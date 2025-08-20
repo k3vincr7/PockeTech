@@ -1,0 +1,53 @@
+<!DOCTYPE html><html><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Range Percent Calculator</title>
+<link rel="stylesheet" href="../styles.css">
+<script>
+const n=v=>{ if(v===undefined||v===null) return null;
+  v=(''+v).replace(/,/g,'').trim();
+  if(!v) return null;
+  const x=parseFloat(v);
+  return isNaN(x)?null:x;
+};
+function calcPercent(){
+  const L = n(document.getElementById("lrv").value);
+  const U = n(document.getElementById("urv").value);
+  const out = document.getElementById("out");
+  if(L==null || U==null){ out.textContent = "⚠️ Enter valid LRV and URV."; return; }
+  const span = U - L;
+  const vals = {
+    "0%":   L,
+    "25%":  L + span*0.25,
+    "50%":  L + span*0.50,
+    "75%":  L + span*0.75,
+    "100%": U
+  };
+  out.innerHTML =
+    `0% = ${vals["0%"]}\n`+
+    `25% = ${vals["25%"]}\n`+
+    `50% = ${vals["50%"]}\n`+
+    `75% = ${vals["75%"]}\n`+
+    `100% = ${vals["100%"]}`;
+}
+</script>
+</head><body>
+<div class="wrap">
+  <h1>Range Percent Calculator</h1>
+
+  <section class="tool">
+    <div class="row">
+      <div>
+        <label>LRV (Lower Range Value)</label>
+        <input id="lrv" inputmode="decimal" placeholder="e.g., 0">
+      </div>
+      <div>
+        <label>URV (Upper Range Value)</label>
+        <input id="urv" inputmode="decimal" placeholder="e.g., 200">
+      </div>
+    </div>
+    <button onclick="calcPercent()">Calculate</button>
+    <pre id="out" class="result"></pre>
+    <p class="note">Tip: accepts negatives and decimals. Output shows exact values (no rounding).</p>
+  </section>
+</div>
+</body></html>
