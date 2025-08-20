@@ -1,0 +1,88 @@
+<!DOCTYPE html><html><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gauge ↔ Absolute</title><link rel="stylesheet" href="../styles.css">
+<script>
+const n=v=>{if(v===undefined||v===null)return null;v=(''+v).replace(/,/g,'').trim();if(!v)return null;const x=parseFloat(v);return isNaN(x)?null:x;}
+const PA_PER_PSIG = 6894.757293168;
+function baroFromElevationFt(ft){
+  const m=ft*0.3048;
+  const Pa = 101325*Math.pow(1-2.25577e-5*m,5.25588);
+  return Pa/PA_PER_PSIG; // psia
+}
+function baroResolve(){
+  const mode=document.getElementById('baro_mode').value;
+  if(mode==='elev'){
+    const ft=n(document.getElementById('elev_ft').value);
+    if(ft==null){return null;}
+    return baroFromElevationFt(ft);
+  }else{
+    const val=n(document.getElementById('baro_val').value);
+    const unit=document.getElementById('baro_unit').value;
+    if(val==null) return null;
+    if(unit==='psia') return val;
+    if(unit==='kPa') return (val*1000)/PA_PER_PSIG;
+    if(unit==='inHg') return (val*3386.389)/PA_PER_PSIG;
+    if(unit==='mbar') return (val*100)/PA_PER_PSIG;
+    return null;
+  }
+}
+function psigToPsia(){
+  const psig=n(document.getElementById('psig').value);
+  const baro=baroResolve();
+  const out=document.getElementById('abs_out');
+  if(psig==null||baro==null){out.textContent='Fill psig and barometric.';return;}
+  out.textContent=`${psig.toFixed(3)} psig → ${(psig+baro).toFixed(3)} psia (baro=${baro.toFixed(3)} psia)`;
+}
+function psiaToPsig(){
+  const psia=n(document.getElementById('psia').value);
+  const baro=baroResolve();
+  const out=document.getElementById('gage_out');
+  if(psia==null||baro==null){out.textContent='Fill psia and barometric.';return;}
+  out.textContent=`${psia.toFixed(3)} psia → ${(psia-baro).toFixed(3)} psig (baro=${baro.toFixed(3)} psia)`;
+}
+</script>
+</head><body><div class="wrap">
+  <h1>Gauge ↔ Absolute</h1>
+
+  <section class="tool">
+    <h3>Barometric Source</h3>
+    <div class="row">
+      <div>
+        <label>Mode</label>
+        <select id="baro_mode" onchange="
+          document.getElementById('elev_box').style.display=this.value==='elev'?'block':'none';
+          document.getElementById('baro_box').style.display=this.value==='baro'?'block':'none';
+        ">
+          <option value="elev" selected>Use Elevation (ft)</option>
+          <option value="baro">Enter Barometric</option>
+        </select>
+      </div>
+    </div>
+    <div id="elev_box">
+      <label>Elevation (ft)</label><input id="elev_ft" inputmode="decimal" placeholder="e.g., 0">
+    </div>
+    <div id="baro_box" style="display:none">
+      <div class="row">
+        <div><label>Value</label><input id="baro_val" inputmode="decimal" placeholder="e.g., 14.7"></div>
+        <div><label>Unit</label>
+          <select id="baro_unit"><option>psia</option><option>kPa</option><option>inHg</option><option>mbar</option></select>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tool">
+    <div class="row">
+      <div>
+        <label>psig</label><input id="psig" inputmode="decimal">
+        <button onclick="psigToPsia()">psig → psia</button>
+        <div id="abs_out" class="result"></div>
+      </div>
+      <div>
+        <label>psia</label><input id="psia" inputmode="decimal">
+        <button onclick="psiaToPsig()">psia → psig</button>
+        <div id="gage_out" class="result"></div>
+      </div>
+    </div>
+  </section>
+</div></body></html>
