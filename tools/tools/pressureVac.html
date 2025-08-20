@@ -1,0 +1,47 @@
+<!DOCTYPE html><html><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vacuum Helpers</title><link rel="stylesheet" href="../styles.css">
+<script>
+const n=v=>{if(v===undefined||v===null)return null;v=(''+v).replace(/,/g,'').trim();if(!v)return null;const x=parseFloat(v);return isNaN(x)?null:x;}
+const PA_PER_PSIG=6894.757293168;
+function baroFromElevationFt(ft){const m=ft*0.3048;const Pa=101325*Math.pow(1-2.25577e-5*m,5.25588);return Pa/PA_PER_PSIG;}
+function baroVal(){const mode=document.getElementById('v_mode').value; if(mode==='elev'){const ft=n(v_elev.value); if(ft==null)return null; return baroFromElevationFt(ft);} const val=n(v_baro_val.value); const unit=v_baro_unit.value; if(val==null)return null; if(unit==='psia')return val; if(unit==='kPa')return (val*1000)/PA_PER_PSIG; if(unit==='inHg')return (val*3386.389)/PA_PER_PSIG; if(unit==='mbar')return (val*100)/PA_PER_PSIG; return null;}
+function inHgVacToPsia(){const baro=baroVal(); if(baro==null){v_out1.textContent='Set barometric first.';return;} const inv=n(vhg.value); if(inv==null){v_out1.textContent='Enter inHg vacuum.';return;} const psia = baro - (inv*3386.389/PA_PER_PSIG); v_out1.textContent = `${inv.toFixed(3)} inHg vacuum → ${psia.toFixed(3)} psia (baro ${baro.toFixed(3)} psia)`;}
+function psiaToInHgVac(){const baro=baroVal(); if(baro==null){v_out2.textContent='Set barometric first.';return;} const p=n(v_psia.value); if(p==null){v_out2.textContent='Enter psia.';return;} const inv = (baro-p)*PA_PER_PSIG/3386.389; v_out2.textContent = `${p.toFixed(3)} psia → ${inv.toFixed(3)} inHg vacuum (baro ${baro.toFixed(3)} psia)`;}
+function pctVacFromPsia(){const baro=baroVal(); if(baro==null){v_out3.textContent='Set barometric first.';return;} const p=n(v_psia2.value); if(p==null){v_out3.textContent='Enter psia.';return;} const pct=Math.max(0,Math.min(100,(1-p/baro)*100)); v_out3.textContent = `${p.toFixed(3)} psia → ${pct.toFixed(1)}% vacuum (at baro ${baro.toFixed(3)} psia)`;}
+function psiaFromPctVac(){const baro=baroVal(); if(baro==null){v_out4.textContent='Set barometric first.';return;} const pct=n(v_pct.value); if(pct==null){v_out4.textContent='Enter % vacuum.';return;} const p=baro*(1-pct/100); v_out4.textContent = `${pct.toFixed(1)}% vacuum → ${p.toFixed(3)} psia (at baro ${baro.toFixed(3)} psia)`;}
+</script>
+</head><body><div class="wrap">
+  <h1>Vacuum Helpers</h1>
+
+  <section class="tool">
+    <h3>Barometric Source</h3>
+    <select id="v_mode" onchange="document.getElementById('v_elev_box').style.display=this.value==='elev'?'block':'none';document.getElementById('v_baro_box').style.display=this.value==='baro'?'block':'none';">
+      <option value="elev" selected>Use Elevation (ft)</option>
+      <option value="baro">Enter Barometric</option>
+    </select>
+    <div id="v_elev_box"><label>Elevation (ft)</label><input id="v_elev" inputmode="decimal"></div>
+    <div id="v_baro_box" style="display:none">
+      <div class="row">
+        <div><label>Value</label><input id="v_baro_val" inputmode="decimal"></div>
+        <div><label>Unit</label><select id="v_baro_unit"><option>psia</option><option>kPa</option><option>inHg</option><option>mbar</option></select></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tool">
+    <h3>inHg vacuum ↔ psia</h3>
+    <div class="row">
+      <div><label>inHg vacuum</label><input id="vhg" inputmode="decimal"><button onclick="inHgVacToPsia()">To psia</button><div id="v_out1" class="result"></div></div>
+      <div><label>psia</label><input id="v_psia" inputmode="decimal"><button onclick="psiaToInHgVac()">To inHg vac</button><div id="v_out2" class="result"></div></div>
+    </div>
+  </section>
+
+  <section class="tool">
+    <h3>% vacuum ↔ psia (local)</h3>
+    <div class="row">
+      <div><label>% vacuum</label><input id="v_pct" inputmode="decimal"><button onclick="psiaFromPctVac()">To psia</button><div id="v_out4" class="result"></div></div>
+      <div><label>psia</label><input id="v_psia2" inputmode="decimal"><button onclick="pctVacFromPsia()">To % vacuum</button><div id="v_out3" class="result"></div></div>
+    </div>
+  </section>
+</div></body></html>
