@@ -18,7 +18,10 @@
       <a class="card" href="tools/pressureVac.html"><b>Vacuum Helpers</b><br><small>inHg vac ⇄ psia • % vacuum</small></a>
       <a class="card" href="tools/pressureSwitch.html"><b>Pressure Switch Helper</b><br><small>Trip/Reset/Deadband • proof-test plan</small></a>
       <a class="card" href="tools/four20.html"><b>4–20 mA Tools</b><br><small>mA⇄EU • √flow option</small></a>
-    </div>
+      <a class="card" href="tools/percentCalc.html">
+  <b>Range Percent (0/25/50/75/100)</b><br>
+  <small>Quick setpoints from LRV/URV</small>
+</a></div>
   </div>
 
   <script src="script.js"></script>
