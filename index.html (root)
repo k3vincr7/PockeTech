@@ -1,50 +1,43 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PockeTech — Simple Build</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PockeTech — Field Tools (Simple)</title>
   <style>
-    /* minimal, readable defaults */
-    :root { --pad: 12px; --gap: 10px; --border:#ddd; --bg:#fafafa; --muted:#666; }
-    * { box-sizing: border-box; }
-    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:#fff; color:#111; }
-    header { padding:16px; border-bottom:1px solid var(--border); }
-    h1 { margin:0; font-size:20px; }
-    nav { display:flex; gap:8px; padding:8px 16px; border-bottom:1px solid var(--border); flex-wrap: wrap; }
-    nav button { padding:8px 12px; border:1px solid var(--border); background:#fff; cursor:pointer; border-radius:6px; }
-    nav button.active { background:var(--bg); }
-    main { padding:16px; max-width: 980px; margin: 0 auto; }
-    section { display:none; }
+    body { font-family: Arial, sans-serif; margin:0; background:#f5f5f5; color:#333; }
+    header { background:#222; color:#fff; padding:1em; text-align:center; }
+    nav { display:flex; flex-wrap:wrap; justify-content:center; background:#444; gap:4px; }
+    nav button { background:#444; color:#fff; border:none; padding:0.9em 1em; cursor:pointer; }
+    nav button:hover, nav button.active { background:#666; }
+    main { padding:1em; max-width:1000px; margin:0 auto; }
+    section { display:none; background:#fff; padding:1em; border:1px solid #ddd; border-radius:6px; }
     section.active { display:block; }
-    .row { display:flex; gap:var(--gap); flex-wrap:wrap; margin-bottom:var(--gap); }
-    .col { flex:1 1 240px; min-width:240px; }
-    label { display:block; font-size:12px; color:var(--muted); margin-bottom:4px; }
-    input, select, textarea { width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; }
-    table { width:100%; border-collapse: collapse; margin-top:10px; }
-    th, td { border:1px solid var(--border); padding:8px; text-align:left; font-size:14px; }
-    th { background:var(--bg); }
-    .btns { display:flex; gap:8px; flex-wrap: wrap; margin-top:8px; }
-    .muted { color:var(--muted); font-size:12px; }
-    .pill { padding:2px 8px; border-radius:999px; border:1px solid var(--border); display:inline-block; font-size:12px; }
-    .pill.pass { background:#f0fff4; border-color:#b7e4c7; }
-    .pill.fail { background:#fff5f5; border-color:#ffc9c9; }
-    .footer { margin-top:24px; font-size:12px; color:var(--muted); }
-    .hr { height:1px; background:var(--border); margin:16px 0; }
-    .nowrap { white-space: nowrap; }
-    .stack { display:flex; flex-direction:column; gap:8px; }
+    input, button, textarea, select { margin:.3em 0; padding:.5em; }
+    input, select, textarea { width:100%; max-width:100%; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; }
+    .col { flex:1 1 220px; min-width:220px; }
+    table { border-collapse:collapse; margin-top:1em; width:100%; font-size:14px; }
+    table, th, td { border:1px solid #aaa; }
+    th, td { padding:.5em; text-align:left; }
+    .muted { font-size:12px; color:#777; }
+    .btns { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+    .hr { height:1px; background:#ddd; margin:12px 0; }
+    footer { text-align:center; color:#777; font-size:12px; padding:12px; }
+    .hidden { display:none; }
   </style>
 </head>
 <body>
   <header>
     <h1>PockeTech — Field Tools (Simple)</h1>
-    <div class="muted">Tools · Logs · Offline localStorage · CSV export</div>
   </header>
 
   <nav>
     <button data-target="percent" class="active">Percent Steps</button>
     <button data-target="signal">Signal Helper</button>
-    <button data-target="loops">Loop Check Log</button>
+    <button data-target="cal">Calibration Tracker</button>
+    <button data-target="loop">Loop Check Log</button>
+    <button data-target="legacy">Legacy Tools</button>
   </nav>
 
   <main>
@@ -52,180 +45,163 @@
     <section id="percent" class="active">
       <h2>Percent Steps</h2>
       <div class="row">
-        <div class="col">
-          <label>Lower Range Value (LRV)</label>
-          <input id="ps-lrv" type="number" step="any" placeholder="e.g., 0" />
-        </div>
-        <div class="col">
-          <label>Upper Range Value (URV)</label>
-          <input id="ps-urv" type="number" step="any" placeholder="e.g., 200" />
-        </div>
+        <div class="col"><label>LRV <input type="number" id="lrv" step="any" placeholder="e.g., 0"/></label></div>
+        <div class="col"><label>URV <input type="number" id="urv" step="any" placeholder="e.g., 200"/></label></div>
       </div>
       <div class="btns">
-        <button id="ps-calc">Calculate</button>
-        <button id="ps-copy">Copy table</button>
-        <button id="ps-csv">Export CSV</button>
+        <button onclick="calcPercent()">Calculate</button>
+        <button onclick="exportPercentCSV()">Export CSV</button>
       </div>
-      <div class="hr"></div>
-      <table id="ps-table">
-        <thead>
-          <tr><th>%</th><th>Eng Units</th></tr>
-        </thead>
-        <tbody>
-          <!-- filled by JS -->
-        </tbody>
-      </table>
-      <div class="footer muted">Tip: includes 0, 25, 50, 75, 100%.</div>
+      <table id="percentTable"></table>
+      <div class="muted">Outputs 0, 25, 50, 75, 100%.</div>
     </section>
 
     <!-- Signal Helper -->
     <section id="signal">
       <h2>Signal Helper (4–20 mA)</h2>
       <div class="row">
-        <div class="col">
-          <label>LRV (Engineering Units)</label>
-          <input id="sh-lrv" type="number" step="any" placeholder="e.g., 0" />
-        </div>
-        <div class="col">
-          <label>URV (Engineering Units)</label>
-          <input id="sh-urv" type="number" step="any" placeholder="e.g., 200" />
-        </div>
+        <div class="col"><label>LRV (EU) <input type="number" id="sh_lrv" step="any" placeholder="e.g., 0"/></label></div>
+        <div class="col"><label>URV (EU) <input type="number" id="sh_urv" step="any" placeholder="e.g., 200"/></label></div>
       </div>
       <div class="row">
-        <div class="col">
-          <label>mA (4–20)</label>
-          <input id="sh-ma" type="number" step="any" placeholder="e.g., 12" />
-        </div>
-        <div class="col">
-          <label>% (0–100)</label>
-          <input id="sh-pct" type="number" step="any" placeholder="e.g., 50" />
-        </div>
-        <div class="col">
-          <label>Engineering Units</label>
-          <input id="sh-eu" type="number" step="any" placeholder="e.g., 100" />
-        </div>
+        <div class="col"><label>mA <input type="number" id="ma" step="any" placeholder="e.g., 12"/></label></div>
+        <div class="col"><label>% <input type="number" id="percentInput" step="any" placeholder="e.g., 50"/></label></div>
+        <div class="col"><label>EU <input type="number" id="eu" step="any" placeholder="e.g., 100"/></label></div>
       </div>
       <div class="btns">
-        <button id="sh-from-ma">From mA → (% & EU)</button>
-        <button id="sh-from-pct">From % → (mA & EU)</button>
-        <button id="sh-from-eu">From EU → (mA & %)</button>
-        <button id="sh-clear">Clear</button>
+        <button onclick="maToPercent()">From mA</button>
+        <button onclick="percentToMa()">From %</button>
+        <button onclick="euToPercent()">From EU</button>
+        <button onclick="signalClear()">Clear</button>
       </div>
-      <div class="footer muted">Uses linear interpolation: 4 mA = 0%, 20 mA = 100%.</div>
+      <p id="signalResult" class="muted"></p>
+    </section>
+
+    <!-- Calibration Tracker -->
+    <section id="cal">
+      <h2>Calibration Tracker</h2>
+      <div class="row">
+        <div class="col"><label>Tag <input id="cal_tag" placeholder="e.g., PT-101"/></label></div>
+        <div class="col"><label>Make/Model <input id="cal_model" placeholder="e.g., Yokogawa EJA"/></label></div>
+        <div class="col"><label>Type <input id="cal_type" placeholder="e.g., PT / FT / LT / TT"/></label></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>LRV <input type="number" id="cal_lrv" step="any"/></label></div>
+        <div class="col"><label>URV <input type="number" id="cal_urv" step="any"/></label></div>
+        <div class="col"><label>Method <input id="cal_method" placeholder="e.g., 5-point, As Found/As Left"/></label></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>As-Found <input id="cal_af" placeholder="e.g., 0.12%"/></label></div>
+        <div class="col"><label>As-Left <input id="cal_al" placeholder="e.g., 0.05%"/></label></div>
+        <div class="col"><label>Date <input type="date" id="cal_date"/></label></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>Interval <select id="cal_interval">
+          <option value="">Select</option>
+          <option value="6">6 months</option>
+          <option value="12">12 months</option>
+        </select></label></div>
+        <div class="col"><label>Next Due <input id="cal_due" readonly placeholder="auto"/></label></div>
+        <div class="col"><label>Tech <input id="cal_tech" placeholder="e.g., K. Calvillo"/></label></div>
+      </div>
+      <div class="row">
+        <div class="col" style="flex:1 1 100%"><label>Notes <input id="cal_notes" placeholder="Short notes…"/></label></div>
+      </div>
+      <div class="btns">
+        <button id="cal_add">Add Calibration</button>
+        <button id="cal_export">Export CSV</button>
+        <button id="cal_import_btn" type="button">Import CSV</button>
+        <input id="cal_import" type="file" accept=".csv" class="hidden"/>
+        <button id="cal_clear">Clear All (local)</button>
+      </div>
+      <div class="hr"></div>
+      <table id="cal_table">
+        <thead>
+          <tr>
+            <th>Tag</th><th>Make/Model</th><th>Type</th>
+            <th>LRV</th><th>URV</th><th>Method</th>
+            <th>As-Found</th><th>As-Left</th>
+            <th>Date</th><th>Interval</th><th>Next Due</th>
+            <th>Tech</th><th>Notes</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="muted">Stores locally on this device. Export CSV to share. Import expects headers shown above (case-insensitive).</div>
     </section>
 
     <!-- Loop Check Log -->
-    <section id="loops">
-      <h2>Loop Check Log (MVP)</h2>
-      <div class="stack">
+    <section id="loop">
+      <h2>Loop Check Log</h2>
+      <form id="loopForm">
         <div class="row">
-          <div class="col">
-            <label>Tag</label>
-            <input id="lc-tag" placeholder="e.g., FT-101" />
-          </div>
-          <div class="col">
-            <label>Service</label>
-            <input id="lc-service" placeholder="e.g., Steam Flow" />
-          </div>
-          <div class="col">
-            <label>Type</label>
-            <select id="lc-type">
-              <option value="">Select</option>
-              <option>AI</option>
-              <option>AO</option>
-              <option>DI</option>
-              <option>DO</option>
-            </select>
-          </div>
+          <div class="col"><input placeholder="Tag" id="tag" required></div>
+          <div class="col"><input placeholder="Service" id="service"></div>
+          <div class="col"><select id="type"><option>AI</option><option>AO</option><option>DI</option><option>DO</option></select></div>
         </div>
         <div class="row">
-          <div class="col">
-            <label>LRV</label>
-            <input id="lc-lrv" type="number" step="any" />
-          </div>
-          <div class="col">
-            <label>URV</label>
-            <input id="lc-urv" type="number" step="any" />
-          </div>
-          <div class="col">
-            <label>Date</label>
-            <input id="lc-date" type="date" />
-          </div>
+          <div class="col"><input placeholder="LRV" id="rangeLrv" type="number" step="any"></div>
+          <div class="col"><input placeholder="URV" id="rangeUrv" type="number" step="any"></div>
+          <div class="col"><input placeholder="Date" id="date" type="date"></div>
         </div>
         <div class="row">
-          <div class="col">
-            <label>As-Found</label>
-            <input id="lc-af" placeholder="e.g., 98.7%" />
-          </div>
-          <div class="col">
-            <label>As-Left</label>
-            <input id="lc-al" placeholder="e.g., 100.0%" />
-          </div>
-          <div class="col">
-            <label>Tech</label>
-            <input id="lc-tech" placeholder="e.g., K. Calvillo" />
-          </div>
+          <div class="col"><input placeholder="As-Found" id="asFound"></div>
+          <div class="col"><input placeholder="As-Left" id="asLeft"></div>
+          <div class="col"><input placeholder="Technician" id="tech"></div>
         </div>
         <div class="row">
-          <div class="col" style="flex:2 1 100%;">
-            <label>Notes</label>
-            <input id="lc-notes" placeholder="Short notes…" />
-          </div>
-          <div class="col">
-            <label>Status</label>
-            <select id="lc-status">
-              <option>Pass</option>
-              <option>Fail</option>
-              <option>Blocked</option>
-            </select>
-          </div>
+          <div class="col" style="flex:1 1 100%"><input placeholder="Notes" id="notes"></div>
+          <div class="col"><select id="status"><option value="Pass">Pass</option><option value="Fail">Fail</option></select></div>
         </div>
         <div class="btns">
-          <button id="lc-add">Add Entry</button>
-          <button id="lc-export">Export CSV</button>
-          <button id="lc-clear">Clear All (local)</button>
+          <button type="submit">Add</button>
+          <button type="button" onclick="downloadLoopCSV()">Export CSV</button>
+          <button type="button" id="loop_import_btn">Import CSV</button>
+          <input id="loop_import" type="file" accept=".csv" class="hidden"/>
+          <button type="button" onclick="clearLoop()">Clear All (local)</button>
         </div>
-      </div>
-
-      <div class="hr"></div>
-
-      <table id="lc-table">
+      </form>
+      <table id="loopTable">
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Tag</th>
-            <th>Service</th>
-            <th>Type</th>
-            <th class="nowrap">LRV</th>
-            <th class="nowrap">URV</th>
-            <th>As-Found</th>
-            <th>As-Left</th>
-            <th>Tech</th>
-            <th>Status</th>
-            <th class="nowrap">Actions</th>
+            <th>Date</th><th>Tag</th><th>Service</th><th>Type</th>
+            <th>LRV</th><th>URV</th><th>As-Found</th><th>As-Left</th>
+            <th>Tech</th><th>Status</th><th>Notes</th>
           </tr>
         </thead>
-        <tbody><!-- rows injected --></tbody>
+        <tbody></tbody>
       </table>
-      <div class="footer muted">Stored locally on this device (no cloud). CSV export for sharing.</div>
+      <div class="muted">Import expects headers shown above (case-insensitive).</div>
+    </section>
+
+    <!-- Legacy Tools -->
+    <section id="legacy">
+      <h2>Legacy Tools</h2>
+      <ul>
+        <li><a href="tools/four20.html" target="_blank">4–20 mA Helper</a></li>
+        <li><a href="tools/pressureA.html" target="_blank">Pressure A</a></li>
+        <li><a href="tools/pressureC.html" target="_blank">Pressure: Gauge ↔ Absolute</a></li>
+        <li><a href="tools/pressureSwitch.html" target="_blank">Pressure Switch</a></li>
+        <li><a href="tools/pressureVac.html" target="_blank">Vacuum / Pressure</a></li>
+      </ul>
+      <p class="muted">These open the older standalone tools in new tabs.</p>
     </section>
   </main>
 
+  <footer class="muted">PockeTech — simple build • v0.3</footer>
+
   <script>
-    // --- simple router ---
-    const navBtns = document.querySelectorAll('nav button');
-    const sections = document.querySelectorAll('main section');
-    navBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        navBtns.forEach(b => b.classList.remove('active'));
-        sections.forEach(s => s.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.target).classList.add('active');
+    // ---- Simple router ----
+    document.querySelectorAll("nav button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+        document.querySelectorAll("main section").forEach(sec => sec.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById(btn.dataset.target).classList.add("active");
       });
     });
 
-    // --- helpers ---
-    const clamp = (v,min,max)=> Math.min(Math.max(v, min), max);
+    // ---- Helpers ----
     function toCSV(rows) {
       return rows.map(r => r.map(cell => {
         const s = (cell ?? '').toString();
@@ -233,235 +209,335 @@
       }).join(',')).join('\n');
     }
     function downloadCSV(filename, rows) {
-      const blob = new Blob([toCSV(rows)], {type: 'text/csv;charset=utf-8;'});
+      const blob = new Blob([toCSV(rows)], {type:'text/csv;charset=utf-8;'});
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = filename;
-      document.body.appendChild(a); a.click(); a.remove();
+      const a = document.createElement('a'); a.href=url; a.download=filename; a.click();
       URL.revokeObjectURL(url);
     }
-    function copyTableToClipboard(table) {
-      const rows = [...table.querySelectorAll('tr')].map(tr =>
-        [...tr.children].map(td => td.innerText));
-      const txt = rows.map(r => r.join('\t')).join('\n');
-      return navigator.clipboard.writeText(txt);
-    }
-    function fmt(n) {
+    const fmt = n => {
       const x = Number(n);
       if (!Number.isFinite(x)) return '';
-      // choose compact formatting: up to 4 decimals as needed
-      return (Math.abs(x) >= 1000 || Math.abs(x) === 0)
-        ? x.toFixed(2).replace(/\.00$/,'')
-        : x.toFixed(4).replace(/0+$/,'').replace(/\.$/,'');
-    }
-
-    // --- Percent Steps ---
-    const psLRV = document.getElementById('ps-lrv');
-    const psURV = document.getElementById('ps-urv');
-    const psTBody = document.querySelector('#ps-table tbody');
-    const psCalc = document.getElementById('ps-calc');
-    const psCopy = document.getElementById('ps-copy');
-    const psCSV  = document.getElementById('ps-csv');
-
-    function rebuildPercentTable(lrv, urv) {
-      const steps = [0,25,50,75,100];
-      psTBody.innerHTML = '';
-      if (!isFinite(lrv) || !isFinite(urv) || urv === lrv) return;
-      steps.forEach(p => {
-        const eu = lrv + (urv - lrv) * (p/100);
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${p}%</td><td>${fmt(eu)}</td>`;
-        psTBody.appendChild(tr);
-      });
-    }
-
-    psCalc.addEventListener('click', () => {
-      const lrv = Number(psLRV.value);
-      const urv = Number(psURV.value);
-      if (!isFinite(lrv) || !isFinite(urv)) { alert('Enter numeric LRV and URV'); return; }
-      if (lrv === urv) { alert('LRV and URV must differ'); return; }
-      rebuildPercentTable(lrv, urv);
-    });
-
-    psCopy.addEventListener('click', async () => {
-      try {
-        await copyTableToClipboard(document.getElementById('ps-table'));
-        alert('Copied!');
-      } catch {
-        alert('Copy failed. Select & copy manually.');
-      }
-    });
-
-    psCSV.addEventListener('click', () => {
-      const rows = [['Percent','EngUnits']];
-      [...psTBody.querySelectorAll('tr')].forEach(tr => {
-        const tds = tr.querySelectorAll('td');
-        rows.push([tds[0].innerText, tds[1].innerText]);
-      });
-      if (rows.length === 1) { alert('Nothing to export. Calculate first.'); return; }
-      downloadCSV('percent_steps.csv', rows);
-    });
-
-    // --- Signal Helper ---
-    const shLRV = document.getElementById('sh-lrv');
-    const shURV = document.getElementById('sh-urv');
-    const shmA  = document.getElementById('sh-ma');
-    const shPct = document.getElementById('sh-pct');
-    const shEU  = document.getElementById('sh-eu');
-
-    function ensureRange() {
-      const lrv = Number(shLRV.value), urv = Number(shURV.value);
-      if (!isFinite(lrv) || !isFinite(urv) || lrv === urv) {
-        alert('Enter valid LRV/URV (must be numbers and not equal).');
-        return null;
-      }
-      return { lrv, urv };
-    }
-
-    document.getElementById('sh-from-ma').addEventListener('click', () => {
-      const range = ensureRange(); if (!range) return;
-      const v = Number(shmA.value);
-      if (!isFinite(v)) { alert('Enter mA value.'); return; }
-      const pct = clamp((v - 4) / (20 - 4) * 100, 0, 100);
-      const eu = range.lrv + (range.urv - range.lrv) * (pct/100);
-      shPct.value = fmt(pct);
-      shEU.value  = fmt(eu);
-    });
-
-    document.getElementById('sh-from-pct').addEventListener('click', () => {
-      const range = ensureRange(); if (!range) return;
-      const p = Number(shPct.value);
-      if (!isFinite(p)) { alert('Enter % value.'); return; }
-      const pct = clamp(p, 0, 100);
-      const ma = 4 + (20 - 4) * (pct/100);
-      const eu = range.lrv + (range.urv - range.lrv) * (pct/100);
-      shmA.value = fmt(ma);
-      shEU.value = fmt(eu);
-      shPct.value = fmt(pct);
-    });
-
-    document.getElementById('sh-from-eu').addEventListener('click', () => {
-      const range = ensureRange(); if (!range) return;
-      const eu = Number(shEU.value);
-      if (!isFinite(eu)) { alert('Enter EU value.'); return; }
-      const pct = clamp((eu - range.lrv) / (range.urv - range.lrv) * 100, 0, 100);
-      const ma = 4 + (20 - 4) * (pct/100);
-      shPct.value = fmt(pct);
-      shmA.value  = fmt(ma);
-    });
-
-    document.getElementById('sh-clear').addEventListener('click', () => {
-      [shLRV, shURV, shmA, shPct, shEU].forEach(i => i.value = '');
-    });
-
-    // --- Loop Check Log (localStorage) ---
-    const LC_KEY = 'pocketech.looplog.v1';
-    const lcForm = {
-      tag: document.getElementById('lc-tag'),
-      service: document.getElementById('lc-service'),
-      type: document.getElementById('lc-type'),
-      lrv: document.getElementById('lc-lrv'),
-      urv: document.getElementById('lc-urv'),
-      date: document.getElementById('lc-date'),
-      af: document.getElementById('lc-af'),
-      al: document.getElementById('lc-al'),
-      tech: document.getElementById('lc-tech'),
-      notes: document.getElementById('lc-notes'),
-      status: document.getElementById('lc-status'),
+      return (Math.abs(x)>=1000||x===0) ? x.toFixed(2).replace(/\.00$/,'') : x.toFixed(4).replace(/0+$/,'').replace(/\.$/,'');
     };
-    const lcTableBody = document.querySelector('#lc-table tbody');
+    // CSV parser (handles quotes, commas, newlines)
+    function parseCSV(text){
+      const rows=[]; let i=0, cur='', row=[], inQ=false;
+      while(i<text.length){
+        const c=text[i];
+        if(inQ){
+          if(c==='"' && text[i+1]==='"'){ cur+='"'; i+=2; continue; }
+          if(c==='"' ){ inQ=false; i++; continue; }
+          cur+=c; i++; continue;
+        } else {
+          if(c==='"'){ inQ=true; i++; continue; }
+          if(c===','){ row.push(cur); cur=''; i++; continue; }
+          if(c==='\n' || c==='\r'){
+            // handle \r\n or \n
+            if(c==='\r' && text[i+1]==='\n') i++;
+            row.push(cur); rows.push(row); row=[]; cur=''; i++; continue;
+          }
+          cur+=c; i++; continue;
+        }
+      }
+      row.push(cur); rows.push(row);
+      // trim trailing empty last row if it's just one empty cell
+      if(rows.length && rows[rows.length-1].length===1 && rows[rows.length-1][0]==='') rows.pop();
+      return rows;
+    }
+    function indexHeaders(headerRow){
+      const map={};
+      headerRow.forEach((h,idx)=>{
+        const k=(h||'').toString().trim().toLowerCase();
+        map[k]=idx;
+      });
+      return map;
+    }
 
-    function loadLC() {
-      try {
-        return JSON.parse(localStorage.getItem(LC_KEY) || '[]');
-      } catch { return []; }
+    // ---- Percent Steps ----
+    function calcPercent() {
+      const lrv = parseFloat(document.getElementById("lrv").value);
+      const urv = parseFloat(document.getElementById("urv").value);
+      if (isNaN(lrv) || isNaN(urv) || lrv===urv) { alert("Enter numeric LRV/URV (not equal)."); return; }
+      const steps=[0,25,50,75,100];
+      let html = "<tr><th>%</th><th>Value</th></tr>";
+      steps.forEach(p=>{
+        const val = lrv + (urv-lrv)*(p/100);
+        html += `<tr><td>${p}%</td><td>${fmt(val)}</td></tr>`;
+      });
+      document.getElementById("percentTable").innerHTML = html;
     }
-    function saveLC(rows) {
-      localStorage.setItem(LC_KEY, JSON.stringify(rows));
+    function exportPercentCSV() {
+      const table = document.getElementById("percentTable");
+      if (!table || !table.rows.length) { alert("Calculate first."); return; }
+      const rows = [["Percent","EngUnits"]];
+      for (let i=1;i<table.rows.length;i++){
+        rows.push([table.rows[i].cells[0].innerText, table.rows[i].cells[1].innerText]);
+      }
+      downloadCSV("percent_steps.csv", rows);
     }
-    function renderLC() {
-      const rows = loadLC();
-      lcTableBody.innerHTML = '';
-      rows.forEach((r, idx) => {
+
+    // ---- Signal Helper ----
+    function ensureRangeSH() {
+      const lrv = parseFloat(document.getElementById("sh_lrv").value);
+      const urv = parseFloat(document.getElementById("sh_urv").value);
+      if (isNaN(lrv)||isNaN(urv)||lrv===urv) { alert("Enter valid LRV/URV."); return null; }
+      return {lrv, urv};
+    }
+    function maToPercent() {
+      const r = ensureRangeSH(); if (!r) return;
+      const ma = parseFloat(document.getElementById("ma").value);
+      if (isNaN(ma)) { alert("Enter mA."); return; }
+      const pct = Math.min(Math.max((ma-4)/16*100,0),100);
+      const eu = r.lrv + (r.urv-r.lrv)*(pct/100);
+      document.getElementById("percentInput").value = fmt(pct);
+      document.getElementById("eu").value = fmt(eu);
+      document.getElementById("signalResult").innerText = `${ma} mA → ${fmt(pct)}% → ${fmt(eu)} EU`;
+    }
+    function percentToMa() {
+      const r = ensureRangeSH(); if (!r) return;
+      const p = parseFloat(document.getElementById("percentInput").value);
+      if (isNaN(p)) { alert("Enter %."); return; }
+      const pct = Math.min(Math.max(p,0),100);
+      const ma = 4 + 16*(pct/100);
+      const eu = r.lrv + (r.urv-r.lrv)*(pct/100);
+      document.getElementById("ma").value = fmt(ma);
+      document.getElementById("eu").value = fmt(eu);
+      document.getElementById("signalResult").innerText = `${fmt(pct)}% → ${fmt(ma)} mA → ${fmt(eu)} EU`;
+    }
+    function euToPercent() {
+      const r = ensureRangeSH(); if (!r) return;
+      const eu = parseFloat(document.getElementById("eu").value);
+      if (isNaN(eu)) { alert("Enter EU."); return; }
+      const pct = Math.min(Math.max((eu - r.lrv) / (r.urv - r.lrv) * 100,0),100);
+      const ma = 4 + 16*(pct/100);
+      document.getElementById("percentInput").value = fmt(pct);
+      document.getElementById("ma").value = fmt(ma);
+      document.getElementById("signalResult").innerText = `${fmt(eu)} EU → ${fmt(pct)}% → ${fmt(ma)} mA`;
+    }
+    function signalClear(){ ["sh_lrv","sh_urv","ma","percentInput","eu"].forEach(id=>document.getElementById(id).value=""); document.getElementById("signalResult").innerText=""; }
+
+    // ---- Calibration Tracker ----
+    const CAL_KEY = 'pocketech.calibrations.v1';
+    const calTBody = document.querySelector('#cal_table tbody');
+    const calImpBtn = document.getElementById('cal_import_btn');
+    const calImpInp = document.getElementById('cal_import');
+
+    function addMonths(dateStr, months){
+      if (!dateStr || !months) return '';
+      const d = new Date(dateStr);
+      if (isNaN(d)) return '';
+      d.setMonth(d.getMonth() + Number(months));
+      const iso = d.toISOString().slice(0,10);
+      return iso;
+    }
+    function calcDuePreview(){
+      const date = document.getElementById('cal_date').value;
+      const interval = document.getElementById('cal_interval').value;
+      document.getElementById('cal_due').value = addMonths(date, interval) || '';
+    }
+    document.getElementById('cal_date').addEventListener('change', calcDuePreview);
+    document.getElementById('cal_interval').addEventListener('change', calcDuePreview);
+
+    function loadCals(){ try { return JSON.parse(localStorage.getItem(CAL_KEY)||'[]'); } catch { return []; } }
+    function saveCals(rows){ localStorage.setItem(CAL_KEY, JSON.stringify(rows)); }
+    function renderCals(){
+      const rows = loadCals();
+      calTBody.innerHTML='';
+      rows.forEach(r=>{
         const tr = document.createElement('tr');
-        const pillClass = r.status === 'Pass' ? 'pass' : (r.status === 'Fail' ? 'fail' : '');
         tr.innerHTML = `
-          <td>${r.date || ''}</td>
-          <td>${r.tag || ''}</td>
-          <td>${r.service || ''}</td>
-          <td>${r.type || ''}</td>
-          <td>${r.lrv ?? ''}</td>
-          <td>${r.urv ?? ''}</td>
-          <td>${r.af || ''}</td>
-          <td>${r.al || ''}</td>
-          <td>${r.tech || ''}</td>
-          <td><span class="pill ${pillClass}">${r.status || ''}</span></td>
-          <td class="nowrap">
-            <button data-act="toggle" data-i="${idx}">Toggle P/F</button>
-            <button data-act="del" data-i="${idx}">Delete</button>
-          </td>
+          <td>${r.tag||''}</td><td>${r.model||''}</td><td>${r.ctype||''}</td>
+          <td>${r.lrv??''}</td><td>${r.urv??''}</td><td>${r.method||''}</td>
+          <td>${r.af||''}</td><td>${r.al||''}</td>
+          <td>${r.date||''}</td><td>${r.interval||''}</td><td>${r.due||''}</td>
+          <td>${r.tech||''}</td><td>${r.notes||''}</td>
         `;
-        lcTableBody.appendChild(tr);
+        calTBody.appendChild(tr);
       });
     }
-
-    document.getElementById('lc-add').addEventListener('click', () => {
+    document.getElementById('cal_add').addEventListener('click', ()=>{
       const row = {
-        date: lcForm.date.value || new Date().toISOString().slice(0,10),
-        tag: lcForm.tag.value.trim(),
-        service: lcForm.service.value.trim(),
-        type: lcForm.type.value,
-        lrv: lcForm.lrv.value,
-        urv: lcForm.urv.value,
-        af: lcForm.af.value.trim(),
-        al: lcForm.al.value.trim(),
-        tech: lcForm.tech.value.trim(),
-        notes: lcForm.notes.value.trim(),
-        status: lcForm.status.value
+        tag: document.getElementById('cal_tag').value.trim(),
+        model: document.getElementById('cal_model').value.trim(),
+        ctype: document.getElementById('cal_type').value.trim(),
+        lrv: document.getElementById('cal_lrv').value,
+        urv: document.getElementById('cal_urv').value,
+        method: document.getElementById('cal_method').value.trim(),
+        af: document.getElementById('cal_af').value.trim(),
+        al: document.getElementById('cal_al').value.trim(),
+        date: document.getElementById('cal_date').value,
+        interval: document.getElementById('cal_interval').value,
+        due: document.getElementById('cal_due').value,
+        tech: document.getElementById('cal_tech').value.trim(),
+        notes: document.getElementById('cal_notes').value.trim(),
+      };
+      if (!row.tag){ alert('Tag required'); return; }
+      const rows = loadCals(); rows.push(row); saveCals(rows); renderCals();
+      ['cal_tag','cal_model','cal_type','cal_lrv','cal_urv','cal_method','cal_af','cal_al','cal_notes'].forEach(id=>document.getElementById(id).value='');
+    });
+    document.getElementById('cal_export').addEventListener('click', ()=>{
+      const rows = loadCals();
+      if (!rows.length){ alert('Nothing to export.'); return; }
+      const header = ['Tag','Make/Model','Type','LRV','URV','Method','As-Found','As-Left','Date','Interval(months)','Next Due','Tech','Notes'];
+      const csvRows = [header, ...rows.map(r=>[r.tag,r.model,r.ctype,r.lrv,r.urv,r.method,r.af,r.al,r.date,r.interval,r.due,r.tech,r.notes])];
+      downloadCSV('calibration_tracker.csv', csvRows);
+    });
+    document.getElementById('cal_clear').addEventListener('click', ()=>{
+      if (confirm('Clear ALL local calibration records?')){ saveCals([]); renderCals(); }
+    });
+    calImpBtn.addEventListener('click', ()=> calImpInp.click());
+    calImpInp.addEventListener('change', (e)=>{
+      const file=e.target.files[0]; if(!file) return;
+      const reader=new FileReader();
+      reader.onload=()=>{
+        const rows=parseCSV(reader.result);
+        if(!rows.length) { alert('Empty CSV'); return; }
+        const header=rows[0]; const idx=indexHeaders(header);
+        // accepted header keys (case-insensitive)
+        const need = {
+          tag:['tag'],
+          model:['make/model','make','model','make model'],
+          ctype:['type'],
+          lrv:['lrv'],
+          urv:['urv'],
+          method:['method'],
+          af:['as-found','as found'],
+          al:['as-left','as left'],
+          date:['date'],
+          interval:['interval','interval(months)','interval months'],
+          due:['next due','next_due','nextdue','due'],
+          tech:['tech','technician'],
+          notes:['notes','note']
+        };
+        function pick(obj){ // map row array -> our object
+          const lower = (s)=> (s||'').toString().trim().toLowerCase();
+          const get = (keys)=> {
+            for(const k of keys){ const i=idx[lower(k)]; if(i!=null) return obj[i]; }
+            return '';
+          };
+          return {
+            tag:get(need.tag),
+            model:get(need.model),
+            ctype:get(need.ctype),
+            lrv:get(need.lrv),
+            urv:get(need.urv),
+            method:get(need.method),
+            af:get(need.af),
+            al:get(need.al),
+            date:get(need.date),
+            interval:get(need.interval),
+            due:get(need.due),
+            tech:get(need.tech),
+            notes:get(need.notes),
+          };
+        }
+        const incoming = rows.slice(1).filter(r=>r.some(x=>String(x).trim()!=='')).map(pick);
+        const cur=loadCals();
+        saveCals(cur.concat(incoming));
+        renderCals();
+        alert(`Imported ${incoming.length} calibration rows.`);
+        calImpInp.value='';
+      };
+      reader.readAsText(file);
+    });
+
+    // ---- Loop Log ----
+    const LOOP_KEY = 'pocketech.looplog.v1';
+    let loopData = JSON.parse(localStorage.getItem(LOOP_KEY) || "[]");
+    const loopForm = document.getElementById("loopForm");
+    const loopTableBody = document.querySelector("#loopTable tbody");
+    const loopImpBtn = document.getElementById('loop_import_btn');
+    const loopImpInp = document.getElementById('loop_import');
+
+    function renderLoopTable() {
+      loopTableBody.innerHTML = "";
+      loopData.forEach(r => {
+        let tr = document.createElement("tr");
+        tr.innerHTML = `<td>${r.date||''}</td><td>${r.tag||''}</td><td>${r.service||''}</td><td>${r.type||''}</td>
+          <td>${r.lrv??''}</td><td>${r.urv??''}</td><td>${r.asFound||''}</td><td>${r.asLeft||''}</td>
+          <td>${r.tech||''}</td><td>${r.status||''}</td><td>${r.notes||''}</td>`;
+        loopTableBody.appendChild(tr);
+      });
+    }
+    loopForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const row = {
+        date: document.getElementById("date").value || new Date().toISOString().slice(0,10),
+        tag: document.getElementById("tag").value.trim(),
+        service: document.getElementById("service").value.trim(),
+        type: document.getElementById("type").value,
+        lrv: document.getElementById("rangeLrv").value,
+        urv: document.getElementById("rangeUrv").value,
+        asFound: document.getElementById("asFound").value.trim(),
+        asLeft: document.getElementById("asLeft").value.trim(),
+        tech: document.getElementById("tech").value.trim(),
+        notes: document.getElementById("notes").value.trim(),
+        status: document.getElementById("status").value
       };
       if (!row.tag) { alert('Tag is required'); return; }
-      if (!row.type) { alert('Type is required'); return; }
-      const lrvn = Number(row.lrv), urvn = Number(row.urv);
-      if (!isFinite(lrvn) || !isFinite(urvn) || lrvn === urvn) { alert('LRV/URV must be numeric and different'); return; }
-      const rows = loadLC();
-      rows.push(row); saveLC(rows); renderLC();
-      // quick reset (keep date/tech for speed)
-      [lcForm.tag, lcForm.service, lcForm.type, lcForm.lrv, lcForm.urv, lcForm.af, lcForm.al, lcForm.notes].forEach(i => i.value = '');
+      loopData.push(row);
+      localStorage.setItem(LOOP_KEY, JSON.stringify(loopData));
+      renderLoopTable();
+      loopForm.reset();
     });
-
-    lcTableBody.addEventListener('click', (e) => {
-      const btn = e.target.closest('button'); if (!btn) return;
-      const idx = Number(btn.dataset.i);
-      const act = btn.dataset.act;
-      const rows = loadLC();
-      if (!rows[idx]) return;
-      if (act === 'del') {
-        rows.splice(idx,1);
-      } else if (act === 'toggle') {
-        rows[idx].status = rows[idx].status === 'Pass' ? 'Fail' : 'Pass';
-      }
-      saveLC(rows); renderLC();
-    });
-
-    document.getElementById('lc-export').addEventListener('click', () => {
-      const rows = loadLC();
-      if (!rows.length) { alert('Nothing to export.'); return; }
+    function downloadLoopCSV() {
       const header = ['Date','Tag','Service','Type','LRV','URV','As-Found','As-Left','Tech','Status','Notes'];
-      const csvRows = [header];
-      rows.forEach(r => csvRows.push([
-        r.date, r.tag, r.service, r.type, r.lrv, r.urv, r.af, r.al, r.tech, r.status, r.notes
-      ]));
-      downloadCSV('loop_check_log.csv', csvRows);
+      const rows = [header, ...loopData.map(r=>[r.date,r.tag,r.service,r.type,r.lrv,r.urv,r.asFound,r.asLeft,r.tech,r.status,r.notes])];
+      downloadCSV('loop_check_log.csv', rows);
+    }
+    function clearLoop(){ if (confirm('Clear ALL local loop entries?')) { loopData=[]; localStorage.setItem(LOOP_KEY,'[]'); renderLoopTable(); } }
+
+    loopImpBtn.addEventListener('click', ()=> loopImpInp.click());
+    loopImpInp.addEventListener('change', (e)=>{
+      const file=e.target.files[0]; if(!file) return;
+      const reader=new FileReader();
+      reader.onload=()=>{
+        const rows=parseCSV(reader.result);
+        if(!rows.length) { alert('Empty CSV'); return; }
+        const header=rows[0]; const idx=indexHeaders(header);
+        const need = {
+          date:['date'],
+          tag:['tag'],
+          service:['service'],
+          type:['type'],
+          lrv:['lrv'],
+          urv:['urv'],
+          asFound:['as-found','as found'],
+          asLeft:['as-left','as left'],
+          tech:['tech','technician'],
+          status:['status'],
+          notes:['notes','note']
+        };
+        function pick(obj){
+          const lower = (s)=> (s||'').toString().trim().toLowerCase();
+          const get = (keys)=> { for(const k of keys){ const i=idx[lower(k)]; if(i!=null) return obj[i]; } return ''; };
+          return {
+            date:get(need.date),
+            tag:get(need.tag),
+            service:get(need.service),
+            type:get(need.type),
+            lrv:get(need.lrv),
+            urv:get(need.urv),
+            asFound:get(need.asFound),
+            asLeft:get(need.asLeft),
+            tech:get(need.tech),
+            status:get(need.status),
+            notes:get(need.notes),
+          };
+        }
+        const incoming = rows.slice(1).filter(r=>r.some(x=>String(x).trim()!=='')).map(pick);
+        loopData = loopData.concat(incoming);
+        localStorage.setItem(LOOP_KEY, JSON.stringify(loopData));
+        renderLoopTable();
+        alert(`Imported ${incoming.length} loop rows.`);
+        loopImpInp.value='';
+      };
+      reader.readAsText(file);
     });
 
-    document.getElementById('lc-clear').addEventListener('click', () => {
-      if (confirm('Clear ALL locally stored loop entries?')) {
-        saveLC([]); renderLC();
-      }
-    });
-
-    // init
-    renderLC();
+    // ---- Init ----
+    renderCals();
+    renderLoopTable();
   </script>
 </body>
 </html>
