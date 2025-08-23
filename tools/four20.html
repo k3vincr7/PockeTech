@@ -2,24 +2,23 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>4–20 mA Tools</title><link rel="stylesheet" href="../styles.css">
 <script>
-const n=v=>{if(v===undefined||v===null)return null;v=(''+v).replace(/,/g,'').trim();if(!v)return null;const x=parseFloat(v);return isNaN(x)?null:x;}
-function out(id,s){document.getElementById(id).textContent=s}
+const n=v=>{if(v==null)return null;v=(''+v).replace(/,/g,'').trim();if(!v)return null;const x=parseFloat(v);return isNaN(x)?null:x;}
+const out=(id,s)=>document.getElementById(id).textContent=s;
 function ma2eu(){
-  const ma=n(m_ma.value), L=n(m_lrv.value), U=n(m_urv.value);
+  const ma=n(m_ma.value),L=n(m_lrv.value),U=n(m_urv.value);
   if([ma,L,U].some(v=>v==null)){out('o1','Fill Measured mA, LRV, URV.');return;}
-  let pct=(ma-4)/16; if(m_sqrt.checked) pct=pct*pct;
-  const eu=L + pct*(U-L);
-  out('o1',`PV ≈ ${eu.toFixed(4)} (at ${ma.toFixed(3)} mA)`);
+  let pct=(ma-4)/16; if(m_sqrt.checked)pct=pct*pct;
+  out('o1',`PV ≈ ${(L + pct*(U-L)).toFixed(4)} (at ${ma.toFixed(3)} mA)`);
 }
 function eu2ma(){
-  const eu=n(e_eu.value), L=n(e_lrv.value), U=n(e_urv.value);
+  const eu=n(e_eu.value),L=n(e_lrv.value),U=n(e_urv.value);
   if([eu,L,U].some(v=>v==null)){out('o2','Fill EU, LRV, URV.');return;}
-  let pct=(eu-L)/(U-L); if(e_sqrt.checked) pct=Math.sqrt(Math.max(0,pct));
-  const ma = 4 + pct*16;
-  out('o2',`mA ≈ ${ma.toFixed(3)} (for ${eu.toFixed(4)} EU)`);
+  let pct=(eu-L)/(U-L); if(e_sqrt.checked)pct=Math.sqrt(Math.max(0,pct));
+  out('o2',`mA ≈ ${(4 + pct*16).toFixed(3)} (for ${eu.toFixed(4)} EU)`);
 }
 </script>
-</head><body><div class="wrap">
+</head><body>
+<div class="wrap" id="four20">
   <h1>4–20 mA Tools</h1>
 
   <section class="tool">
@@ -28,10 +27,13 @@ function eu2ma(){
       <div><label>Measured mA</label><input id="m_ma" inputmode="decimal"></div>
       <div><label>LRV (EU)</label><input id="m_lrv" inputmode="decimal"></div>
       <div><label>URV (EU)</label><input id="m_urv" inputmode="decimal"></div>
-      <div><label><input id="m_sqrt" type="checkbox"> Square‑root (flow)</label></div>
+      <div><label><input id="m_sqrt" type="checkbox"> Square-root (flow)</label></div>
     </div>
-    <button onclick="ma2eu()">Convert</button>
-    <div id="o1" class="result"></div>
+    <div class="row" style="margin-top:8px">
+      <button onclick="ma2eu()">Convert</button>
+      <button onclick="clearTool('four20')">Reset</button>
+    </div>
+    <pre id="o1" class="result"></pre>
   </section>
 
   <section class="tool">
@@ -40,9 +42,14 @@ function eu2ma(){
       <div><label>Engineering Units</label><input id="e_eu" inputmode="decimal"></div>
       <div><label>LRV (EU)</label><input id="e_lrv" inputmode="decimal"></div>
       <div><label>URV (EU)</label><input id="e_urv" inputmode="decimal"></div>
-      <div><label><input id="e_sqrt" type="checkbox"> Square‑root (flow)</label></div>
+      <div><label><input id="e_sqrt" type="checkbox"> Square-root (flow)</label></div>
     </div>
-    <button onclick="eu2ma()">Convert</button>
-    <div id="o2" class="result"></div>
+    <div class="row" style="margin-top:8px">
+      <button onclick="eu2ma()">Convert</button>
+      <button onclick="clearTool('four20')">Reset</button>
+    </div>
+    <pre id="o2" class="result"></pre>
   </section>
-</div></body></html>
+</div>
+<script src="../script.js"></script>
+</body></html>
