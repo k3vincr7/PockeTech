@@ -3,82 +3,47 @@
 <title>Pressure Tools — Phase A</title>
 <link rel="stylesheet" href="../styles.css">
 <script>
-const P = {psi:6894.757293168, bar:100000, kPa:1000, MPa:1e6, inH2O:249.08891, mmH2O:9.80665, inHg:3386.389, mmHg:133.322368, atm:101325};
-const INH2O_PER_PSI = 27.7076, KPA_PER_INH2O = 0.24908891;
-const n = v => { if(v===undefined||v===null) return null; v=(''+v).replace(/,/g,'').trim(); if(!v) return null; const x=parseFloat(v); return isNaN(x)?null:x; };
-function toPa(v,u){return v*P[u]}; function fromPa(pa,u){return pa/P[u]};
-function out(id, s){document.getElementById(id).textContent = s}
+const P={psi:6894.757293168,bar:100000,kPa:1000,MPa:1e6,inH2O:249.08891,mmH2O:9.80665,inHg:3386.389,mmHg:133.322368,atm:101325};
+const INH2O_PER_PSI=27.7076, KPA_PER_INH2O=0.24908891;
+const n=v=>{if(v==null)return null;v=(''+v).replace(/,/g,'').trim();if(!v)return null;const x=parseFloat(v);return isNaN(x)?null:x;}
+const toPa=(v,u)=>v*P[u], fromPa=(pa,u)=>pa/P[u];
+const out=(id,s)=>document.getElementById(id).textContent=s;
 
-function convertP(){
-  const val=n(c_val.value), from=c_from.value, to=c_to.value;
-  if(val==null){out('c_out','Enter a value.');return;}
-  const r = fromPa(toPa(val,from),to);
-  out('c_out',`${val} ${from} ≈ ${r.toFixed(6)} ${to}`);
-}
-
-function r2p(){
-  const L=n(rp_lrv.value), U=n(rp_urv.value), PV=n(rp_pv.value);
-  if([L,U,PV].some(v=>v==null)){out('rp_out1','Enter LRV, URV, PV.');return;}
-  out('rp_out1',`Percent ≈ ${(((PV-L)/(U-L))*100).toFixed(2)} %`);
-}
-function p2r(){
-  const L=n(rp_lrv.value), U=n(rp_urv.value), pct=n(rp_pct.value);
-  if([L,U,pct].some(v=>v==null)){out('rp_out2','Enter LRV, URV, %.');return;}
-  out('rp_out2',`PV ≈ ${(L+(pct/100)*(U-L)).toFixed(4)}`);
-}
-
-function modeSwap(){
-  const m=hs_mode.value;
-  h2p.style.display = (m==='h2p')?'block':'none';
-  p2h.style.display = (m==='p2h')?'block':'none';
-}
+function convertP(){const val=n(c_val.value),f=c_from.value,t=c_to.value;if(val==null){out('c_out','Enter a value.');return;}out('c_out',`${val} ${f} ≈ ${fromPa(toPa(val,f),t).toFixed(6)} ${t}`);}
+function r2p(){const L=n(rp_lrv.value),U=n(rp_urv.value),PV=n(rp_pv.value);if([L,U,PV].some(v=>v==null)){out('rp_out1','Enter LRV, URV, PV.');return;}out('rp_out1',`Percent ≈ ${(((PV-L)/(U-L))*100).toFixed(2)} %`);}
+function p2r(){const L=n(rp_lrv.value),U=n(rp_urv.value),pct=n(rp_pct.value);if([L,U,pct].some(v=>v==null)){out('rp_out2','Enter LRV, URV, %.');return;}out('rp_out2',`PV ≈ ${(L+(pct/100)*(U-L)).toFixed(4)}`);}
+function modeSwap(){const m=hs_mode.value;h2p.style.display=(m==='h2p')?'block':'none';p2h.style.display=(m==='p2h')?'block':'none';}
 function hydro(){
-  const sg = n(hs_sg.value);
-  if(sg==null){out('hs_out','Enter specific gravity.');return;}
+  const sg=n(hs_sg.value); if(sg==null){out('hs_out','Enter specific gravity.');return;}
   if(hs_mode.value==='h2p'){
     const h=n(hs_h.value); if(h==null){out('hs_out','Enter height.');return;}
-    const u=hs_h_unit.value;
-    const inches = u==='in'?h : u==='ft'?h*12 : h*39.3700787;
-    const inH2O = inches*sg;
-    const psi = inH2O/INH2O_PER_PSI;
-    const kPa = inH2O*KPA_PER_INH2O;
+    const inches = hs_h_unit.value==='in'?h : hs_h_unit.value==='ft'?h*12 : h*39.3700787;
+    const inH2O=inches*sg, psi=inH2O/INH2O_PER_PSI, kPa=inH2O*KPA_PER_INH2O;
     out('hs_out',`ΔP ≈ ${inH2O.toFixed(2)} inH₂O • ${psi.toFixed(3)} psi • ${kPa.toFixed(2)} kPa`);
   } else {
     const p=n(hs_p.value); if(p==null){out('hs_out','Enter pressure.');return;}
-    const pu=hs_p_unit.value;
-    const inH2O = pu==='inH2O'?p : pu==='psi'?p*INH2O_PER_PSI : p/KPA_PER_INH2O;
-    const height_in = inH2O/sg;
+    const inH2O = hs_p_unit.value==='inH2O'?p : hs_p_unit.value==='psi'?p*INH2O_PER_PSI : p/KPA_PER_INH2O;
+    const height_in=inH2O/sg;
     out('hs_out',`Height ≈ ${height_in.toFixed(1)} in • ${(height_in/12).toFixed(2)} ft • ${(height_in*0.0254).toFixed(3)} m`);
   }
 }
 </script>
 </head><body>
-<div class="wrap">
+<div class="wrap" id="pressureA">
   <h1>Pressure Tools — Phase A</h1>
 
   <section class="tool">
     <h3>Unit Convert</h3>
     <div class="row">
-      <div>
-        <label>Value</label><input id="c_val" inputmode="decimal" placeholder="e.g., 25">
-      </div>
-      <div>
-        <label>From</label>
-        <select id="c_from">
-          <option>psi</option><option>bar</option><option>kPa</option><option>MPa</option>
-          <option selected>inH2O</option><option>mmH2O</option><option>inHg</option><option>mmHg</option><option>atm</option>
-        </select>
-      </div>
-      <div>
-        <label>To</label>
-        <select id="c_to">
-          <option>psi</option><option>bar</option><option>kPa</option><option>MPa</option>
-          <option>inH2O</option><option>mmH2O</option><option>inHg</option><option>mmHg</option><option>atm</option>
-        </select>
-      </div>
+      <div><label>Value</label><input id="c_val" inputmode="decimal"></div>
+      <div><label>From</label><select id="c_from"><option>psi</option><option>bar</option><option>kPa</option><option>MPa</option><option selected>inH2O</option><option>mmH2O</option><option>inHg</option><option>mmHg</option><option>atm</option></select></div>
+      <div><label>To</label><select id="c_to"><option>psi</option><option>bar</option><option>kPa</option><option>MPa</option><option>inH2O</option><option>mmH2O</option><option>inHg</option><option>mmHg</option><option>atm</option></select></div>
     </div>
-    <button onclick="convertP()">Convert</button>
-    <div id="c_out" class="result"></div>
+    <div class="row" style="margin-top:8px">
+      <button onclick="convertP()">Convert</button>
+      <button onclick="clearTool('pressureA')">Reset</button>
+    </div>
+    <pre id="c_out" class="result"></pre>
   </section>
 
   <section class="tool">
@@ -86,54 +51,38 @@ function hydro(){
     <div class="row">
       <div><label>LRV</label><input id="rp_lrv" inputmode="decimal"></div>
       <div><label>URV</label><input id="rp_urv" inputmode="decimal"></div>
-      <div><label>PV (for Range→%)</label><input id="rp_pv" inputmode="decimal"></div>
-      <div><label>% (for %→Range)</label><input id="rp_pct" inputmode="decimal"></div>
+      <div><label>PV (Range→%)</label><input id="rp_pv" inputmode="decimal"></div>
+      <div><label>% ( %→Range )</label><input id="rp_pct" inputmode="decimal"></div>
     </div>
-    <div class="row">
+    <div class="row" style="margin-top:8px">
       <button onclick="r2p()">Range → %</button>
       <button onclick="p2r()">% → Range</button>
+      <button onclick="clearTool('pressureA')">Reset</button>
     </div>
-    <div id="rp_out1" class="result"></div>
-    <div id="rp_out2" class="result"></div>
+    <pre id="rp_out1" class="result"></pre>
+    <pre id="rp_out2" class="result"></pre>
   </section>
 
   <section class="tool">
     <h3>Hydrostatic Head</h3>
     <div class="row">
-      <div>
-        <label>Mode</label>
-        <select id="hs_mode" onchange="modeSwap()">
-          <option value="h2p" selected>Height → Pressure</option>
-          <option value="p2h">Pressure → Height</option>
-        </select>
-      </div>
-      <div>
-        <label>Specific gravity</label>
-        <input id="hs_sg" inputmode="decimal" value="1.000">
-      </div>
+      <div><label>Mode</label><select id="hs_mode" onchange="modeSwap()"><option value="h2p" selected>Height → Pressure</option><option value="p2h">Pressure → Height</option></select></div>
+      <div><label>Specific Gravity</label><input id="hs_sg" inputmode="decimal" value="1.000"></div>
     </div>
-
     <div id="h2p">
-      <div class="row">
-        <div><label>Height</label><input id="hs_h" inputmode="decimal" placeholder="e.g., 25"></div>
-        <div><label>Height unit</label>
-          <select id="hs_h_unit"><option value="in" selected>in</option><option value="ft">ft</option><option value="m">m</option></select>
-        </div>
-      </div>
+      <div class="row"><div><label>Height</label><input id="hs_h" inputmode="decimal"></div>
+      <div><label>Unit</label><select id="hs_h_unit"><option value="in" selected>in</option><option value="ft">ft</option><option value="m">m</option></select></div></div>
     </div>
-
     <div id="p2h" style="display:none">
-      <div class="row">
-        <div><label>Pressure</label><input id="hs_p" inputmode="decimal" placeholder="e.g., 10"></div>
-        <div><label>Pressure unit</label>
-          <select id="hs_p_unit"><option value="inH2O" selected>inH2O</option><option value="psi">psi</option><option value="kPa">kPa</option></select>
-        </div>
-      </div>
+      <div class="row"><div><label>Pressure</label><input id="hs_p" inputmode="decimal"></div>
+      <div><label>Unit</label><select id="hs_p_unit"><option value="inH2O" selected>inH2O</option><option value="psi">psi</option><option value="kPa">kPa</option></select></div></div>
     </div>
-
-    <button onclick="hydro()">Calculate</button>
-    <div id="hs_out" class="result"></div>
+    <div class="row" style="margin-top:8px">
+      <button onclick="hydro()">Calculate</button>
+      <button onclick="clearTool('pressureA')">Reset</button>
+    </div>
+    <pre id="hs_out" class="result"></pre>
   </section>
-
 </div>
+<script src="../script.js"></script>
 </body></html>
