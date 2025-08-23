@@ -1,1 +1,8 @@
-// (placeholder) shared helpers could live here later
+// Clear all <input>, <select>, and result areas inside a container
+function clearTool(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.querySelectorAll('input').forEach(i => { i.value = ''; });
+  el.querySelectorAll('select').forEach(s => { s.selectedIndex = 0; });
+  el.querySelectorAll('.result, pre').forEach(o => { o.textContent = ''; o.innerHTML = ''; });
+}
