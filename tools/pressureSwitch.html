@@ -2,35 +2,28 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Pressure Switch Helper</title><link rel="stylesheet" href="../styles.css">
 <script>
-const n=v=>{if(v===undefined||v===null)return null;v=(''+v).replace(/,/g,'').trim();if(!v)return null;const x=parseFloat(v);return isNaN(x)?null:x;}
-const pct=(val,l,u)=> (val-l)/(u-l)*100;
-const fromPct=(p,l,u)=> l + (p/100)*(u-l);
-function out(id,s){document.getElementById(id).textContent=s}
+const n=v=>{if(v==null)return null;v=(''+v).replace(/,/g,'').trim();if(!v)return null;const x=parseFloat(v);return isNaN(x)?null:x;}
+const pct=(val,l,u)=>(val-l)/(u-l)*100, fromPct=(p,l,u)=>l+(p/100)*(u-l);
+const out=(id,s)=>document.getElementById(id).textContent=s;
 
-function calcReset(){
-  const dir=dirSel.value, l=n(ps_lrv.value), u=n(ps_urv.value),
-        trip=n(ps_trip.value), db=n(ps_deadband.value);
+function calcReset(){const dir=dirSel.value,l=n(ps_lrv.value),u=n(ps_urv.value),trip=n(ps_trip.value),db=n(ps_deadband.value);
   if([l,u,trip,db].some(v=>v==null)){out('ps_out1','Enter LRV, URV, Trip, Deadband.');return;}
-  const reset = dir==='rising' ? (trip - db) : (trip + db);
+  const reset = dir==='rising'?(trip-db):(trip+db);
   out('ps_out1',`Reset ≈ ${reset.toFixed(3)} ${ps_unit.value} • Trip=${pct(trip,l,u).toFixed(1)}% • Reset=${pct(reset,l,u).toFixed(1)}%`);
 }
-function calcDeadband(){
-  const dir=dirSel.value, l=n(ps_lrv.value), u=n(ps_urv.value),
-        trip=n(ps_trip2.value), reset=n(ps_reset2.value);
+function calcDeadband(){const dir=dirSel.value,l=n(ps_lrv.value),u=n(ps_urv.value),trip=n(ps_trip2.value),reset=n(ps_reset2.value);
   if([l,u,trip,reset].some(v=>v==null)){out('ps_out2','Enter LRV, URV, Trip, Reset.');return;}
-  const db = dir==='rising' ? (trip-reset) : (reset-trip);
+  const db = dir==='rising'?(trip-reset):(reset-trip);
   out('ps_out2',`Deadband ≈ ${db.toFixed(3)} ${ps_unit.value} • ${(db/(u-l)*100).toFixed(1)}% span`);
 }
-function calcFromPct(){
-  const dir=dirSel.value, l=n(ps_lrv.value), u=n(ps_urv.value),
-        pT=n(ps_pctTrip.value), pR=n(ps_pctReset.value);
+function calcFromPct(){const dir=dirSel.value,l=n(ps_lrv.value),u=n(ps_urv.value),pT=n(ps_pctTrip.value),pR=n(ps_pctReset.value);
   if([l,u,pT,pR].some(v=>v==null)){out('ps_out3','Enter LRV, URV, %Trip, %Reset.');return;}
-  const trip=fromPct(pT,l,u), reset=fromPct(pR,l,u);
-  const db = dir==='rising' ? (trip-reset) : (reset-trip);
+  const trip=fromPct(pT,l,u),reset=fromPct(pR,l,u),db=dir==='rising'?(trip-reset):(reset-trip);
   out('ps_out3',`Trip ≈ ${trip.toFixed(3)} ${ps_unit.value} • Reset ≈ ${reset.toFixed(3)} ${ps_unit.value} • DB=${db.toFixed(3)} ${ps_unit.value}`);
 }
 </script>
-</head><body><div class="wrap">
+</head><body>
+<div class="wrap" id="switchHelper">
   <h1>Pressure Switch Helper</h1>
 
   <section class="tool">
@@ -42,6 +35,7 @@ function calcFromPct(){
       <div><label>LRV</label><input id="ps_lrv" inputmode="decimal"></div>
       <div><label>URV</label><input id="ps_urv" inputmode="decimal"></div>
     </div>
+    <div class="row" style="margin-top:8px"><button onclick="clearTool('switchHelper')">Reset</button></div>
   </section>
 
   <section class="tool">
@@ -50,8 +44,11 @@ function calcFromPct(){
       <div><label>Trip</label><input id="ps_trip" inputmode="decimal"></div>
       <div><label>Deadband</label><input id="ps_deadband" inputmode="decimal"></div>
     </div>
-    <button onclick="calcReset()">Calculate Reset</button>
-    <div id="ps_out1" class="result"></div>
+    <div class="row" style="margin-top:8px">
+      <button onclick="calcReset()">Calculate Reset</button>
+      <button onclick="clearTool('switchHelper')">Reset</button>
+    </div>
+    <pre id="ps_out1" class="result"></pre>
   </section>
 
   <section class="tool">
@@ -60,8 +57,11 @@ function calcFromPct(){
       <div><label>Trip</label><input id="ps_trip2" inputmode="decimal"></div>
       <div><label>Reset</label><input id="ps_reset2" inputmode="decimal"></div>
     </div>
-    <button onclick="calcDeadband()">Calculate Deadband</button>
-    <div id="ps_out2" class="result"></div>
+    <div class="row" style="margin-top:8px">
+      <button onclick="calcDeadband()">Calculate Deadband</button>
+      <button onclick="clearTool('switchHelper')">Reset</button>
+    </div>
+    <pre id="ps_out2" class="result"></pre>
   </section>
 
   <section class="tool">
@@ -70,7 +70,12 @@ function calcFromPct(){
       <div><label>% Trip</label><input id="ps_pctTrip" inputmode="decimal"></div>
       <div><label>% Reset</label><input id="ps_pctReset" inputmode="decimal"></div>
     </div>
-    <button onclick="calcFromPct()">Calculate</button>
-    <div id="ps_out3" class="result"></div>
+    <div class="row" style="margin-top:8px">
+      <button onclick="calcFromPct()">Calculate</button>
+      <button onclick="clearTool('switchHelper')">Reset</button>
+    </div>
+    <pre id="ps_out3" class="result"></pre>
   </section>
-</div></body></html>
+</div>
+<script src="../script.js"></script>
+</body></html>
