@@ -1,29 +1,467 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PockeTech</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PockeTech — Simple Build</title>
+  <style>
+    /* minimal, readable defaults */
+    :root { --pad: 12px; --gap: 10px; --border:#ddd; --bg:#fafafa; --muted:#666; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:#fff; color:#111; }
+    header { padding:16px; border-bottom:1px solid var(--border); }
+    h1 { margin:0; font-size:20px; }
+    nav { display:flex; gap:8px; padding:8px 16px; border-bottom:1px solid var(--border); flex-wrap: wrap; }
+    nav button { padding:8px 12px; border:1px solid var(--border); background:#fff; cursor:pointer; border-radius:6px; }
+    nav button.active { background:var(--bg); }
+    main { padding:16px; max-width: 980px; margin: 0 auto; }
+    section { display:none; }
+    section.active { display:block; }
+    .row { display:flex; gap:var(--gap); flex-wrap:wrap; margin-bottom:var(--gap); }
+    .col { flex:1 1 240px; min-width:240px; }
+    label { display:block; font-size:12px; color:var(--muted); margin-bottom:4px; }
+    input, select, textarea { width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; }
+    table { width:100%; border-collapse: collapse; margin-top:10px; }
+    th, td { border:1px solid var(--border); padding:8px; text-align:left; font-size:14px; }
+    th { background:var(--bg); }
+    .btns { display:flex; gap:8px; flex-wrap: wrap; margin-top:8px; }
+    .muted { color:var(--muted); font-size:12px; }
+    .pill { padding:2px 8px; border-radius:999px; border:1px solid var(--border); display:inline-block; font-size:12px; }
+    .pill.pass { background:#f0fff4; border-color:#b7e4c7; }
+    .pill.fail { background:#fff5f5; border-color:#ffc9c9; }
+    .footer { margin-top:24px; font-size:12px; color:var(--muted); }
+    .hr { height:1px; background:var(--border); margin:16px 0; }
+    .nowrap { white-space: nowrap; }
+    .stack { display:flex; flex-direction:column; gap:8px; }
+  </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>🧰 PockeTech</h1>
-    <p class="sub">Field‑ready tools for instrument technicians. Works offline.</p>
+  <header>
+    <h1>PockeTech — Field Tools (Simple)</h1>
+    <div class="muted">Tools · Logs · Offline localStorage · CSV export</div>
+  </header>
 
-    <div class="grid">
-      <a class="card" href="tools/pressureA.html"><b>Pressure Tools — Phase A</b><br><small>Unit convert • Range⇄% • Hydrostatic</small></a>
-      <a class="card" href="tools/pressureC.html"><b>Gauge ↔ Absolute</b><br><small>psig/psia • by baro or elevation</small></a>
-      <a class="card" href="tools/pressureVac.html"><b>Vacuum Helpers</b><br><small>inHg vac ⇄ psia • % vacuum</small></a>
-      <a class="card" href="tools/pressureSwitch.html"><b>Pressure Switch Helper</b><br><small>Trip/Reset/Deadband • proof-test plan</small></a>
-      <a class="card" href="tools/four20.html"><b>4–20 mA Tools</b><br><small>mA⇄EU • √flow option</small></a>
-      <a class="card" href="tools/percentCalc.html">
-  <b>Range Percent (0/25/50/75/100)</b><br>
-  <small>Quick setpoints from LRV/URV</small>
-</a></div>
-  </div>
+  <nav>
+    <button data-target="percent" class="active">Percent Steps</button>
+    <button data-target="signal">Signal Helper</button>
+    <button data-target="loops">Loop Check Log</button>
+  </nav>
 
-  <script src="script.js"></script>
+  <main>
+    <!-- Percent Steps -->
+    <section id="percent" class="active">
+      <h2>Percent Steps</h2>
+      <div class="row">
+        <div class="col">
+          <label>Lower Range Value (LRV)</label>
+          <input id="ps-lrv" type="number" step="any" placeholder="e.g., 0" />
+        </div>
+        <div class="col">
+          <label>Upper Range Value (URV)</label>
+          <input id="ps-urv" type="number" step="any" placeholder="e.g., 200" />
+        </div>
+      </div>
+      <div class="btns">
+        <button id="ps-calc">Calculate</button>
+        <button id="ps-copy">Copy table</button>
+        <button id="ps-csv">Export CSV</button>
+      </div>
+      <div class="hr"></div>
+      <table id="ps-table">
+        <thead>
+          <tr><th>%</th><th>Eng Units</th></tr>
+        </thead>
+        <tbody>
+          <!-- filled by JS -->
+        </tbody>
+      </table>
+      <div class="footer muted">Tip: includes 0, 25, 50, 75, 100%.</div>
+    </section>
+
+    <!-- Signal Helper -->
+    <section id="signal">
+      <h2>Signal Helper (4–20 mA)</h2>
+      <div class="row">
+        <div class="col">
+          <label>LRV (Engineering Units)</label>
+          <input id="sh-lrv" type="number" step="any" placeholder="e.g., 0" />
+        </div>
+        <div class="col">
+          <label>URV (Engineering Units)</label>
+          <input id="sh-urv" type="number" step="any" placeholder="e.g., 200" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label>mA (4–20)</label>
+          <input id="sh-ma" type="number" step="any" placeholder="e.g., 12" />
+        </div>
+        <div class="col">
+          <label>% (0–100)</label>
+          <input id="sh-pct" type="number" step="any" placeholder="e.g., 50" />
+        </div>
+        <div class="col">
+          <label>Engineering Units</label>
+          <input id="sh-eu" type="number" step="any" placeholder="e.g., 100" />
+        </div>
+      </div>
+      <div class="btns">
+        <button id="sh-from-ma">From mA → (% & EU)</button>
+        <button id="sh-from-pct">From % → (mA & EU)</button>
+        <button id="sh-from-eu">From EU → (mA & %)</button>
+        <button id="sh-clear">Clear</button>
+      </div>
+      <div class="footer muted">Uses linear interpolation: 4 mA = 0%, 20 mA = 100%.</div>
+    </section>
+
+    <!-- Loop Check Log -->
+    <section id="loops">
+      <h2>Loop Check Log (MVP)</h2>
+      <div class="stack">
+        <div class="row">
+          <div class="col">
+            <label>Tag</label>
+            <input id="lc-tag" placeholder="e.g., FT-101" />
+          </div>
+          <div class="col">
+            <label>Service</label>
+            <input id="lc-service" placeholder="e.g., Steam Flow" />
+          </div>
+          <div class="col">
+            <label>Type</label>
+            <select id="lc-type">
+              <option value="">Select</option>
+              <option>AI</option>
+              <option>AO</option>
+              <option>DI</option>
+              <option>DO</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <label>LRV</label>
+            <input id="lc-lrv" type="number" step="any" />
+          </div>
+          <div class="col">
+            <label>URV</label>
+            <input id="lc-urv" type="number" step="any" />
+          </div>
+          <div class="col">
+            <label>Date</label>
+            <input id="lc-date" type="date" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <label>As-Found</label>
+            <input id="lc-af" placeholder="e.g., 98.7%" />
+          </div>
+          <div class="col">
+            <label>As-Left</label>
+            <input id="lc-al" placeholder="e.g., 100.0%" />
+          </div>
+          <div class="col">
+            <label>Tech</label>
+            <input id="lc-tech" placeholder="e.g., K. Calvillo" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col" style="flex:2 1 100%;">
+            <label>Notes</label>
+            <input id="lc-notes" placeholder="Short notes…" />
+          </div>
+          <div class="col">
+            <label>Status</label>
+            <select id="lc-status">
+              <option>Pass</option>
+              <option>Fail</option>
+              <option>Blocked</option>
+            </select>
+          </div>
+        </div>
+        <div class="btns">
+          <button id="lc-add">Add Entry</button>
+          <button id="lc-export">Export CSV</button>
+          <button id="lc-clear">Clear All (local)</button>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <table id="lc-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Tag</th>
+            <th>Service</th>
+            <th>Type</th>
+            <th class="nowrap">LRV</th>
+            <th class="nowrap">URV</th>
+            <th>As-Found</th>
+            <th>As-Left</th>
+            <th>Tech</th>
+            <th>Status</th>
+            <th class="nowrap">Actions</th>
+          </tr>
+        </thead>
+        <tbody><!-- rows injected --></tbody>
+      </table>
+      <div class="footer muted">Stored locally on this device (no cloud). CSV export for sharing.</div>
+    </section>
+  </main>
+
+  <script>
+    // --- simple router ---
+    const navBtns = document.querySelectorAll('nav button');
+    const sections = document.querySelectorAll('main section');
+    navBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        navBtns.forEach(b => b.classList.remove('active'));
+        sections.forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.target).classList.add('active');
+      });
+    });
+
+    // --- helpers ---
+    const clamp = (v,min,max)=> Math.min(Math.max(v, min), max);
+    function toCSV(rows) {
+      return rows.map(r => r.map(cell => {
+        const s = (cell ?? '').toString();
+        return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s;
+      }).join(',')).join('\n');
+    }
+    function downloadCSV(filename, rows) {
+      const blob = new Blob([toCSV(rows)], {type: 'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    }
+    function copyTableToClipboard(table) {
+      const rows = [...table.querySelectorAll('tr')].map(tr =>
+        [...tr.children].map(td => td.innerText));
+      const txt = rows.map(r => r.join('\t')).join('\n');
+      return navigator.clipboard.writeText(txt);
+    }
+    function fmt(n) {
+      const x = Number(n);
+      if (!Number.isFinite(x)) return '';
+      // choose compact formatting: up to 4 decimals as needed
+      return (Math.abs(x) >= 1000 || Math.abs(x) === 0)
+        ? x.toFixed(2).replace(/\.00$/,'')
+        : x.toFixed(4).replace(/0+$/,'').replace(/\.$/,'');
+    }
+
+    // --- Percent Steps ---
+    const psLRV = document.getElementById('ps-lrv');
+    const psURV = document.getElementById('ps-urv');
+    const psTBody = document.querySelector('#ps-table tbody');
+    const psCalc = document.getElementById('ps-calc');
+    const psCopy = document.getElementById('ps-copy');
+    const psCSV  = document.getElementById('ps-csv');
+
+    function rebuildPercentTable(lrv, urv) {
+      const steps = [0,25,50,75,100];
+      psTBody.innerHTML = '';
+      if (!isFinite(lrv) || !isFinite(urv) || urv === lrv) return;
+      steps.forEach(p => {
+        const eu = lrv + (urv - lrv) * (p/100);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${p}%</td><td>${fmt(eu)}</td>`;
+        psTBody.appendChild(tr);
+      });
+    }
+
+    psCalc.addEventListener('click', () => {
+      const lrv = Number(psLRV.value);
+      const urv = Number(psURV.value);
+      if (!isFinite(lrv) || !isFinite(urv)) { alert('Enter numeric LRV and URV'); return; }
+      if (lrv === urv) { alert('LRV and URV must differ'); return; }
+      rebuildPercentTable(lrv, urv);
+    });
+
+    psCopy.addEventListener('click', async () => {
+      try {
+        await copyTableToClipboard(document.getElementById('ps-table'));
+        alert('Copied!');
+      } catch {
+        alert('Copy failed. Select & copy manually.');
+      }
+    });
+
+    psCSV.addEventListener('click', () => {
+      const rows = [['Percent','EngUnits']];
+      [...psTBody.querySelectorAll('tr')].forEach(tr => {
+        const tds = tr.querySelectorAll('td');
+        rows.push([tds[0].innerText, tds[1].innerText]);
+      });
+      if (rows.length === 1) { alert('Nothing to export. Calculate first.'); return; }
+      downloadCSV('percent_steps.csv', rows);
+    });
+
+    // --- Signal Helper ---
+    const shLRV = document.getElementById('sh-lrv');
+    const shURV = document.getElementById('sh-urv');
+    const shmA  = document.getElementById('sh-ma');
+    const shPct = document.getElementById('sh-pct');
+    const shEU  = document.getElementById('sh-eu');
+
+    function ensureRange() {
+      const lrv = Number(shLRV.value), urv = Number(shURV.value);
+      if (!isFinite(lrv) || !isFinite(urv) || lrv === urv) {
+        alert('Enter valid LRV/URV (must be numbers and not equal).');
+        return null;
+      }
+      return { lrv, urv };
+    }
+
+    document.getElementById('sh-from-ma').addEventListener('click', () => {
+      const range = ensureRange(); if (!range) return;
+      const v = Number(shmA.value);
+      if (!isFinite(v)) { alert('Enter mA value.'); return; }
+      const pct = clamp((v - 4) / (20 - 4) * 100, 0, 100);
+      const eu = range.lrv + (range.urv - range.lrv) * (pct/100);
+      shPct.value = fmt(pct);
+      shEU.value  = fmt(eu);
+    });
+
+    document.getElementById('sh-from-pct').addEventListener('click', () => {
+      const range = ensureRange(); if (!range) return;
+      const p = Number(shPct.value);
+      if (!isFinite(p)) { alert('Enter % value.'); return; }
+      const pct = clamp(p, 0, 100);
+      const ma = 4 + (20 - 4) * (pct/100);
+      const eu = range.lrv + (range.urv - range.lrv) * (pct/100);
+      shmA.value = fmt(ma);
+      shEU.value = fmt(eu);
+      shPct.value = fmt(pct);
+    });
+
+    document.getElementById('sh-from-eu').addEventListener('click', () => {
+      const range = ensureRange(); if (!range) return;
+      const eu = Number(shEU.value);
+      if (!isFinite(eu)) { alert('Enter EU value.'); return; }
+      const pct = clamp((eu - range.lrv) / (range.urv - range.lrv) * 100, 0, 100);
+      const ma = 4 + (20 - 4) * (pct/100);
+      shPct.value = fmt(pct);
+      shmA.value  = fmt(ma);
+    });
+
+    document.getElementById('sh-clear').addEventListener('click', () => {
+      [shLRV, shURV, shmA, shPct, shEU].forEach(i => i.value = '');
+    });
+
+    // --- Loop Check Log (localStorage) ---
+    const LC_KEY = 'pocketech.looplog.v1';
+    const lcForm = {
+      tag: document.getElementById('lc-tag'),
+      service: document.getElementById('lc-service'),
+      type: document.getElementById('lc-type'),
+      lrv: document.getElementById('lc-lrv'),
+      urv: document.getElementById('lc-urv'),
+      date: document.getElementById('lc-date'),
+      af: document.getElementById('lc-af'),
+      al: document.getElementById('lc-al'),
+      tech: document.getElementById('lc-tech'),
+      notes: document.getElementById('lc-notes'),
+      status: document.getElementById('lc-status'),
+    };
+    const lcTableBody = document.querySelector('#lc-table tbody');
+
+    function loadLC() {
+      try {
+        return JSON.parse(localStorage.getItem(LC_KEY) || '[]');
+      } catch { return []; }
+    }
+    function saveLC(rows) {
+      localStorage.setItem(LC_KEY, JSON.stringify(rows));
+    }
+    function renderLC() {
+      const rows = loadLC();
+      lcTableBody.innerHTML = '';
+      rows.forEach((r, idx) => {
+        const tr = document.createElement('tr');
+        const pillClass = r.status === 'Pass' ? 'pass' : (r.status === 'Fail' ? 'fail' : '');
+        tr.innerHTML = `
+          <td>${r.date || ''}</td>
+          <td>${r.tag || ''}</td>
+          <td>${r.service || ''}</td>
+          <td>${r.type || ''}</td>
+          <td>${r.lrv ?? ''}</td>
+          <td>${r.urv ?? ''}</td>
+          <td>${r.af || ''}</td>
+          <td>${r.al || ''}</td>
+          <td>${r.tech || ''}</td>
+          <td><span class="pill ${pillClass}">${r.status || ''}</span></td>
+          <td class="nowrap">
+            <button data-act="toggle" data-i="${idx}">Toggle P/F</button>
+            <button data-act="del" data-i="${idx}">Delete</button>
+          </td>
+        `;
+        lcTableBody.appendChild(tr);
+      });
+    }
+
+    document.getElementById('lc-add').addEventListener('click', () => {
+      const row = {
+        date: lcForm.date.value || new Date().toISOString().slice(0,10),
+        tag: lcForm.tag.value.trim(),
+        service: lcForm.service.value.trim(),
+        type: lcForm.type.value,
+        lrv: lcForm.lrv.value,
+        urv: lcForm.urv.value,
+        af: lcForm.af.value.trim(),
+        al: lcForm.al.value.trim(),
+        tech: lcForm.tech.value.trim(),
+        notes: lcForm.notes.value.trim(),
+        status: lcForm.status.value
+      };
+      if (!row.tag) { alert('Tag is required'); return; }
+      if (!row.type) { alert('Type is required'); return; }
+      const lrvn = Number(row.lrv), urvn = Number(row.urv);
+      if (!isFinite(lrvn) || !isFinite(urvn) || lrvn === urvn) { alert('LRV/URV must be numeric and different'); return; }
+      const rows = loadLC();
+      rows.push(row); saveLC(rows); renderLC();
+      // quick reset (keep date/tech for speed)
+      [lcForm.tag, lcForm.service, lcForm.type, lcForm.lrv, lcForm.urv, lcForm.af, lcForm.al, lcForm.notes].forEach(i => i.value = '');
+    });
+
+    lcTableBody.addEventListener('click', (e) => {
+      const btn = e.target.closest('button'); if (!btn) return;
+      const idx = Number(btn.dataset.i);
+      const act = btn.dataset.act;
+      const rows = loadLC();
+      if (!rows[idx]) return;
+      if (act === 'del') {
+        rows.splice(idx,1);
+      } else if (act === 'toggle') {
+        rows[idx].status = rows[idx].status === 'Pass' ? 'Fail' : 'Pass';
+      }
+      saveLC(rows); renderLC();
+    });
+
+    document.getElementById('lc-export').addEventListener('click', () => {
+      const rows = loadLC();
+      if (!rows.length) { alert('Nothing to export.'); return; }
+      const header = ['Date','Tag','Service','Type','LRV','URV','As-Found','As-Left','Tech','Status','Notes'];
+      const csvRows = [header];
+      rows.forEach(r => csvRows.push([
+        r.date, r.tag, r.service, r.type, r.lrv, r.urv, r.af, r.al, r.tech, r.status, r.notes
+      ]));
+      downloadCSV('loop_check_log.csv', csvRows);
+    });
+
+    document.getElementById('lc-clear').addEventListener('click', () => {
+      if (confirm('Clear ALL locally stored loop entries?')) {
+        saveLC([]); renderLC();
+      }
+    });
+
+    // init
+    renderLC();
+  </script>
 </body>
 </html>
