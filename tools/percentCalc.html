@@ -22,7 +22,7 @@ function calcPercent(){
     "75%":  L + span*0.75,
     "100%": U
   };
-  out.innerHTML =
+  out.textContent =
     `0% = ${vals["0%"]}\n`+
     `25% = ${vals["25%"]}\n`+
     `50% = ${vals["50%"]}\n`+
@@ -31,7 +31,7 @@ function calcPercent(){
 }
 </script>
 </head><body>
-<div class="wrap">
+<div class="wrap" id="tool">
   <h1>Range Percent Calculator</h1>
 
   <section class="tool">
@@ -45,9 +45,15 @@ function calcPercent(){
         <input id="urv" inputmode="decimal" placeholder="e.g., 200">
       </div>
     </div>
-    <button onclick="calcPercent()">Calculate</button>
+
+    <div class="row" style="margin-top:8px">
+      <button onclick="calcPercent()">Calculate</button>
+      <button onclick="clearTool('tool')">Reset</button>
+    </div>
+
     <pre id="out" class="result"></pre>
-    <p class="note">Tip: accepts negatives and decimals. Output shows exact values (no rounding).</p>
+    <p class="note">Tip: accepts negatives and decimals. Output shows exact values.</p>
   </section>
 </div>
+<script src="../script.js"></script>
 </body></html>
