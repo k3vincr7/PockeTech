@@ -1,23 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PockeTech — Field Tools (Simple)</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f5f5f5; color: #333; }
-    header { background: #222; color: #fff; padding: 1em; text-align: center; }
-    nav { display: flex; justify-content: center; background: #444; }
-    nav button { background: #444; color: #fff; border: none; padding: 1em; cursor: pointer; }
-    nav button:hover { background: #666; }
-    main { padding: 1em; }
-    section { display: none; }
-    section.active { display: block; }
-    input, button, textarea, select { margin: .3em 0; padding: .5em; }
-    table { border-collapse: collapse; margin-top: 1em; width: 100%; }
-    table, th, td { border: 1px solid #aaa; }
-    th, td { padding: .5em; text-align: left; }
-    .muted { font-size: 0.9em; color: #777; }
+    body { font-family: Arial, sans-serif; margin:0; background:#f5f5f5; color:#333; }
+    header { background:#222; color:#fff; padding:1em; text-align:center; }
+    nav { display:flex; flex-wrap:wrap; justify-content:center; background:#444; gap:4px; }
+    nav button { background:#444; color:#fff; border:none; padding:0.9em 1em; cursor:pointer; }
+    nav button:hover, nav button.active { background:#666; }
+    main { padding:1em; max-width:1000px; margin:0 auto; }
+    section { display:none; background:#fff; padding:1em; border:1px solid #ddd; border-radius:6px; }
+    section.active { display:block; }
+    input, button, textarea, select { margin:.3em 0; padding:.5em; }
+    input, select, textarea { width:100%; max-width:100%; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; }
+    .col { flex:1 1 220px; min-width:220px; }
+    table { border-collapse:collapse; margin-top:1em; width:100%; font-size:14px; }
+    table, th, td { border:1px solid #aaa; }
+    th, td { padding:.5em; text-align:left; }
+    .muted { font-size:12px; color:#777; }
+    .btns { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+    .hr { height:1px; background:#ddd; margin:12px 0; }
+    footer { text-align:center; color:#777; font-size:12px; padding:12px; }
   </style>
 </head>
 <body>
@@ -26,8 +32,9 @@
   </header>
 
   <nav>
-    <button data-target="percent">Percent Steps</button>
+    <button data-target="percent" class="active">Percent Steps</button>
     <button data-target="signal">Signal Helper</button>
+    <button data-target="cal">Calibration Tracker</button>
     <button data-target="loop">Loop Check Log</button>
     <button data-target="legacy">Legacy Tools</button>
   </nav>
@@ -36,53 +43,129 @@
     <!-- Percent Steps -->
     <section id="percent" class="active">
       <h2>Percent Steps</h2>
-      <label>LRV: <input type="number" id="lrv"></label><br>
-      <label>URV: <input type="number" id="urv"></label><br>
-      <button onclick="calcPercent()">Calculate</button>
+      <div class="row">
+        <div class="col"><label>LRV <input type="number" id="lrv" step="any" placeholder="e.g., 0"/></label></div>
+        <div class="col"><label>URV <input type="number" id="urv" step="any" placeholder="e.g., 200"/></label></div>
+      </div>
+      <div class="btns">
+        <button onclick="calcPercent()">Calculate</button>
+        <button onclick="exportPercentCSV()">Export CSV</button>
+      </div>
       <table id="percentTable"></table>
+      <div class="muted">Outputs 0, 25, 50, 75, 100%.</div>
     </section>
 
     <!-- Signal Helper -->
     <section id="signal">
-      <h2>Signal Helper</h2>
-      <label>mA: <input type="number" id="ma" step="0.01"></label>
-      <button onclick="maToPercent()">mA → %</button><br>
-      <label>%: <input type="number" id="percentInput" step="0.1"></label>
-      <button onclick="percentToMa()">% → mA</button>
-      <p id="signalResult"></p>
+      <h2>Signal Helper (4–20 mA)</h2>
+      <div class="row">
+        <div class="col"><label>LRV (EU) <input type="number" id="sh_lrv" step="any" placeholder="e.g., 0"/></label></div>
+        <div class="col"><label>URV (EU) <input type="number" id="sh_urv" step="any" placeholder="e.g., 200"/></label></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>mA <input type="number" id="ma" step="any" placeholder="e.g., 12"/></label></div>
+        <div class="col"><label>% <input type="number" id="percentInput" step="any" placeholder="e.g., 50"/></label></div>
+        <div class="col"><label>EU <input type="number" id="eu" step="any" placeholder="e.g., 100"/></label></div>
+      </div>
+      <div class="btns">
+        <button onclick="maToPercent()">From mA</button>
+        <button onclick="percentToMa()">From %</button>
+        <button onclick="euToPercent()">From EU</button>
+        <button onclick="signalClear()">Clear</button>
+      </div>
+      <p id="signalResult" class="muted"></p>
+    </section>
+
+    <!-- Calibration Tracker (NEW) -->
+    <section id="cal">
+      <h2>Calibration Tracker</h2>
+      <div class="row">
+        <div class="col"><label>Tag <input id="cal_tag" placeholder="e.g., PT-101"/></label></div>
+        <div class="col"><label>Make/Model <input id="cal_model" placeholder="e.g., Yokogawa EJA"/></label></div>
+        <div class="col"><label>Type <input id="cal_type" placeholder="e.g., PT / FT / LT / TT"/></label></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>LRV <input type="number" id="cal_lrv" step="any"/></label></div>
+        <div class="col"><label>URV <input type="number" id="cal_urv" step="any"/></label></div>
+        <div class="col"><label>Method <input id="cal_method" placeholder="e.g., 5-point, As Found/As Left"/></label></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>As-Found <input id="cal_af" placeholder="e.g., 0.12%"/></label></div>
+        <div class="col"><label>As-Left <input id="cal_al" placeholder="e.g., 0.05%"/></label></div>
+        <div class="col"><label>Date <input type="date" id="cal_date"/></label></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>Interval <select id="cal_interval">
+          <option value="">Select</option>
+          <option value="6">6 months</option>
+          <option value="12">12 months</option>
+        </select></label></div>
+        <div class="col"><label>Next Due <input id="cal_due" readonly placeholder="auto"/></label></div>
+        <div class="col"><label>Tech <input id="cal_tech" placeholder="e.g., K. Calvillo"/></label></div>
+      </div>
+      <div class="row">
+        <div class="col" style="flex:1 1 100%"><label>Notes <input id="cal_notes" placeholder="Short notes…"/></label></div>
+      </div>
+      <div class="btns">
+        <button id="cal_add">Add Calibration</button>
+        <button id="cal_export">Export CSV</button>
+        <button id="cal_clear">Clear All (local)</button>
+      </div>
+      <div class="hr"></div>
+      <table id="cal_table">
+        <thead>
+          <tr>
+            <th>Tag</th><th>Make/Model</th><th>Type</th>
+            <th>LRV</th><th>URV</th><th>Method</th>
+            <th>As-Found</th><th>As-Left</th>
+            <th>Date</th><th>Interval</th><th>Next Due</th>
+            <th>Tech</th><th>Notes</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="muted">Stores locally on this device. Export CSV to share.</div>
     </section>
 
     <!-- Loop Check Log -->
     <section id="loop">
       <h2>Loop Check Log</h2>
       <form id="loopForm">
-        <input placeholder="Tag" id="tag" required>
-        <input placeholder="Service" id="service">
-        <input placeholder="Range (LRV)" id="rangeLrv" type="number">
-        <input placeholder="Range (URV)" id="rangeUrv" type="number">
-        <input placeholder="Type" id="type">
-        <input placeholder="As-Found" id="asFound">
-        <input placeholder="As-Left" id="asLeft">
-        <input placeholder="Technician" id="tech">
-        <input placeholder="Date" id="date" type="date">
-        <input placeholder="Notes" id="notes">
-        <select id="status">
-          <option value="Pass">Pass</option>
-          <option value="Fail">Fail</option>
-        </select>
-        <button type="submit">Add</button>
+        <div class="row">
+          <div class="col"><input placeholder="Tag" id="tag" required></div>
+          <div class="col"><input placeholder="Service" id="service"></div>
+          <div class="col"><select id="type"><option>AI</option><option>AO</option><option>DI</option><option>DO</option></select></div>
+        </div>
+        <div class="row">
+          <div class="col"><input placeholder="LRV" id="rangeLrv" type="number" step="any"></div>
+          <div class="col"><input placeholder="URV" id="rangeUrv" type="number" step="any"></div>
+          <div class="col"><input placeholder="Date" id="date" type="date"></div>
+        </div>
+        <div class="row">
+          <div class="col"><input placeholder="As-Found" id="asFound"></div>
+          <div class="col"><input placeholder="As-Left" id="asLeft"></div>
+          <div class="col"><input placeholder="Technician" id="tech"></div>
+        </div>
+        <div class="row">
+          <div class="col" style="flex:1 1 100%"><input placeholder="Notes" id="notes"></div>
+          <div class="col"><select id="status"><option value="Pass">Pass</option><option value="Fail">Fail</option></select></div>
+        </div>
+        <div class="btns">
+          <button type="submit">Add</button>
+          <button type="button" onclick="downloadLoopCSV()">Export CSV</button>
+          <button type="button" onclick="clearLoop()">Clear All (local)</button>
+        </div>
       </form>
       <table id="loopTable">
         <thead>
           <tr>
-            <th>Tag</th><th>Service</th><th>Range</th><th>Type</th>
-            <th>As-Found</th><th>As-Left</th><th>Tech</th><th>Date</th>
-            <th>Notes</th><th>Status</th>
+            <th>Date</th><th>Tag</th><th>Service</th><th>Type</th>
+            <th>LRV</th><th>URV</th><th>As-Found</th><th>As-Left</th>
+            <th>Tech</th><th>Status</th><th>Notes</th>
           </tr>
         </thead>
         <tbody></tbody>
       </table>
-      <button onclick="downloadLoopCSV()">Download CSV</button>
     </section>
 
     <!-- Legacy Tools -->
@@ -99,93 +182,215 @@
     </section>
   </main>
 
+  <footer class="muted">PockeTech — simple build • v0.2</footer>
+
   <script>
-    // Navigation
+    // ---- Simple router ----
     document.querySelectorAll("nav button").forEach(btn => {
       btn.addEventListener("click", () => {
+        document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
         document.querySelectorAll("main section").forEach(sec => sec.classList.remove("active"));
+        btn.classList.add("active");
         document.getElementById(btn.dataset.target).classList.add("active");
       });
     });
 
-    // Percent Steps
+    // ---- Helpers ----
+    function toCSV(rows) {
+      return rows.map(r => r.map(cell => {
+        const s = (cell ?? '').toString();
+        return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s;
+      }).join(',')).join('\n');
+    }
+    function downloadCSV(filename, rows) {
+      const blob = new Blob([toCSV(rows)], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download=filename; a.click();
+      URL.revokeObjectURL(url);
+    }
+    const fmt = n => {
+      const x = Number(n);
+      if (!Number.isFinite(x)) return '';
+      return (Math.abs(x)>=1000||x===0) ? x.toFixed(2).replace(/\.00$/,'') : x.toFixed(4).replace(/0+$/,'').replace(/\.$/,'');
+    };
+
+    // ---- Percent Steps ----
     function calcPercent() {
-      let lrv = parseFloat(document.getElementById("lrv").value);
-      let urv = parseFloat(document.getElementById("urv").value);
-      if (isNaN(lrv) || isNaN(urv)) return;
-      let steps = [0, 25, 50, 75, 100];
-      let table = "<tr><th>%</th><th>Value</th></tr>";
-      steps.forEach(p => {
-        let val = lrv + (urv - lrv) * (p / 100);
-        table += `<tr><td>${p}%</td><td>${val.toFixed(2)}</td></tr>`;
+      const lrv = parseFloat(document.getElementById("lrv").value);
+      const urv = parseFloat(document.getElementById("urv").value);
+      if (isNaN(lrv) || isNaN(urv) || lrv===urv) { alert("Enter numeric LRV/URV (not equal)."); return; }
+      const steps=[0,25,50,75,100];
+      let html = "<tr><th>%</th><th>Value</th></tr>";
+      steps.forEach(p=>{
+        const val = lrv + (urv-lrv)*(p/100);
+        html += `<tr><td>${p}%</td><td>${fmt(val)}</td></tr>`;
       });
-      document.getElementById("percentTable").innerHTML = table;
+      document.getElementById("percentTable").innerHTML = html;
+    }
+    function exportPercentCSV() {
+      const table = document.getElementById("percentTable");
+      if (!table || !table.rows.length) { alert("Calculate first."); return; }
+      const rows = [["Percent","EngUnits"]];
+      for (let i=1;i<table.rows.length;i++){
+        rows.push([table.rows[i].cells[0].innerText, table.rows[i].cells[1].innerText]);
+      }
+      downloadCSV("percent_steps.csv", rows);
     }
 
-    // Signal Helper
+    // ---- Signal Helper ----
+    function ensureRangeSH() {
+      const lrv = parseFloat(document.getElementById("sh_lrv").value);
+      const urv = parseFloat(document.getElementById("sh_urv").value);
+      if (isNaN(lrv)||isNaN(urv)||lrv===urv) { alert("Enter valid LRV/URV."); return null; }
+      return {lrv, urv};
+    }
     function maToPercent() {
-      let ma = parseFloat(document.getElementById("ma").value);
-      if (isNaN(ma)) return;
-      let percent = ((ma - 4) / 16) * 100;
-      document.getElementById("signalResult").innerText = `${ma} mA = ${percent.toFixed(1)}%`;
+      const r = ensureRangeSH(); if (!r) return;
+      const ma = parseFloat(document.getElementById("ma").value);
+      if (isNaN(ma)) { alert("Enter mA."); return; }
+      const pct = Math.min(Math.max((ma-4)/16*100,0),100);
+      const eu = r.lrv + (r.urv-r.lrv)*(pct/100);
+      document.getElementById("percentInput").value = fmt(pct);
+      document.getElementById("eu").value = fmt(eu);
+      document.getElementById("signalResult").innerText = `${ma} mA → ${fmt(pct)}% → ${fmt(eu)} EU`;
     }
     function percentToMa() {
-      let p = parseFloat(document.getElementById("percentInput").value);
-      if (isNaN(p)) return;
-      let ma = 4 + (16 * (p / 100));
-      document.getElementById("signalResult").innerText = `${p.toFixed(1)}% = ${ma.toFixed(2)} mA`;
+      const r = ensureRangeSH(); if (!r) return;
+      const p = parseFloat(document.getElementById("percentInput").value);
+      if (isNaN(p)) { alert("Enter %."); return; }
+      const pct = Math.min(Math.max(p,0),100);
+      const ma = 4 + 16*(pct/100);
+      const eu = r.lrv + (r.urv-r.lrv)*(pct/100);
+      document.getElementById("ma").value = fmt(ma);
+      document.getElementById("eu").value = fmt(eu);
+      document.getElementById("signalResult").innerText = `${fmt(pct)}% → ${fmt(ma)} mA → ${fmt(eu)} EU`;
     }
+    function euToPercent() {
+      const r = ensureRangeSH(); if (!r) return;
+      const eu = parseFloat(document.getElementById("eu").value);
+      if (isNaN(eu)) { alert("Enter EU."); return; }
+      const pct = Math.min(Math.max((eu - r.lrv) / (r.urv - r.lrv) * 100,0),100);
+      const ma = 4 + 16*(pct/100);
+      document.getElementById("percentInput").value = fmt(pct);
+      document.getElementById("ma").value = fmt(ma);
+      document.getElementById("signalResult").innerText = `${fmt(eu)} EU → ${fmt(pct)}% → ${fmt(ma)} mA`;
+    }
+    function signalClear(){ ["sh_lrv","sh_urv","ma","percentInput","eu"].forEach(id=>document.getElementById(id).value=""); document.getElementById("signalResult").innerText=""; }
 
-    // Loop Check Log
-    let loopData = JSON.parse(localStorage.getItem("pocketech.looplog.v1") || "[]");
+    // ---- Calibration Tracker ----
+    const CAL_KEY = 'pocketech.calibrations.v1';
+    const calTBody = document.querySelector('#cal_table tbody');
+
+    function addMonths(dateStr, months){
+      if (!dateStr || !months) return '';
+      const d = new Date(dateStr);
+      if (isNaN(d)) return '';
+      d.setMonth(d.getMonth() + Number(months));
+      const iso = d.toISOString().slice(0,10);
+      return iso;
+    }
+    function calcDuePreview(){
+      const date = document.getElementById('cal_date').value;
+      const interval = document.getElementById('cal_interval').value;
+      document.getElementById('cal_due').value = addMonths(date, interval) || '';
+    }
+    document.getElementById('cal_date').addEventListener('change', calcDuePreview);
+    document.getElementById('cal_interval').addEventListener('change', calcDuePreview);
+
+    function loadCals(){ try { return JSON.parse(localStorage.getItem(CAL_KEY)||'[]'); } catch { return []; } }
+    function saveCals(rows){ localStorage.setItem(CAL_KEY, JSON.stringify(rows)); }
+    function renderCals(){
+      const rows = loadCals();
+      calTBody.innerHTML='';
+      rows.forEach(r=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.tag||''}</td><td>${r.model||''}</td><td>${r.ctype||''}</td>
+          <td>${r.lrv??''}</td><td>${r.urv??''}</td><td>${r.method||''}</td>
+          <td>${r.af||''}</td><td>${r.al||''}</td>
+          <td>${r.date||''}</td><td>${r.interval||''}</td><td>${r.due||''}</td>
+          <td>${r.tech||''}</td><td>${r.notes||''}</td>
+        `;
+        calTBody.appendChild(tr);
+      });
+    }
+    document.getElementById('cal_add').addEventListener('click', ()=>{
+      const row = {
+        tag: document.getElementById('cal_tag').value.trim(),
+        model: document.getElementById('cal_model').value.trim(),
+        ctype: document.getElementById('cal_type').value.trim(),
+        lrv: document.getElementById('cal_lrv').value,
+        urv: document.getElementById('cal_urv').value,
+        method: document.getElementById('cal_method').value.trim(),
+        af: document.getElementById('cal_af').value.trim(),
+        al: document.getElementById('cal_al').value.trim(),
+        date: document.getElementById('cal_date').value,
+        interval: document.getElementById('cal_interval').value,
+        due: document.getElementById('cal_due').value,
+        tech: document.getElementById('cal_tech').value.trim(),
+        notes: document.getElementById('cal_notes').value.trim(),
+      };
+      if (!row.tag){ alert('Tag required'); return; }
+      const rows = loadCals(); rows.push(row); saveCals(rows); renderCals();
+      ['cal_tag','cal_model','cal_type','cal_lrv','cal_urv','cal_method','cal_af','cal_al','cal_notes'].forEach(id=>document.getElementById(id).value='');
+    });
+    document.getElementById('cal_export').addEventListener('click', ()=>{
+      const rows = loadCals();
+      if (!rows.length){ alert('Nothing to export.'); return; }
+      const header = ['Tag','Make/Model','Type','LRV','URV','Method','As-Found','As-Left','Date','Interval(months)','Next Due','Tech','Notes'];
+      const csvRows = [header, ...rows.map(r=>[r.tag,r.model,r.ctype,r.lrv,r.urv,r.method,r.af,r.al,r.date,r.interval,r.due,r.tech,r.notes])];
+      downloadCSV('calibration_tracker.csv', csvRows);
+    });
+    document.getElementById('cal_clear').addEventListener('click', ()=>{
+      if (confirm('Clear ALL local calibration records?')){ saveCals([]); renderCals(); }
+    });
+
+    // ---- Loop Log ----
+    const LOOP_KEY = 'pocketech.looplog.v1';
+    let loopData = JSON.parse(localStorage.getItem(LOOP_KEY) || "[]");
     const loopForm = document.getElementById("loopForm");
     const loopTableBody = document.querySelector("#loopTable tbody");
 
     function renderLoopTable() {
       loopTableBody.innerHTML = "";
-      loopData.forEach(row => {
+      loopData.forEach(r => {
         let tr = document.createElement("tr");
-        tr.innerHTML = `<td>${row.tag}</td><td>${row.service}</td><td>${row.range}</td>
-          <td>${row.type}</td><td>${row.asFound}</td><td>${row.asLeft}</td>
-          <td>${row.tech}</td><td>${row.date}</td><td>${row.notes}</td><td>${row.status}</td>`;
+        tr.innerHTML = `<td>${r.date||''}</td><td>${r.tag||''}</td><td>${r.service||''}</td><td>${r.type||''}</td>
+          <td>${r.lrv??''}</td><td>${r.urv??''}</td><td>${r.asFound||''}</td><td>${r.asLeft||''}</td>
+          <td>${r.tech||''}</td><td>${r.status||''}</td><td>${r.notes||''}</td>`;
         loopTableBody.appendChild(tr);
       });
     }
-
     loopForm.addEventListener("submit", e => {
       e.preventDefault();
-      let row = {
-        tag: document.getElementById("tag").value,
-        service: document.getElementById("service").value,
-        range: document.getElementById("rangeLrv").value + " - " + document.getElementById("rangeUrv").value,
+      const row = {
+        date: document.getElementById("date").value || new Date().toISOString().slice(0,10),
+        tag: document.getElementById("tag").value.trim(),
+        service: document.getElementById("service").value.trim(),
         type: document.getElementById("type").value,
-        asFound: document.getElementById("asFound").value,
-        asLeft: document.getElementById("asLeft").value,
-        tech: document.getElementById("tech").value,
-        date: document.getElementById("date").value,
-        notes: document.getElementById("notes").value,
+        lrv: document.getElementById("rangeLrv").value,
+        urv: document.getElementById("rangeUrv").value,
+        asFound: document.getElementById("asFound").value.trim(),
+        asLeft: document.getElementById("asLeft").value.trim(),
+        tech: document.getElementById("tech").value.trim(),
+        notes: document.getElementById("notes").value.trim(),
         status: document.getElementById("status").value
       };
+      if (!row.tag) { alert('Tag is required'); return; }
       loopData.push(row);
-      localStorage.setItem("pocketech.looplog.v1", JSON.stringify(loopData));
+      localStorage.setItem(LOOP_KEY, JSON.stringify(loopData));
       renderLoopTable();
       loopForm.reset();
     });
-
     function downloadLoopCSV() {
-      let csv = "Tag,Service,Range,Type,As-Found,As-Left,Tech,Date,Notes,Status\n";
-      loopData.forEach(r => {
-        csv += `${r.tag},${r.service},${r.range},${r.type},${r.asFound},${r.asLeft},${r.tech},${r.date},${r.notes},${r.status}\n`;
-      });
-      let blob = new Blob([csv], { type: "text/csv" });
-      let url = URL.createObjectURL(blob);
-      let a = document.createElement("a");
-      a.href = url;
-      a.download = "loop_check_log.csv";
-      a.click();
-      URL.revokeObjectURL(url);
+      const header = ['Date','Tag','Service','Type','LRV','URV','As-Found','As-Left','Tech','Status','Notes'];
+      const rows = [header, ...loopData.map(r=>[r.date,r.tag,r.service,r.type,r.lrv,r.urv,r.asFound,r.asLeft,r.tech,r.status,r.notes])];
+      downloadCSV('loop_check_log.csv', rows);
     }
+    function clearLoop(){ if (confirm('Clear ALL local loop entries?')) { loopData=[]; localStorage.setItem(LOOP_KEY,'[]'); renderLoopTable(); } }
 
+    // ---- Init ----
+    renderCals();
     renderLoopTable();
   </script>
 </body>
