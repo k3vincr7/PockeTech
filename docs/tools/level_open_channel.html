@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Level (Open Channel) — PockeTech</title>
+<style>
+ body{font-family:system-ui,Arial,sans-serif;margin:0;background:#0f1115;color:#e8e8e8}
+ main{max-width:800px;margin:0 auto;padding:14px}
+ section{background:#151922;border:1px solid #2a2f3a;border-radius:10px;padding:12px}
+ input,select,button{padding:.6em .7em;border-radius:8px;border:1px solid #2a2f3a;background:transparent;color:#e8e8e8;width:100%;margin:.35em 0}
+ table{width:100%;border-collapse:collapse;margin-top:10px}
+ th,td{border:1px solid #2a2f3a;padding:8px;text-align:left}
+ .row{display:flex;gap:10px;flex-wrap:wrap}.col{flex:1 1 240px;min-width:240px}
+ .muted{color:#a0a0a0;font-size:12px}
+ .btn{background:#2b3240;border-color:#2b3240;cursor:pointer}
+</style>
+</head><body>
+<main>
+  <h1>Level (Open Channel)</h1>
+  <section>
+    <h3>V-notch weir (flow from head)</h3>
+    <div class="row">
+      <div class="col"><label>Notch Angle (deg)<input id="angle" type="number" step="any" value="90"></label></div>
+      <div class="col"><label>Head over crest, H (in)<input id="head" type="number" step="any" placeholder="e.g., 6"></label></div>
+      <div class="col"><label>Discharge Coefficient, C<sub>d</sub><input id="cd" type="number" step="any" value="0.62"></label></div>
+    </div>
+    <div class="row">
+      <div class="col"><label>Output Units
+        <select id="units"><option value="gpm">gpm</option><option value="lps">L/s</option></select>
+      </label></div>
+    </div>
+    <div class="row"><div class="col"><button class="btn" onclick="calc()">Calculate</button></div></div>
+    <table><tbody id="out"><tr><th>Result</th><td>—</td></tr></tbody></table>
+    <p class="muted">
+      Formula (SI): Q = (8/15)·C<sub>d</sub>·√(2g) · tan(θ/2) · H<sup>5/2</sup>.<br>
+      We take H in meters internally; outputs shown in selected units. g = 9.80665 m/s².
+    </p>
+  </section>
+</main>
+<script>
+ const G=9.80665; // m/s^2
+ function fmt(n){const x=Number(n); if(!isFinite(x)) return '-'; return (Math.abs(x)>=1000||x===0)?x.toFixed(2).replace(/\.00$/,''):x.toFixed(4).replace(/0+$/,'').replace(/\.$/,'');}
+ function calc(){
+   const deg=parseFloat(document.getElementById('angle').value);
+   const H_in=parseFloat(document.getElementById('head').value);
+   const Cd=parseFloat(document.getElementById('cd').value);
+   const units=document.getElementById('units').value;
+   if(isNaN(deg)||isNaN(H_in)||isNaN(Cd)||H_in<0){ alert('Enter angle, head, and Cd'); return; }
+   // Convert head inches -> meters
+   const H = H_in * 0.0254;
+   // Q (m^3/s)
+   const Q = (8/15) * Cd * Math.sqrt(2*G) * Math.tan((deg*Math.PI/180)/2) * Math.pow(H, 2.5);
+   let out;
+   if(units==='gpm'){
+     const gpm = Q * 15850.323141; // 1 m^3/s = 15850.323 gpm
+     out = fmt(gpm) + ' gpm';
+   } else {
+     const lps = Q * 1000; // 1 m^3/s = 1000 L/s
+     out = fmt(lps) + ' L/s';
+   }
+   document.getElementById('out').innerHTML = `<tr><th>Flow</th><td>${out}</td></tr>
+     <tr><th>Inputs</th><td>θ=${fmt(deg)}°, H=${fmt(H_in)} in, C<sub>d</sub>=${Cd}</td></tr>`;
+ }
+</script>
+</body></html>
