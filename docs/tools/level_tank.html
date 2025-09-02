@@ -1,63 +1,178 @@
 <!DOCTYPE html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Level (Tank) — PockeTech</title>
+<title>Level — Closed Tank (Tap-to-Tap) • PockeTech</title>
 <style>
- body{font-family:system-ui,Arial,sans-serif;margin:0;background:#0f1115;color:#e8e8e8}
- main{max-width:800px;margin:0 auto;padding:14px}
- section{background:#151922;border:1px solid #2a2f3a;border-radius:10px;padding:12px}
- input,select,button{padding:.6em .7em;border-radius:8px;border:1px solid #2a2f3a;background:transparent;color:#e8e8e8;width:100%;margin:.35em 0}
- table{width:100%;border-collapse:collapse;margin-top:10px}
- th,td{border:1px solid #2a2f3a;padding:8px;text-align:left}
- .row{display:flex;gap:10px;flex-wrap:wrap}.col{flex:1 1 240px;min-width:240px}
- .muted{color:#a0a0a0;font-size:12px}
+ body{font-family:-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#0f1115;color:#e8e8e8}
+ main{max-width:900px;margin:0 auto;padding:14px}
+ section{background:#151922;border:1px solid #2a2f3a;border-radius:12px;padding:12px}
+ input,select,button{padding:.65em .75em;border-radius:10px;border:1px solid #2a2f3a;background:transparent;color:#e8e8e8;width:100%;margin:.4em 0;font-size:16px}
+ .row{display:flex;gap:10px;flex-wrap:wrap}.col{flex:1 1 230px;min-width:230px}
  .btn{background:#2b3240;border-color:#2b3240;cursor:pointer}
+ table{width:100%;border-collapse:collapse;margin-top:10px} th,td{border:1px solid #2a2f3a;padding:8px;text-align:left} th{background:#1b2230}
+ .muted{color:#a0a0a0;font-size:12px}
+ .hr{height:1px;background:#2a2f3a;margin:12px 0}
+ code{background:#1b2230;padding:2px 6px;border-radius:6px}
 </style>
-</head><body>
-<main>
-  <h1>Level (Tank)</h1>
-  <section>
-    <h3>Cylindrical (vertical) tank</h3>
-    <div class="row">
-      <div class="col"><label>Inside Diameter (in)<input id="dia" type="number" step="any" placeholder="e.g., 72"></label></div>
-      <div class="col"><label>Level (in)<input id="lvl" type="number" step="any" placeholder="e.g., 30"></label></div>
-    </div>
-    <div class="row">
-      <div class="col"><label>Units
-        <select id="units">
-          <option value="gal">US gal</option>
-          <option value="bbl">bbl (42 gal)</option>
-          <option value="L">Liters</option>
-        </select></label>
-      </div>
-      <div class="col"><label>Tank Height (optional, in)<input id="height" type="number" step="any" placeholder="for % full"></label></div>
-    </div>
-    <div class="row">
-      <div class="col"><button class="btn" onclick="calc()">Calculate</button></div>
-    </div>
-    <table>
-      <tbody id="out"><tr><th>Result</th><td>—</td></tr></tbody>
-    </table>
-    <p class="muted">Formula: Volume = π·(D/2)^2·Level. 1 in³ = 0.004329 gal = 0.016387 L.</p>
-  </section>
-</main>
+</head><body><main>
+<h1>Level — Closed Tank (tap-to-tap)</h1>
+<section>
+  <div class="row">
+    <div class="col"><label>Tap-to-tap height (level span)
+      <input id="span" type="number" step="any" placeholder="e.g., 72"></label></div>
+    <div class="col"><label>Span units
+      <select id="spanUnits"><option value="in">in</option><option value="ft">ft</option><option value="m">m</option></select></label></div>
+    <div class="col"><label>Liquid SG
+      <input id="sgL" type="number" step="any" value="1.0"></label></div>
+  </div>
+
+  <div class="row">
+    <div class="col"><label>Leg type
+      <select id="legType"><option value="dry">Dry leg (gas)</option><option value="wet">Wet leg (condensing)</option></select></label></div>
+    <div class="col"><label>Wet leg height (in) <small class="muted">if wet leg</small>
+      <input id="wetH" type="number" step="any" placeholder="e.g., 36"></label></div>
+    <div class="col"><label>Wet leg SG <small class="muted">if wet leg</small>
+      <input id="sgW" type="number" step="any" value="1.0"></label></div>
+  </div>
+
+  <div class="row">
+    <div class="col"><label>dP units
+      <select id="dpUnits"><option value="inh2o">inH₂O</option><option value="psi">psi</option><option value="kpa">kPa</option></select></label></div>
+    <div class="col"><label>LRV (dP at 0%) <small class="muted">(blank = auto)</small>
+      <input id="lrv" type="number" step="any" placeholder="optional"></label></div>
+    <div class="col"><label>URV (dP at 100%) <small class="muted">(blank = auto)</small>
+      <input id="urv" type="number" step="any" placeholder="optional"></label></div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="row">
+    <div class="col"><label>Current level (same units as span)
+      <input id="lvl" type="number" step="any" placeholder="enter level to get mA"></label></div>
+    <div class="col"><button class="btn" onclick="levelToMa()">Level → mA</button></div>
+    <div class="col"><label>or mA
+      <input id="ma" type="number" step="any" placeholder="enter mA to get level"></label></div>
+    <div class="col"><button class="btn" onclick="maToLevel()">mA → Level</button></div>
+  </div>
+  <p id="result" class="muted"></p>
+
+  <div class="btn"><button class="btn" onclick="buildSteps()">Build 0/25/50/75/100 Table</button></div>
+  <table id="steps"><thead><tr><th>%</th><th>Level (span units)</th><th>dP (chosen units)</th><th>mA</th></tr></thead><tbody></tbody></table>
+
+  <p class="muted">
+    Closed tank (dry leg): gas pressure cancels, <code>ΔP = ρ<sub>liq</sub> g h</code>.<br>
+    Wet leg: <code>ΔP = ρ<sub>liq</sub> g h − ρ<sub>wet</sub> g H<sub>wet</sub></code>. The wet leg term is a constant offset.
+  </p>
+</section>
+
 <script>
- const PI=Math.PI, IN3_TO_GAL=0.004329, GAL_TO_BBL=1/42, IN3_TO_L=0.016387;
- function fmt(n){const x=Number(n); if(!isFinite(x)) return '-'; return (Math.abs(x)>=1000||x===0)?x.toFixed(2).replace(/\.00$/,''):x.toFixed(4).replace(/0+$/,'').replace(/\.$/,'');}
- function calc(){
-   const D=parseFloat(document.getElementById('dia').value);
-   const L=parseFloat(document.getElementById('lvl').value);
-   const H=parseFloat(document.getElementById('height').value);
-   const u=document.getElementById('units').value;
-   if(isNaN(D)||isNaN(L)||D<=0||L<0){ alert('Enter diameter and level'); return; }
-   const in3 = PI*Math.pow(D/2,2)*L;
-   let vol; if(u==='gal') vol = in3*IN3_TO_GAL; else if(u==='bbl') vol = in3*IN3_TO_GAL*GAL_TO_BBL; else vol = in3*IN3_TO_L;
-   const pct = (!isNaN(H)&&H>0) ? (100*Math.min(Math.max(L/H,0),1)) : null;
-   const rows=[];
-   rows.push(['Volume', (u==='gal'?fmt(vol)+' gal': u==='bbl'?fmt(vol)+' bbl': fmt(vol)+' L')]);
-   rows.push(['Level', fmt(L)+' in']);
-   rows.push(['Diameter', fmt(D)+' in']);
-   if(pct!==null) rows.push(['% Full', fmt(pct)+' %']);
-   document.getElementById('out').innerHTML = rows.map(r=>`<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`).join('');
- }
+// --- units/conv
+const INH2O_PER_PSI = 27.679904842545;
+const KPA_PER_PSI   = 6.894757293168;
+const IN_PER_FT     = 12;
+const IN_PER_M      = 39.37007874;
+
+const q = id => document.getElementById(id);
+const fmt = n => {
+  const x=Number(n); if(!Number.isFinite(x)) return '';
+  return (Math.abs(x)>=1000||x===0)?x.toFixed(2).replace(/\.00$/,''):x.toFixed(4).replace(/0+$/,'').replace(/\.$/,'');
+};
+
+function inches(val, u){
+  if (u==='in') return val;
+  if (u==='ft') return val*IN_PER_FT;
+  if (u==='m')  return val*IN_PER_M;
+  return val;
+}
+function convFromInH2O(x, dpUnits){
+  if (dpUnits==='inh2o') return x;
+  if (dpUnits==='psi')   return x / INH2O_PER_PSI;
+  if (dpUnits==='kpa')   return (x / INH2O_PER_PSI) * KPA_PER_PSI;
+  return x;
+}
+function convToInH2O(x, dpUnits){
+  if (dpUnits==='inh2o') return x;
+  if (dpUnits==='psi')   return x * INH2O_PER_PSI;
+  if (dpUnits==='kpa')   return (x / KPA_PER_PSI) * INH2O_PER_PSI;
+  return x;
+}
+
+// theoretical dP at level h (inches) -> inH2O
+function dp_inH2O_atLevel(h_in, cfg){
+  const wetOffset = (cfg.legType==='wet') ? (cfg.sgW * (cfg.wetH||0)) : 0; // inH2O equivalent (since SG×in)
+  // liquid head term:
+  const liqTerm = cfg.sgL * h_in; // inH2O
+  // differential transmitter: bottom (high) - top (low)
+  // With wet leg: ΔP = SG_liq*h - SG_wet*H_wet  (constant offset)
+  // Dry leg: ΔP = SG_liq*h
+  return liqTerm - wetOffset;
+}
+
+function computeCfg(){
+  const span = parseFloat(q('span').value);
+  const spanU = q('spanUnits').value;
+  const sgL = parseFloat(q('sgL').value||'1');
+  const legType = q('legType').value;
+  const wetH = parseFloat(q('wetH').value||'0'); // inches
+  const sgW = parseFloat(q('sgW').value||'1');
+  const dpU = q('dpUnits').value;
+
+  if (isNaN(span) || span<=0 || isNaN(sgL) || sgL<=0) { alert('Enter span and liquid SG'); return null; }
+
+  const span_in = inches(span, spanU);
+
+  // Default LRV/URV from theory if not provided
+  const lrvIn = q('lrv').value.trim();
+  const urvIn = q('urv').value.trim();
+
+  // LRV at h=0:
+  const dP0_inH2O = dp_inH2O_atLevel(0, {legType, sgL, sgW, wetH});
+  // URV at h=span:
+  const dP100_inH2O = dp_inH2O_atLevel(span_in, {legType, sgL, sgW, wetH});
+
+  let LRV = lrvIn==='' ? convFromInH2O(dP0_inH2O, dpU) : parseFloat(lrvIn);
+  let URV = urvIn==='' ? convFromInH2O(dP100_inH2O, dpU) : parseFloat(urvIn);
+
+  return {span, spanU, span_in, sgL, legType, wetH, sgW, dpU, LRV, URV};
+}
+
+function pctToDP(p, LRV, URV){ return LRV + (URV-LRV)*(p/100); }
+function dpToPct(dp, LRV, URV){ if (URV===LRV) return 0; return (dp-LRV)/(URV-LRV)*100; }
+function pctToMA(p){ return 4 + 16*(p/100); }
+function maToPct(ma){ return (ma-4)/16*100; }
+
+function levelToMa(){
+  const cfg = computeCfg(); if(!cfg) return;
+  const lvl = parseFloat(q('lvl').value);
+  if (isNaN(lvl)) { alert('Enter level'); return; }
+  const lvl_in = inches(lvl, cfg.spanU);
+  const pct = Math.min(Math.max((lvl_in/cfg.span_in)*100,0),100);
+  const dp  = pctToDP(pct, cfg.LRV, cfg.URV);
+  const ma  = pctToMA(pct);
+  q('result').innerText = `Level ${fmt(lvl)} ${cfg.spanU} → ${fmt(pct)}% → ${fmt(dp)} ${cfg.dpU} → ${fmt(ma)} mA`;
+}
+function maToLevel(){
+  const cfg = computeCfg(); if(!cfg) return;
+  const ma = parseFloat(q('ma').value);
+  if (isNaN(ma)) { alert('Enter mA'); return; }
+  const pct = Math.min(Math.max(maToPct(ma),0),100);
+  const dp  = pctToDP(pct, cfg.LRV, cfg.URV);
+  const lvl_in = (pct/100)*cfg.span_in;
+  let lvl = lvl_in;
+  if (cfg.spanU==='ft') lvl = lvl_in/IN_PER_FT;
+  if (cfg.spanU==='m')  lvl = lvl_in/IN_PER_M;
+  q('result').innerText = `${fmt(ma)} mA → ${fmt(pct)}% → ${fmt(dp)} ${cfg.dpU} → Level ${fmt(lvl)} ${cfg.spanU}`;
+}
+function buildSteps(){
+  const cfg = computeCfg(); if(!cfg) return;
+  const steps=[0,25,50,75,100];
+  const tbody = q('steps').querySelector('tbody');
+  tbody.innerHTML='';
+  steps.forEach(p=>{
+    const dp = pctToDP(p, cfg.LRV, cfg.URV);
+    let lvl = (p/100)*cfg.span;
+    tbody.insertAdjacentHTML('beforeend',
+      `<tr><td>${p}%</td><td>${fmt(lvl)} ${cfg.spanU}</td><td>${fmt(dp)} ${cfg.dpU}</td><td>${fmt(pctToMA(p))} mA</td></tr>`);
+  });
+}
 </script>
-</body></html>
+</main></body></html>
