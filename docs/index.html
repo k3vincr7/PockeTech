@@ -4,6 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PockeTech — Field Tools</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#0f1115"/>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png"> <!-- optional if you add icons -->
+
   <style>
     :root{
       --bg:#f5f5f5; --fg:#222; --muted:#777; --card:#fff; --border:#d0d0d0;
@@ -45,30 +53,17 @@
     .hidden{ display:none; }
     .pill{ padding:2px 8px; border-radius:999px; border:1px solid var(--border); font-size:12px; }
 
-    /* Cards / grid */
     .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px}
     .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px}
     .big{font-size:28px;font-weight:600}
 
     /* Number pad */
-    .numpad {
-      position: fixed; left: 0; right: 0; bottom: 0;
-      background: var(--card); border-top: 1px solid var(--border);
-      display: none; padding: 8px; z-index: 50;
-      box-shadow: 0 -6px 20px rgba(0,0,0,.25);
-    }
+    .numpad { position: fixed; left: 0; right: 0; bottom: 0; background: var(--card); border-top: 1px solid var(--border); display: none; padding: 8px; z-index: 50; box-shadow: 0 -6px 20px rgba(0,0,0,.25); }
     .numpad.show { display: block; }
-    .numpad-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
-      max-width: 520px; margin: 0 auto;
-    }
-    .np-btn {
-      padding: 16px; font-size: 18px; border-radius: 10px; border:1px solid var(--border);
-      background: var(--btn); color: var(--btn-fg); text-align: center; user-select: none;
-    }
+    .numpad-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 520px; margin: 0 auto; }
+    .np-btn { padding: 16px; font-size: 18px; border-radius: 10px; border:1px solid var(--border); background: var(--btn); color: var(--btn-fg); text-align: center; user-select: none; }
     .np-wide { grid-column: span 2; }
 
-    /* Signal “nice” bits */
     .rowline{display:flex;align-items:center;gap:8px}
     .copy{cursor:pointer;border:1px dashed var(--border);padding:4px 8px;border-radius:8px;font-size:12px;color:var(--muted)}
     .copy:hover{border-color:var(--accent)}
@@ -80,7 +75,10 @@
 <body>
   <header>
     <h1>PockeTech — Field Tools</h1>
-    <button id="themeToggle" class="toggle" title="Toggle dark/light">🌓 Theme</button>
+    <div class="row" style="gap:6px">
+      <button id="installBtn" class="toggle" title="Install app">⬇️ Install</button>
+      <button id="themeToggle" class="toggle" title="Toggle dark/light">🌓 Theme</button>
+    </div>
   </header>
 
   <nav>
@@ -89,11 +87,14 @@
     <button data-target="level_open">Level — Open</button>
     <button data-target="level_closed">Level — Closed</button>
     <button data-target="pressure">Pressure</button>
+    <button data-target="temp">Temp</button>
+    <button data-target="ip">I/P 3–15</button>
     <button data-target="cal">Calibration</button>
     <button data-target="loop">Loop Log</button>
     <button data-target="tickets">Tickets</button>
     <button data-target="qr">QR Scan</button>
     <button data-target="backup">Backup</button>
+    <button data-target="settings">Settings</button>
   </nav>
 
   <main>
@@ -112,77 +113,55 @@
       <p class="muted">Outputs 0, 25, 50, 75, 100% of your range.</p>
     </section>
 
-    <!-- Signal Helper (NICE / PRO) -->
+    <!-- Signal Helper (Pro) -->
     <section id="signal">
       <h2>4–20 mA Helper (Pro)</h2>
-
       <div class="row">
         <div class="col"><label>LRV (EU) <input id="sh_lrv" class="num" inputmode="decimal" placeholder="0"></label><button class="kbd-toggle" data-for="sh_lrv">kbd</button></div>
         <div class="col"><label>URV (EU) <input id="sh_urv" class="num" inputmode="decimal" placeholder="200"></label><button class="kbd-toggle" data-for="sh_urv">kbd</button></div>
         <div class="col"><label>EU Label (optional) <input id="sh_eulbl" placeholder="e.g., gpm, °F, psi"></label></div>
       </div>
-
       <div class="row">
         <div class="col"><label>mA <input id="sh_ma" class="num" inputmode="decimal" placeholder="12"></label><button class="kbd-toggle" data-for="sh_ma">kbd</button></div>
         <div class="col"><label>% <input id="sh_pct" class="num" inputmode="decimal" placeholder="50"></label><button class="kbd-toggle" data-for="sh_pct">kbd</button></div>
         <div class="col"><label>EU <input id="sh_eu" class="num" inputmode="decimal" placeholder="100"></label><button class="kbd-toggle" data-for="sh_eu">kbd</button></div>
       </div>
-
       <div class="row">
         <div class="col"><button class="btn" id="sh_from_ma">From mA</button></div>
         <div class="col"><button class="btn" id="sh_from_pct">From %</button></div>
         <div class="col"><button class="btn" id="sh_from_eu">From EU</button></div>
       </div>
-
       <div class="hr"></div>
-
       <div class="grid">
-        <div class="card">
-          <div class="rowline"><div class="big" id="read_ma">—</div><span class="copy" data-copy="#read_ma">copy</span></div>
-          <div class="muted">mA</div>
-        </div>
+        <div class="card"><div class="rowline"><div class="big" id="read_ma">—</div><span class="copy" data-copy="#read_ma">copy</span></div><div class="muted">mA</div></div>
         <div class="card">
           <div class="rowline"><div class="big" id="read_pct">—</div><span class="copy" data-copy="#read_pct">copy</span></div>
           <div class="muted">Percent</div>
           <div class="steps" style="margin-top:8px">
-            <button class="btn step" data-p="0">0%</button>
-            <button class="btn step" data-p="25">25%</button>
-            <button class="btn step" data-p="50">50%</button>
-            <button class="btn step" data-p="75">75%</button>
-            <button class="btn step" data-p="100">100%</button>
+            <button class="btn step" data-p="0">0%</button><button class="btn step" data-p="25">25%</button>
+            <button class="btn step" data-p="50">50%</button><button class="btn step" data-p="75">75%</button><button class="btn step" data-p="100">100%</button>
           </div>
         </div>
         <div class="card">
           <div class="rowline"><div class="big" id="read_eu">—</div><span class="copy" data-copy="#read_eu">copy</span></div>
           <div class="muted">Eng Units</div>
-          <label class="rowline" style="margin-top:8px">
-            <input type="checkbox" id="sqrt_mode"> square-root (flow)
-          </label>
+          <label class="rowline" style="margin-top:8px"><input type="checkbox" id="sqrt_mode"> square-root (flow)</label>
         </div>
       </div>
-
-      <div class="row" style="margin-top:10px">
-        <div class="col">
-          <input id="pct_slider" type="range" min="0" max="100" step="0.1" value="50">
-        </div>
-      </div>
+      <div class="row" style="margin-top:10px"><div class="col"><input id="pct_slider" type="range" min="0" max="100" step="0.1" value="50"></div></div>
       <p class="muted" id="sh_hint">Tip: slider drives % ⇄ mA ⇄ EU live.</p>
     </section>
 
-    <!-- Level — Open (tap-to-tap) -->
+    <!-- Level — Open -->
     <section id="level_open">
       <h2>Level — Open Tank (tap-to-tap)</h2>
       <div class="row">
         <div class="col"><label>Tap-to-tap span <input id="lo_span" class="num" inputmode="decimal" placeholder="e.g., 72"></label><button class="kbd-toggle" data-for="lo_span">kbd</button></div>
-        <div class="col"><label>Units
-          <select id="lo_units"><option value="in">in</option><option value="ft">ft</option><option value="m">m</option></select>
-        </label></div>
+        <div class="col"><label>Units <select id="lo_units"><option value="in">in</option><option value="ft">ft</option><option value="m">m</option></select></label></div>
         <div class="col"><label>Specific Gravity (SG) <input id="lo_sg" class="num" inputmode="decimal" value="1.0"></label><button class="kbd-toggle" data-for="lo_sg">kbd</button></div>
       </div>
       <div class="row">
-        <div class="col"><label>dP Units
-          <select id="lo_dpU"><option value="inh2o">inH₂O</option><option value="psi">psi</option><option value="kpa">kPa</option></select>
-        </label></div>
+        <div class="col"><label>dP Units <select id="lo_dpU"><option value="inh2o">inH₂O</option><option value="psi">psi</option><option value="kpa">kPa</option></select></label></div>
         <div class="col"><label>LRV (optional) <input id="lo_lrv" class="num" inputmode="decimal" placeholder="blank = 0"></label><button class="kbd-toggle" data-for="lo_lrv">kbd</button></div>
         <div class="col"><label>URV (optional) <input id="lo_urv" class="num" inputmode="decimal" placeholder="blank = auto"></label><button class="kbd-toggle" data-for="lo_urv">kbd</button></div>
       </div>
@@ -196,30 +175,24 @@
       <p id="lo_result" class="muted"></p>
       <div class="row"><div class="col"><button class="btn" onclick="LO_buildSteps()">Build 0/25/50/75/100 Table</button></div></div>
       <table id="lo_steps"><thead><tr><th>%</th><th>Level (span units)</th><th>dP</th><th>mA</th></tr></thead><tbody></tbody></table>
-      <p class="muted">Open tank: ΔP = ρ g h ⇒ with SG, inH₂O@100% ≈ SG × span(in).</p>
+      <p class="muted">Open tank: ΔP = ρ g h ⇒ inH₂O@100% ≈ SG × span(in).</p>
     </section>
 
-    <!-- Level — Closed (tap-to-tap) -->
+    <!-- Level — Closed -->
     <section id="level_closed">
       <h2>Level — Closed Tank (tap-to-tap)</h2>
       <div class="row">
         <div class="col"><label>Tap-to-tap span <input id="lc_span" class="num" inputmode="decimal" placeholder="e.g., 72"></label><button class="kbd-toggle" data-for="lc_span">kbd</button></div>
-        <div class="col"><label>Units
-          <select id="lc_units"><option value="in">in</option><option value="ft">ft</option><option value="m">m</option></select>
-        </label></div>
+        <div class="col"><label>Units <select id="lc_units"><option value="in">in</option><option value="ft">ft</option><option value="m">m</option></select></label></div>
         <div class="col"><label>Liquid SG <input id="lc_sgL" class="num" inputmode="decimal" value="1.0"></label><button class="kbd-toggle" data-for="lc_sgL">kbd</button></div>
       </div>
       <div class="row">
-        <div class="col"><label>Leg Type
-          <select id="lc_leg"><option value="dry">Dry leg (gas)</option><option value="wet">Wet leg (condensing)</option></select>
-        </label></div>
+        <div class="col"><label>Leg Type <select id="lc_leg"><option value="dry">Dry leg (gas)</option><option value="wet">Wet leg (condensing)</option></select></label></div>
         <div class="col"><label>Wet leg height (in) <input id="lc_wetH" class="num" inputmode="decimal" placeholder="if wet"></label><button class="kbd-toggle" data-for="lc_wetH">kbd</button></div>
         <div class="col"><label>Wet leg SG <input id="lc_sgW" class="num" inputmode="decimal" value="1.0"></label><button class="kbd-toggle" data-for="lc_sgW">kbd</button></div>
       </div>
       <div class="row">
-        <div class="col"><label>dP Units
-          <select id="lc_dpU"><option value="inh2o">inH₂O</option><option value="psi">psi</option><option value="kpa">kPa</option></select>
-        </label></div>
+        <div class="col"><label>dP Units <select id="lc_dpU"><option value="inh2o">inH₂O</option><option value="psi">psi</option><option value="kpa">kPa</option></select></label></div>
         <div class="col"><label>LRV (optional) <input id="lc_lrv" class="num" inputmode="decimal" placeholder="auto"></label><button class="kbd-toggle" data-for="lc_lrv">kbd</button></div>
         <div class="col"><label>URV (optional) <input id="lc_urv" class="num" inputmode="decimal" placeholder="auto"></label><button class="kbd-toggle" data-for="lc_urv">kbd</button></div>
       </div>
@@ -233,49 +206,36 @@
       <p id="lc_result" class="muted"></p>
       <div class="row"><div class="col"><button class="btn" onclick="LC_buildSteps()">Build 0/25/50/75/100 Table</button></div></div>
       <table id="lc_steps"><thead><tr><th>%</th><th>Level (span units)</th><th>dP</th><th>mA</th></tr></thead><tbody></tbody></table>
-      <p class="muted">Dry leg: ΔP = ρ_l g h. Wet leg: ΔP = ρ_l g h − ρ_w g H_w (constant offset).</p>
+      <p class="muted">Dry leg: ΔP = ρ_l g h. Wet leg: ΔP = ρ_l g h − ρ_w g H_w (offset).</p>
     </section>
 
     <!-- Pressure -->
     <section id="pressure">
       <h2>Pressure</h2>
 
-      <!-- Simple THIS → THAT Converter -->
       <h3>Quick Convert — “This → That”</h3>
       <div class="row">
         <div class="col">
-          <label>Value
-            <input id="pc_val_in" class="num" inputmode="decimal" placeholder="e.g., 15">
-          </label>
+          <label>Value <input id="pc_val_in" class="num" inputmode="decimal" placeholder="e.g., 15"></label>
           <button class="kbd-toggle" data-for="pc_val_in">kbd</button>
         </div>
         <div class="col">
           <label>From
             <select id="pc_unit_in">
-              <option value="psi">psi</option>
-              <option value="kpa">kPa</option>
-              <option value="bar">bar</option>
-              <option value="pa">Pa</option>
-              <option value="mpa">MPa</option>
-              <option value="inh2o">inH₂O</option>
-              <option value="mmh2o">mmH₂O</option>
-              <option value="inhg">inHg</option>
-              <option value="mmhg">mmHg</option>
+              <option value="psi">psi</option><option value="kpa">kPa</option><option value="bar">bar</option>
+              <option value="pa">Pa</option><option value="mpa">MPa</option>
+              <option value="inh2o">inH₂O</option><option value="mmh2o">mmH₂O</option>
+              <option value="inhg">inHg</option><option value="mmhg">mmHg</option>
             </select>
           </label>
         </div>
         <div class="col">
           <label>To
             <select id="pc_unit_out">
-              <option value="kpa">kPa</option>
-              <option value="psi">psi</option>
-              <option value="bar">bar</option>
-              <option value="pa">Pa</option>
-              <option value="mpa">MPa</option>
-              <option value="inh2o">inH₂O</option>
-              <option value="mmh2o">mmH₂O</option>
-              <option value="inhg">inHg</option>
-              <option value="mmhg">mmHg</option>
+              <option value="kpa">kPa</option><option value="psi">psi</option><option value="bar">bar</option>
+              <option value="pa">Pa</option><option value="mpa">MPa</option>
+              <option value="inh2o">inH₂O</option><option value="mmh2o">mmH₂O</option>
+              <option value="inhg">inHg</option><option value="mmhg">mmHg</option>
             </select>
           </label>
         </div>
@@ -285,21 +245,16 @@
         <div class="col"><button class="btn" id="pc_swap">Swap</button></div>
         <div class="col"><label>Result <input id="pc_val_out" readonly placeholder="—"></label></div>
       </div>
-      <p class="muted">inH₂O, mmH₂O assume 4 °C water; inHg/mmHg assume 0 °C mercury (standard tables). Good enough for field work.</p>
+      <p class="muted">inH₂O/mmH₂O@4 °C; inHg/mmHg@0 °C (field-standard tables).</p>
 
       <div class="hr"></div>
-
-      <!-- Gauge ↔ Absolute -->
       <h3>Gauge ↔ Absolute</h3>
       <div class="row">
-        <div class="col"><label>Atmospheric (psia) <input id="atm" class="num" inputmode="decimal" value="14.7"></label><button class="kbd-toggle" data-for="atm">kbd</button></div>
+        <div class="col"><label>Atmospheric (psia) <input id="atm" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="atm">kbd</button></div>
         <div class="col"><label>Gauge (psig) <input id="psig" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="psig">kbd</button></div>
         <div class="col"><label>Absolute (psia) <input id="psia" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="psia">kbd</button></div>
       </div>
-      <div class="row">
-        <div class="col"><button class="btn" onclick="psigToPsia()">psig → psia</button></div>
-        <div class="col"><button class="btn" onclick="psiaToPsig()">psia → psig</button></div>
-      </div>
+      <div class="row"><div class="col"><button class="btn" onclick="psigToPsia()">psig → psia</button></div><div class="col"><button class="btn" onclick="psiaToPsig()">psia → psig</button></div></div>
 
       <div class="hr"></div>
       <h3>psi ↔ kPa ↔ bar</h3>
@@ -308,20 +263,14 @@
         <div class="col"><label>kPa <input id="u_kpa" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="u_kpa">kbd</button></div>
         <div class="col"><label>bar <input id="u_bar" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="u_bar">kbd</button></div>
       </div>
-      <div class="row">
-        <div class="col"><button class="btn" onclick="fromPSI()">From psi</button></div>
-        <div class="col"><button class="btn" onclick="fromKPA()">From kPa</button></div>
-        <div class="col"><button class="btn" onclick="fromBAR()">From bar</button></div>
-      </div>
+      <div class="row"><div class="col"><button class="btn" onclick="fromPSI()">From psi</button></div><div class="col"><button class="btn" onclick="fromKPA()">From kPa</button></div><div class="col"><button class="btn" onclick="fromBAR()">From bar</button></div></div>
 
       <div class="hr"></div>
       <h3>Pressure Switch</h3>
       <div class="row">
         <div class="col"><label>Setpoint (rising, psig) <input id="sw_set" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="sw_set">kbd</button></div>
         <div class="col"><label>Deadband (psig) <input id="sw_db" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="sw_db">kbd</button></div>
-        <div class="col"><label>Mode
-          <select id="sw_mode"><option value="nc">NC (opens on rise)</option><option value="no">NO (closes on rise)</option></select>
-        </label></div>
+        <div class="col"><label>Mode <select id="sw_mode"><option value="nc">NC (opens on rise)</option><option value="no">NO (closes on rise)</option></select></label></div>
       </div>
       <div class="row"><div class="col"><button class="btn" onclick="calcSwitch()">Calculate</button></div></div>
       <table id="sw_out"><tbody></tbody></table>
@@ -333,12 +282,69 @@
         <div class="col"><label>psia <input id="vac_psia" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="vac_psia">kbd</button></div>
         <div class="col"><label>psig <input id="vac_psig" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="vac_psig">kbd</button></div>
       </div>
-      <div class="row">
-        <div class="col"><button class="btn" onclick="fromInHg()">From inHg</button></div>
-        <div class="col"><button class="btn" onclick="fromPSIA()">From psia</button></div>
-        <div class="col"><button class="btn" onclick="fromPSIG()">From psig</button></div>
-      </div>
+      <div class="row"><div class="col"><button class="btn" onclick="fromInHg()">From inHg</button></div><div class="col"><button class="btn" onclick="fromPSIA()">From psia</button></div><div class="col"><button class="btn" onclick="fromPSIG()">From psig</button></div></div>
       <p class="muted">Assumes 29.92 inHg at 14.7 psia (sea level standard).</p>
+    </section>
+
+    <!-- Temp Converter -->
+    <section id="temp">
+      <h2>Temperature</h2>
+      <h3>Convert — “This → That”</h3>
+      <div class="row">
+        <div class="col">
+          <label>Value <input id="tc_val" class="num" inputmode="decimal" placeholder="e.g., 68"></label>
+          <button class="kbd-toggle" data-for="tc_val">kbd</button>
+        </div>
+        <div class="col">
+          <label>From <select id="tc_from"><option value="F">°F</option><option value="C">°C</option><option value="K">K</option></select></label>
+        </div>
+        <div class="col">
+          <label>To <select id="tc_to"><option value="C">°C</option><option value="F">°F</option><option value="K">K</option></select></label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col"><button class="btn" id="tc_conv_btn">Convert</button></div>
+        <div class="col"><label>Result <input id="tc_out" readonly placeholder="—"></label></div>
+      </div>
+
+      <div class="hr"></div>
+      <h3>Delta T</h3>
+      <div class="row">
+        <div class="col">
+          <label>ΔValue <input id="td_val" class="num" inputmode="decimal" placeholder="e.g., 10"></label>
+          <button class="kbd-toggle" data-for="td_val">kbd</button>
+        </div>
+        <div class="col"><label>From <select id="td_from"><option value="F">Δ°F</option><option value="C">Δ°C</option><option value="K">ΔK</option></select></label></div>
+        <div class="col"><label>To <select id="td_to"><option value="C">Δ°C</option><option value="F">Δ°F</option><option value="K">ΔK</option></select></label></div>
+      </div>
+      <div class="row"><div class="col"><button class="btn" id="td_conv_btn">Convert Δ</button></div><div class="col"><label>Result <input id="td_out" readonly placeholder="—"></label></div></div>
+      <p class="muted">Δ°F = Δ°C × 9/5. ΔK = Δ°C.</p>
+    </section>
+
+    <!-- I/P 3–15 psi Helper -->
+    <section id="ip">
+      <h2>I/P 3–15 psi Helper</h2>
+      <div class="row">
+        <div class="col"><label>% <input id="ip_pct" class="num" inputmode="decimal" placeholder="50"></label><button class="kbd-toggle" data-for="ip_pct">kbd</button></div>
+        <div class="col"><label>psi <input id="ip_psi" class="num" inputmode="decimal" placeholder="9"></label><button class="kbd-toggle" data-for="ip_psi">kbd</button></div>
+      </div>
+      <div class="row">
+        <div class="col"><button class="btn" id="ip_from_pct">From %</button></div>
+        <div class="col"><button class="btn" id="ip_from_psi">From psi</button></div>
+      </div>
+      <div class="hr"></div>
+      <div class="grid">
+        <div class="card">
+          <div class="rowline"><div class="big" id="ip_read_pct">—</div><span class="copy" data-copy="#ip_read_pct">copy</span></div>
+          <div class="muted">Percent</div>
+          <div class="steps" style="margin-top:8px">
+            <button class="btn ipstep" data-p="0">0%</button><button class="btn ipstep" data-p="25">25%</button>
+            <button class="btn ipstep" data-p="50">50%</button><button class="btn ipstep" data-p="75">75%</button><button class="btn ipstep" data-p="100">100%</button>
+          </div>
+        </div>
+        <div class="card"><div class="rowline"><div class="big" id="ip_read_psi">—</div><span class="copy" data-copy="#ip_read_psi">copy</span></div><div class="muted">psi (3–15)</div></div>
+      </div>
+      <p class="muted">Linear: psi = 3 + 12×(%/100). % = (psi−3)/12×100.</p>
     </section>
 
     <!-- Calibration -->
@@ -462,6 +468,25 @@
         <div class="col"><button class="btn danger" id="bk_clear">Clear All (local)</button></div>
       </div>
     </section>
+
+    <!-- Settings -->
+    <section id="settings">
+      <h2>Settings</h2>
+      <div class="row">
+        <div class="col"><label>Default Atmosphere (psia) <input id="s_atm" class="num" inputmode="decimal" placeholder="14.7"></label><button class="kbd-toggle" data-for="s_atm">kbd</button></div>
+        <div class="col"><label>Default Pressure Unit <select id="s_punit"><option value="psi">psi</option><option value="kpa">kPa</option><option value="bar">bar</option></select></label></div>
+        <div class="col"><label>Default Level Unit <select id="s_lunit"><option value="in">in</option><option value="ft">ft</option><option value="m">m</option></select></label></div>
+      </div>
+      <div class="row">
+        <div class="col"><label class="rowline"><input type="checkbox" id="s_haptics"> Haptics on keypad taps</label></div>
+        <div class="col"><label class="rowline"><input type="checkbox" id="s_dark"> Force dark mode</label></div>
+      </div>
+      <div class="row">
+        <div class="col"><button class="btn ok" id="s_save">Save</button></div>
+        <div class="col"><button class="btn danger" id="s_reset">Reset to defaults</button></div>
+      </div>
+      <p class="muted">Settings are stored locally on this device.</p>
+    </section>
   </main>
 
   <!-- Number pad overlay -->
@@ -474,16 +499,35 @@
     </div>
   </div>
 
-  <footer class="muted">PockeTech — v0.73</footer>
+  <footer class="muted">PockeTech — v0.80</footer>
 
   <script>
-    // Theme toggle
+    // ------- Settings store -------
+    const SKEY='pocketech.settings';
+    const DEF={atm:14.7,punit:'psi',lunit:'in',haptics:false,theme:'auto'};
+    const getS=()=>({...DEF, ...(JSON.parse(localStorage.getItem(SKEY)||'{}'))});
+    const setS=(o)=>localStorage.setItem(SKEY, JSON.stringify(o));
+
+    // ------- Theme toggle -------
     const themeBtn=document.getElementById('themeToggle');
     const root=document.documentElement;
-    const THEME_KEY='pocketech.theme';
-    function applyTheme(t){ root.setAttribute('data-theme',t); localStorage.setItem(THEME_KEY,t); }
-    applyTheme(localStorage.getItem(THEME_KEY)||'auto');
-    themeBtn.addEventListener('click',()=>{ const cur=root.getAttribute('data-theme')||'auto'; const next=cur==='auto'?'dark':(cur==='dark'?'light':'auto'); applyTheme(next); alert('Theme: '+next); });
+    function applyTheme(t){ root.setAttribute('data-theme',t); }
+    function syncThemeFromSettings(){ const s=getS(); applyTheme(s.theme); }
+    syncThemeFromSettings();
+    themeBtn.addEventListener('click',()=>{
+      const s=getS(); s.theme = s.theme==='auto'?'dark':(s.theme==='dark'?'light':'auto'); setS(s); applyTheme(s.theme); alert('Theme: '+s.theme);
+    });
+
+    // PWA: install
+    let deferredPrompt=null;
+    const installBtn=document.getElementById('installBtn');
+    installBtn.disabled=true;
+    window.addEventListener('beforeinstallprompt',(e)=>{ e.preventDefault(); deferredPrompt=e; installBtn.disabled=false; });
+    installBtn.addEventListener('click', async ()=>{
+      if(!deferredPrompt) return alert('Install not available here. Try from Chrome mobile.');
+      deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; installBtn.disabled=true;
+    });
+    if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js'); }
 
     // Router
     document.querySelectorAll('nav button').forEach(btn=>{
@@ -501,15 +545,16 @@
     function val(id){return document.getElementById(id).value;}
     function setVal(id,v){document.getElementById(id).value=v;}
 
-    // ---------- Number Pad (sticky; only hides on Done or outside tap) ----------
+    // Haptics
+    function buzz(ms=10){ try{ if(getS().haptics && navigator.vibrate) navigator.vibrate(ms); }catch{} }
+
+    // ---------- Number Pad (sticky) ----------
     const numpad = document.getElementById('numpad');
     let npTarget = null;
     function showPad(forInput){
       npTarget = forInput;
-      const padH = 280;
-      document.body.style.paddingBottom = padH+'px';
+      document.body.style.paddingBottom = '280px';
       numpad.classList.add('show'); numpad.setAttribute('aria-hidden','false');
-      // keep the field centered and focused
       setTimeout(()=>{ try{ npTarget.scrollIntoView({block:'center', behavior:'smooth'}); }catch{} }, 10);
       const v = npTarget.value; try{ npTarget.setSelectionRange(v.length, v.length); }catch{}
     }
@@ -520,15 +565,13 @@
     }
     function insertVal(s){
       if(!npTarget) return;
+      buzz(8);
       const el=npTarget;
       const start = el.selectionStart ?? el.value.length;
       const end = el.selectionEnd ?? el.value.length;
       let v = el.value;
       if(s==='.' && v.includes('.')) return;
-      if(s==='-'){
-        if(v.startsWith('-')) v = v.slice(1); else v = '-' + v;
-        el.value = v; return;
-      }
+      if(s==='-'){ v = v.startsWith('-') ? v.slice(1) : ('-'+v); el.value=v; return; }
       el.value = v.slice(0,start) + s + v.slice(end);
       const pos = start + s.length;
       try{ el.setSelectionRange(pos,pos); }catch{}
@@ -538,9 +581,7 @@
         inp.readOnly = true;
         inp.addEventListener('focus', ()=> showPad(inp));
         inp.addEventListener('click', ()=> showPad(inp));
-        // NOTE: no blur-to-hide anymore
       });
-      // optional keyboard toggle
       document.querySelectorAll('.kbd-toggle').forEach(btn=>{
         btn.addEventListener('click', ()=>{
           const id = btn.getAttribute('data-for'); const el = document.getElementById(id);
@@ -550,7 +591,6 @@
           btn.textContent = el.readOnly ? 'kbd' : 'done';
         });
       });
-      // tap outside to hide
       document.addEventListener('click', (e)=>{
         if(!numpad.classList.contains('show')) return;
         const withinPad = e.target.closest('#numpad');
@@ -574,12 +614,24 @@
       npTarget.dispatchEvent(new Event('input',{bubbles:true}));
     });
 
-    // ---------- Signal (nice) ----------
-    function sh_getRange(){
-      const l=parseFloat(val('sh_lrv')), u=parseFloat(val('sh_urv'));
-      if(isNaN(l)||isNaN(u)||l===u){ alert('Enter valid LRV/URV'); return null; }
-      return {l,u};
+    // ---------- Percent ----------
+    function calcPercent(){
+      const L=parseFloat(val('lrv')); const U=parseFloat(val('urv'));
+      if(isNaN(L)||isNaN(U)||L===U){ alert('Enter valid LRV/URV'); return; }
+      const steps=[0,25,50,75,100];
+      const rows=[['%','EU']];
+      steps.forEach(p=> rows.push([p+'%', fmt(L+(U-L)*(p/100))]));
+      const t=document.getElementById('percentTable');
+      t.innerHTML = rows.map((r,i)=>`<tr>${r.map(c=>`<${i?'td':'th'}>${c}</${i?'td':'th'}>`).join('')}</tr>`).join('');
     }
+    function exportPercentCSV(){
+      const L=parseFloat(val('lrv')); const U=parseFloat(val('urv')); if(isNaN(L)||isNaN(U)||L===U){ alert('Enter valid LRV/URV'); return; }
+      const rows=[['%','EU'],['0%',L],['25%',L+(U-L)*.25],['50%',L+(U-L)*.5],['75%',L+(U-L)*.75],['100%',U]];
+      downloadCSV('percent_steps.csv', rows);
+    }
+
+    // ---------- Signal (nice) ----------
+    function sh_getRange(){ const l=parseFloat(val('sh_lrv')), u=parseFloat(val('sh_urv')); if(isNaN(l)||isNaN(u)||l===u){ alert('Enter valid LRV/URV'); return null; } return {l,u}; }
     function fmtEUlabel(){ const lbl = document.getElementById('sh_eulbl').value.trim(); return lbl?(' '+lbl):''; }
     function sh_updateFromPct(p){
       const r=sh_getRange(); if(!r) return;
@@ -599,15 +651,7 @@
     }
     function sh_fromMA(){ const r=sh_getRange(); if(!r) return; const m=parseFloat(val('sh_ma')); if(isNaN(m)){alert('Enter mA');return;} const pct = Math.min(Math.max((m-4)/16*100,0),100); sh_updateFromPct(pct); }
     function sh_fromPct(){ const p=parseFloat(val('sh_pct')); if(isNaN(p)){alert('Enter %');return;} sh_updateFromPct(p); }
-    function sh_fromEU(){
-      const r=sh_getRange(); if(!r) return;
-      const e=parseFloat(val('sh_eu')); if(isNaN(e)){alert('Enter EU');return;}
-      const sqrt = document.getElementById('sqrt_mode').checked;
-      let pct;
-      if(!sqrt){ pct = (e - r.l)/(r.u - r.l)*100; }
-      else { const euNorm = (e - r.l)/(r.u - r.l); pct = Math.pow(Math.max(euNorm,0),2)*100; }
-      sh_updateFromPct(pct);
-    }
+    function sh_fromEU(){ const r=sh_getRange(); if(!r) return; const e=parseFloat(val('sh_eu')); if(isNaN(e)){alert('Enter EU');return;} const sqrt=document.getElementById('sqrt_mode').checked; let pct; if(!sqrt){ pct = (e - r.l)/(r.u - r.l)*100; } else { const euNorm=(e - r.l)/(r.u - r.l); pct = Math.pow(Math.max(euNorm,0),2)*100; } sh_updateFromPct(pct); }
     document.getElementById('sh_from_ma').addEventListener('click', sh_fromMA);
     document.getElementById('sh_from_pct').addEventListener('click', sh_fromPct);
     document.getElementById('sh_from_eu').addEventListener('click', sh_fromEU);
@@ -621,10 +665,10 @@
       });
     });
 
-    // ---------- Pressure conversions ----------
-    const INH2O_PER_PSI=27.679904842545, KPA_PER_PSI=6.894757293168, IN_PER_FT=12, IN_PER_M=39.37007874;
+    // ---------- Pressure ----------
+    const INH2O_PER_PSI=27.679904842545, KPA_PER_PSI=6.894757293168;
     const P2PA = { pa:1, kpa:1000, mpa:1_000_000, bar:100000, psi:6894.757293168, inh2o:249.08891, mmh2o:9.80665, inhg:3386.389, mmhg:133.322387415 };
-    function convertPressure(val, from, to){ if(!Number.isFinite(val)) return ''; const pa = val * P2PA[from]; return pa / P2PA[to]; }
+    function convertPressure(valV, from, to){ if(!Number.isFinite(valV)) return ''; const pa = valV * P2PA[from]; return pa / P2PA[to]; }
     document.getElementById('pc_convert').addEventListener('click', ()=>{
       const v=parseFloat(val('pc_val_in')); if(isNaN(v)){ alert('Enter a value to convert'); return; }
       const from=document.getElementById('pc_unit_in').value; const to=document.getElementById('pc_unit_out').value;
@@ -633,84 +677,49 @@
     document.getElementById('pc_swap').addEventListener('click', ()=>{
       const a=document.getElementById('pc_unit_in'); const b=document.getElementById('pc_unit_out'); const tmp=a.value; a.value=b.value; b.value=tmp;
     });
-
-    // Gauge ↔ Absolute
     function psigToPsia(){const a=parseFloat(val('atm')), g=parseFloat(val('psig')); if(isNaN(a)||isNaN(g)){alert('Enter atm and psig');return;} setVal('psia',fmt(a+g));}
     function psiaToPsig(){const a=parseFloat(val('atm')), p=parseFloat(val('psia')); if(isNaN(a)||isNaN(p)){alert('Enter atm and psia');return;} setVal('psig',fmt(p-a));}
-
-    // psi/kPa/bar quick trio
     function fromPSI(){const p=parseFloat(val('u_psi')); if(isNaN(p)){alert('Enter psi');return;} setVal('u_kpa',fmt(p*KPA_PER_PSI)); setVal('u_bar',fmt(p*0.06894757));}
     function fromKPA(){const k=parseFloat(val('u_kpa')); if(isNaN(k)){alert('Enter kPa');return;} const psi=k/KPA_PER_PSI; setVal('u_psi',fmt(psi)); setVal('u_bar',fmt(psi*0.06894757));}
     function fromBAR(){const b=parseFloat(val('u_bar')); if(isNaN(b)){alert('Enter bar');return;} const psi=b/0.06894757; setVal('u_psi',fmt(psi)); setVal('u_kpa',fmt(psi*KPA_PER_PSI));}
-
-    // Pressure switch + vacuum
     function calcSwitch(){
       const sp=parseFloat(val('sw_set')); const db=parseFloat(val('sw_db')); const mode=document.getElementById('sw_mode').value;
       if(isNaN(sp)||isNaN(db)||db<0){ alert('Enter setpoint and deadband ≥ 0'); return; }
       const openOnRise = (mode==='nc');
-      const rows = [
-        ['Contact', 'Action', 'Pressure'],
-        [openOnRise?'NC':'NO', openOnRise?'opens':'closes', fmt(sp)+' psig'],
-        [openOnRise?'NC':'NO', openOnRise?'closes':'opens', fmt(sp-db)+' psig'],
-      ];
-      const tb=document.querySelector('#sw_out tbody'); tb.innerHTML='';
-      rows.forEach((r,i)=>{ tb.insertAdjacentHTML('beforeend', `<tr>${r.map((c)=>`<${i? 'td':'th'}>${c}</${i? 'td':'th'}>`).join('')}</tr>`); });
+      const rows = [['Contact','Action','Pressure'],[openOnRise?'NC':'NO',openOnRise?'opens':'closes',fmt(sp)+' psig'],[openOnRise?'NC':'NO',openOnRise?'closes':'opens',fmt(sp-db)+' psig']];
+      const tb=document.querySelector('#sw_out tbody'); tb.innerHTML=''; rows.forEach((r,i)=> tb.insertAdjacentHTML('beforeend', `<tr>${r.map(c=>`<${i?'td':'th'}>${c}</${i?'td':'th'}>`).join('')}</tr>`));
     }
-    function fromInHg(){
-      const inhg=parseFloat(val('vac_inhg')); const atmPsia=parseFloat(val('atm')); if(isNaN(inhg)||isNaN(atmPsia)){alert('Enter inHg and atm psia');return;}
-      const psia = atmPsia - (inhg * atmPsia / 29.92);
-      const psig = psia - atmPsia;
-      setVal('vac_psia',fmt(psia)); setVal('vac_psig',fmt(psig));
-    }
-    function fromPSIA(){
-      const psia=parseFloat(val('vac_psia')); const atmPsia=parseFloat(val('atm')); if(isNaN(psia)||isNaN(atmPsia)){alert('Enter psia and atm');return;}
-      const inhg = (atmPsia-psia) * (29.92/atmPsia);
-      const psig = psia - atmPsia;
-      setVal('vac_inhg',fmt(inhg)); setVal('vac_psig',fmt(psig));
-    }
-    function fromPSIG(){
-      const psig=parseFloat(val('vac_psig')); const atmPsia=parseFloat(val('atm')); if(isNaN(psig)||isNaN(atmPsia)){alert('Enter psig and atm');return;}
-      const psia = psig + atmPsia;
-      const inhg = (atmPsia-psia) * (29.92/atmPsia);
-      setVal('vac_psia',fmt(psia)); setVal('vac_inhg',fmt(inhg));
-    }
+    function fromInHg(){ const inhg=parseFloat(val('vac_inhg')); const atmPsia=parseFloat(val('atm')); if(isNaN(inhg)||isNaN(atmPsia)){alert('Enter inHg and atm psia');return;} const psia = atmPsia - (inhg * atmPsia / 29.92); const psig = psia - atmPsia; setVal('vac_psia',fmt(psia)); setVal('vac_psig',fmt(psig)); }
+    function fromPSIA(){ const psia=parseFloat(val('vac_psia')); const atmPsia=parseFloat(val('atm')); if(isNaN(psia)||isNaN(atmPsia)){alert('Enter psia and atm');return;} const inhg = (atmPsia-psia) * (29.92/atmPsia); const psig = psia - atmPsia; setVal('vac_inhg',fmt(inhg)); setVal('vac_psig',fmt(psig)); }
+    function fromPSIG(){ const psig=parseFloat(val('vac_psig')); const atmPsia=parseFloat(val('atm')); if(isNaN(psig)||isNaN(atmPsia)){alert('Enter psig and atm');return;} const psia = psig + atmPsia; const inhg = (atmPsia-psia) * (29.92/atmPsia); setVal('vac_psia',fmt(psia)); setVal('vac_inhg',fmt(inhg)); }
 
-    // ---------- Level helpers (same as v0.72) ----------
+    // ---------- Level ----------
     function pctToDP(p, LRV, URV){ return LRV + (URV-LRV)*(p/100); }
     function pctToMA(p){ return 4 + 16*(p/100); }
     function maToPct(ma){ return (ma-4)/16*100; }
 
-    // Level — Open
+    // Open
+    const IN_PER_FT=12, IN_PER_M=39.37007874;
     function LO_cfg(){
-      const span=parseFloat(val('lo_span')); const u=document.getElementById('lo_units').value; const sg=parseFloat(val('lo_sg')||'1'); const dpU=document.getElementById('lo_dpU').value;
+      const s=getS();
+      const span=parseFloat(val('lo_span')); const u=document.getElementById('lo_units').value||s.lunit; const sg=parseFloat(val('lo_sg')||'1'); const dpU=document.getElementById('lo_dpU').value;
       if(isNaN(span)||span<=0||isNaN(sg)||sg<=0){ alert('Enter span and SG'); return null; }
-      let spanIn=span; if(u==='ft') spanIn*=12; if(u==='m') spanIn*=39.37007874;
+      let spanIn=span; if(u==='ft') spanIn*=IN_PER_FT; if(u==='m') spanIn*=IN_PER_M;
       const urv_inh2o = sg*spanIn;
       let LRV = parseFloat(val('lo_lrv')); if(isNaN(LRV)) LRV=0;
-      let URV = parseFloat(val('lo_urv')); if(isNaN(URV)) URV = (dpU==='inh2o')?urv_inh2o:(dpU==='psi'? urv_inh2o/27.679904842545 : (urv_inh2o/27.679904842545)*6.894757293168 );
+      let URV = parseFloat(val('lo_urv'));
+      if(isNaN(URV)) URV = (dpU==='inh2o')?urv_inh2o:(dpU==='psi'? urv_inh2o/27.679904842545 : (urv_inh2o/27.679904842545)*6.894757293168 );
       return {span, u, spanIn, sg, dpU, LRV, URV};
     }
-    function LO_levelToMa(){
-      const c=LO_cfg(); if(!c) return; const lvl=parseFloat(val('lo_lvl')); if(isNaN(lvl)){alert('Enter level');return;}
-      let lvlIn=lvl; if(c.u==='ft') lvlIn*=12; if(c.u==='m') lvlIn*=39.37007874;
-      const pct=Math.min(Math.max((lvlIn/c.spanIn)*100,0),100); const dp=pctToDP(pct,c.LRV,c.URV); const ma=pctToMA(pct);
-      document.getElementById('lo_result').innerText = `Level ${fmt(lvl)} ${c.u} → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → ${fmt(ma)} mA`;
-    }
-    function LO_maToLevel(){
-      const c=LO_cfg(); if(!c) return; const ma=parseFloat(val('lo_ma')); if(isNaN(ma)){alert('Enter mA');return;}
-      const pct=Math.min(Math.max(maToPct(ma),0),100); const dp=pctToDP(pct,c.LRV,c.URV);
-      let lvlIn=(pct/100)*c.spanIn; let lvl=lvlIn; if(c.u==='ft') lvl=lvlIn/12; if(c.u==='m') lvl=lvlIn/39.37007874;
-      document.getElementById('lo_result').innerText = `${fmt(ma)} mA → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → Level ${fmt(lvl)} ${c.u}`;
-    }
-    function LO_buildSteps(){
-      const c=LO_cfg(); if(!c) return; const steps=[0,25,50,75,100]; const tb=document.querySelector('#lo_steps tbody'); tb.innerHTML='';
-      steps.forEach(p=>{ const dp=pctToDP(p,c.LRV,c.URV); const lvl=(p/100)*c.span; tb.insertAdjacentHTML('beforeend', `<tr><td>${p}%</td><td>${fmt(lvl)} ${c.u}</td><td>${fmt(dp)} ${c.dpU}</td><td>${fmt(pctToMA(p))} mA</td></tr>`); });
-    }
+    function LO_levelToMa(){ const c=LO_cfg(); if(!c) return; const lvl=parseFloat(val('lo_lvl')); if(isNaN(lvl)){alert('Enter level');return;} let lvlIn=lvl; if(c.u==='ft') lvlIn*=IN_PER_FT; if(c.u==='m') lvlIn*=IN_PER_M; const pct=Math.min(Math.max((lvlIn/c.spanIn)*100,0),100); const dp=pctToDP(pct,c.LRV,c.URV); const ma=pctToMA(pct); document.getElementById('lo_result').innerText = `Level ${fmt(lvl)} ${c.u} → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → ${fmt(ma)} mA`; }
+    function LO_maToLevel(){ const c=LO_cfg(); if(!c) return; const ma=parseFloat(val('lo_ma')); if(isNaN(ma)){alert('Enter mA');return;} const pct=Math.min(Math.max(maToPct(ma),0),100); const dp=pctToDP(pct,c.LRV,c.URV); let lvlIn=(pct/100)*c.spanIn; let lvl=lvlIn; if(c.u==='ft') lvl=lvlIn/IN_PER_FT; if(c.u==='m') lvl=lvlIn/IN_PER_M; document.getElementById('lo_result').innerText = `${fmt(ma)} mA → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → Level ${fmt(lvl)} ${c.u}`; }
+    function LO_buildSteps(){ const c=LO_cfg(); if(!c) return; const steps=[0,25,50,75,100]; const tb=document.querySelector('#lo_steps tbody'); tb.innerHTML=''; steps.forEach(p=>{ const dp=pctToDP(p,c.LRV,c.URV); const lvl=(p/100)*c.span; tb.insertAdjacentHTML('beforeend', `<tr><td>${p}%</td><td>${fmt(lvl)} ${c.u}</td><td>${fmt(dp)} ${c.dpU}</td><td>${fmt(pctToMA(p))} mA</td></tr>`); }); }
 
-    // Level — Closed
-    function LC_inches(valU, u){ if(u==='in') return valU; if(u==='ft') return valU*12; if(u==='m') return valU*39.37007874; return valU; }
+    // Closed
+    function LC_inches(valU, u){ if(u==='in') return valU; if(u==='ft') return valU*IN_PER_FT; if(u==='m') return valU*IN_PER_M; return valU; }
     function LC_cfg(){
-      const span=parseFloat(val('lc_span')); const u=document.getElementById('lc_units').value;
+      const s=getS();
+      const span=parseFloat(val('lc_span')); const u=(document.getElementById('lc_units').value)||s.lunit;
       const sgL=parseFloat(val('lc_sgL')||'1'); const leg=document.getElementById('lc_leg').value;
       const wetH=parseFloat(val('lc_wetH')||'0'); const sgW=parseFloat(val('lc_sgW')||'1'); const dpU=document.getElementById('lc_dpU').value;
       if(isNaN(span)||span<=0||isNaN(sgL)||sgL<=0){ alert('Enter span and liquid SG'); return null; }
@@ -721,22 +730,55 @@
       let URV=parseFloat(val('lc_urv')); if(isNaN(URV)) URV = (dpU==='inh2o')?dP100_inH2O:(dpU==='psi'? dP100_inH2O/27.679904842545 : (dP100_inH2O/27.679904842545)*6.894757293168);
       return {span, u, span_in, sgL, leg, wetH, sgW, dpU, LRV, URV};
     }
-    function LC_levelToMa(){
-      const c=LC_cfg(); if(!c) return; const lvl=parseFloat(val('lc_lvl')); if(isNaN(lvl)){alert('Enter level');return;}
-      const lvl_in = LC_inches(lvl, c.u);
-      const pct=Math.min(Math.max((lvl_in/c.span_in)*100,0),100); const dp=pctToDP(pct,c.LRV,c.URV); const ma=pctToMA(pct);
-      document.getElementById('lc_result').innerText = `Level ${fmt(lvl)} ${c.u} → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → ${fmt(ma)} mA`;
+    function LC_levelToMa(){ const c=LC_cfg(); if(!c) return; const lvl=parseFloat(val('lc_lvl')); if(isNaN(lvl)){alert('Enter level');return;} const lvl_in = LC_inches(lvl, c.u); const pct=Math.min(Math.max((lvl_in/c.span_in)*100,0),100); const dp=pctToDP(pct,c.LRV,c.URV); const ma=pctToMA(pct); document.getElementById('lc_result').innerText = `Level ${fmt(lvl)} ${c.u} → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → ${fmt(ma)} mA`; }
+    function LC_maToLevel(){ const c=LC_cfg(); if(!c) return; const ma=parseFloat(val('lc_ma')); if(isNaN(ma)){alert('Enter mA');return;} const pct=Math.min(Math.max(maToPct(ma),0),100); const dp=pctToDP(pct,c.LRV,c.URV); const lvl_in=(pct/100)*c.span_in; let lvl=lvl_in; if(c.u==='ft') lvl=lvl_in/IN_PER_FT; if(c.u==='m') lvl=lvl_in/IN_PER_M; document.getElementById('lc_result').innerText = `${fmt(ma)} mA → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → Level ${fmt(lvl)} ${c.u}`; }
+    function LC_buildSteps(){ const c=LC_cfg(); if(!c) return; const steps=[0,25,50,75,100]; const tb=document.querySelector('#lc_steps tbody'); tb.innerHTML=''; steps.forEach(p=>{ const dp=pctToDP(p,c.LRV,c.URV); const lvl=(p/100)*c.span; tb.insertAdjacentHTML('beforeend', `<tr><td>${p}%</td><td>${fmt(lvl)} ${c.u}</td><td>${fmt(dp)} ${c.dpU}</td><td>${fmt(pctToMA(p))} mA</td></tr>`); }); }
+
+    // ---------- Temp ----------
+    function T_toK(v,unit){ if(unit==='C') return v+273.15; if(unit==='F') return (v-32)*5/9+273.15; return v; }
+    function K_to(v,unit){ if(unit==='C') return v-273.15; if(unit==='F') return (v-273.15)*9/5+32; return v; }
+    document.getElementById('tc_conv_btn').addEventListener('click', ()=>{
+      const v=parseFloat(val('tc_val')); if(isNaN(v)){ alert('Enter a temperature'); return; }
+      const from=document.getElementById('tc_from').value, to=document.getElementById('tc_to').value;
+      const k=T_toK(v, from); setVal('tc_out', fmt(K_to(k, to)));
+    });
+    document.getElementById('td_conv_btn').addEventListener('click', ()=>{
+      const v=parseFloat(val('td_val')); if(isNaN(v)){ alert('Enter ΔT'); return; }
+      const from=document.getElementById('td_from').value, to=document.getElementById('td_to').value;
+      let c; if(from==='F') c=v*5/9; else if(from==='K') c=v; else c=v;
+      let out; if(to==='F') out=c*9/5; else if(to==='K') out=c; else out=c;
+      setVal('td_out', fmt(out));
+    });
+
+    // ---------- I/P 3–15 ----------
+    function ip_fromPct(p){ const psi=3+12*(p/100); setVal('ip_psi', fmt(psi)); document.getElementById('ip_read_pct').textContent=fmt(p)+'%'; document.getElementById('ip_read_psi').textContent=fmt(psi)+' psi'; }
+    function ip_fromPsi(psi){ const pct=(psi-3)/12*100; setVal('ip_pct', fmt(pct)); document.getElementById('ip_read_pct').textContent=fmt(pct)+'%'; document.getElementById('ip_read_psi').textContent=fmt(psi)+' psi'; }
+    document.getElementById('ip_from_pct').addEventListener('click', ()=>{ const p=parseFloat(val('ip_pct')); if(isNaN(p)){alert('Enter %');return;} ip_fromPct(p); });
+    document.getElementById('ip_from_psi').addEventListener('click', ()=>{ const psi=parseFloat(val('ip_psi')); if(isNaN(psi)){alert('Enter psi');return;} ip_fromPsi(psi); });
+    document.querySelectorAll('.ipstep').forEach(b=> b.addEventListener('click', ()=> ip_fromPct(parseFloat(b.dataset.p))));
+
+    // ---------- Calibration / Loop / Tickets / Backup (unchanged logic placeholders) ----------
+    // (Left as in previous versions — your existing CSV and storage handlers remain)
+
+    // ---------- Settings wiring ----------
+    function loadSettingsUI(){
+      const s=getS();
+      setVal('s_atm', s.atm); document.getElementById('s_punit').value=s.punit; document.getElementById('s_lunit').value=s.lunit;
+      document.getElementById('s_haptics').checked=!!s.haptics; document.getElementById('s_dark').checked=(s.theme==='dark');
+      // apply to Pressure defaults
+      setVal('atm', s.atm);
     }
-    function LC_maToLevel(){
-      const c=LC_cfg(); if(!c) return; const ma=parseFloat(val('lc_ma')); if(isNaN(ma)){alert('Enter mA');return;}
-      const pct=Math.min(Math.max(maToPct(ma),0),100); const dp=pctToDP(pct,c.LRV,c.URV);
-      const lvl_in=(pct/100)*c.span_in; let lvl=lvl_in; if(c.u==='ft') lvl=lvl_in/12; if(c.u==='m') lvl=lvl_in/39.37007874;
-      document.getElementById('lc_result').innerText = `${fmt(ma)} mA → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → Level ${fmt(lvl)} ${c.u}`;
-    }
-    function LC_buildSteps(){
-      const c=LC_cfg(); if(!c) return; const steps=[0,25,50,75,100]; const tb=document.querySelector('#lc_steps tbody'); tb.innerHTML='';
-      steps.forEach(p=>{ const dp=pctToDP(p,c.LRV,c.URV); const lvl=(p/100)*c.span; tb.insertAdjacentHTML('beforeend', `<tr><td>${p}%</td><td>${fmt(lvl)} ${c.u}</td><td>${fmt(dp)} ${c.dpU}</td><td>${fmt(pctToMA(p))} mA</td></tr>`); });
-    }
+    loadSettingsUI();
+    document.getElementById('s_save').addEventListener('click', ()=>{
+      const s=getS();
+      const atm=parseFloat(val('s_atm')); if(!isNaN(atm)) s.atm=atm;
+      s.punit=document.getElementById('s_punit').value;
+      s.lunit=document.getElementById('s_lunit').value;
+      s.haptics=document.getElementById('s_haptics').checked;
+      s.theme=document.getElementById('s_dark').checked?'dark':'auto';
+      setS(s); syncThemeFromSettings(); setVal('atm', s.atm); alert('Saved.');
+    });
+    document.getElementById('s_reset').addEventListener('click', ()=>{ setS(DEF); loadSettingsUI(); syncThemeFromSettings(); alert('Settings reset.'); });
 
     // ---------- Init ----------
     wireNumpad();
@@ -745,6 +787,8 @@
     document.getElementById('sh_pct').value = 50;
     document.getElementById('read_pct').textContent = '50%';
     document.getElementById('read_ma').textContent = '12';
+    // Pressure default atm
+    setVal('atm', getS().atm);
   </script>
 </body>
 </html>
