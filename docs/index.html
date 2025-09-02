@@ -41,18 +41,28 @@
     table{ width:100%; border-collapse:collapse; margin-top:8px; font-size:14px; }
     th,td{ border:1px solid var(--border); padding:8px; text-align:left; }
     th{ background:rgba(128,128,128,.08); }
-
-    /* Legacy link cards */
-    .toolgrid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:10px; margin:8px 0; }
-    .toolcard{ display:block; padding:12px; border:1px solid var(--border); background:var(--card); color:var(--fg); text-decoration:none; border-radius:10px; }
-    .toolcard:hover{ outline:2px solid var(--accent); }
-    .toolcard h4{ margin:0 0 4px 0; font-size:16px; }
-    .toolcard p{ margin:0; font-size:12px; color:var(--muted); }
-
     footer{ text-align:center; color:var(--muted); font-size:12px; padding:12px; }
     .hidden{ display:none; }
     .pill{ padding:2px 8px; border-radius:999px; border:1px solid var(--border); font-size:12px; }
     .pill.open{ background:#2f3646; } .pill.blocked{ background:#5a3a2f;} .pill.done{ background:#243a2f;}
+
+    /* Number pad */
+    .numpad {
+      position: fixed; left: 0; right: 0; bottom: 0;
+      background: var(--card); border-top: 1px solid var(--border);
+      display: none; padding: 8px; z-index: 50;
+      box-shadow: 0 -6px 20px rgba(0,0,0,.25);
+    }
+    .numpad.show { display: block; }
+    .numpad-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+      max-width: 520px; margin: 0 auto;
+    }
+    .np-btn {
+      padding: 16px; font-size: 18px; border-radius: 10px; border:1px solid var(--border);
+      background: var(--btn); color: var(--btn-fg); text-align: center; user-select: none;
+    }
+    .np-wide { grid-column: span 2; }
   </style>
 </head>
 <body>
@@ -62,14 +72,15 @@
   </header>
 
   <nav>
-    <button data-target="percent" class="active">Percent Steps</button>
-    <button data-target="signal">Signal Helper</button>
+    <button data-target="percent" class="active">Percent</button>
+    <button data-target="signal">Signal</button>
+    <button data-target="level_open">Level — Open</button>
+    <button data-target="level_closed">Level — Closed</button>
     <button data-target="pressure">Pressure</button>
     <button data-target="cal">Calibration</button>
     <button data-target="loop">Loop Log</button>
     <button data-target="tickets">Tickets</button>
     <button data-target="qr">QR Scan</button>
-    <button data-target="legacy">Legacy Tools</button>
     <button data-target="backup">Backup</button>
   </nav>
 
@@ -78,8 +89,8 @@
     <section id="percent" class="active">
       <h2>Percent Steps</h2>
       <div class="row">
-        <div class="col"><label>LRV <input id="lrv" type="number" step="any" placeholder="0"></label></div>
-        <div class="col"><label>URV <input id="urv" type="number" step="any" placeholder="200"></label></div>
+        <div class="col"><label>LRV <input id="lrv" class="num" inputmode="decimal" placeholder="0"></label></div>
+        <div class="col"><label>URV <input id="urv" class="num" inputmode="decimal" placeholder="200"></label></div>
       </div>
       <div class="row">
         <div class="col"><button class="btn" onclick="calcPercent()">Calculate</button></div>
@@ -93,13 +104,13 @@
     <section id="signal">
       <h2>Signal Helper (4–20 mA)</h2>
       <div class="row">
-        <div class="col"><label>LRV (EU) <input id="sh_lrv" type="number" step="any" placeholder="0"></label></div>
-        <div class="col"><label>URV (EU) <input id="sh_urv" type="number" step="any" placeholder="200"></label></div>
+        <div class="col"><label>LRV (EU) <input id="sh_lrv" class="num" inputmode="decimal" placeholder="0"></label></div>
+        <div class="col"><label>URV (EU) <input id="sh_urv" class="num" inputmode="decimal" placeholder="200"></label></div>
       </div>
       <div class="row">
-        <div class="col"><label>mA <input id="ma" type="number" step="any" placeholder="12"></label></div>
-        <div class="col"><label>% <input id="percentInput" type="number" step="any" placeholder="50"></label></div>
-        <div class="col"><label>EU <input id="eu" type="number" step="any" placeholder="100"></label></div>
+        <div class="col"><label>mA <input id="ma" class="num" inputmode="decimal" placeholder="12"></label></div>
+        <div class="col"><label>% <input id="percentInput" class="num" inputmode="decimal" placeholder="50"></label></div>
+        <div class="col"><label>EU <input id="eu" class="num" inputmode="decimal" placeholder="100"></label></div>
       </div>
       <div class="row">
         <div class="col"><button class="btn" onclick="maToPercent()">From mA</button></div>
@@ -110,35 +121,128 @@
       <p id="signalResult" class="muted"></p>
     </section>
 
+    <!-- Level — Open (tap-to-tap) -->
+    <section id="level_open">
+      <h2>Level — Open Tank (tap-to-tap)</h2>
+      <div class="row">
+        <div class="col"><label>Tap-to-tap span <input id="lo_span" class="num" inputmode="decimal" placeholder="e.g., 72"></label></div>
+        <div class="col"><label>Units
+          <select id="lo_units"><option value="in">in</option><option value="ft">ft</option><option value="m">m</option></select>
+        </label></div>
+        <div class="col"><label>Specific Gravity (SG) <input id="lo_sg" class="num" inputmode="decimal" value="1.0"></label></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>dP Units
+          <select id="lo_dpU"><option value="inh2o">inH₂O</option><option value="psi">psi</option><option value="kpa">kPa</option></select>
+        </label></div>
+        <div class="col"><label>LRV (optional) <input id="lo_lrv" class="num" inputmode="decimal" placeholder="blank = 0"></label></div>
+        <div class="col"><label>URV (optional) <input id="lo_urv" class="num" inputmode="decimal" placeholder="blank = auto"></label></div>
+      </div>
+      <div class="hr"></div>
+      <div class="row">
+        <div class="col"><label>Level <input id="lo_lvl" class="num" inputmode="decimal" placeholder="same units as span"></label></div>
+        <div class="col"><button class="btn" onclick="LO_levelToMa()">Level → mA</button></div>
+        <div class="col"><label>mA <input id="lo_ma" class="num" inputmode="decimal" placeholder="e.g., 12"></label></div>
+        <div class="col"><button class="btn" onclick="LO_maToLevel()">mA → Level</button></div>
+      </div>
+      <p id="lo_result" class="muted"></p>
+      <div class="row"><div class="col"><button class="btn" onclick="LO_buildSteps()">Build 0/25/50/75/100 Table</button></div></div>
+      <table id="lo_steps"><thead><tr><th>%</th><th>Level (span units)</th><th>dP</th><th>mA</th></tr></thead><tbody></tbody></table>
+      <p class="muted">Open tank: ΔP = ρ g h ⇒ with SG, inH₂O@100% ≈ SG × span(in).</p>
+    </section>
+
+    <!-- Level — Closed (tap-to-tap) -->
+    <section id="level_closed">
+      <h2>Level — Closed Tank (tap-to-tap)</h2>
+      <div class="row">
+        <div class="col"><label>Tap-to-tap span <input id="lc_span" class="num" inputmode="decimal" placeholder="e.g., 72"></label></div>
+        <div class="col"><label>Units
+          <select id="lc_units"><option value="in">in</option><option value="ft">ft</option><option value="m">m</option></select>
+        </label></div>
+        <div class="col"><label>Liquid SG <input id="lc_sgL" class="num" inputmode="decimal" value="1.0"></label></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>Leg Type
+          <select id="lc_leg"><option value="dry">Dry leg (gas)</option><option value="wet">Wet leg (condensing)</option></select>
+        </label></div>
+        <div class="col"><label>Wet leg height (in) <input id="lc_wetH" class="num" inputmode="decimal" placeholder="if wet"></label></div>
+        <div class="col"><label>Wet leg SG <input id="lc_sgW" class="num" inputmode="decimal" value="1.0"></label></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>dP Units
+          <select id="lc_dpU"><option value="inh2o">inH₂O</option><option value="psi">psi</option><option value="kpa">kPa</option></select>
+        </label></div>
+        <div class="col"><label>LRV (optional) <input id="lc_lrv" class="num" inputmode="decimal" placeholder="auto"></label></div>
+        <div class="col"><label>URV (optional) <input id="lc_urv" class="num" inputmode="decimal" placeholder="auto"></label></div>
+      </div>
+      <div class="hr"></div>
+      <div class="row">
+        <div class="col"><label>Level <input id="lc_lvl" class="num" inputmode="decimal" placeholder="same units as span"></label></div>
+        <div class="col"><button class="btn" onclick="LC_levelToMa()">Level → mA</button></div>
+        <div class="col"><label>mA <input id="lc_ma" class="num" inputmode="decimal" placeholder="e.g., 12"></label></div>
+        <div class="col"><button class="btn" onclick="LC_maToLevel()">mA → Level</button></div>
+      </div>
+      <p id="lc_result" class="muted"></p>
+      <div class="row"><div class="col"><button class="btn" onclick="LC_buildSteps()">Build 0/25/50/75/100 Table</button></div></div>
+      <table id="lc_steps"><thead><tr><th>%</th><th>Level (span units)</th><th>dP</th><th>mA</th></tr></thead><tbody></tbody></table>
+      <p class="muted">Dry leg: ΔP = ρ_l g h. Wet leg: ΔP = ρ_l g h − ρ_w g H_w (constant offset).</p>
+    </section>
+
     <!-- Pressure -->
     <section id="pressure">
       <h2>Pressure</h2>
       <h3>Gauge ↔ Absolute</h3>
       <div class="row">
-        <div class="col"><label>Atmospheric (psia) <input id="atm" type="number" step="any" value="14.7"></label></div>
-        <div class="col"><label>Gauge (psig) <input id="psig" type="number" step="any"></label></div>
-        <div class="col"><label>Absolute (psia) <input id="psia" type="number" step="any"></label></div>
+        <div class="col"><label>Atmospheric (psia) <input id="atm" class="num" inputmode="decimal" value="14.7"></label></div>
+        <div class="col"><label>Gauge (psig) <input id="psig" class="num" inputmode="decimal"></label></div>
+        <div class="col"><label>Absolute (psia) <input id="psia" class="num" inputmode="decimal"></label></div>
       </div>
       <div class="row">
         <div class="col"><button class="btn" onclick="psigToPsia()">psig → psia</button></div>
         <div class="col"><button class="btn" onclick="psiaToPsig()">psia → psig</button></div>
       </div>
+
       <div class="hr"></div>
       <h3>psi ↔ kPa ↔ bar</h3>
       <div class="row">
-        <div class="col"><label>psi <input id="u_psi" type="number" step="any"></label></div>
-        <div class="col"><label>kPa <input id="u_kpa" type="number" step="any"></label></div>
-        <div class="col"><label>bar <input id="u_bar" type="number" step="any"></label></div>
+        <div class="col"><label>psi <input id="u_psi" class="num" inputmode="decimal"></label></div>
+        <div class="col"><label>kPa <input id="u_kpa" class="num" inputmode="decimal"></label></div>
+        <div class="col"><label>bar <input id="u_bar" class="num" inputmode="decimal"></label></div>
       </div>
       <div class="row">
         <div class="col"><button class="btn" onclick="fromPSI()">From psi</button></div>
         <div class="col"><button class="btn" onclick="fromKPA()">From kPa</button></div>
         <div class="col"><button class="btn" onclick="fromBAR()">From bar</button></div>
       </div>
-      <p class="muted">1 psi = 6.894757 kPa = 0.06894757 bar.</p>
+
+      <div class="hr"></div>
+      <h3>Pressure Switch</h3>
+      <div class="row">
+        <div class="col"><label>Setpoint (rising, psig) <input id="sw_set" class="num" inputmode="decimal"></label></div>
+        <div class="col"><label>Deadband (psig) <input id="sw_db" class="num" inputmode="decimal"></label></div>
+        <div class="col"><label>Mode
+          <select id="sw_mode"><option value="nc">NC (opens on rise)</option><option value="no">NO (closes on rise)</option></select>
+        </label></div>
+      </div>
+      <div class="row"><div class="col"><button class="btn" onclick="calcSwitch()">Calculate</button></div></div>
+      <table id="sw_out"><tbody></tbody></table>
+
+      <div class="hr"></div>
+      <h3>Vacuum helpers</h3>
+      <div class="row">
+        <div class="col"><label>Vacuum (inHg) <input id="vac_inhg" class="num" inputmode="decimal"></label></div>
+        <div class="col"><label>psia <input id="vac_psia" class="num" inputmode="decimal"></label></div>
+        <div class="col"><label>psig <input id="vac_psig" class="num" inputmode="decimal"></label></div>
+      </div>
+      <div class="row">
+        <div class="col"><button class="btn" onclick="fromInHg()">From inHg</button></div>
+        <div class="col"><button class="btn" onclick="fromPSIA()">From psia</button></div>
+        <div class="col"><button class="btn" onclick="fromPSIG()">From psig</button></div>
+      </div>
+      <p class="muted">Assumes 29.92 inHg at 14.7 psia (sea level standard).</p>
     </section>
 
-    <!-- Calibration Tracker -->
+    <!-- Calibration -->
     <section id="cal">
       <h2>Calibration Tracker</h2>
       <div class="row">
@@ -147,8 +251,8 @@
         <div class="col"><label>Type <input id="cal_type" placeholder="PT/FT/LT/TT"></label></div>
       </div>
       <div class="row">
-        <div class="col"><label>LRV <input id="cal_lrv" type="number" step="any"></label></div>
-        <div class="col"><label>URV <input id="cal_urv" type="number" step="any"></label></div>
+        <div class="col"><label>LRV <input id="cal_lrv" class="num" inputmode="decimal"></label></div>
+        <div class="col"><label>URV <input id="cal_urv" class="num" inputmode="decimal"></label></div>
         <div class="col"><label>Method <input id="cal_method" placeholder="5-point, AF/AL"></label></div>
       </div>
       <div class="row">
@@ -184,8 +288,8 @@
           <div class="col"><select id="type"><option>AI</option><option>AO</option><option>DI</option><option>DO</option></select></div>
         </div>
         <div class="row">
-          <div class="col"><input id="rangeLrv" type="number" step="any" placeholder="LRV"></div>
-          <div class="col"><input id="rangeUrv" type="number" step="any" placeholder="URV"></div>
+          <div class="col"><input id="rangeLrv" class="num" inputmode="decimal" placeholder="LRV"></div>
+          <div class="col"><input id="rangeUrv" class="num" inputmode="decimal" placeholder="URV"></div>
           <div class="col"><input id="date" type="date" placeholder="Date"></div>
         </div>
         <div class="row">
@@ -249,45 +353,6 @@
       <p id="qr_result" class="muted"></p>
     </section>
 
-    <!-- Legacy Tools -->
-    <section id="legacy">
-      <h2>Legacy Tools</h2>
-      <div class="toolgrid">
-        <!-- LEVEL (your preferred ones) -->
-        <a class="toolcard" href="tools/level_closed.html" target="_blank" rel="noopener">
-          <h4>Level — Closed Tank</h4>
-          <p>Tap-to-Tap (pressurized; wet/dry leg)</p>
-        </a>
-        <a class="toolcard" href="tools/level_open.html" target="_blank" rel="noopener">
-          <h4>Level — Open Tank</h4>
-          <p>Tap-to-Tap (vented)</p>
-        </a>
-
-        <!-- PRESSURE / SIGNAL (existing) -->
-        <a class="toolcard" href="tools/four20.html" target="_blank" rel="noopener">
-          <h4>4–20 mA Helper</h4>
-          <p>mA ↔ % ↔ EU</p>
-        </a>
-        <a class="toolcard" href="tools/pressureA.html" target="_blank" rel="noopener">
-          <h4>Pressure A</h4>
-          <p>General pressure helper</p>
-        </a>
-        <a class="toolcard" href="tools/pressureC.html" target="_blank" rel="noopener">
-          <h4>Pressure — Gauge ↔ Absolute</h4>
-          <p>psig/psia with site atm</p>
-        </a>
-        <a class="toolcard" href="tools/pressureSwitch.html" target="_blank" rel="noopener">
-          <h4>Pressure Switch</h4>
-          <p>Setpoint / deadband</p>
-        </a>
-        <a class="toolcard" href="tools/pressureVac.html" target="_blank" rel="noopener">
-          <h4>Vacuum / Pressure</h4>
-          <p>Vac ↔ psia/psig</p>
-        </a>
-      </div>
-      <p class="muted">Make sure the files live in <code>/docs/tools/</code> and names match exactly.</p>
-    </section>
-
     <!-- Backup -->
     <section id="backup">
       <h2>Backup & Restore</h2>
@@ -300,7 +365,17 @@
     </section>
   </main>
 
-  <footer class="muted">PockeTech — v0.6</footer>
+  <!-- Number pad overlay -->
+  <div id="numpad" class="numpad" aria-hidden="true">
+    <div class="numpad-grid">
+      <div class="np-btn">7</div><div class="np-btn">8</div><div class="np-btn">9</div><div class="np-btn" data-act="back">⌫</div>
+      <div class="np-btn">4</div><div class="np-btn">5</div><div class="np-btn">6</div><div class="np-btn" data-act="clear">C</div>
+      <div class="np-btn">1</div><div class="np-btn">2</div><div class="np-btn">3</div><div class="np-btn" data-val="-">−</div>
+      <div class="np-btn np-wide">0</div><div class="np-btn">.</div><div class="np-btn np-wide" data-act="done">Done</div>
+    </div>
+  </div>
+
+  <footer class="muted">PockeTech — v0.7</footer>
 
   <script>
     // Theme toggle
@@ -329,6 +404,54 @@
     function val(id){return document.getElementById(id).value;}
     function setVal(id,v){document.getElementById(id).value=v;}
 
+    // Global Number Pad
+    const numpad = document.getElementById('numpad');
+    let npTarget = null;
+    function showPad(forInput){
+      npTarget = forInput; numpad.classList.add('show'); numpad.setAttribute('aria-hidden','false');
+      const v = npTarget.value; npTarget.focus(); try{ npTarget.setSelectionRange(v.length, v.length); }catch{}
+      window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'});
+    }
+    function hidePad(){ numpad.classList.remove('show'); numpad.setAttribute('aria-hidden','true'); npTarget = null; }
+    function insertVal(s){
+      if(!npTarget) return;
+      const el=npTarget;
+      const start = el.selectionStart ?? el.value.length;
+      const end = el.selectionEnd ?? el.value.length;
+      let v = el.value;
+      if(s==='.' && v.includes('.')) return;
+      if(s==='-'){
+        // toggle leading minus
+        if(v.startsWith('-')) v = v.slice(1);
+        else v = '-' + v;
+        el.value = v; return;
+      }
+      el.value = v.slice(0,start) + s + v.slice(end);
+      const pos = start + s.length;
+      try{ el.setSelectionRange(pos,pos); }catch{}
+    }
+    function wireNumpad(){
+      document.querySelectorAll('input.num').forEach(inp=>{
+        inp.addEventListener('focus', ()=> showPad(inp));
+        inp.addEventListener('blur', ()=> setTimeout(()=>{ if(document.activeElement !== inp) hidePad(); }, 120));
+      });
+    }
+    numpad.addEventListener('click', (e)=>{
+      const btn = e.target.closest('.np-btn'); if(!btn||!npTarget) return;
+      const act = btn.dataset.act; const explicitVal = btn.dataset.val;
+      if(act==='back'){
+        const el=npTarget; const start=el.selectionStart??el.value.length; const end=el.selectionEnd??el.value.length;
+        if(start!==end){ el.value = el.value.slice(0,start) + el.value.slice(end); try{ el.setSelectionRange(start,start); }catch{} return; }
+        if(start>0){ el.value = el.value.slice(0,start-1) + el.value.slice(start); try{ el.setSelectionRange(start-1,start-1);}catch{} }
+        return;
+      }
+      if(act==='clear'){ npTarget.value=''; return; }
+      if(act==='done'){ hidePad(); return; }
+      const text = explicitVal || btn.textContent.trim();
+      insertVal(text);
+      npTarget.dispatchEvent(new Event('input',{bubbles:true}));
+    });
+
     // Percent
     function calcPercent(){const l=parseFloat(val('lrv')), u=parseFloat(val('urv')); if(isNaN(l)||isNaN(u)||l===u){alert('Enter numeric LRV/URV (not equal).');return;} const steps=[0,25,50,75,100]; let html="<tr><th>%</th><th>Value</th></tr>"; steps.forEach(p=>{const v=l+(u-l)*(p/100); html+=`<tr><td>${p}%</td><td>${fmt(v)}</td></tr>`;}); document.getElementById('percentTable').innerHTML=html;}
     function exportPercentCSV(){const t=document.getElementById('percentTable'); if(!t||!t.rows.length){alert('Calculate first.');return;} const rows=[['Percent','EngUnits']]; for(let i=1;i<t.rows.length;i++){rows.push([t.rows[i].cells[0].innerText,t.rows[i].cells[1].innerText])} downloadCSV('percent_steps.csv',rows);}
@@ -340,13 +463,114 @@
     function euToPercent(){const r=ensureRangeSH(); if(!r) return; const e=parseFloat(val('eu')); if(isNaN(e)){alert('Enter EU.');return;} const p=Math.min(Math.max((e-r.l)/(r.u-r.l)*100,0),100); const m=4+16*(p/100); setVal('percentInput',fmt(p)); setVal('ma',fmt(m)); document.getElementById('signalResult').innerText=`${fmt(e)} EU → ${fmt(p)}% → ${fmt(m)} mA`;}
     function signalClear(){['sh_lrv','sh_urv','ma','percentInput','eu'].forEach(id=>setVal(id,'')); document.getElementById('signalResult').innerText='';}
 
-    // Pressure
-    const INH2O_PER_PSI=27.679904842545, KPA_PER_PSI=6.894757293168;
+    // Unit constants
+    const INH2O_PER_PSI=27.679904842545, KPA_PER_PSI=6.894757293168, IN_PER_FT=12, IN_PER_M=39.37007874;
+
+    // Level — Open
+    function LO_cfg(){
+      const span=parseFloat(val('lo_span')); const u=document.getElementById('lo_units').value; const sg=parseFloat(val('lo_sg')||'1'); const dpU=document.getElementById('lo_dpU').value;
+      if(isNaN(span)||span<=0||isNaN(sg)||sg<=0){ alert('Enter span and SG'); return null; }
+      let spanIn=span; if(u==='ft') spanIn*=IN_PER_FT; if(u==='m') spanIn*=IN_PER_M;
+      const urv_inh2o = sg*spanIn;
+      let LRV = parseFloat(val('lo_lrv')); if(isNaN(LRV)) LRV=0;
+      let URV = parseFloat(val('lo_urv')); if(isNaN(URV)) URV = (dpU==='inh2o')?urv_inh2o:(dpU==='psi'? urv_inh2o/INH2O_PER_PSI : (urv_inh2o/INH2O_PER_PSI)*KPA_PER_PSI );
+      return {span, u, spanIn, sg, dpU, LRV, URV};
+    }
+    function pctToDP(p, LRV, URV){ return LRV + (URV-LRV)*(p/100); }
+    function pctToMA(p){ return 4 + 16*(p/100); }
+    function maToPct(ma){ return (ma-4)/16*100; }
+    function LO_levelToMa(){
+      const c=LO_cfg(); if(!c) return; const lvl=parseFloat(val('lo_lvl')); if(isNaN(lvl)){alert('Enter level');return;}
+      let lvlIn=lvl; if(c.u==='ft') lvlIn*=IN_PER_FT; if(c.u==='m') lvlIn*=IN_PER_M;
+      const pct=Math.min(Math.max((lvlIn/c.spanIn)*100,0),100); const dp=pctToDP(pct,c.LRV,c.URV); const ma=pctToMA(pct);
+      document.getElementById('lo_result').innerText = `Level ${fmt(lvl)} ${c.u} → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → ${fmt(ma)} mA`;
+    }
+    function LO_maToLevel(){
+      const c=LO_cfg(); if(!c) return; const ma=parseFloat(val('lo_ma')); if(isNaN(ma)){alert('Enter mA');return;}
+      const pct=Math.min(Math.max(maToPct(ma),0),100); const dp=pctToDP(pct,c.LRV,c.URV);
+      let lvlIn=(pct/100)*c.spanIn; let lvl=lvlIn; if(c.u==='ft') lvl=lvlIn/IN_PER_FT; if(c.u==='m') lvl=lvlIn/IN_PER_M;
+      document.getElementById('lo_result').innerText = `${fmt(ma)} mA → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → Level ${fmt(lvl)} ${c.u}`;
+    }
+    function LO_buildSteps(){
+      const c=LO_cfg(); if(!c) return; const steps=[0,25,50,75,100]; const tb=document.querySelector('#lo_steps tbody'); tb.innerHTML='';
+      steps.forEach(p=>{ const dp=pctToDP(p,c.LRV,c.URV); const lvl=(p/100)*c.span; tb.insertAdjacentHTML('beforeend', `<tr><td>${p}%</td><td>${fmt(lvl)} ${c.u}</td><td>${fmt(dp)} ${c.dpU}</td><td>${fmt(pctToMA(p))} mA</td></tr>`); });
+    }
+
+    // Level — Closed
+    function LC_inches(valU, u){ if(u==='in') return valU; if(u==='ft') return valU*IN_PER_FT; if(u==='m') return valU*IN_PER_M; return valU; }
+    function LC_cfg(){
+      const span=parseFloat(val('lc_span')); const u=document.getElementById('lc_units').value;
+      const sgL=parseFloat(val('lc_sgL')||'1'); const leg=document.getElementById('lc_leg').value;
+      const wetH=parseFloat(val('lc_wetH')||'0'); const sgW=parseFloat(val('lc_sgW')||'1'); const dpU=document.getElementById('lc_dpU').value;
+      if(isNaN(span)||span<=0||isNaN(sgL)||sgL<=0){ alert('Enter span and liquid SG'); return null; }
+      const span_in = LC_inches(span, u);
+      // ΔP(h) in inH2O
+      const dP0_inH2O = (leg==='wet') ? (0 - sgW*(wetH||0)) : 0;
+      const dP100_inH2O = (sgL*span_in) - (leg==='wet' ? sgW*(wetH||0) : 0);
+      let LRV=parseFloat(val('lc_lrv')); if(isNaN(LRV)) LRV = (dpU==='inh2o')?dP0_inH2O:(dpU==='psi'? dP0_inH2O/INH2O_PER_PSI : (dP0_inH2O/INH2O_PER_PSI)*KPA_PER_PSI);
+      let URV=parseFloat(val('lc_urv')); if(isNaN(URV)) URV = (dpU==='inh2o')?dP100_inH2O:(dpU==='psi'? dP100_inH2O/INH2O_PER_PSI : (dP100_inH2O/INH2O_PER_PSI)*KPA_PER_PSI);
+      return {span, u, span_in, sgL, leg, wetH, sgW, dpU, LRV, URV};
+    }
+    function LC_levelToMa(){
+      const c=LC_cfg(); if(!c) return; const lvl=parseFloat(val('lc_lvl')); if(isNaN(lvl)){alert('Enter level');return;}
+      const lvl_in = LC_inches(lvl, c.u);
+      const pct=Math.min(Math.max((lvl_in/c.span_in)*100,0),100); const dp=pctToDP(pct,c.LRV,c.URV); const ma=pctToMA(pct);
+      document.getElementById('lc_result').innerText = `Level ${fmt(lvl)} ${c.u} → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → ${fmt(ma)} mA`;
+    }
+    function LC_maToLevel(){
+      const c=LC_cfg(); if(!c) return; const ma=parseFloat(val('lc_ma')); if(isNaN(ma)){alert('Enter mA');return;}
+      const pct=Math.min(Math.max(maToPct(ma),0),100); const dp=pctToDP(pct,c.LRV,c.URV);
+      const lvl_in=(pct/100)*c.span_in; let lvl=lvl_in; if(c.u==='ft') lvl=lvl_in/IN_PER_FT; if(c.u==='m') lvl=lvl_in/IN_PER_M;
+      document.getElementById('lc_result').innerText = `${fmt(ma)} mA → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → Level ${fmt(lvl)} ${c.u}`;
+    }
+    function LC_buildSteps(){
+      const c=LC_cfg(); if(!c) return; const steps=[0,25,50,75,100]; const tb=document.querySelector('#lc_steps tbody'); tb.innerHTML='';
+      steps.forEach(p=>{ const dp=pctToDP(p,c.LRV,c.URV); const lvl=(p/100)*c.span; tb.insertAdjacentHTML('beforeend', `<tr><td>${p}%</td><td>${fmt(lvl)} ${c.u}</td><td>${fmt(dp)} ${c.dpU}</td><td>${fmt(pctToMA(p))} mA</td></tr>`); });
+    }
+
+    // Pressure: gauge ↔ absolute
     function psigToPsia(){const a=parseFloat(val('atm')), g=parseFloat(val('psig')); if(isNaN(a)||isNaN(g)){alert('Enter atm and psig');return;} setVal('psia',fmt(a+g));}
     function psiaToPsig(){const a=parseFloat(val('atm')), p=parseFloat(val('psia')); if(isNaN(a)||isNaN(p)){alert('Enter atm and psia');return;} setVal('psig',fmt(p-a));}
+    // Unit conv
     function fromPSI(){const p=parseFloat(val('u_psi')); if(isNaN(p)){alert('Enter psi');return;} setVal('u_kpa',fmt(p*KPA_PER_PSI)); setVal('u_bar',fmt(p*0.06894757));}
     function fromKPA(){const k=parseFloat(val('u_kpa')); if(isNaN(k)){alert('Enter kPa');return;} const psi=k/KPA_PER_PSI; setVal('u_psi',fmt(psi)); setVal('u_bar',fmt(psi*0.06894757));}
     function fromBAR(){const b=parseFloat(val('u_bar')); if(isNaN(b)){alert('Enter bar');return;} const psi=b/0.06894757; setVal('u_psi',fmt(psi)); setVal('u_kpa',fmt(psi*KPA_PER_PSI));}
+    // Pressure switch
+    function calcSwitch(){
+      const sp=parseFloat(val('sw_set')); const db=parseFloat(val('sw_db')); const mode=document.getElementById('sw_mode').value;
+      if(isNaN(sp)||isNaN(db)||db<0){ alert('Enter setpoint and deadband ≥ 0'); return; }
+      let openOnRise = (mode==='nc'); // NC opens on rise; NO closes on rise
+      const risingOn  = openOnRise ? 'opens' : 'closes';
+      const fallingOn = openOnRise ? 'closes' : 'opens';
+      const high = sp;
+      const low  = sp - db;
+      const rows = [
+        ['Contact', 'Action', 'Pressure'],
+        [openOnRise?'NC':'NO', risingOn, fmt(high)+' psig'],
+        [openOnRise?'NC':'NO', fallingOn, fmt(low)+' psig'],
+      ];
+      const tb=document.querySelector('#sw_out tbody'); tb.innerHTML='';
+      rows.forEach((r,i)=>{ tb.insertAdjacentHTML('beforeend', `<tr>${r.map((c,j)=>`<${i? 'td':'th'}>${c}</${i? 'td':'th'}>`).join('')}</tr>`); });
+    }
+    // Vacuum helpers
+    function fromInHg(){
+      const inhg=parseFloat(val('vac_inhg')); const atmPsia=parseFloat(val('atm')); if(isNaN(inhg)||isNaN(atmPsia)){alert('Enter inHg and atm psia');return;}
+      const psia = atmPsia - (inhg * atmPsia / 29.92);
+      const psig = psia - atmPsia;
+      setVal('vac_psia',fmt(psia)); setVal('vac_psig',fmt(psig));
+    }
+    function fromPSIA(){
+      const psia=parseFloat(val('vac_psia')); const atmPsia=parseFloat(val('atm')); if(isNaN(psia)||isNaN(atmPsia)){alert('Enter psia and atm');return;}
+      const inhg = (atmPsia-psia) * (29.92/atmPsia);
+      const psig = psia - atmPsia;
+      setVal('vac_inhg',fmt(inhg)); setVal('vac_psig',fmt(psig));
+    }
+    function fromPSIG(){
+      const psig=parseFloat(val('vac_psig')); const atmPsia=parseFloat(val('atm')); if(isNaN(psig)||isNaN(atmPsia)){alert('Enter psig and atm');return;}
+      const psia = psig + atmPsia;
+      const inhg = (atmPsia-psia) * (29.92/atmPsia);
+      setVal('vac_psia',fmt(psia)); setVal('vac_inhg',fmt(inhg));
+    }
 
     // Calibration
     const CAL_KEY='pocketech.calibrations.v1'; const calTBody=document.querySelector('#cal_table tbody');
@@ -400,6 +624,7 @@
     document.getElementById('bk_clear').addEventListener('click',()=>{ if(!confirm('Clear ALL local data (Cal + Loop + Tickets)?')) return; ALL_KEYS.forEach(k=>localStorage.removeItem(k)); renderCals(); renderLoopTable(); renderTickets(); alert('All local data cleared.'); });
 
     // Init
+    wireNumpad();
     renderCals(); renderLoopTable(); renderTickets();
   </script>
 </body>
