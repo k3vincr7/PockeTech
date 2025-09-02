@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Level (Tank) — PockeTech</title>
+<style>
+ body{font-family:system-ui,Arial,sans-serif;margin:0;background:#0f1115;color:#e8e8e8}
+ main{max-width:800px;margin:0 auto;padding:14px}
+ section{background:#151922;border:1px solid #2a2f3a;border-radius:10px;padding:12px}
+ input,select,button{padding:.6em .7em;border-radius:8px;border:1px solid #2a2f3a;background:transparent;color:#e8e8e8;width:100%;margin:.35em 0}
+ table{width:100%;border-collapse:collapse;margin-top:10px}
+ th,td{border:1px solid #2a2f3a;padding:8px;text-align:left}
+ .row{display:flex;gap:10px;flex-wrap:wrap}.col{flex:1 1 240px;min-width:240px}
+ .muted{color:#a0a0a0;font-size:12px}
+ .btn{background:#2b3240;border-color:#2b3240;cursor:pointer}
+</style>
+</head><body>
+<main>
+  <h1>Level (Tank)</h1>
+  <section>
+    <h3>Cylindrical (vertical) tank</h3>
+    <div class="row">
+      <div class="col"><label>Inside Diameter (in)<input id="dia" type="number" step="any" placeholder="e.g., 72"></label></div>
+      <div class="col"><label>Level (in)<input id="lvl" type="number" step="any" placeholder="e.g., 30"></label></div>
+    </div>
+    <div class="row">
+      <div class="col"><label>Units
+        <select id="units">
+          <option value="gal">US gal</option>
+          <option value="bbl">bbl (42 gal)</option>
+          <option value="L">Liters</option>
+        </select></label>
+      </div>
+      <div class="col"><label>Tank Height (optional, in)<input id="height" type="number" step="any" placeholder="for % full"></label></div>
+    </div>
+    <div class="row">
+      <div class="col"><button class="btn" onclick="calc()">Calculate</button></div>
+    </div>
+    <table>
+      <tbody id="out"><tr><th>Result</th><td>—</td></tr></tbody>
+    </table>
+    <p class="muted">Formula: Volume = π·(D/2)^2·Level. 1 in³ = 0.004329 gal = 0.016387 L.</p>
+  </section>
+</main>
+<script>
+ const PI=Math.PI, IN3_TO_GAL=0.004329, GAL_TO_BBL=1/42, IN3_TO_L=0.016387;
+ function fmt(n){const x=Number(n); if(!isFinite(x)) return '-'; return (Math.abs(x)>=1000||x===0)?x.toFixed(2).replace(/\.00$/,''):x.toFixed(4).replace(/0+$/,'').replace(/\.$/,'');}
+ function calc(){
+   const D=parseFloat(document.getElementById('dia').value);
+   const L=parseFloat(document.getElementById('lvl').value);
+   const H=parseFloat(document.getElementById('height').value);
+   const u=document.getElementById('units').value;
+   if(isNaN(D)||isNaN(L)||D<=0||L<0){ alert('Enter diameter and level'); return; }
+   const in3 = PI*Math.pow(D/2,2)*L;
+   let vol; if(u==='gal') vol = in3*IN3_TO_GAL; else if(u==='bbl') vol = in3*IN3_TO_GAL*GAL_TO_BBL; else vol = in3*IN3_TO_L;
+   const pct = (!isNaN(H)&&H>0) ? (100*Math.min(Math.max(L/H,0),1)) : null;
+   const rows=[];
+   rows.push(['Volume', (u==='gal'?fmt(vol)+' gal': u==='bbl'?fmt(vol)+' bbl': fmt(vol)+' L')]);
+   rows.push(['Level', fmt(L)+' in']);
+   rows.push(['Diameter', fmt(D)+' in']);
+   if(pct!==null) rows.push(['% Full', fmt(pct)+' %']);
+   document.getElementById('out').innerHTML = rows.map(r=>`<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`).join('');
+ }
+</script>
+</body></html>
