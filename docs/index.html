@@ -1,42 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="auto">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PockeTech — Field Tools (Simple)</title>
   <style>
-    body { font-family: Arial, sans-serif; margin:0; background:#f5f5f5; color:#333; }
-    header { background:#222; color:#fff; padding:1em; text-align:center; }
-    nav { display:flex; flex-wrap:wrap; justify-content:center; background:#444; gap:4px; }
-    nav button { background:#444; color:#fff; border:none; padding:0.9em 1em; cursor:pointer; }
-    nav button:hover, nav button.active { background:#666; }
-    main { padding:1em; max-width:1000px; margin:0 auto; }
-    section { display:none; background:#fff; padding:1em; border:1px solid #ddd; border-radius:6px; }
+    :root{
+      --bg:#f5f5f5; --fg:#222; --muted:#777; --card:#fff; --border:#d0d0d0;
+      --accent:#3a7afe; --btn:#444; --btn-fg:#fff;
+      --pad:10px; --radius:10px; --gap:10px; --tap:14px 16px;
+      --thumb:64px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root{ --bg:#0f1115; --fg:#e8e8e8; --muted:#a0a0a0; --card:#151922; --border:#2a2f3a; --btn:#2b3240; --btn-fg:#e8e8e8; }
+    }
+    [data-theme="light"]{ --bg:#f5f5f5; --fg:#222; --muted:#777; --card:#fff; --border:#d0d0d0; --btn:#444; --btn-fg:#fff; }
+    [data-theme="dark"]{ --bg:#0f1115; --fg:#e8e8e8; --muted:#a0a0a0; --card:#151922; --border:#2a2f3a; --btn:#2b3240; --btn-fg:#e8e8e8; }
+
+    *{ box-sizing:border-box; }
+    body { font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif; margin:0; background:var(--bg); color:var(--fg); }
+    header { background:var(--card); color:var(--fg); padding:12px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    header h1{ margin:0; font-size:18px; }
+    .right { display:flex; gap:8px; align-items:center; }
+    .toggle { padding:6px 10px; border:1px solid var(--border); border-radius:8px; background:var(--card); cursor:pointer; }
+
+    nav { display:flex; flex-wrap:wrap; gap:6px; padding:10px; border-bottom:1px solid var(--border); background:var(--card); position:sticky; top:0; z-index:5; }
+    nav button { background:var(--btn); color:var(--btn-fg); border:none; padding:var(--tap); border-radius:10px; cursor:pointer; font-size:15px; }
+    nav button.active { outline:2px solid var(--accent); }
+
+    main { padding:12px; max-width:1100px; margin:0 auto; }
+    section { display:none; background:var(--card); padding:12px; border:1px solid var(--border); border-radius:var(--radius); }
     section.active { display:block; }
-    input, button, textarea, select { margin:.3em 0; padding:.5em; }
-    input, select, textarea { width:100%; max-width:100%; }
-    .row { display:flex; gap:10px; flex-wrap:wrap; }
-    .col { flex:1 1 220px; min-width:220px; }
-    table { border-collapse:collapse; margin-top:1em; width:100%; font-size:14px; }
-    table, th, td { border:1px solid #aaa; }
-    th, td { padding:.5em; text-align:left; }
-    .muted { font-size:12px; color:#777; }
+
+    input, button, textarea, select { margin:.35em 0; padding:.6em .7em; font-size:16px; border-radius:8px; }
+    input, select, textarea { width:100%; border:1px solid var(--border); background:transparent; color:var(--fg); }
+    textarea{ min-height:80px; }
     .btns { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
-    .hr { height:1px; background:#ddd; margin:12px 0; }
-    footer { text-align:center; color:#777; font-size:12px; padding:12px; }
+    .btn { background:var(--btn); color:var(--btn-fg); border:1px solid var(--border); cursor:pointer; }
+    .danger { background:#8b1e1e; border-color:#8b1e1e; }
+    .ok { background:#166534; border-color:#166534; }
+    .row { display:flex; gap:var(--gap); flex-wrap:wrap; }
+    .col { flex:1 1 240px; min-width:240px; }
+    .muted { font-size:12px; color:var(--muted); }
+    .hr { height:1px; background:var(--border); margin:12px 0; }
+    table { width:100%; border-collapse:collapse; margin-top:8px; font-size:14px; }
+    th, td { border:1px solid var(--border); padding:8px; text-align:left; }
+    th { background:rgba(128,128,128,.08); }
+    .thumbs { display:flex; gap:6px; flex-wrap:wrap; }
+    .thumbs img{ width:var(--thumb); height:var(--thumb); object-fit:cover; border-radius:8px; border:1px solid var(--border); }
+
+    footer { text-align:center; color:var(--muted); font-size:12px; padding:12px; }
     .hidden { display:none; }
+    .pill { padding:2px 8px; border-radius:999px; border:1px solid var(--border); font-size:12px; }
+    .pill.open{ background:#2f3646; } .pill.blocked{ background:#5a3a2f;} .pill.done{ background:#243a2f;}
   </style>
 </head>
 <body>
   <header>
     <h1>PockeTech — Field Tools (Simple)</h1>
+    <div class="right">
+      <button id="themeToggle" class="toggle" title="Toggle dark/light">🌓 Theme</button>
+    </div>
   </header>
 
   <nav>
     <button data-target="percent" class="active">Percent Steps</button>
     <button data-target="signal">Signal Helper</button>
+    <button data-target="pressure">Pressure</button>
     <button data-target="cal">Calibration Tracker</button>
     <button data-target="loop">Loop Check Log</button>
+    <button data-target="tickets">Tickets</button>
+    <button data-target="qr">QR Scan</button>
     <button data-target="legacy">Legacy Tools</button>
     <button data-target="backup">Backup</button>
   </nav>
@@ -50,8 +84,8 @@
         <div class="col"><label>URV <input type="number" id="urv" step="any" placeholder="e.g., 200"/></label></div>
       </div>
       <div class="btns">
-        <button onclick="calcPercent()">Calculate</button>
-        <button onclick="exportPercentCSV()">Export CSV</button>
+        <button class="btn" onclick="calcPercent()">Calculate</button>
+        <button class="btn" onclick="exportPercentCSV()">Export CSV</button>
       </div>
       <table id="percentTable"></table>
       <div class="muted">Outputs 0, 25, 50, 75, 100%.</div>
@@ -70,12 +104,41 @@
         <div class="col"><label>EU <input type="number" id="eu" step="any" placeholder="e.g., 100"/></label></div>
       </div>
       <div class="btns">
-        <button onclick="maToPercent()">From mA</button>
-        <button onclick="percentToMa()">From %</button>
-        <button onclick="euToPercent()">From EU</button>
-        <button onclick="signalClear()">Clear</button>
+        <button class="btn" onclick="maToPercent()">From mA</button>
+        <button class="btn" onclick="percentToMa()">From %</button>
+        <button class="btn" onclick="euToPercent()">From EU</button>
+        <button class="btn" onclick="signalClear()">Clear</button>
       </div>
       <p id="signalResult" class="muted"></p>
+    </section>
+
+    <!-- Pressure Converters -->
+    <section id="pressure">
+      <h2>Pressure</h2>
+      <h3>Gauge ↔ Absolute</h3>
+      <div class="row">
+        <div class="col"><label>Atmospheric Pressure (psia) <input type="number" id="atm" step="any" value="14.7"/></label></div>
+        <div class="col"><label>Gauge (psig) <input type="number" id="psig" step="any"/></label></div>
+        <div class="col"><label>Absolute (psia) <input type="number" id="psia" step="any"/></label></div>
+      </div>
+      <div class="btns">
+        <button class="btn" onclick="psigToPsia()">psig → psia</button>
+        <button class="btn" onclick="psiaToPsig()">psia → psig</button>
+      </div>
+
+      <div class="hr"></div>
+      <h3>Units: psi ↔ kPa ↔ bar</h3>
+      <div class="row">
+        <div class="col"><label>psi <input type="number" id="u_psi" step="any"/></label></div>
+        <div class="col"><label>kPa <input type="number" id="u_kpa" step="any"/></label></div>
+        <div class="col"><label>bar <input type="number" id="u_bar" step="any"/></label></div>
+      </div>
+      <div class="btns">
+        <button class="btn" onclick="fromPSI()">From psi</button>
+        <button class="btn" onclick="fromKPA()">From kPa</button>
+        <button class="btn" onclick="fromBAR()">From bar</button>
+      </div>
+      <p class="muted">1 psi = 6.894757 kPa = 0.06894757 bar</p>
     </section>
 
     <!-- Calibration Tracker -->
@@ -109,12 +172,12 @@
         <div class="col" style="flex:1 1 100%"><label>Notes <input id="cal_notes" placeholder="Short notes…"/></label></div>
       </div>
       <div class="btns">
-        <button id="cal_add">Add Calibration</button>
-        <button id="cal_export">Export CSV</button>
-        <button id="cal_tpl">Download CSV Template</button>
-        <button id="cal_import_btn" type="button">Import CSV</button>
+        <button class="btn" id="cal_add">Add Calibration</button>
+        <button class="btn" id="cal_export">Export CSV</button>
+        <button class="btn" id="cal_tpl">CSV Template</button>
+        <button class="btn" id="cal_import_btn" type="button">Import CSV</button>
         <input id="cal_import" type="file" accept=".csv" class="hidden"/>
-        <button id="cal_clear">Clear All (local)</button>
+        <button class="btn danger" id="cal_clear">Clear All (local)</button>
       </div>
       <div class="hr"></div>
       <table id="cal_table">
@@ -156,14 +219,18 @@
           <div class="col"><select id="status"><option value="Pass">Pass</option><option value="Fail">Fail</option></select></div>
         </div>
         <div class="btns">
-          <button type="submit">Add</button>
-          <button type="button" onclick="downloadLoopCSV()">Export CSV</button>
-          <button type="button" id="loop_tpl">Download CSV Template</button>
-          <button type="button" id="loop_import_btn">Import CSV</button>
+          <button class="btn ok" type="submit">Add</button>
+          <button class="btn" type="button" onclick="downloadLoopCSV()">Export CSV</button>
+          <button class="btn" type="button" id="loop_tpl">CSV Template</button>
+          <button class="btn" type="button" id="loop_import_btn">Import CSV</button>
           <input id="loop_import" type="file" accept=".csv" class="hidden"/>
-          <button type="button" onclick="clearLoop()">Clear All (local)</button>
+          <button class="btn danger" type="button" onclick="clearLoop()">Clear All (local)</button>
         </div>
       </form>
+      <div class="row">
+        <div class="col"><label>Filter by Tag <input id="loop_filter_tag" placeholder="e.g., PT-101"/></label></div>
+        <div class="col"><button class="btn" type="button" onclick="applyLoopFilter()">Apply Filter</button></div>
+      </div>
       <table id="loopTable">
         <thead>
           <tr>
@@ -177,6 +244,61 @@
       <div class="muted">Import expects the headers shown above (case-insensitive).</div>
     </section>
 
+    <!-- Tickets -->
+    <section id="tickets">
+      <h2>Tickets</h2>
+      <div class="row">
+        <div class="col"><label>Title <input id="t_title" placeholder="Short title"/></label></div>
+        <div class="col"><label>System/Tag <input id="t_system" placeholder="e.g., PT-101"/></label></div>
+        <div class="col"><label>Severity
+          <select id="t_sev"><option>Low</option><option>Med</option><option>High</option></select>
+        </label></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>Status
+          <select id="t_status"><option>Open</option><option>Blocked</option><option>Done</option></select>
+        </label></div>
+        <div class="col"><label>Assignee <input id="t_assignee" placeholder="e.g., J. Doe"/></label></div>
+        <div class="col"><label>Date <input type="date" id="t_date"/></label></div>
+      </div>
+      <div class="row">
+        <div class="col" style="flex:1 1 100%"><label>Notes <textarea id="t_notes" placeholder="Notes..."></textarea></label></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>Photos (max 3) <input id="t_photos" type="file" accept="image/*" multiple capture="environment"/></label></div>
+      </div>
+      <div class="btns">
+        <button class="btn ok" id="t_add">Add Ticket</button>
+        <button class="btn" id="t_export">Export CSV</button>
+        <button class="btn danger" id="t_clear">Clear All (local)</button>
+      </div>
+
+      <div class="hr"></div>
+      <table id="t_table">
+        <thead>
+          <tr>
+            <th>Title</th><th>System/Tag</th><th>Severity</th><th>Status</th>
+            <th>Assignee</th><th>Date</th><th>Notes</th><th>Photos</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="muted">Photos stored locally as thumbnails. CSV export lists photo counts (images aren’t embedded in CSV).</div>
+    </section>
+
+    <!-- QR Scan -->
+    <section id="qr">
+      <h2>QR Scan</h2>
+      <p class="muted">Scan a QR code that contains a tag (e.g., <code>PT-101</code>) or a URL with <code>?tag=PT-101</code>. We’ll auto-filter the Loop Log.</p>
+      <div class="btns">
+        <button class="btn" id="qr_live_btn">Start Live Scan (if supported)</button>
+        <button class="btn" id="qr_photo_btn">Scan from Photo</button>
+        <input id="qr_photo" type="file" accept="image/*" capture="environment" class="hidden"/>
+      </div>
+      <video id="qr_video" class="hidden" autoplay playsinline style="width:100%; max-width:420px; border-radius:8px; border:1px solid var(--border);"></video>
+      <p id="qr_result" class="muted"></p>
+    </section>
+
     <!-- Legacy Tools -->
     <section id="legacy">
       <h2>Legacy Tools</h2>
@@ -186,27 +308,43 @@
         <li><a href="tools/pressureC.html" target="_blank">Pressure: Gauge ↔ Absolute</a></li>
         <li><a href="tools/pressureSwitch.html" target="_blank">Pressure Switch</a></li>
         <li><a href="tools/pressureVac.html" target="_blank">Vacuum / Pressure</a></li>
+        <!-- LEVEL TOOLS — update these hrefs to your real filenames under docs/tools/ -->
+        <li><a href="tools/level_tank.html" target="_blank">Level (Tank) — legacy</a></li>
+        <li><a href="tools/level_open_channel.html" target="_blank">Level (Open Channel) — legacy</a></li>
       </ul>
-      <p class="muted">These open the older standalone tools in new tabs.</p>
+      <p class="muted">These open the older standalone tools in new tabs. Make sure the files live in <code>/docs/tools/</code> and update the link names above to match.</p>
     </section>
 
     <!-- Backup & Restore -->
     <section id="backup">
       <h2>Backup & Restore</h2>
-      <p class="muted">Back up everything stored locally (Calibration Tracker + Loop Log) to a single JSON file and restore it later.</p>
+      <p class="muted">Back up everything stored locally (Calibration + Loop + Tickets) to JSON and restore later.</p>
       <div class="btns">
-        <button type="button" id="bk_export">Export All (JSON)</button>
-        <button type="button" id="bk_import_btn">Import All (JSON)</button>
+        <button class="btn" id="bk_export">Export All (JSON)</button>
+        <button class="btn" id="bk_import_btn">Import All (JSON)</button>
         <input id="bk_import" type="file" accept=".json,application/json" class="hidden"/>
-        <button type="button" id="bk_clear">Clear All (local)</button>
+        <button class="btn danger" id="bk_clear">Clear All (local)</button>
       </div>
-      <div class="muted">Tip: keep the JSON in your Files/Drive so you can restore on another device.</div>
     </section>
   </main>
 
-  <footer class="muted">PockeTech — simple build • v0.4</footer>
+  <footer class="muted">PockeTech — simple build • v0.5</footer>
 
   <script>
+    // ---- Theme toggle ----
+    const themeBtn = document.getElementById('themeToggle');
+    const rootEl = document.documentElement;
+    const SAVED_THEME_KEY = 'pocketech.theme';
+    function applyTheme(t){ rootEl.setAttribute('data-theme', t); localStorage.setItem(SAVED_THEME_KEY, t); }
+    const savedT = localStorage.getItem(SAVED_THEME_KEY) || 'auto';
+    applyTheme(savedT);
+    themeBtn.addEventListener('click', ()=>{
+      const cur = rootEl.getAttribute('data-theme') || 'auto';
+      const next = cur==='auto' ? 'dark' : (cur==='dark' ? 'light' : 'auto');
+      applyTheme(next);
+      alert(`Theme: ${next}`);
+    });
+
     // ---- Simple router ----
     document.querySelectorAll("nav button").forEach(btn => {
       btn.addEventListener("click", () => {
@@ -235,7 +373,6 @@
       if (!Number.isFinite(x)) return '';
       return (Math.abs(x)>=1000||x===0) ? x.toFixed(2).replace(/\.00$/,'') : x.toFixed(4).replace(/0+$/,'').replace(/\.$/,'');
     };
-    // CSV parser (quotes/commas/newlines)
     function parseCSV(text){
       const rows=[]; let i=0, cur='', row=[], inQ=false;
       while(i<text.length){
@@ -247,10 +384,7 @@
         } else {
           if(c==='"'){ inQ=true; i++; continue; }
           if(c===','){ row.push(cur); cur=''; i++; continue; }
-          if(c==='\n' || c==='\r'){
-            if(c==='\r' && text[i+1]==='\n') i++;
-            row.push(cur); rows.push(row); row=[]; cur=''; i++; continue;
-          }
+          if(c==='\n' || c==='\r'){ if(c==='\r' && text[i+1]==='\n') i++; row.push(cur); rows.push(row); row=[]; cur=''; i++; continue; }
           cur+=c; i++; continue;
         }
       }
@@ -259,12 +393,7 @@
       return rows;
     }
     function indexHeaders(headerRow){
-      const map={};
-      headerRow.forEach((h,idx)=>{
-        const k=(h||'').toString().trim().toLowerCase();
-        map[k]=idx;
-      });
-      return map;
+      const map={}; headerRow.forEach((h,idx)=>{ const k=(h||'').toString().trim().toLowerCase(); map[k]=idx; }); return map;
     }
 
     // ---- Percent Steps ----
@@ -299,8 +428,7 @@
     }
     function maToPercent() {
       const r = ensureRangeSH(); if (!r) return;
-      const ma = parseFloat(document.getElementById("ma").value);
-      if (isNaN(ma)) { alert("Enter mA."); return; }
+      const ma = parseFloat(document.getElementById("ma").value); if (isNaN(ma)) { alert("Enter mA."); return; }
       const pct = Math.min(Math.max((ma-4)/16*100,0),100);
       const eu = r.lrv + (r.urv-r.lrv)*(pct/100);
       document.getElementById("percentInput").value = fmt(pct);
@@ -309,8 +437,7 @@
     }
     function percentToMa() {
       const r = ensureRangeSH(); if (!r) return;
-      const p = parseFloat(document.getElementById("percentInput").value);
-      if (isNaN(p)) { alert("Enter %."); return; }
+      const p = parseFloat(document.getElementById("percentInput").value); if (isNaN(p)) { alert("Enter %."); return; }
       const pct = Math.min(Math.max(p,0),100);
       const ma = 4 + 16*(pct/100);
       const eu = r.lrv + (r.urv-r.lrv)*(pct/100);
@@ -320,8 +447,7 @@
     }
     function euToPercent() {
       const r = ensureRangeSH(); if (!r) return;
-      const eu = parseFloat(document.getElementById("eu").value);
-      if (isNaN(eu)) { alert("Enter EU."); return; }
+      const eu = parseFloat(document.getElementById("eu").value); if (isNaN(eu)) { alert("Enter EU."); return; }
       const pct = Math.min(Math.max((eu - r.lrv) / (r.urv - r.lrv) * 100,0),100);
       const ma = 4 + 16*(pct/100);
       document.getElementById("percentInput").value = fmt(pct);
@@ -330,142 +456,39 @@
     }
     function signalClear(){ ["sh_lrv","sh_urv","ma","percentInput","eu"].forEach(id=>document.getElementById(id).value=""); document.getElementById("signalResult").innerText=""; }
 
+    // ---- Pressure ----
+    function psigToPsia(){ const atm=parseFloat(document.getElementById('atm').value); const g=parseFloat(document.getElementById('psig').value); if(isNaN(atm)||isNaN(g)) { alert('Enter atm and psig'); return; } document.getElementById('psia').value = fmt(atm + g); }
+    function psiaToPsig(){ const atm=parseFloat(document.getElementById('atm').value); const a=parseFloat(document.getElementById('psia').value); if(isNaN(atm)||isNaN(a)) { alert('Enter atm and psia'); return; } document.getElementById('psig').value = fmt(a - atm); }
+    const PSI_TO_KPA=6.894757, PSI_TO_BAR=0.06894757;
+    function fromPSI(){ const p=parseFloat(document.getElementById('u_psi').value); if(isNaN(p)){alert('Enter psi');return;} document.getElementById('u_kpa').value=fmt(p*PSI_TO_KPA); document.getElementById('u_bar').value=fmt(p*PSI_TO_BAR); }
+    function fromKPA(){ const k=parseFloat(document.getElementById('u_kpa').value); if(isNaN(k)){alert('Enter kPa');return;} document.getElementById('u_psi').value=fmt(k/PSI_TO_KPA); document.getElementById('u_bar').value=fmt((k/PSI_TO_KPA)*PSI_TO_BAR); }
+    function fromBAR(){ const b=parseFloat(document.getElementById('u_bar').value); if(isNaN(b)){alert('Enter bar');return;} document.getElementById('u_psi').value=fmt(b/PSI_TO_BAR); document.getElementById('u_kpa').value=fmt((b/PSI_TO_BAR)*PSI_TO_KPA); }
+
     // ---- Calibration Tracker ----
     const CAL_KEY = 'pocketech.calibrations.v1';
     const calTBody = document.querySelector('#cal_table tbody');
-    const calImpBtn = document.getElementById('cal_import_btn');
-    const calImpInp = document.getElementById('cal_import');
-
-    function addMonths(dateStr, months){
-      if (!dateStr || !months) return '';
-      const d = new Date(dateStr);
-      if (isNaN(d)) return '';
-      d.setMonth(d.getMonth() + Number(months));
-      const iso = d.toISOString().slice(0,10);
-      return iso;
-    }
-    function calcDuePreview(){
-      const date = document.getElementById('cal_date').value;
-      const interval = document.getElementById('cal_interval').value;
-      document.getElementById('cal_due').value = addMonths(date, interval) || '';
-    }
+    function addMonths(dateStr, months){ if(!dateStr||!months) return ''; const d=new Date(dateStr); if(isNaN(d)) return ''; d.setMonth(d.getMonth()+Number(months)); return d.toISOString().slice(0,10); }
+    function calcDuePreview(){ const date=document.getElementById('cal_date').value; const interval=document.getElementById('cal_interval').value; document.getElementById('cal_due').value=addMonths(date, interval)||''; }
     document.getElementById('cal_date').addEventListener('change', calcDuePreview);
     document.getElementById('cal_interval').addEventListener('change', calcDuePreview);
-
-    function loadCals(){ try { return JSON.parse(localStorage.getItem(CAL_KEY)||'[]'); } catch { return []; } }
+    function loadCals(){ try{ return JSON.parse(localStorage.getItem(CAL_KEY)||'[]'); }catch{return [];} }
     function saveCals(rows){ localStorage.setItem(CAL_KEY, JSON.stringify(rows)); }
-    function renderCals(){
-      const rows = loadCals();
-      calTBody.innerHTML='';
-      rows.forEach(r=>{
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${r.tag||''}</td><td>${r.model||''}</td><td>${r.ctype||''}</td>
-          <td>${r.lrv??''}</td><td>${r.urv??''}</td><td>${r.method||''}</td>
-          <td>${r.af||''}</td><td>${r.al||''}</td>
-          <td>${r.date||''}</td><td>${r.interval||''}</td><td>${r.due||''}</td>
-          <td>${r.tech||''}</td><td>${r.notes||''}</td>
-        `;
-        calTBody.appendChild(tr);
-      });
-    }
-    document.getElementById('cal_add').addEventListener('click', ()=>{
-      const row = {
-        tag: document.getElementById('cal_tag').value.trim(),
-        model: document.getElementById('cal_model').value.trim(),
-        ctype: document.getElementById('cal_type').value.trim(),
-        lrv: document.getElementById('cal_lrv').value,
-        urv: document.getElementById('cal_urv').value,
-        method: document.getElementById('cal_method').value.trim(),
-        af: document.getElementById('cal_af').value.trim(),
-        al: document.getElementById('cal_al').value.trim(),
-        date: document.getElementById('cal_date').value,
-        interval: document.getElementById('cal_interval').value,
-        due: document.getElementById('cal_due').value,
-        tech: document.getElementById('cal_tech').value.trim(),
-        notes: document.getElementById('cal_notes').value.trim(),
-      };
-      if (!row.tag){ alert('Tag required'); return; }
-      const rows = loadCals(); rows.push(row); saveCals(rows); renderCals();
-      ['cal_tag','cal_model','cal_type','cal_lrv','cal_urv','cal_method','cal_af','cal_al','cal_notes'].forEach(id=>document.getElementById(id).value='');
-    });
-    document.getElementById('cal_export').addEventListener('click', ()=>{
-      const rows = loadCals();
-      if (!rows.length){ alert('Nothing to export.'); return; }
-      const header = ['Tag','Make/Model','Type','LRV','URV','Method','As-Found','As-Left','Date','Interval(months)','Next Due','Tech','Notes'];
-      const csvRows = [header, ...rows.map(r=>[r.tag,r.model,r.ctype,r.lrv,r.urv,r.method,r.af,r.al,r.date,r.interval,r.due,r.tech,r.notes])];
-      downloadCSV('calibration_tracker.csv', csvRows);
-    });
-    document.getElementById('cal_clear').addEventListener('click', ()=>{
-      if (confirm('Clear ALL local calibration records?')){ saveCals([]); renderCals(); }
-    });
-    document.getElementById('cal_tpl').addEventListener('click', ()=>{
-      const header = ['Tag','Make/Model','Type','LRV','URV','Method','As-Found','As-Left','Date','Interval(months)','Next Due','Tech','Notes'];
-      downloadCSV('calibration_tracker_template.csv', [header]);
-    });
-    calImpBtn.addEventListener('click', ()=> calImpInp.click());
-    calImpInp.addEventListener('change', (e)=>{
-      const file=e.target.files[0]; if(!file) return;
-      const reader=new FileReader();
-      reader.onload=()=>{
-        const rows=parseCSV(reader.result);
-        if(!rows.length) { alert('Empty CSV'); return; }
-        const header=rows[0]; const idx=indexHeaders(header);
-        const need = {
-          tag:['tag'],
-          model:['make/model','make','model','make model'],
-          ctype:['type'],
-          lrv:['lrv'],
-          urv:['urv'],
-          method:['method'],
-          af:['as-found','as found'],
-          al:['as-left','as left'],
-          date:['date'],
-          interval:['interval','interval(months)','interval months'],
-          due:['next due','next_due','nextdue','due'],
-          tech:['tech','technician'],
-          notes:['notes','note']
-        };
-        function pick(obj){
-          const lower = (s)=> (s||'').toString().trim().toLowerCase();
-          const get = (keys)=> { for(const k of keys){ const i=idx[lower(k)]; if(i!=null) return obj[i]; } return ''; };
-          return {
-            tag:get(need.tag),
-            model:get(need.model),
-            ctype:get(need.ctype),
-            lrv:get(need.lrv),
-            urv:get(need.urv),
-            method:get(need.method),
-            af:get(need.af),
-            al:get(need.al),
-            date:get(need.date),
-            interval:get(need.interval),
-            due:get(need.due),
-            tech:get(need.tech),
-            notes:get(need.notes),
-          };
-        }
-        const incoming = rows.slice(1).filter(r=>r.some(x=>String(x).trim()!=='')).map(pick);
-        const cur=loadCals();
-        saveCals(cur.concat(incoming));
-        renderCals();
-        alert(`Imported ${incoming.length} calibration rows.`);
-        calImpInp.value='';
-      };
-      reader.readAsText(file);
-    });
+    function renderCals(){ const rows=loadCals(); calTBody.innerHTML=''; rows.forEach(r=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${r.tag||''}</td><td>${r.model||''}</td><td>${r.ctype||''}</td><td>${r.lrv??''}</td><td>${r.urv??''}</td><td>${r.method||''}</td><td>${r.af||''}</td><td>${r.al||''}</td><td>${r.date||''}</td><td>${r.interval||''}</td><td>${r.due||''}</td><td>${r.tech||''}</td><td>${r.notes||''}</td>`; calTBody.appendChild(tr); }); }
+    document.getElementById('cal_add').addEventListener('click', ()=>{ const row={ tag:val('cal_tag'), model:val('cal_model'), ctype:val('cal_type'), lrv:val('cal_lrv'), urv:val('cal_urv'), method:val('cal_method'), af:val('cal_af'), al:val('cal_al'), date:val('cal_date'), interval:val('cal_interval'), due:val('cal_due'), tech:val('cal_tech'), notes:val('cal_notes') }; if(!row.tag){alert('Tag required');return;} const rows=loadCals(); rows.push(row); saveCals(rows); renderCals(); ['cal_tag','cal_model','cal_type','cal_lrv','cal_urv','cal_method','cal_af','cal_al','cal_notes'].forEach(id=>setVal(id,'')); });
+    document.getElementById('cal_export').addEventListener('click', ()=>{ const rows=loadCals(); if(!rows.length){alert('Nothing to export.'); return;} const header=['Tag','Make/Model','Type','LRV','URV','Method','As-Found','As-Left','Date','Interval(months)','Next Due','Tech','Notes']; const csvRows=[header, ...rows.map(r=>[r.tag,r.model,r.ctype,r.lrv,r.urv,r.method,r.af,r.al,r.date,r.interval,r.due,r.tech,r.notes])]; downloadCSV('calibration_tracker.csv', csvRows); });
+    document.getElementById('cal_clear').addEventListener('click', ()=>{ if(confirm('Clear ALL local calibration records?')){ saveCals([]); renderCals(); } });
+    document.getElementById('cal_tpl').addEventListener('click', ()=>{ const header=['Tag','Make/Model','Type','LRV','URV','Method','As-Found','As-Left','Date','Interval(months)','Next Due','Tech','Notes']; downloadCSV('calibration_tracker_template.csv', [header]); });
+    document.getElementById('cal_import_btn').addEventListener('click', ()=> document.getElementById('cal_import').click());
+    document.getElementById('cal_import').addEventListener('change', (e)=>{ const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{ const rows=parseCSV(reader.result); if(!rows.length){alert('Empty CSV'); return;} const idx=indexHeaders(rows[0]); const need={ tag:['tag'], model:['make/model','make','model','make model'], ctype:['type'], lrv:['lrv'], urv:['urv'], method:['method'], af:['as-found','as found'], al:['as-left','as left'], date:['date'], interval:['interval','interval(months)','interval months'], due:['next due','next_due','nextdue','due'], tech:['tech','technician'], notes:['notes','note'] }; function pick(r){ const g=(ks)=>{ for(const k of ks){ const i=idx[k]; if(i!=null) return r[i]; } return ''; }; return { tag:g(need.tag), model:g(need.model), ctype:g(need.ctype), lrv:g(need.lrv), urv:g(need.urv), method:g(need.method), af:g(need.af), al:g(need.al), date:g(need.date), interval:g(need.interval), due:g(need.due), tech:g(need.tech), notes:g(need.notes)} } const incoming=rows.slice(1).filter(r=>r.some(x=>String(x).trim()!=='')).map(pick); const cur=loadCals(); saveCals(cur.concat(incoming)); renderCals(); alert(`Imported ${incoming.length} calibration rows.`); e.target.value=''; }; reader.readAsText(file); });
 
     // ---- Loop Log ----
     const LOOP_KEY = 'pocketech.looplog.v1';
     let loopData = JSON.parse(localStorage.getItem(LOOP_KEY) || "[]");
-    const loopForm = document.getElementById("loopForm");
     const loopTableBody = document.querySelector("#loopTable tbody");
-    const loopImpBtn = document.getElementById('loop_import_btn');
-    const loopImpInp = document.getElementById('loop_import');
-
-    function renderLoopTable() {
+    function renderLoopTable(filterTag){
       loopTableBody.innerHTML = "";
-      loopData.forEach(r => {
+      (loopData||[]).filter(r=>!filterTag || String(r.tag||'').toLowerCase().includes(filterTag.toLowerCase()))
+      .forEach(r => {
         let tr = document.createElement("tr");
         tr.innerHTML = `<td>${r.date||''}</td><td>${r.tag||''}</td><td>${r.service||''}</td><td>${r.type||''}</td>
           <td>${r.lrv??''}</td><td>${r.urv??''}</td><td>${r.asFound||''}</td><td>${r.asLeft||''}</td>
@@ -473,132 +496,177 @@
         loopTableBody.appendChild(tr);
       });
     }
-    loopForm.addEventListener("submit", e => {
+    document.getElementById("loopForm").addEventListener("submit", e => {
       e.preventDefault();
       const row = {
-        date: document.getElementById("date").value || new Date().toISOString().slice(0,10),
-        tag: document.getElementById("tag").value.trim(),
-        service: document.getElementById("service").value.trim(),
-        type: document.getElementById("type").value,
-        lrv: document.getElementById("rangeLrv").value,
-        urv: document.getElementById("rangeUrv").value,
-        asFound: document.getElementById("asFound").value.trim(),
-        asLeft: document.getElementById("asLeft").value.trim(),
-        tech: document.getElementById("tech").value.trim(),
-        notes: document.getElementById("notes").value.trim(),
-        status: document.getElementById("status").value
+        date: val("date") || new Date().toISOString().slice(0,10),
+        tag: val("tag").trim(),
+        service: val("service").trim(),
+        type: val("type"),
+        lrv: val("rangeLrv"),
+        urv: val("rangeUrv"),
+        asFound: val("asFound").trim(),
+        asLeft: val("asLeft").trim(),
+        tech: val("tech").trim(),
+        notes: val("notes").trim(),
+        status: val("status")
       };
       if (!row.tag) { alert('Tag is required'); return; }
       loopData.push(row);
       localStorage.setItem(LOOP_KEY, JSON.stringify(loopData));
       renderLoopTable();
-      loopForm.reset();
+      e.target.reset();
     });
+    function applyLoopFilter(){ const t=document.getElementById('loop_filter_tag').value.trim(); renderLoopTable(t||undefined); }
     function downloadLoopCSV() {
       const header = ['Date','Tag','Service','Type','LRV','URV','As-Found','As-Left','Tech','Status','Notes'];
       const rows = [header, ...loopData.map(r=>[r.date,r.tag,r.service,r.type,r.lrv,r.urv,r.asFound,r.asLeft,r.tech,r.status,r.notes])];
       downloadCSV('loop_check_log.csv', rows);
     }
     function clearLoop(){ if (confirm('Clear ALL local loop entries?')) { loopData=[]; localStorage.setItem(LOOP_KEY,'[]'); renderLoopTable(); } }
-    document.getElementById('loop_tpl').addEventListener('click', ()=>{
-      const header = ['Date','Tag','Service','Type','LRV','URV','As-Found','As-Left','Tech','Status','Notes'];
-      downloadCSV('loop_check_log_template.csv', [header]);
+    document.getElementById('loop_tpl').addEventListener('click', ()=>{ const header=['Date','Tag','Service','Type','LRV','URV','As-Found','As-Left','Tech','Status','Notes']; downloadCSV('loop_check_log_template.csv', [header]); });
+    document.getElementById('loop_import_btn').addEventListener('click', ()=> document.getElementById('loop_import').click());
+    document.getElementById('loop_import').addEventListener('change', (e)=>{ const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{ const rows=parseCSV(reader.result); if(!rows.length){alert('Empty CSV'); return;} const idx=indexHeaders(rows[0]); const need={ date:['date'], tag:['tag'], service:['service'], type:['type'], lrv:['lrv'], urv:['urv'], asFound:['as-found','as found'], asLeft:['as-left','as left'], tech:['tech','technician'], status:['status'], notes:['notes','note'] }; function pick(r){ const g=(ks)=>{ for(const k of ks){ const i=idx[k]; if(i!=null) return r[i]; } return ''; }; return { date:g(need.date), tag:g(need.tag), service:g(need.service), type:g(need.type), lrv:g(need.lrv), urv:g(need.urv), asFound:g(need.asFound), asLeft:g(need.asLeft), tech:g(need.tech), status:g(need.status), notes:g(need.notes) } } const incoming=rows.slice(1).filter(r=>r.some(x=>String(x).trim()!=='')).map(pick); loopData=loopData.concat(incoming); localStorage.setItem(LOOP_KEY, JSON.stringify(loopData)); renderLoopTable(); alert(`Imported ${incoming.length} loop rows.`); e.target.value=''; }; reader.readAsText(file); });
+
+    // ---- Tickets ----
+    const TICKET_KEY='pocketech.tickets.v1';
+    const tBody=document.querySelector('#t_table tbody');
+    function loadTickets(){ try{return JSON.parse(localStorage.getItem(TICKET_KEY)||'[]');}catch{return [];} }
+    function saveTickets(rows){ localStorage.setItem(TICKET_KEY, JSON.stringify(rows)); }
+    function renderTickets(){
+      const rows=loadTickets(); tBody.innerHTML='';
+      rows.forEach((r,i)=>{
+        const tr=document.createElement('tr');
+        const pillClass = r.status==='Open'?'open':(r.status==='Blocked'?'blocked':'done');
+        const thumbs = (r.photos||[]).map(src=>`<img src="${src}" alt="photo"/>`).join('');
+        tr.innerHTML=`<td>${r.title||''}</td><td>${r.system||''}</td><td>${r.sev||''}</td>
+        <td><span class="pill ${pillClass}">${r.status||''}</span></td><td>${r.assignee||''}</td><td>${r.date||''}</td>
+        <td>${(r.notes||'').replace(/,/g,';')}</td><td><div class="thumbs">${thumbs}</div></td>
+        <td><button class="btn" data-i="${i}" data-act="toggle">Toggle Done</button> <button class="btn danger" data-i="${i}" data-act="del">Delete</button></td>`;
+        tBody.appendChild(tr);
+      });
+    }
+    document.getElementById('t_add').addEventListener('click', async ()=>{
+      const files=[...(document.getElementById('t_photos').files||[])].slice(0,3);
+      const photos=[];
+      for(const f of files){ const b=await fileToDataURL(f); photos.push(b); }
+      const row={ title:val('t_title'), system:val('t_system'), sev:val('t_sev'), status:val('t_status'), assignee:val('t_assignee'), date:val('t_date'), notes:val('t_notes'), photos };
+      if(!row.title){ alert('Title required'); return; }
+      const rows=loadTickets(); rows.push(row); saveTickets(rows); renderTickets();
+      ['t_title','t_system','t_notes','t_assignee','t_date'].forEach(id=>setVal(id,'')); document.getElementById('t_photos').value='';
     });
-    loopImpBtn.addEventListener('click', ()=> loopImpInp.click());
-    loopImpInp.addEventListener('change', (e)=>{
+    tBody.addEventListener('click',(e)=>{ const b=e.target.closest('button'); if(!b) return; const i=+b.dataset.i; const act=b.dataset.act; const rows=loadTickets(); if(!rows[i])return;
+      if(act==='del'){ rows.splice(i,1); } else if(act==='toggle'){ rows[i].status = rows[i].status==='Done' ? 'Open' : 'Done'; }
+      saveTickets(rows); renderTickets();
+    });
+    document.getElementById('t_export').addEventListener('click', ()=>{
+      const rows=loadTickets();
+      if(!rows.length){ alert('Nothing to export.'); return; }
+      const header=['Title','System/Tag','Severity','Status','Assignee','Date','Notes','PhotoCount'];
+      const data=rows.map(r=>[r.title,r.system,r.sev,r.status,r.assignee,r.date,(r.notes||'').replace(/[\r\n,]/g,' '),(r.photos||[]).length]);
+      downloadCSV('tickets.csv', [header, ...data]);
+    });
+    document.getElementById('t_clear').addEventListener('click', ()=>{ if(confirm('Clear ALL local tickets?')){ saveTickets([]); renderTickets(); } });
+    function fileToDataURL(file){ return new Promise(res=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.readAsDataURL(file); }); }
+
+    // ---- QR Scan ----
+    const qrVideo=document.getElementById('qr_video');
+    const qrLiveBtn=document.getElementById('qr_live_btn');
+    const qrPhotoBtn=document.getElementById('qr_photo_btn');
+    const qrPhotoInp=document.getElementById('qr_photo');
+    const qrResult=document.getElementById('qr_result');
+    let mediaStream=null, detector=null, scanTimer=null;
+
+    async function initBarcode(){
+      if('BarcodeDetector' in window){
+        try{ detector = new BarcodeDetector({formats:['qr_code']}); return true; }catch{ return false; }
+      }
+      return false;
+    }
+    function stopLive(){ if(scanTimer){ clearInterval(scanTimer); scanTimer=null; } if(mediaStream){ mediaStream.getTracks().forEach(t=>t.stop()); mediaStream=null; } qrVideo.classList.add('hidden'); }
+    function handleQRText(text){
+      qrResult.textContent = 'Scanned: ' + text;
+      // try to extract ?tag=XYZ or plain text
+      let tag=null;
+      try{ const u=new URL(text); tag=u.searchParams.get('tag') || u.hash.replace(/^#tag=/,'') || null; }catch{ /* not a URL */ }
+      if(!tag){ tag = text.trim(); }
+      if(tag){
+        // set filter and switch to Loop
+        setVal('loop_filter_tag', tag);
+        document.querySelector('nav button[data-target="loop"]').click();
+        applyLoopFilter();
+        alert('Applied tag filter: ' + tag);
+      }
+    }
+
+    qrLiveBtn.addEventListener('click', async ()=>{
+      stopLive();
+      const has = await initBarcode();
+      if(!has){ alert('Live scan not supported on this browser. Use "Scan from Photo".'); return; }
+      try{
+        mediaStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+        qrVideo.srcObject = mediaStream;
+        qrVideo.classList.remove('hidden');
+        const canvas = document.createElement('canvas'); const ctx=canvas.getContext('2d');
+        scanTimer=setInterval(async ()=>{
+          if(!qrVideo.videoWidth) return;
+          canvas.width=qrVideo.videoWidth; canvas.height=qrVideo.videoHeight;
+          ctx.drawImage(qrVideo,0,0);
+          const bmp = await createImageBitmap(canvas);
+          const codes = await detector.detect(bmp);
+          if(codes && codes.length){ stopLive(); handleQRText(codes[0].rawValue); }
+        }, 600);
+      }catch(err){ alert('Camera access failed. Try "Scan from Photo".'); }
+    });
+
+    qrPhotoBtn.addEventListener('click', ()=> qrPhotoInp.click());
+    qrPhotoInp.addEventListener('change', async (e)=>{
       const file=e.target.files[0]; if(!file) return;
-      const reader=new FileReader();
-      reader.onload=()=>{
-        const rows=parseCSV(reader.result);
-        if(!rows.length) { alert('Empty CSV'); return; }
-        const header=rows[0]; const idx=indexHeaders(header);
-        const need = {
-          date:['date'],
-          tag:['tag'],
-          service:['service'],
-          type:['type'],
-          lrv:['lrv'],
-          urv:['urv'],
-          asFound:['as-found','as found'],
-          asLeft:['as-left','as left'],
-          tech:['tech','technician'],
-          status:['status'],
-          notes:['notes','note']
-        };
-        function pick(obj){
-          const lower = (s)=> (s||'').toString().trim().toLowerCase();
-          const get = (keys)=> { for(const k of keys){ const i=idx[lower(k)]; if(i!=null) return obj[i]; } return ''; };
-          return {
-            date:get(need.date),
-            tag:get(need.tag),
-            service:get(need.service),
-            type:get(need.type),
-            lrv:get(need.lrv),
-            urv:get(need.urv),
-            asFound:get(need.asFound),
-            asLeft:get(need.asLeft),
-            tech:get(need.tech),
-            status:get(need.status),
-            notes:get(need.notes),
-          };
-        }
-        const incoming = rows.slice(1).filter(r=>r.some(x=>String(x).trim()!=='')).map(pick);
-        loopData = loopData.concat(incoming);
-        localStorage.setItem(LOOP_KEY, JSON.stringify(loopData));
-        renderLoopTable();
-        alert(`Imported ${incoming.length} loop rows.`);
-        loopImpInp.value='';
-      };
-      reader.readAsText(file);
+      const has = await initBarcode();
+      if(!has){ alert('QR detection not supported here. Try a different browser (Chrome).'); return; }
+      const img = await createImageBitmap(file);
+      const codes = await detector.detect(img);
+      if(codes && codes.length){ handleQRText(codes[0].rawValue); } else { alert('No QR found in image.'); }
+      e.target.value='';
     });
 
     // ---- Backup & Restore ----
-    const ALL_KEYS = ['pocketech.calibrations.v1','pocketech.looplog.v1'];
-    const bkExp = document.getElementById('bk_export');
-    const bkImpBtn = document.getElementById('bk_import_btn');
-    const bkImpInp = document.getElementById('bk_import');
-    const bkClr = document.getElementById('bk_clear');
-
-    bkExp.addEventListener('click', ()=>{
-      const payload = {};
-      ALL_KEYS.forEach(k => { payload[k] = localStorage.getItem(k) || '[]'; });
+    const ALL_KEYS = ['pocketech.calibrations.v1','pocketech.looplog.v1','pocketech.tickets.v1'];
+    document.getElementById('bk_export').addEventListener('click', ()=>{
+      const payload = {}; ALL_KEYS.forEach(k => { payload[k] = localStorage.getItem(k) || '[]'; });
       const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href=url; a.download='pocketech_backup.json'; a.click();
-      URL.revokeObjectURL(url);
+      const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='pocketech_backup.json'; a.click(); URL.revokeObjectURL(url);
     });
-    bkImpBtn.addEventListener('click', ()=> bkImpInp.click());
-    bkImpInp.addEventListener('change', (e)=>{
+    document.getElementById('bk_import_btn').addEventListener('click', ()=> document.getElementById('bk_import').click());
+    document.getElementById('bk_import').addEventListener('change', (e)=>{
       const file=e.target.files[0]; if(!file) return;
       const reader=new FileReader();
       reader.onload=()=>{
         try{
           const data = JSON.parse(reader.result);
-          let restored = 0;
-          ALL_KEYS.forEach(k=>{
-            if (data[k]) { localStorage.setItem(k, data[k]); restored++; }
-          });
-          renderCals();
-          renderLoopTable();
+          let restored = 0; ALL_KEYS.forEach(k=>{ if (data[k]) { localStorage.setItem(k, data[k]); restored++; } });
+          renderCals(); renderLoopTable(); renderTickets();
           alert(`Restore complete. Keys restored: ${restored}`);
-        } catch(err){
-          alert('Invalid JSON backup.');
-        }
-        bkImpInp.value='';
+        } catch(err){ alert('Invalid JSON backup.'); }
+        e.target.value='';
       };
       reader.readAsText(file);
     });
-    bkClr.addEventListener('click', ()=>{
-      if (!confirm('Clear ALL local data (Calibration + Loop)?')) return;
+    document.getElementById('bk_clear').addEventListener('click', ()=>{
+      if (!confirm('Clear ALL local data (Cal + Loop + Tickets)?')) return;
       ALL_KEYS.forEach(k=> localStorage.removeItem(k));
-      renderCals();
-      renderLoopTable();
+      renderCals(); renderLoopTable(); renderTickets();
       alert('All local data cleared.');
     });
+
+    // ---- small utils ----
+    function val(id){ return document.getElementById(id).value; }
+    function setVal(id,v){ document.getElementById(id).value=v; }
 
     // ---- Init ----
     renderCals();
     renderLoopTable();
+    renderTickets();
   </script>
 </body>
 </html>
