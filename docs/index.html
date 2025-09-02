@@ -24,6 +24,7 @@
     .btns { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
     .hr { height:1px; background:#ddd; margin:12px 0; }
     footer { text-align:center; color:#777; font-size:12px; padding:12px; }
+    .hidden { display:none; }
   </style>
 </head>
 <body>
@@ -37,6 +38,7 @@
     <button data-target="cal">Calibration Tracker</button>
     <button data-target="loop">Loop Check Log</button>
     <button data-target="legacy">Legacy Tools</button>
+    <button data-target="backup">Backup</button>
   </nav>
 
   <main>
@@ -76,7 +78,7 @@
       <p id="signalResult" class="muted"></p>
     </section>
 
-    <!-- Calibration Tracker (NEW) -->
+    <!-- Calibration Tracker -->
     <section id="cal">
       <h2>Calibration Tracker</h2>
       <div class="row">
@@ -109,6 +111,9 @@
       <div class="btns">
         <button id="cal_add">Add Calibration</button>
         <button id="cal_export">Export CSV</button>
+        <button id="cal_tpl">Download CSV Template</button>
+        <button id="cal_import_btn" type="button">Import CSV</button>
+        <input id="cal_import" type="file" accept=".csv" class="hidden"/>
         <button id="cal_clear">Clear All (local)</button>
       </div>
       <div class="hr"></div>
@@ -124,7 +129,7 @@
         </thead>
         <tbody></tbody>
       </table>
-      <div class="muted">Stores locally on this device. Export CSV to share.</div>
+      <div class="muted">Stores locally on this device. Import expects the headers shown above (case-insensitive).</div>
     </section>
 
     <!-- Loop Check Log -->
@@ -153,6 +158,9 @@
         <div class="btns">
           <button type="submit">Add</button>
           <button type="button" onclick="downloadLoopCSV()">Export CSV</button>
+          <button type="button" id="loop_tpl">Download CSV Template</button>
+          <button type="button" id="loop_import_btn">Import CSV</button>
+          <input id="loop_import" type="file" accept=".csv" class="hidden"/>
           <button type="button" onclick="clearLoop()">Clear All (local)</button>
         </div>
       </form>
@@ -166,6 +174,7 @@
         </thead>
         <tbody></tbody>
       </table>
+      <div class="muted">Import expects the headers shown above (case-insensitive).</div>
     </section>
 
     <!-- Legacy Tools -->
@@ -180,9 +189,22 @@
       </ul>
       <p class="muted">These open the older standalone tools in new tabs.</p>
     </section>
+
+    <!-- Backup & Restore -->
+    <section id="backup">
+      <h2>Backup & Restore</h2>
+      <p class="muted">Back up everything stored locally (Calibration Tracker + Loop Log) to a single JSON file and restore it later.</p>
+      <div class="btns">
+        <button type="button" id="bk_export">Export All (JSON)</button>
+        <button type="button" id="bk_import_btn">Import All (JSON)</button>
+        <input id="bk_import" type="file" accept=".json,application/json" class="hidden"/>
+        <button type="button" id="bk_clear">Clear All (local)</button>
+      </div>
+      <div class="muted">Tip: keep the JSON in your Files/Drive so you can restore on another device.</div>
+    </section>
   </main>
 
-  <footer class="muted">PockeTech — simple build • v0.2</footer>
+  <footer class="muted">PockeTech — simple build • v0.4</footer>
 
   <script>
     // ---- Simple router ----
@@ -213,6 +235,37 @@
       if (!Number.isFinite(x)) return '';
       return (Math.abs(x)>=1000||x===0) ? x.toFixed(2).replace(/\.00$/,'') : x.toFixed(4).replace(/0+$/,'').replace(/\.$/,'');
     };
+    // CSV parser (quotes/commas/newlines)
+    function parseCSV(text){
+      const rows=[]; let i=0, cur='', row=[], inQ=false;
+      while(i<text.length){
+        const c=text[i];
+        if(inQ){
+          if(c==='"' && text[i+1]==='"'){ cur+='"'; i+=2; continue; }
+          if(c==='"' ){ inQ=false; i++; continue; }
+          cur+=c; i++; continue;
+        } else {
+          if(c==='"'){ inQ=true; i++; continue; }
+          if(c===','){ row.push(cur); cur=''; i++; continue; }
+          if(c==='\n' || c==='\r'){
+            if(c==='\r' && text[i+1]==='\n') i++;
+            row.push(cur); rows.push(row); row=[]; cur=''; i++; continue;
+          }
+          cur+=c; i++; continue;
+        }
+      }
+      row.push(cur); rows.push(row);
+      if(rows.length && rows[rows.length-1].length===1 && rows[rows.length-1][0]==='') rows.pop();
+      return rows;
+    }
+    function indexHeaders(headerRow){
+      const map={};
+      headerRow.forEach((h,idx)=>{
+        const k=(h||'').toString().trim().toLowerCase();
+        map[k]=idx;
+      });
+      return map;
+    }
 
     // ---- Percent Steps ----
     function calcPercent() {
@@ -280,6 +333,8 @@
     // ---- Calibration Tracker ----
     const CAL_KEY = 'pocketech.calibrations.v1';
     const calTBody = document.querySelector('#cal_table tbody');
+    const calImpBtn = document.getElementById('cal_import_btn');
+    const calImpInp = document.getElementById('cal_import');
 
     function addMonths(dateStr, months){
       if (!dateStr || !months) return '';
@@ -344,12 +399,69 @@
     document.getElementById('cal_clear').addEventListener('click', ()=>{
       if (confirm('Clear ALL local calibration records?')){ saveCals([]); renderCals(); }
     });
+    document.getElementById('cal_tpl').addEventListener('click', ()=>{
+      const header = ['Tag','Make/Model','Type','LRV','URV','Method','As-Found','As-Left','Date','Interval(months)','Next Due','Tech','Notes'];
+      downloadCSV('calibration_tracker_template.csv', [header]);
+    });
+    calImpBtn.addEventListener('click', ()=> calImpInp.click());
+    calImpInp.addEventListener('change', (e)=>{
+      const file=e.target.files[0]; if(!file) return;
+      const reader=new FileReader();
+      reader.onload=()=>{
+        const rows=parseCSV(reader.result);
+        if(!rows.length) { alert('Empty CSV'); return; }
+        const header=rows[0]; const idx=indexHeaders(header);
+        const need = {
+          tag:['tag'],
+          model:['make/model','make','model','make model'],
+          ctype:['type'],
+          lrv:['lrv'],
+          urv:['urv'],
+          method:['method'],
+          af:['as-found','as found'],
+          al:['as-left','as left'],
+          date:['date'],
+          interval:['interval','interval(months)','interval months'],
+          due:['next due','next_due','nextdue','due'],
+          tech:['tech','technician'],
+          notes:['notes','note']
+        };
+        function pick(obj){
+          const lower = (s)=> (s||'').toString().trim().toLowerCase();
+          const get = (keys)=> { for(const k of keys){ const i=idx[lower(k)]; if(i!=null) return obj[i]; } return ''; };
+          return {
+            tag:get(need.tag),
+            model:get(need.model),
+            ctype:get(need.ctype),
+            lrv:get(need.lrv),
+            urv:get(need.urv),
+            method:get(need.method),
+            af:get(need.af),
+            al:get(need.al),
+            date:get(need.date),
+            interval:get(need.interval),
+            due:get(need.due),
+            tech:get(need.tech),
+            notes:get(need.notes),
+          };
+        }
+        const incoming = rows.slice(1).filter(r=>r.some(x=>String(x).trim()!=='')).map(pick);
+        const cur=loadCals();
+        saveCals(cur.concat(incoming));
+        renderCals();
+        alert(`Imported ${incoming.length} calibration rows.`);
+        calImpInp.value='';
+      };
+      reader.readAsText(file);
+    });
 
     // ---- Loop Log ----
     const LOOP_KEY = 'pocketech.looplog.v1';
     let loopData = JSON.parse(localStorage.getItem(LOOP_KEY) || "[]");
     const loopForm = document.getElementById("loopForm");
     const loopTableBody = document.querySelector("#loopTable tbody");
+    const loopImpBtn = document.getElementById('loop_import_btn');
+    const loopImpInp = document.getElementById('loop_import');
 
     function renderLoopTable() {
       loopTableBody.innerHTML = "";
@@ -388,6 +500,101 @@
       downloadCSV('loop_check_log.csv', rows);
     }
     function clearLoop(){ if (confirm('Clear ALL local loop entries?')) { loopData=[]; localStorage.setItem(LOOP_KEY,'[]'); renderLoopTable(); } }
+    document.getElementById('loop_tpl').addEventListener('click', ()=>{
+      const header = ['Date','Tag','Service','Type','LRV','URV','As-Found','As-Left','Tech','Status','Notes'];
+      downloadCSV('loop_check_log_template.csv', [header]);
+    });
+    loopImpBtn.addEventListener('click', ()=> loopImpInp.click());
+    loopImpInp.addEventListener('change', (e)=>{
+      const file=e.target.files[0]; if(!file) return;
+      const reader=new FileReader();
+      reader.onload=()=>{
+        const rows=parseCSV(reader.result);
+        if(!rows.length) { alert('Empty CSV'); return; }
+        const header=rows[0]; const idx=indexHeaders(header);
+        const need = {
+          date:['date'],
+          tag:['tag'],
+          service:['service'],
+          type:['type'],
+          lrv:['lrv'],
+          urv:['urv'],
+          asFound:['as-found','as found'],
+          asLeft:['as-left','as left'],
+          tech:['tech','technician'],
+          status:['status'],
+          notes:['notes','note']
+        };
+        function pick(obj){
+          const lower = (s)=> (s||'').toString().trim().toLowerCase();
+          const get = (keys)=> { for(const k of keys){ const i=idx[lower(k)]; if(i!=null) return obj[i]; } return ''; };
+          return {
+            date:get(need.date),
+            tag:get(need.tag),
+            service:get(need.service),
+            type:get(need.type),
+            lrv:get(need.lrv),
+            urv:get(need.urv),
+            asFound:get(need.asFound),
+            asLeft:get(need.asLeft),
+            tech:get(need.tech),
+            status:get(need.status),
+            notes:get(need.notes),
+          };
+        }
+        const incoming = rows.slice(1).filter(r=>r.some(x=>String(x).trim()!=='')).map(pick);
+        loopData = loopData.concat(incoming);
+        localStorage.setItem(LOOP_KEY, JSON.stringify(loopData));
+        renderLoopTable();
+        alert(`Imported ${incoming.length} loop rows.`);
+        loopImpInp.value='';
+      };
+      reader.readAsText(file);
+    });
+
+    // ---- Backup & Restore ----
+    const ALL_KEYS = ['pocketech.calibrations.v1','pocketech.looplog.v1'];
+    const bkExp = document.getElementById('bk_export');
+    const bkImpBtn = document.getElementById('bk_import_btn');
+    const bkImpInp = document.getElementById('bk_import');
+    const bkClr = document.getElementById('bk_clear');
+
+    bkExp.addEventListener('click', ()=>{
+      const payload = {};
+      ALL_KEYS.forEach(k => { payload[k] = localStorage.getItem(k) || '[]'; });
+      const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download='pocketech_backup.json'; a.click();
+      URL.revokeObjectURL(url);
+    });
+    bkImpBtn.addEventListener('click', ()=> bkImpInp.click());
+    bkImpInp.addEventListener('change', (e)=>{
+      const file=e.target.files[0]; if(!file) return;
+      const reader=new FileReader();
+      reader.onload=()=>{
+        try{
+          const data = JSON.parse(reader.result);
+          let restored = 0;
+          ALL_KEYS.forEach(k=>{
+            if (data[k]) { localStorage.setItem(k, data[k]); restored++; }
+          });
+          renderCals();
+          renderLoopTable();
+          alert(`Restore complete. Keys restored: ${restored}`);
+        } catch(err){
+          alert('Invalid JSON backup.');
+        }
+        bkImpInp.value='';
+      };
+      reader.readAsText(file);
+    });
+    bkClr.addEventListener('click', ()=>{
+      if (!confirm('Clear ALL local data (Calibration + Loop)?')) return;
+      ALL_KEYS.forEach(k=> localStorage.removeItem(k));
+      renderCals();
+      renderLoopTable();
+      alert('All local data cleared.');
+    });
 
     // ---- Init ----
     renderCals();
