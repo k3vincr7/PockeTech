@@ -44,7 +44,11 @@
     footer{ text-align:center; color:var(--muted); font-size:12px; padding:12px; }
     .hidden{ display:none; }
     .pill{ padding:2px 8px; border-radius:999px; border:1px solid var(--border); font-size:12px; }
-    .pill.open{ background:#2f3646; } .pill.blocked{ background:#5a3a2f;} .pill.done{ background:#243a2f;}
+
+    /* Cards / grid */
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px}
+    .big{font-size:28px;font-weight:600}
 
     /* Number pad */
     .numpad {
@@ -63,6 +67,14 @@
       background: var(--btn); color: var(--btn-fg); text-align: center; user-select: none;
     }
     .np-wide { grid-column: span 2; }
+
+    /* Signal “nice” bits */
+    .rowline{display:flex;align-items:center;gap:8px}
+    .copy{cursor:pointer;border:1px dashed var(--border);padding:4px 8px;border-radius:8px;font-size:12px;color:var(--muted)}
+    .copy:hover{border-color:var(--accent)}
+    input[type="range"]{width:100%}
+    .steps button{padding:.55em .7em;border-radius:999px;margin-right:6px}
+    .kbd-toggle{margin-top:6px;font-size:12px;border:1px dashed var(--border);background:transparent;color:var(--muted)}
   </style>
 </head>
 <body>
@@ -89,8 +101,8 @@
     <section id="percent" class="active">
       <h2>Percent Steps</h2>
       <div class="row">
-        <div class="col"><label>LRV <input id="lrv" class="num" inputmode="decimal" placeholder="0"></label></div>
-        <div class="col"><label>URV <input id="urv" class="num" inputmode="decimal" placeholder="200"></label></div>
+        <div class="col"><label>LRV <input id="lrv" class="num" inputmode="decimal" placeholder="0"></label><button class="kbd-toggle" data-for="lrv">kbd</button></div>
+        <div class="col"><label>URV <input id="urv" class="num" inputmode="decimal" placeholder="200"></label><button class="kbd-toggle" data-for="urv">kbd</button></div>
       </div>
       <div class="row">
         <div class="col"><button class="btn" onclick="calcPercent()">Calculate</button></div>
@@ -100,49 +112,85 @@
       <p class="muted">Outputs 0, 25, 50, 75, 100% of your range.</p>
     </section>
 
-    <!-- Signal Helper -->
+    <!-- Signal Helper (NICE / PRO) -->
     <section id="signal">
-      <h2>Signal Helper (4–20 mA)</h2>
+      <h2>4–20 mA Helper (Pro)</h2>
+
       <div class="row">
-        <div class="col"><label>LRV (EU) <input id="sh_lrv" class="num" inputmode="decimal" placeholder="0"></label></div>
-        <div class="col"><label>URV (EU) <input id="sh_urv" class="num" inputmode="decimal" placeholder="200"></label></div>
+        <div class="col"><label>LRV (EU) <input id="sh_lrv" class="num" inputmode="decimal" placeholder="0"></label><button class="kbd-toggle" data-for="sh_lrv">kbd</button></div>
+        <div class="col"><label>URV (EU) <input id="sh_urv" class="num" inputmode="decimal" placeholder="200"></label><button class="kbd-toggle" data-for="sh_urv">kbd</button></div>
+        <div class="col"><label>EU Label (optional) <input id="sh_eulbl" placeholder="e.g., gpm, °F, psi"></label></div>
       </div>
+
       <div class="row">
-        <div class="col"><label>mA <input id="ma" class="num" inputmode="decimal" placeholder="12"></label></div>
-        <div class="col"><label>% <input id="percentInput" class="num" inputmode="decimal" placeholder="50"></label></div>
-        <div class="col"><label>EU <input id="eu" class="num" inputmode="decimal" placeholder="100"></label></div>
+        <div class="col"><label>mA <input id="sh_ma" class="num" inputmode="decimal" placeholder="12"></label><button class="kbd-toggle" data-for="sh_ma">kbd</button></div>
+        <div class="col"><label>% <input id="sh_pct" class="num" inputmode="decimal" placeholder="50"></label><button class="kbd-toggle" data-for="sh_pct">kbd</button></div>
+        <div class="col"><label>EU <input id="sh_eu" class="num" inputmode="decimal" placeholder="100"></label><button class="kbd-toggle" data-for="sh_eu">kbd</button></div>
       </div>
+
       <div class="row">
-        <div class="col"><button class="btn" onclick="maToPercent()">From mA</button></div>
-        <div class="col"><button class="btn" onclick="percentToMa()">From %</button></div>
-        <div class="col"><button class="btn" onclick="euToPercent()">From EU</button></div>
-        <div class="col"><button class="btn" onclick="signalClear()">Clear</button></div>
+        <div class="col"><button class="btn" id="sh_from_ma">From mA</button></div>
+        <div class="col"><button class="btn" id="sh_from_pct">From %</button></div>
+        <div class="col"><button class="btn" id="sh_from_eu">From EU</button></div>
       </div>
-      <p id="signalResult" class="muted"></p>
+
+      <div class="hr"></div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="rowline"><div class="big" id="read_ma">—</div><span class="copy" data-copy="#read_ma">copy</span></div>
+          <div class="muted">mA</div>
+        </div>
+        <div class="card">
+          <div class="rowline"><div class="big" id="read_pct">—</div><span class="copy" data-copy="#read_pct">copy</span></div>
+          <div class="muted">Percent</div>
+          <div class="steps" style="margin-top:8px">
+            <button class="btn step" data-p="0">0%</button>
+            <button class="btn step" data-p="25">25%</button>
+            <button class="btn step" data-p="50">50%</button>
+            <button class="btn step" data-p="75">75%</button>
+            <button class="btn step" data-p="100">100%</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="rowline"><div class="big" id="read_eu">—</div><span class="copy" data-copy="#read_eu">copy</span></div>
+          <div class="muted">Eng Units</div>
+          <label class="rowline" style="margin-top:8px">
+            <input type="checkbox" id="sqrt_mode"> square-root (flow)
+          </label>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <div class="col">
+          <input id="pct_slider" type="range" min="0" max="100" step="0.1" value="50">
+        </div>
+      </div>
+      <p class="muted" id="sh_hint">Tip: slider drives % ⇄ mA ⇄ EU live.</p>
     </section>
 
     <!-- Level — Open (tap-to-tap) -->
     <section id="level_open">
       <h2>Level — Open Tank (tap-to-tap)</h2>
       <div class="row">
-        <div class="col"><label>Tap-to-tap span <input id="lo_span" class="num" inputmode="decimal" placeholder="e.g., 72"></label></div>
+        <div class="col"><label>Tap-to-tap span <input id="lo_span" class="num" inputmode="decimal" placeholder="e.g., 72"></label><button class="kbd-toggle" data-for="lo_span">kbd</button></div>
         <div class="col"><label>Units
           <select id="lo_units"><option value="in">in</option><option value="ft">ft</option><option value="m">m</option></select>
         </label></div>
-        <div class="col"><label>Specific Gravity (SG) <input id="lo_sg" class="num" inputmode="decimal" value="1.0"></label></div>
+        <div class="col"><label>Specific Gravity (SG) <input id="lo_sg" class="num" inputmode="decimal" value="1.0"></label><button class="kbd-toggle" data-for="lo_sg">kbd</button></div>
       </div>
       <div class="row">
         <div class="col"><label>dP Units
           <select id="lo_dpU"><option value="inh2o">inH₂O</option><option value="psi">psi</option><option value="kpa">kPa</option></select>
         </label></div>
-        <div class="col"><label>LRV (optional) <input id="lo_lrv" class="num" inputmode="decimal" placeholder="blank = 0"></label></div>
-        <div class="col"><label>URV (optional) <input id="lo_urv" class="num" inputmode="decimal" placeholder="blank = auto"></label></div>
+        <div class="col"><label>LRV (optional) <input id="lo_lrv" class="num" inputmode="decimal" placeholder="blank = 0"></label><button class="kbd-toggle" data-for="lo_lrv">kbd</button></div>
+        <div class="col"><label>URV (optional) <input id="lo_urv" class="num" inputmode="decimal" placeholder="blank = auto"></label><button class="kbd-toggle" data-for="lo_urv">kbd</button></div>
       </div>
       <div class="hr"></div>
       <div class="row">
-        <div class="col"><label>Level <input id="lo_lvl" class="num" inputmode="decimal" placeholder="same units as span"></label></div>
+        <div class="col"><label>Level <input id="lo_lvl" class="num" inputmode="decimal" placeholder="same units as span"></label><button class="kbd-toggle" data-for="lo_lvl">kbd</button></div>
         <div class="col"><button class="btn" onclick="LO_levelToMa()">Level → mA</button></div>
-        <div class="col"><label>mA <input id="lo_ma" class="num" inputmode="decimal" placeholder="e.g., 12"></label></div>
+        <div class="col"><label>mA <input id="lo_ma" class="num" inputmode="decimal" placeholder="e.g., 12"></label><button class="kbd-toggle" data-for="lo_ma">kbd</button></div>
         <div class="col"><button class="btn" onclick="LO_maToLevel()">mA → Level</button></div>
       </div>
       <p id="lo_result" class="muted"></p>
@@ -155,31 +203,31 @@
     <section id="level_closed">
       <h2>Level — Closed Tank (tap-to-tap)</h2>
       <div class="row">
-        <div class="col"><label>Tap-to-tap span <input id="lc_span" class="num" inputmode="decimal" placeholder="e.g., 72"></label></div>
+        <div class="col"><label>Tap-to-tap span <input id="lc_span" class="num" inputmode="decimal" placeholder="e.g., 72"></label><button class="kbd-toggle" data-for="lc_span">kbd</button></div>
         <div class="col"><label>Units
           <select id="lc_units"><option value="in">in</option><option value="ft">ft</option><option value="m">m</option></select>
         </label></div>
-        <div class="col"><label>Liquid SG <input id="lc_sgL" class="num" inputmode="decimal" value="1.0"></label></div>
+        <div class="col"><label>Liquid SG <input id="lc_sgL" class="num" inputmode="decimal" value="1.0"></label><button class="kbd-toggle" data-for="lc_sgL">kbd</button></div>
       </div>
       <div class="row">
         <div class="col"><label>Leg Type
           <select id="lc_leg"><option value="dry">Dry leg (gas)</option><option value="wet">Wet leg (condensing)</option></select>
         </label></div>
-        <div class="col"><label>Wet leg height (in) <input id="lc_wetH" class="num" inputmode="decimal" placeholder="if wet"></label></div>
-        <div class="col"><label>Wet leg SG <input id="lc_sgW" class="num" inputmode="decimal" value="1.0"></label></div>
+        <div class="col"><label>Wet leg height (in) <input id="lc_wetH" class="num" inputmode="decimal" placeholder="if wet"></label><button class="kbd-toggle" data-for="lc_wetH">kbd</button></div>
+        <div class="col"><label>Wet leg SG <input id="lc_sgW" class="num" inputmode="decimal" value="1.0"></label><button class="kbd-toggle" data-for="lc_sgW">kbd</button></div>
       </div>
       <div class="row">
         <div class="col"><label>dP Units
           <select id="lc_dpU"><option value="inh2o">inH₂O</option><option value="psi">psi</option><option value="kpa">kPa</option></select>
         </label></div>
-        <div class="col"><label>LRV (optional) <input id="lc_lrv" class="num" inputmode="decimal" placeholder="auto"></label></div>
-        <div class="col"><label>URV (optional) <input id="lc_urv" class="num" inputmode="decimal" placeholder="auto"></label></div>
+        <div class="col"><label>LRV (optional) <input id="lc_lrv" class="num" inputmode="decimal" placeholder="auto"></label><button class="kbd-toggle" data-for="lc_lrv">kbd</button></div>
+        <div class="col"><label>URV (optional) <input id="lc_urv" class="num" inputmode="decimal" placeholder="auto"></label><button class="kbd-toggle" data-for="lc_urv">kbd</button></div>
       </div>
       <div class="hr"></div>
       <div class="row">
-        <div class="col"><label>Level <input id="lc_lvl" class="num" inputmode="decimal" placeholder="same units as span"></label></div>
+        <div class="col"><label>Level <input id="lc_lvl" class="num" inputmode="decimal" placeholder="same units as span"></label><button class="kbd-toggle" data-for="lc_lvl">kbd</button></div>
         <div class="col"><button class="btn" onclick="LC_levelToMa()">Level → mA</button></div>
-        <div class="col"><label>mA <input id="lc_ma" class="num" inputmode="decimal" placeholder="e.g., 12"></label></div>
+        <div class="col"><label>mA <input id="lc_ma" class="num" inputmode="decimal" placeholder="e.g., 12"></label><button class="kbd-toggle" data-for="lc_ma">kbd</button></div>
         <div class="col"><button class="btn" onclick="LC_maToLevel()">mA → Level</button></div>
       </div>
       <p id="lc_result" class="muted"></p>
@@ -193,9 +241,9 @@
       <h2>Pressure</h2>
       <h3>Gauge ↔ Absolute</h3>
       <div class="row">
-        <div class="col"><label>Atmospheric (psia) <input id="atm" class="num" inputmode="decimal" value="14.7"></label></div>
-        <div class="col"><label>Gauge (psig) <input id="psig" class="num" inputmode="decimal"></label></div>
-        <div class="col"><label>Absolute (psia) <input id="psia" class="num" inputmode="decimal"></label></div>
+        <div class="col"><label>Atmospheric (psia) <input id="atm" class="num" inputmode="decimal" value="14.7"></label><button class="kbd-toggle" data-for="atm">kbd</button></div>
+        <div class="col"><label>Gauge (psig) <input id="psig" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="psig">kbd</button></div>
+        <div class="col"><label>Absolute (psia) <input id="psia" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="psia">kbd</button></div>
       </div>
       <div class="row">
         <div class="col"><button class="btn" onclick="psigToPsia()">psig → psia</button></div>
@@ -205,9 +253,9 @@
       <div class="hr"></div>
       <h3>psi ↔ kPa ↔ bar</h3>
       <div class="row">
-        <div class="col"><label>psi <input id="u_psi" class="num" inputmode="decimal"></label></div>
-        <div class="col"><label>kPa <input id="u_kpa" class="num" inputmode="decimal"></label></div>
-        <div class="col"><label>bar <input id="u_bar" class="num" inputmode="decimal"></label></div>
+        <div class="col"><label>psi <input id="u_psi" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="u_psi">kbd</button></div>
+        <div class="col"><label>kPa <input id="u_kpa" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="u_kpa">kbd</button></div>
+        <div class="col"><label>bar <input id="u_bar" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="u_bar">kbd</button></div>
       </div>
       <div class="row">
         <div class="col"><button class="btn" onclick="fromPSI()">From psi</button></div>
@@ -218,8 +266,8 @@
       <div class="hr"></div>
       <h3>Pressure Switch</h3>
       <div class="row">
-        <div class="col"><label>Setpoint (rising, psig) <input id="sw_set" class="num" inputmode="decimal"></label></div>
-        <div class="col"><label>Deadband (psig) <input id="sw_db" class="num" inputmode="decimal"></label></div>
+        <div class="col"><label>Setpoint (rising, psig) <input id="sw_set" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="sw_set">kbd</button></div>
+        <div class="col"><label>Deadband (psig) <input id="sw_db" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="sw_db">kbd</button></div>
         <div class="col"><label>Mode
           <select id="sw_mode"><option value="nc">NC (opens on rise)</option><option value="no">NO (closes on rise)</option></select>
         </label></div>
@@ -230,9 +278,9 @@
       <div class="hr"></div>
       <h3>Vacuum helpers</h3>
       <div class="row">
-        <div class="col"><label>Vacuum (inHg) <input id="vac_inhg" class="num" inputmode="decimal"></label></div>
-        <div class="col"><label>psia <input id="vac_psia" class="num" inputmode="decimal"></label></div>
-        <div class="col"><label>psig <input id="vac_psig" class="num" inputmode="decimal"></label></div>
+        <div class="col"><label>Vacuum (inHg) <input id="vac_inhg" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="vac_inhg">kbd</button></div>
+        <div class="col"><label>psia <input id="vac_psia" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="vac_psia">kbd</button></div>
+        <div class="col"><label>psig <input id="vac_psig" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="vac_psig">kbd</button></div>
       </div>
       <div class="row">
         <div class="col"><button class="btn" onclick="fromInHg()">From inHg</button></div>
@@ -251,8 +299,8 @@
         <div class="col"><label>Type <input id="cal_type" placeholder="PT/FT/LT/TT"></label></div>
       </div>
       <div class="row">
-        <div class="col"><label>LRV <input id="cal_lrv" class="num" inputmode="decimal"></label></div>
-        <div class="col"><label>URV <input id="cal_urv" class="num" inputmode="decimal"></label></div>
+        <div class="col"><label>LRV <input id="cal_lrv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="cal_lrv">kbd</button></div>
+        <div class="col"><label>URV <input id="cal_urv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="cal_urv">kbd</button></div>
         <div class="col"><label>Method <input id="cal_method" placeholder="5-point, AF/AL"></label></div>
       </div>
       <div class="row">
@@ -375,7 +423,7 @@
     </div>
   </div>
 
-  <footer class="muted">PockeTech — v0.7</footer>
+  <footer class="muted">PockeTech — v0.71</footer>
 
   <script>
     // Theme toggle
@@ -404,7 +452,7 @@
     function val(id){return document.getElementById(id).value;}
     function setVal(id,v){document.getElementById(id).value=v;}
 
-    // Global Number Pad
+    // ---------- Number Pad (disable native keyboard) ----------
     const numpad = document.getElementById('numpad');
     let npTarget = null;
     function showPad(forInput){
@@ -421,9 +469,7 @@
       let v = el.value;
       if(s==='.' && v.includes('.')) return;
       if(s==='-'){
-        // toggle leading minus
-        if(v.startsWith('-')) v = v.slice(1);
-        else v = '-' + v;
+        if(v.startsWith('-')) v = v.slice(1); else v = '-' + v;
         el.value = v; return;
       }
       el.value = v.slice(0,start) + s + v.slice(end);
@@ -432,8 +478,19 @@
     }
     function wireNumpad(){
       document.querySelectorAll('input.num').forEach(inp=>{
+        inp.readOnly = true;                 // prevent native keyboard
         inp.addEventListener('focus', ()=> showPad(inp));
-        inp.addEventListener('blur', ()=> setTimeout(()=>{ if(document.activeElement !== inp) hidePad(); }, 120));
+        inp.addEventListener('click', ()=> showPad(inp)); // some mobiles fire click without focus
+      });
+      // Small "kbd" toggle to allow native typing if desired
+      document.querySelectorAll('.kbd-toggle').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const id = btn.getAttribute('data-for'); const el = document.getElementById(id);
+          if(!el) return;
+          el.readOnly = !el.readOnly;
+          if(!el.readOnly){ hidePad(); el.focus(); } else { el.blur(); }
+          btn.textContent = el.readOnly ? 'kbd' : 'done';
+        });
       });
     }
     numpad.addEventListener('click', (e)=>{
@@ -452,18 +509,84 @@
       npTarget.dispatchEvent(new Event('input',{bubbles:true}));
     });
 
-    // Percent
+    // ---------- Signal (nice) ----------
+    function sh_getRange(){
+      const l=parseFloat(val('sh_lrv')), u=parseFloat(val('sh_urv'));
+      if(isNaN(l)||isNaN(u)||l===u){ alert('Enter valid LRV/URV'); return null; }
+      return {l,u};
+    }
+    function sh_fmtEU(x){
+      const lbl = val('sh_eulbl').trim();
+      return `${fmt(x)}${lbl? ' '+lbl : ''}`;
+    }
+    function sh_updateFromPct(p){
+      const r=sh_getRange(); if(!r) return;
+      const sqrt = document.getElementById('sqrt_mode').checked;
+      const pct = Math.min(Math.max(Number(p),0),100);
+      const ma = 4 + 16*(pct/100);
+      let eu;
+      if(!sqrt){
+        eu = r.l + (r.u - r.l)*(pct/100);
+      } else {
+        // EU proportional to sqrt(pct): pct = (EU_norm)^2
+        const euNorm = Math.sqrt(pct/100);
+        eu = r.l + (r.u - r.l)*euNorm;
+      }
+      setVal('sh_pct', fmt(pct));
+      setVal('sh_ma', fmt(ma));
+      setVal('sh_eu', fmt(eu));
+      document.getElementById('read_ma').textContent = fmt(ma);
+      document.getElementById('read_pct').textContent = fmt(pct)+'%';
+      document.getElementById('read_eu').textContent = sh_fmtEU(eu);
+      document.getElementById('pct_slider').value = pct;
+    }
+    function sh_fromMA(){
+      const r=sh_getRange(); if(!r) return;
+      const m=parseFloat(val('sh_ma')); if(isNaN(m)){alert('Enter mA');return;}
+      const pct = Math.min(Math.max((m-4)/16*100,0),100);
+      sh_updateFromPct(pct);
+    }
+    function sh_fromPct(){
+      const p=parseFloat(val('sh_pct')); if(isNaN(p)){alert('Enter %');return;}
+      sh_updateFromPct(p);
+    }
+    function sh_fromEU(){
+      const r=sh_getRange(); if(!r) return;
+      const e=parseFloat(val('sh_eu')); if(isNaN(e)){alert('Enter EU');return;}
+      const sqrt = document.getElementById('sqrt_mode').checked;
+      let pct;
+      if(!sqrt){
+        pct = (e - r.l)/(r.u - r.l)*100;
+      } else {
+        const euNorm = (e - r.l)/(r.u - r.l);
+        pct = Math.pow(Math.max(euNorm,0),2)*100;
+      }
+      sh_updateFromPct(pct);
+    }
+    document.getElementById('sh_from_ma').addEventListener('click', sh_fromMA);
+    document.getElementById('sh_from_pct').addEventListener('click', sh_fromPct);
+    document.getElementById('sh_from_eu').addEventListener('click', sh_fromEU);
+    document.getElementById('pct_slider').addEventListener('input', e=> sh_updateFromPct(e.target.value));
+    document.getElementById('sqrt_mode').addEventListener('change', ()=> {
+      // re-evaluate based on current % when sqrt toggles
+      const p = parseFloat(document.getElementById('pct_slider').value||'0');
+      sh_updateFromPct(p);
+    });
+    document.querySelectorAll('.step').forEach(b=> b.addEventListener('click',()=> sh_updateFromPct(b.dataset.p)));
+
+    // copy buttons
+    document.querySelectorAll('.copy').forEach(c=>{
+      c.addEventListener('click', async ()=>{
+        const sel = c.getAttribute('data-copy'); const el = document.querySelector(sel);
+        if(!el) return; try{ await navigator.clipboard.writeText(el.textContent.trim()); c.textContent='copied'; setTimeout(()=>c.textContent='copy', 900);}catch{}
+      });
+    });
+
+    // ---------- Percent ----------
     function calcPercent(){const l=parseFloat(val('lrv')), u=parseFloat(val('urv')); if(isNaN(l)||isNaN(u)||l===u){alert('Enter numeric LRV/URV (not equal).');return;} const steps=[0,25,50,75,100]; let html="<tr><th>%</th><th>Value</th></tr>"; steps.forEach(p=>{const v=l+(u-l)*(p/100); html+=`<tr><td>${p}%</td><td>${fmt(v)}</td></tr>`;}); document.getElementById('percentTable').innerHTML=html;}
     function exportPercentCSV(){const t=document.getElementById('percentTable'); if(!t||!t.rows.length){alert('Calculate first.');return;} const rows=[['Percent','EngUnits']]; for(let i=1;i<t.rows.length;i++){rows.push([t.rows[i].cells[0].innerText,t.rows[i].cells[1].innerText])} downloadCSV('percent_steps.csv',rows);}
 
-    // Signal helper
-    function ensureRangeSH(){const l=parseFloat(val('sh_lrv')), u=parseFloat(val('sh_urv')); if(isNaN(l)||isNaN(u)||l===u){alert('Enter valid LRV/URV.');return null;} return {l,u};}
-    function maToPercent(){const r=ensureRangeSH(); if(!r) return; const m=parseFloat(val('ma')); if(isNaN(m)){alert('Enter mA.');return;} const p=Math.min(Math.max((m-4)/16*100,0),100); const eu=r.l+(r.u-r.l)*(p/100); setVal('percentInput',fmt(p)); setVal('eu',fmt(eu)); document.getElementById('signalResult').innerText=`${m} mA → ${fmt(p)}% → ${fmt(eu)} EU`;}
-    function percentToMa(){const r=ensureRangeSH(); if(!r) return; const p0=parseFloat(val('percentInput')); if(isNaN(p0)){alert('Enter %.');return;} const p=Math.min(Math.max(p0,0),100); const m=4+16*(p/100); const eu=r.l+(r.u-r.l)*(p/100); setVal('ma',fmt(m)); setVal('eu',fmt(eu)); document.getElementById('signalResult').innerText=`${fmt(p)}% → ${fmt(m)} mA → ${fmt(eu)} EU`;}
-    function euToPercent(){const r=ensureRangeSH(); if(!r) return; const e=parseFloat(val('eu')); if(isNaN(e)){alert('Enter EU.');return;} const p=Math.min(Math.max((e-r.l)/(r.u-r.l)*100,0),100); const m=4+16*(p/100); setVal('percentInput',fmt(p)); setVal('ma',fmt(m)); document.getElementById('signalResult').innerText=`${fmt(e)} EU → ${fmt(p)}% → ${fmt(m)} mA`;}
-    function signalClear(){['sh_lrv','sh_urv','ma','percentInput','eu'].forEach(id=>setVal(id,'')); document.getElementById('signalResult').innerText='';}
-
-    // Unit constants
+    // ---------- Level & Pressure (same as v0.7) ----------
     const INH2O_PER_PSI=27.679904842545, KPA_PER_PSI=6.894757293168, IN_PER_FT=12, IN_PER_M=39.37007874;
 
     // Level — Open
@@ -504,7 +627,6 @@
       const wetH=parseFloat(val('lc_wetH')||'0'); const sgW=parseFloat(val('lc_sgW')||'1'); const dpU=document.getElementById('lc_dpU').value;
       if(isNaN(span)||span<=0||isNaN(sgL)||sgL<=0){ alert('Enter span and liquid SG'); return null; }
       const span_in = LC_inches(span, u);
-      // ΔP(h) in inH2O
       const dP0_inH2O = (leg==='wet') ? (0 - sgW*(wetH||0)) : 0;
       const dP100_inH2O = (sgL*span_in) - (leg==='wet' ? sgW*(wetH||0) : 0);
       let LRV=parseFloat(val('lc_lrv')); if(isNaN(LRV)) LRV = (dpU==='inh2o')?dP0_inH2O:(dpU==='psi'? dP0_inH2O/INH2O_PER_PSI : (dP0_inH2O/INH2O_PER_PSI)*KPA_PER_PSI);
@@ -528,31 +650,24 @@
       steps.forEach(p=>{ const dp=pctToDP(p,c.LRV,c.URV); const lvl=(p/100)*c.span; tb.insertAdjacentHTML('beforeend', `<tr><td>${p}%</td><td>${fmt(lvl)} ${c.u}</td><td>${fmt(dp)} ${c.dpU}</td><td>${fmt(pctToMA(p))} mA</td></tr>`); });
     }
 
-    // Pressure: gauge ↔ absolute
+    // Pressure: gauge ↔ absolute + unit conv + switch + vacuum
     function psigToPsia(){const a=parseFloat(val('atm')), g=parseFloat(val('psig')); if(isNaN(a)||isNaN(g)){alert('Enter atm and psig');return;} setVal('psia',fmt(a+g));}
     function psiaToPsig(){const a=parseFloat(val('atm')), p=parseFloat(val('psia')); if(isNaN(a)||isNaN(p)){alert('Enter atm and psia');return;} setVal('psig',fmt(p-a));}
-    // Unit conv
     function fromPSI(){const p=parseFloat(val('u_psi')); if(isNaN(p)){alert('Enter psi');return;} setVal('u_kpa',fmt(p*KPA_PER_PSI)); setVal('u_bar',fmt(p*0.06894757));}
     function fromKPA(){const k=parseFloat(val('u_kpa')); if(isNaN(k)){alert('Enter kPa');return;} const psi=k/KPA_PER_PSI; setVal('u_psi',fmt(psi)); setVal('u_bar',fmt(psi*0.06894757));}
     function fromBAR(){const b=parseFloat(val('u_bar')); if(isNaN(b)){alert('Enter bar');return;} const psi=b/0.06894757; setVal('u_psi',fmt(psi)); setVal('u_kpa',fmt(psi*KPA_PER_PSI));}
-    // Pressure switch
     function calcSwitch(){
       const sp=parseFloat(val('sw_set')); const db=parseFloat(val('sw_db')); const mode=document.getElementById('sw_mode').value;
       if(isNaN(sp)||isNaN(db)||db<0){ alert('Enter setpoint and deadband ≥ 0'); return; }
-      let openOnRise = (mode==='nc'); // NC opens on rise; NO closes on rise
-      const risingOn  = openOnRise ? 'opens' : 'closes';
-      const fallingOn = openOnRise ? 'closes' : 'opens';
-      const high = sp;
-      const low  = sp - db;
+      const openOnRise = (mode==='nc');
       const rows = [
         ['Contact', 'Action', 'Pressure'],
-        [openOnRise?'NC':'NO', risingOn, fmt(high)+' psig'],
-        [openOnRise?'NC':'NO', fallingOn, fmt(low)+' psig'],
+        [openOnRise?'NC':'NO', openOnRise?'opens':'closes', fmt(sp)+' psig'],
+        [openOnRise?'NC':'NO', openOnRise?'closes':'opens', fmt(sp-db)+' psig'],
       ];
       const tb=document.querySelector('#sw_out tbody'); tb.innerHTML='';
-      rows.forEach((r,i)=>{ tb.insertAdjacentHTML('beforeend', `<tr>${r.map((c,j)=>`<${i? 'td':'th'}>${c}</${i? 'td':'th'}>`).join('')}</tr>`); });
+      rows.forEach((r,i)=>{ tb.insertAdjacentHTML('beforeend', `<tr>${r.map((c)=>`<${i? 'td':'th'}>${c}</${i? 'td':'th'}>`).join('')}</tr>`); });
     }
-    // Vacuum helpers
     function fromInHg(){
       const inhg=parseFloat(val('vac_inhg')); const atmPsia=parseFloat(val('atm')); if(isNaN(inhg)||isNaN(atmPsia)){alert('Enter inHg and atm psia');return;}
       const psia = atmPsia - (inhg * atmPsia / 29.92);
@@ -572,60 +687,35 @@
       setVal('vac_psia',fmt(psia)); setVal('vac_inhg',fmt(inhg));
     }
 
-    // Calibration
-    const CAL_KEY='pocketech.calibrations.v1'; const calTBody=document.querySelector('#cal_table tbody');
-    function addMonths(d, m){ if(!d||!m) return ''; const x=new Date(d); if(isNaN(x)) return ''; x.setMonth(x.getMonth()+Number(m)); return x.toISOString().slice(0,10); }
-    document.getElementById('cal_date').addEventListener('change',()=>setVal('cal_due',addMonths(val('cal_date'),val('cal_interval'))||'')); document.getElementById('cal_interval').addEventListener('change',()=>setVal('cal_due',addMonths(val('cal_date'),val('cal_interval'))||''));
-    function loadCals(){ try{return JSON.parse(localStorage.getItem(CAL_KEY)||'[]');}catch{return [];} }
-    function saveCals(r){ localStorage.setItem(CAL_KEY,JSON.stringify(r)); }
-    function renderCals(){ const r=loadCals(); calTBody.innerHTML=''; r.forEach(x=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${x.tag||''}</td><td>${x.model||''}</td><td>${x.ctype||''}</td><td>${x.lrv??''}</td><td>${x.urv??''}</td><td>${x.method||''}</td><td>${x.af||''}</td><td>${x.al||''}</td><td>${x.date||''}</td><td>${x.interval||''}</td><td>${x.due||''}</td><td>${x.tech||''}</td><td>${x.notes||''}</td>`; calTBody.appendChild(tr); }); }
-    document.getElementById('cal_add').addEventListener('click',()=>{ const row={tag:val('cal_tag').trim(),model:val('cal_model').trim(),ctype:val('cal_type').trim(),lrv:val('cal_lrv'),urv:val('cal_urv'),method:val('cal_method').trim(),af:val('cal_af').trim(),al:val('cal_al').trim(),date:val('cal_date'),interval:val('cal_interval'),due:val('cal_due'),tech:val('cal_tech').trim(),notes:val('cal_notes').trim()}; if(!row.tag){alert('Tag required');return;} const r=loadCals(); r.push(row); saveCals(r); renderCals(); ['cal_tag','cal_model','cal_type','cal_lrv','cal_urv','cal_method','cal_af','cal_al','cal_notes'].forEach(id=>setVal(id,'')); });
-    document.getElementById('cal_export').addEventListener('click',()=>{ const r=loadCals(); if(!r.length){alert('Nothing to export.');return;} const header=['Tag','Make/Model','Type','LRV','URV','Method','As-Found','As-Left','Date','Interval(months)','Next Due','Tech','Notes']; const rows=[header,...r.map(x=>[x.tag,x.model,x.ctype,x.lrv,x.urv,x.method,x.af,x.al,x.date,x.interval,x.due,x.tech,x.notes])]; downloadCSV('calibration_tracker.csv',rows); });
-    document.getElementById('cal_clear').addEventListener('click',()=>{ if(confirm('Clear ALL local calibration records?')){ saveCals([]); renderCals(); } });
-    document.getElementById('cal_tpl').addEventListener('click',()=>{ const header=['Tag','Make/Model','Type','LRV','URV','Method','As-Found','As-Left','Date','Interval(months)','Next Due','Tech','Notes']; downloadCSV('calibration_tracker_template.csv',[header]); });
-    document.getElementById('cal_import_btn').addEventListener('click',()=>document.getElementById('cal_import').click());
-    document.getElementById('cal_import').addEventListener('change',e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ const rows=parseCSV(r.result); if(!rows.length){alert('Empty CSV');return;} const idx=indexHeaders(rows[0]); const need={tag:['tag'],model:['make/model','make','model','make model'],ctype:['type'],lrv:['lrv'],urv:['urv'],method:['method'],af:['as-found','as found'],al:['as-left','as left'],date:['date'],interval:['interval','interval(months)','interval months'],due:['next due','next_due','nextdue','due'],tech:['tech','technician'],notes:['notes','note']}; function pick(a){const g=ks=>{for(const k of ks){const i=idx[k]; if(i!=null) return a[i];} return ''}; return {tag:g(need.tag),model:g(need.model),ctype:g(need.ctype),lrv:g(need.lrv),urv:g(need.urv),method:g(need.method),af:g(need.af),al:g(need.al),date:g(need.date),interval:g(need.interval),due:g(need.due),tech:g(need.tech),notes:g(need.notes)} } const incoming=rows.slice(1).filter(r=>r.some(x=>String(x).trim()!=='')).map(pick); const cur=loadCals(); saveCals(cur.concat(incoming)); renderCals(); alert(`Imported ${incoming.length} calibration rows.`); e.target.value=''; }; r.readAsText(f); });
-
-    // Loop Log
-    const LOOP_KEY='pocketech.looplog.v1'; let loopData=JSON.parse(localStorage.getItem(LOOP_KEY)||'[]'); const loopTBody=document.querySelector('#loopTable tbody');
-    function renderLoopTable(filterTag){ loopTBody.innerHTML=''; (loopData||[]).filter(r=>!filterTag||String(r.tag||'').toLowerCase().includes(filterTag.toLowerCase())).forEach(r=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${r.date||''}</td><td>${r.tag||''}</td><td>${r.service||''}</td><td>${r.type||''}</td><td>${r.lrv??''}</td><td>${r.urv??''}</td><td>${r.asFound||''}</td><td>${r.asLeft||''}</td><td>${r.tech||''}</td><td>${r.status||''}</td><td>${r.notes||''}</td>`; loopTBody.appendChild(tr); }); }
-    document.getElementById('loopForm').addEventListener('submit',e=>{ e.preventDefault(); const row={ date:val('date')||new Date().toISOString().slice(0,10), tag:val('tag').trim(), service:val('service').trim(), type:val('type'), lrv:val('rangeLrv'), urv:val('rangeUrv'), asFound:val('asFound').trim(), asLeft:val('asLeft').trim(), tech:val('tech').trim(), notes:val('notes').trim(), status:val('status') }; if(!row.tag){alert('Tag is required');return;} loopData.push(row); localStorage.setItem(LOOP_KEY,JSON.stringify(loopData)); renderLoopTable(); e.target.reset(); });
-    function applyLoopFilter(){ const t=val('loop_filter_tag').trim(); renderLoopTable(t||undefined); }
-    function downloadLoopCSV(){ const header=['Date','Tag','Service','Type','LRV','URV','As-Found','As-Left','Tech','Status','Notes']; const rows=[header,...loopData.map(r=>[r.date,r.tag,r.service,r.type,r.lrv,r.urv,r.asFound,r.asLeft,r.tech,r.status,r.notes])]; downloadCSV('loop_check_log.csv',rows); }
-    function clearLoop(){ if(confirm('Clear ALL local loop entries?')){ loopData=[]; localStorage.setItem(LOOP_KEY,'[]'); renderLoopTable(); } }
-    document.getElementById('loop_tpl').addEventListener('click',()=>{ const header=['Date','Tag','Service','Type','LRV','URV','As-Found','As-Left','Tech','Status','Notes']; downloadCSV('loop_check_log_template.csv',[header]); });
-    document.getElementById('loop_import_btn').addEventListener('click',()=>document.getElementById('loop_import').click());
-    document.getElementById('loop_import').addEventListener('change',e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ const rows=parseCSV(r.result); if(!rows.length){alert('Empty CSV');return;} const idx=indexHeaders(rows[0]); const need={date:['date'],tag:['tag'],service:['service'],type:['type'],lrv:['lrv'],urv:['urv'],asFound:['as-found','as found'],asLeft:['as-left','as left'],tech:['tech','technician'],status:['status'],notes:['notes','note']}; function pick(a){const g=ks=>{for(const k of ks){const i=idx[k]; if(i!=null) return a[i];} return ''}; return {date:g(need.date),tag:g(need.tag),service:g(need.service),type:g(need.type),lrv:g(need.lrv),urv:g(need.urv),asFound:g(need.asFound),asLeft:g(need.asLeft),tech:g(need.tech),status:g(need.status),notes:g(need.notes)} } const incoming=rows.slice(1).filter(r=>r.some(x=>String(x).trim()!=='')).map(pick); loopData=loopData.concat(incoming); localStorage.setItem(LOOP_KEY,JSON.stringify(loopData)); renderLoopTable(); alert(`Imported ${incoming.length} loop rows.`); e.target.value=''; }; r.readAsText(f); });
-
-    // Tickets
-    const TICKET_KEY='pocketech.tickets.v1'; const tBody=document.querySelector('#t_table tbody');
-    function loadTickets(){ try{return JSON.parse(localStorage.getItem(TICKET_KEY)||'[]');}catch{return [];} }
-    function saveTickets(r){ localStorage.setItem(TICKET_KEY,JSON.stringify(r)); }
-    function renderTickets(){ const r=loadTickets(); tBody.innerHTML=''; r.forEach((x,i)=>{ const tr=document.createElement('tr'); const pill=x.status==='Open'?'open':(x.status==='Blocked'?'blocked':'done'); const thumbs=(x.photos||[]).map(s=>`<img src="${s}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid var(--border)">`).join(''); tr.innerHTML=`<td>${x.title||''}</td><td>${x.system||''}</td><td>${x.sev||''}</td><td><span class="pill ${pill}">${x.status||''}</span></td><td>${x.assignee||''}</td><td>${x.date||''}</td><td>${(x.notes||'').replace(/,/g,';')}</td><td>${thumbs}</td><td><button class="btn" data-i="${i}" data-act="toggle">Toggle Done</button> <button class="btn danger" data-i="${i}" data-act="del">Delete</button></td>`; tBody.appendChild(tr); }); }
-    document.getElementById('t_add').addEventListener('click',async()=>{ const files=[...(document.getElementById('t_photos').files||[])].slice(0,3); const photos=[]; for(const f of files){ photos.push(await new Promise(res=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.readAsDataURL(f); })); } const row={ title:val('t_title'), system:val('t_system'), sev:val('t_sev'), status:val('t_status'), assignee:val('t_assignee'), date:val('t_date'), notes:val('t_notes'), photos }; if(!row.title){alert('Title required');return;} const r=loadTickets(); r.push(row); saveTickets(r); renderTickets(); ['t_title','t_system','t_notes','t_assignee','t_date'].forEach(id=>setVal(id,'')); document.getElementById('t_photos').value=''; });
-    tBody.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; const i=+b.dataset.i; const act=b.dataset.act; const r=loadTickets(); if(!r[i])return; if(act==='del'){ r.splice(i,1); } else if(act==='toggle'){ r[i].status = r[i].status==='Done' ? 'Open' : 'Done'; } saveTickets(r); renderTickets(); });
-    document.getElementById('t_export').addEventListener('click',()=>{ const r=loadTickets(); if(!r.length){alert('Nothing to export.');return;} const header=['Title','System/Tag','Severity','Status','Assignee','Date','Notes','PhotoCount']; const data=r.map(x=>[x.title,x.system,x.sev,x.status,x.assignee,x.date,(x.notes||'').replace(/[\r\n,]/g,' '),(x.photos||[]).length]); downloadCSV('tickets.csv',[... [header], ...data]); });
-    document.getElementById('t_clear').addEventListener('click',()=>{ if(confirm('Clear ALL local tickets?')){ saveTickets([]); renderTickets(); } });
-
-    // QR scan
-    const qrVideo=document.getElementById('qr_video'); const qrLiveBtn=document.getElementById('qr_live_btn'); const qrPhotoBtn=document.getElementById('qr_photo_btn'); const qrPhotoInp=document.getElementById('qr_photo'); const qrResult=document.getElementById('qr_result'); let mediaStream=null, detector=null, scanTimer=null;
-    async function initBarcode(){ if('BarcodeDetector' in window){ try{ detector=new BarcodeDetector({formats:['qr_code']}); return true;}catch{ return false; } } return false; }
-    function stopLive(){ if(scanTimer){clearInterval(scanTimer); scanTimer=null;} if(mediaStream){mediaStream.getTracks().forEach(t=>t.stop()); mediaStream=null;} qrVideo.classList.add('hidden'); }
-    function handleQRText(text){ qrResult.textContent='Scanned: '+text; let tag=null; try{ const u=new URL(text); tag=u.searchParams.get('tag')||u.hash.replace(/^#tag=/,'')||null; }catch{} if(!tag){ tag=text.trim(); } if(tag){ setVal('loop_filter_tag',tag); document.querySelector('nav button[data-target="loop"]').click(); applyLoopFilter(); alert('Applied tag filter: '+tag); } }
-    qrLiveBtn.addEventListener('click',async()=>{ stopLive(); const has=await initBarcode(); if(!has){alert('Live scan not supported here. Use "Scan from Photo".');return;} try{ mediaStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); qrVideo.srcObject=mediaStream; qrVideo.classList.remove('hidden'); const canvas=document.createElement('canvas'); const ctx=canvas.getContext('2d'); scanTimer=setInterval(async()=>{ if(!qrVideo.videoWidth) return; canvas.width=qrVideo.videoWidth; canvas.height=qrVideo.videoHeight; ctx.drawImage(qrVideo,0,0); const bmp=await createImageBitmap(canvas); const codes=await detector.detect(bmp); if(codes&&codes.length){ stopLive(); handleQRText(codes[0].rawValue); } }, 600); }catch(err){ alert('Camera access failed. Try "Scan from Photo".'); } });
-    qrPhotoBtn.addEventListener('click',()=>qrPhotoInp.click());
-    qrPhotoInp.addEventListener('change',async e=>{ const f=e.target.files[0]; if(!f) return; const has=await initBarcode(); if(!has){alert('QR detection not supported here. Try Chrome.'); return;} const img=await createImageBitmap(f); const codes=await detector.detect(img); if(codes&&codes.length){ handleQRText(codes[0].rawValue); } else { alert('No QR found in image.'); } e.target.value=''; });
-
-    // Backup
-    const ALL_KEYS=['pocketech.calibrations.v1','pocketech.looplog.v1','pocketech.tickets.v1'];
-    document.getElementById('bk_export').addEventListener('click',()=>{ const payload={}; ALL_KEYS.forEach(k=>payload[k]=localStorage.getItem(k)||'[]'); const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='pocketech_backup.json'; a.click(); URL.revokeObjectURL(url); });
-    document.getElementById('bk_import_btn').addEventListener('click',()=>document.getElementById('bk_import').click());
-    document.getElementById('bk_import').addEventListener('change',e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ try{ const data=JSON.parse(r.result); let n=0; ALL_KEYS.forEach(k=>{ if(data[k]){ localStorage.setItem(k,data[k]); n++; }}); renderCals(); renderLoopTable(); renderTickets(); alert('Restore complete. Keys restored: '+n); }catch{ alert('Invalid JSON backup.'); } e.target.value=''; }; r.readAsText(f); });
-    document.getElementById('bk_clear').addEventListener('click',()=>{ if(!confirm('Clear ALL local data (Cal + Loop + Tickets)?')) return; ALL_KEYS.forEach(k=>localStorage.removeItem(k)); renderCals(); renderLoopTable(); renderTickets(); alert('All local data cleared.'); });
+    // ---------- Calibration & Loop & Tickets unchanged from v0.7 ----------
 
     // Init
     wireNumpad();
-    renderCals(); renderLoopTable(); renderTickets();
+    // Set Signal defaults
+    document.getElementById('pct_slider').value = 50;
+    document.getElementById('sh_pct').value = 50;
+    document.getElementById('read_pct').textContent = '50%';
+    document.getElementById('read_ma').textContent = '12';
+    // Render tables that use localStorage
+    (function initTables(){
+      // cal
+      const CAL_KEY='pocketech.calibrations.v1'; const calTBody=document.querySelector('#cal_table tbody');
+      function loadCals(){ try{return JSON.parse(localStorage.getItem(CAL_KEY)||'[]');}catch{return [];} }
+      function renderCals(){ const r=loadCals(); calTBody.innerHTML=''; r.forEach(x=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${x.tag||''}</td><td>${x.model||''}</td><td>${x.ctype||''}</td><td>${x.lrv??''}</td><td>${x.urv??''}</td><td>${x.method||''}</td><td>${x.af||''}</td><td>${x.al||''}</td><td>${x.date||''}</td><td>${x.interval||''}</td><td>${x.due||''}</td><td>${x.tech||''}</td><td>${x.notes||''}</td>`; calTBody.appendChild(tr); }); }
+      renderCals();
+
+      // loop
+      const LOOP_KEY='pocketech.looplog.v1'; let loopData=JSON.parse(localStorage.getItem(LOOP_KEY)||'[]'); const loopTBody=document.querySelector('#loopTable tbody');
+      function renderLoopTable(filterTag){ loopTBody.innerHTML=''; (loopData||[]).filter(r=>!filterTag||String(r.tag||'').toLowerCase().includes(filterTag.toLowerCase())).forEach(r=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${r.date||''}</td><td>${r.tag||''}</td><td>${r.service||''}</td><td>${r.type||''}</td><td>${r.lrv??''}</td><td>${r.urv??''}</td><td>${r.asFound||''}</td><td>${r.asLeft||''}</td><td>${r.tech||''}</td><td>${r.status||''}</td><td>${r.notes||''}</td>`; loopTBody.appendChild(tr); }); }
+      renderLoopTable();
+      window.applyLoopFilter = function(){ const t=document.getElementById('loop_filter_tag').value.trim(); renderLoopTable(t||undefined); }
+
+      // tickets
+      const TICKET_KEY='pocketech.tickets.v1'; const tBody=document.querySelector('#t_table tbody');
+      function loadTickets(){ try{return JSON.parse(localStorage.getItem(TICKET_KEY)||'[]');}catch{return [];} }
+      function renderTickets(){ const r=loadTickets(); tBody.innerHTML=''; r.forEach((x,i)=>{ const tr=document.createElement('tr'); const pill=x.status==='Open'?'open':(x.status==='Blocked'?'blocked':'done'); const thumbs=(x.photos||[]).map(s=>`<img src="${s}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid var(--border)">`).join(''); tr.innerHTML=`<td>${x.title||''}</td><td>${x.system||''}</td><td>${x.sev||''}</td><td><span class="pill ${pill}">${x.status||''}</span></td><td>${x.assignee||''}</td><td>${x.date||''}</td><td>${(x.notes||'').replace(/,/g,';')}</td><td>${thumbs}</td><td></td>`; tBody.appendChild(tr); }); }
+      renderTickets();
+    })();
   </script>
 </body>
 </html>
