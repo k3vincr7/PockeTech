@@ -474,7 +474,7 @@
     </div>
   </div>
 
-  <footer class="muted">PockeTech — v0.72</footer>
+  <footer class="muted">PockeTech — v0.73</footer>
 
   <script>
     // Theme toggle
@@ -498,23 +498,19 @@
     function toCSV(rows){return rows.map(r=>r.map(c=>{const s=(c??'').toString();return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}).join(',')).join('\n');}
     function downloadCSV(filename, rows){ const blob=new Blob([toCSV(rows)],{type:'text/csv;charset=utf-8;'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); }
     const fmt=n=>{const x=Number(n); if(!Number.isFinite(x)) return ''; return (Math.abs(x)>=1000||x===0)?x.toFixed(2).replace(/\.00$/,''):x.toFixed(4).replace(/0+$/,'').replace(/\.$/,'');};
-    function parseCSV(t){const rows=[];let i=0,cur='',row=[],q=false;while(i<t.length){const c=t[i];if(q){if(c==='"'&&t[i+1]==='"'){cur+='"';i+=2;continue}if(c==='"'){q=false;i++;continue}cur+=c;i++;continue}else{if(c==='"'){q=true;i++;continue}if(c===','){row.push(cur);cur='';i++;continue}if(c==='\n'||c==='\r'){if(c==='\r'&&t[i+1]==='\n')i++;row.push(cur);rows.push(row);row=[];cur='';i++;continue}cur+=c;i++;continue}}row.push(cur);rows.push(row);if(rows.length&&rows[rows.length-1].length===1&&rows[rows.length-1][0]==='')rows.pop();return rows;}
-    function indexHeaders(h){const m={};h.forEach((x,i)=>{m[(x||'').toString().trim().toLowerCase()]=i});return m;}
     function val(id){return document.getElementById(id).value;}
     function setVal(id,v){document.getElementById(id).value=v;}
 
-    // ---------- Number Pad (improved: no jumping) ----------
+    // ---------- Number Pad (sticky; only hides on Done or outside tap) ----------
     const numpad = document.getElementById('numpad');
     let npTarget = null;
     function showPad(forInput){
       npTarget = forInput;
-      // reserve space so content isn't hidden behind pad
       const padH = 280;
       document.body.style.paddingBottom = padH+'px';
       numpad.classList.add('show'); numpad.setAttribute('aria-hidden','false');
-      // center the field you're editing in view
+      // keep the field centered and focused
       setTimeout(()=>{ try{ npTarget.scrollIntoView({block:'center', behavior:'smooth'}); }catch{} }, 10);
-      // put caret at end
       const v = npTarget.value; try{ npTarget.setSelectionRange(v.length, v.length); }catch{}
     }
     function hidePad(){
@@ -539,11 +535,10 @@
     }
     function wireNumpad(){
       document.querySelectorAll('input.num').forEach(inp=>{
-        inp.readOnly = true;                 // stop native keyboard
+        inp.readOnly = true;
         inp.addEventListener('focus', ()=> showPad(inp));
         inp.addEventListener('click', ()=> showPad(inp));
-        // do NOT hide on blur immediately (tapping pad shouldn't force-scroll)
-        inp.addEventListener('blur', ()=> setTimeout(()=>{ if(document.activeElement !== inp) hidePad(); }, 250));
+        // NOTE: no blur-to-hide anymore
       });
       // optional keyboard toggle
       document.querySelectorAll('.kbd-toggle').forEach(btn=>{
@@ -554,6 +549,13 @@
           if(!el.readOnly){ hidePad(); el.focus(); } else { el.blur(); }
           btn.textContent = el.readOnly ? 'kbd' : 'done';
         });
+      });
+      // tap outside to hide
+      document.addEventListener('click', (e)=>{
+        if(!numpad.classList.contains('show')) return;
+        const withinPad = e.target.closest('#numpad');
+        const withinNum = e.target.closest('input.num');
+        if(!withinPad && !withinNum){ hidePad(); }
       });
     }
     numpad.addEventListener('click', (e)=>{
@@ -578,61 +580,39 @@
       if(isNaN(l)||isNaN(u)||l===u){ alert('Enter valid LRV/URV'); return null; }
       return {l,u};
     }
-    function sh_fmtEU(x){
-      const lbl = val('sh_eulbl').trim();
-      return `${fmt(x)}${lbl? ' '+lbl : ''}`;
-    }
+    function fmtEUlabel(){ const lbl = document.getElementById('sh_eulbl').value.trim(); return lbl?(' '+lbl):''; }
     function sh_updateFromPct(p){
       const r=sh_getRange(); if(!r) return;
       const sqrt = document.getElementById('sqrt_mode').checked;
       const pct = Math.min(Math.max(Number(p),0),100);
       const ma = 4 + 16*(pct/100);
       let eu;
-      if(!sqrt){
-        eu = r.l + (r.u - r.l)*(pct/100);
-      } else {
-        const euNorm = Math.sqrt(pct/100);
-        eu = r.l + (r.u - r.l)*euNorm;
-      }
+      if(!sqrt){ eu = r.l + (r.u - r.l)*(pct/100); }
+      else { const euNorm = Math.sqrt(pct/100); eu = r.l + (r.u - r.l)*euNorm; }
       setVal('sh_pct', fmt(pct));
       setVal('sh_ma', fmt(ma));
       setVal('sh_eu', fmt(eu));
       document.getElementById('read_ma').textContent = fmt(ma);
       document.getElementById('read_pct').textContent = fmt(pct)+'%';
-      document.getElementById('read_eu').textContent = sh_fmtEU(eu);
+      document.getElementById('read_eu').textContent = fmt(eu)+fmtEUlabel();
       document.getElementById('pct_slider').value = pct;
     }
-    function sh_fromMA(){
-      const r=sh_getRange(); if(!r) return;
-      const m=parseFloat(val('sh_ma')); if(isNaN(m)){alert('Enter mA');return;}
-      const pct = Math.min(Math.max((m-4)/16*100,0),100);
-      sh_updateFromPct(pct);
-    }
-    function sh_fromPct(){
-      const p=parseFloat(val('sh_pct')); if(isNaN(p)){alert('Enter %');return;}
-      sh_updateFromPct(p);
-    }
+    function sh_fromMA(){ const r=sh_getRange(); if(!r) return; const m=parseFloat(val('sh_ma')); if(isNaN(m)){alert('Enter mA');return;} const pct = Math.min(Math.max((m-4)/16*100,0),100); sh_updateFromPct(pct); }
+    function sh_fromPct(){ const p=parseFloat(val('sh_pct')); if(isNaN(p)){alert('Enter %');return;} sh_updateFromPct(p); }
     function sh_fromEU(){
       const r=sh_getRange(); if(!r) return;
       const e=parseFloat(val('sh_eu')); if(isNaN(e)){alert('Enter EU');return;}
       const sqrt = document.getElementById('sqrt_mode').checked;
       let pct;
-      if(!sqrt){
-        pct = (e - r.l)/(r.u - r.l)*100;
-      } else {
-        const euNorm = (e - r.l)/(r.u - r.l);
-        pct = Math.pow(Math.max(euNorm,0),2)*100;
-      }
+      if(!sqrt){ pct = (e - r.l)/(r.u - r.l)*100; }
+      else { const euNorm = (e - r.l)/(r.u - r.l); pct = Math.pow(Math.max(euNorm,0),2)*100; }
       sh_updateFromPct(pct);
     }
     document.getElementById('sh_from_ma').addEventListener('click', sh_fromMA);
     document.getElementById('sh_from_pct').addEventListener('click', sh_fromPct);
     document.getElementById('sh_from_eu').addEventListener('click', sh_fromEU);
     document.getElementById('pct_slider').addEventListener('input', e=> sh_updateFromPct(e.target.value));
-    document.getElementById('sqrt_mode').addEventListener('change', ()=> {
-      const p = parseFloat(document.getElementById('pct_slider').value||'0');
-      sh_updateFromPct(p);
-    });
+    document.getElementById('sqrt_mode').addEventListener('change', ()=> { const p = parseFloat(document.getElementById('pct_slider').value||'0'); sh_updateFromPct(p); });
     document.querySelectorAll('.step').forEach(b=> b.addEventListener('click',()=> sh_updateFromPct(b.dataset.p)));
     document.querySelectorAll('.copy').forEach(c=>{
       c.addEventListener('click', async ()=>{
@@ -643,36 +623,15 @@
 
     // ---------- Pressure conversions ----------
     const INH2O_PER_PSI=27.679904842545, KPA_PER_PSI=6.894757293168, IN_PER_FT=12, IN_PER_M=39.37007874;
-
-    // Base to Pa factors
-    const P2PA = {
-      pa: 1,
-      kpa: 1000,
-      mpa: 1_000_000,
-      bar: 100000,
-      psi: 6894.757293168,
-      inh2o: 249.08891,     // 1 inH2O ≈ 249.08891 Pa (4°C)
-      mmh2o: 9.80665,       // 1 mmH2O ≈ 9.80665 Pa
-      inhg: 3386.389,       // 1 inHg ≈ 3386.389 Pa (0°C)
-      mmhg: 133.322387415   // 1 mmHg ≈ 133.322387415 Pa (0°C)
-    };
-    function convertPressure(val, from, to){
-      if(!Number.isFinite(val)) return '';
-      const pa = val * P2PA[from];
-      const out = pa / P2PA[to];
-      return out;
-    }
+    const P2PA = { pa:1, kpa:1000, mpa:1_000_000, bar:100000, psi:6894.757293168, inh2o:249.08891, mmh2o:9.80665, inhg:3386.389, mmhg:133.322387415 };
+    function convertPressure(val, from, to){ if(!Number.isFinite(val)) return ''; const pa = val * P2PA[from]; return pa / P2PA[to]; }
     document.getElementById('pc_convert').addEventListener('click', ()=>{
-      const v=parseFloat(val('pc_val_in'));
-      if(isNaN(v)){ alert('Enter a value to convert'); return; }
-      const from=document.getElementById('pc_unit_in').value;
-      const to=document.getElementById('pc_unit_out').value;
+      const v=parseFloat(val('pc_val_in')); if(isNaN(v)){ alert('Enter a value to convert'); return; }
+      const from=document.getElementById('pc_unit_in').value; const to=document.getElementById('pc_unit_out').value;
       setVal('pc_val_out', fmt(convertPressure(v, from, to)));
     });
     document.getElementById('pc_swap').addEventListener('click', ()=>{
-      const a=document.getElementById('pc_unit_in');
-      const b=document.getElementById('pc_unit_out');
-      const tmp=a.value; a.value=b.value; b.value=tmp;
+      const a=document.getElementById('pc_unit_in'); const b=document.getElementById('pc_unit_out'); const tmp=a.value; a.value=b.value; b.value=tmp;
     });
 
     // Gauge ↔ Absolute
@@ -716,7 +675,7 @@
       setVal('vac_psia',fmt(psia)); setVal('vac_inhg',fmt(inhg));
     }
 
-    // ---------- Level (same as before) ----------
+    // ---------- Level helpers (same as v0.72) ----------
     function pctToDP(p, LRV, URV){ return LRV + (URV-LRV)*(p/100); }
     function pctToMA(p){ return 4 + 16*(p/100); }
     function maToPct(ma){ return (ma-4)/16*100; }
@@ -725,22 +684,22 @@
     function LO_cfg(){
       const span=parseFloat(val('lo_span')); const u=document.getElementById('lo_units').value; const sg=parseFloat(val('lo_sg')||'1'); const dpU=document.getElementById('lo_dpU').value;
       if(isNaN(span)||span<=0||isNaN(sg)||sg<=0){ alert('Enter span and SG'); return null; }
-      let spanIn=span; if(u==='ft') spanIn*=IN_PER_FT; if(u==='m') spanIn*=IN_PER_M;
+      let spanIn=span; if(u==='ft') spanIn*=12; if(u==='m') spanIn*=39.37007874;
       const urv_inh2o = sg*spanIn;
       let LRV = parseFloat(val('lo_lrv')); if(isNaN(LRV)) LRV=0;
-      let URV = parseFloat(val('lo_urv')); if(isNaN(URV)) URV = (dpU==='inh2o')?urv_inh2o:(dpU==='psi'? urv_inh2o/INH2O_PER_PSI : (urv_inh2o/INH2O_PER_PSI)*KPA_PER_PSI );
+      let URV = parseFloat(val('lo_urv')); if(isNaN(URV)) URV = (dpU==='inh2o')?urv_inh2o:(dpU==='psi'? urv_inh2o/27.679904842545 : (urv_inh2o/27.679904842545)*6.894757293168 );
       return {span, u, spanIn, sg, dpU, LRV, URV};
     }
     function LO_levelToMa(){
       const c=LO_cfg(); if(!c) return; const lvl=parseFloat(val('lo_lvl')); if(isNaN(lvl)){alert('Enter level');return;}
-      let lvlIn=lvl; if(c.u==='ft') lvlIn*=IN_PER_FT; if(c.u==='m') lvlIn*=IN_PER_M;
+      let lvlIn=lvl; if(c.u==='ft') lvlIn*=12; if(c.u==='m') lvlIn*=39.37007874;
       const pct=Math.min(Math.max((lvlIn/c.spanIn)*100,0),100); const dp=pctToDP(pct,c.LRV,c.URV); const ma=pctToMA(pct);
       document.getElementById('lo_result').innerText = `Level ${fmt(lvl)} ${c.u} → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → ${fmt(ma)} mA`;
     }
     function LO_maToLevel(){
       const c=LO_cfg(); if(!c) return; const ma=parseFloat(val('lo_ma')); if(isNaN(ma)){alert('Enter mA');return;}
       const pct=Math.min(Math.max(maToPct(ma),0),100); const dp=pctToDP(pct,c.LRV,c.URV);
-      let lvlIn=(pct/100)*c.spanIn; let lvl=lvlIn; if(c.u==='ft') lvl=lvlIn/IN_PER_FT; if(c.u==='m') lvl=lvlIn/IN_PER_M;
+      let lvlIn=(pct/100)*c.spanIn; let lvl=lvlIn; if(c.u==='ft') lvl=lvlIn/12; if(c.u==='m') lvl=lvlIn/39.37007874;
       document.getElementById('lo_result').innerText = `${fmt(ma)} mA → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → Level ${fmt(lvl)} ${c.u}`;
     }
     function LO_buildSteps(){
@@ -749,7 +708,7 @@
     }
 
     // Level — Closed
-    function LC_inches(valU, u){ if(u==='in') return valU; if(u==='ft') return valU*IN_PER_FT; if(u==='m') return valU*IN_PER_M; return valU; }
+    function LC_inches(valU, u){ if(u==='in') return valU; if(u==='ft') return valU*12; if(u==='m') return valU*39.37007874; return valU; }
     function LC_cfg(){
       const span=parseFloat(val('lc_span')); const u=document.getElementById('lc_units').value;
       const sgL=parseFloat(val('lc_sgL')||'1'); const leg=document.getElementById('lc_leg').value;
@@ -758,8 +717,8 @@
       const span_in = LC_inches(span, u);
       const dP0_inH2O = (leg==='wet') ? (0 - sgW*(wetH||0)) : 0;
       const dP100_inH2O = (sgL*span_in) - (leg==='wet' ? sgW*(wetH||0) : 0);
-      let LRV=parseFloat(val('lc_lrv')); if(isNaN(LRV)) LRV = (dpU==='inh2o')?dP0_inH2O:(dpU==='psi'? dP0_inH2O/INH2O_PER_PSI : (dP0_inH2O/INH2O_PER_PSI)*KPA_PER_PSI);
-      let URV=parseFloat(val('lc_urv')); if(isNaN(URV)) URV = (dpU==='inh2o')?dP100_inH2O:(dpU==='psi'? dP100_inH2O/INH2O_PER_PSI : (dP100_inH2O/INH2O_PER_PSI)*KPA_PER_PSI);
+      let LRV=parseFloat(val('lc_lrv')); if(isNaN(LRV)) LRV = (dpU==='inh2o')?dP0_inH2O:(dpU==='psi'? dP0_inH2O/27.679904842545 : (dP0_inH2O/27.679904842545)*6.894757293168);
+      let URV=parseFloat(val('lc_urv')); if(isNaN(URV)) URV = (dpU==='inh2o')?dP100_inH2O:(dpU==='psi'? dP100_inH2O/27.679904842545 : (dP100_inH2O/27.679904842545)*6.894757293168);
       return {span, u, span_in, sgL, leg, wetH, sgW, dpU, LRV, URV};
     }
     function LC_levelToMa(){
@@ -771,7 +730,7 @@
     function LC_maToLevel(){
       const c=LC_cfg(); if(!c) return; const ma=parseFloat(val('lc_ma')); if(isNaN(ma)){alert('Enter mA');return;}
       const pct=Math.min(Math.max(maToPct(ma),0),100); const dp=pctToDP(pct,c.LRV,c.URV);
-      const lvl_in=(pct/100)*c.span_in; let lvl=lvl_in; if(c.u==='ft') lvl=lvl_in/IN_PER_FT; if(c.u==='m') lvl=lvl_in/IN_PER_M;
+      const lvl_in=(pct/100)*c.span_in; let lvl=lvl_in; if(c.u==='ft') lvl=lvl_in/12; if(c.u==='m') lvl=lvl_in/39.37007874;
       document.getElementById('lc_result').innerText = `${fmt(ma)} mA → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → Level ${fmt(lvl)} ${c.u}`;
     }
     function LC_buildSteps(){
@@ -781,7 +740,7 @@
 
     // ---------- Init ----------
     wireNumpad();
-    // signal defaults
+    // Signal defaults
     document.getElementById('pct_slider').value = 50;
     document.getElementById('sh_pct').value = 50;
     document.getElementById('read_pct').textContent = '50%';
