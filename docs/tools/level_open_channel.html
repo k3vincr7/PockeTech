@@ -1,63 +1,164 @@
 <!DOCTYPE html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Level (Open Channel) — PockeTech</title>
+<title>Level — Open Tank (Tap-to-Tap) • PockeTech</title>
 <style>
- body{font-family:system-ui,Arial,sans-serif;margin:0;background:#0f1115;color:#e8e8e8}
- main{max-width:800px;margin:0 auto;padding:14px}
- section{background:#151922;border:1px solid #2a2f3a;border-radius:10px;padding:12px}
- input,select,button{padding:.6em .7em;border-radius:8px;border:1px solid #2a2f3a;background:transparent;color:#e8e8e8;width:100%;margin:.35em 0}
- table{width:100%;border-collapse:collapse;margin-top:10px}
- th,td{border:1px solid #2a2f3a;padding:8px;text-align:left}
- .row{display:flex;gap:10px;flex-wrap:wrap}.col{flex:1 1 240px;min-width:240px}
- .muted{color:#a0a0a0;font-size:12px}
+ body{font-family:-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#0f1115;color:#e8e8e8}
+ main{max-width:900px;margin:0 auto;padding:14px}
+ section{background:#151922;border:1px solid #2a2f3a;border-radius:12px;padding:12px}
+ input,select,button{padding:.65em .75em;border-radius:10px;border:1px solid #2a2f3a;background:transparent;color:#e8e8e8;width:100%;margin:.4em 0;font-size:16px}
+ .row{display:flex;gap:10px;flex-wrap:wrap}.col{flex:1 1 230px;min-width:230px}
  .btn{background:#2b3240;border-color:#2b3240;cursor:pointer}
+ table{width:100%;border-collapse:collapse;margin-top:10px} th,td{border:1px solid #2a2f3a;padding:8px;text-align:left} th{background:#1b2230}
+ .muted{color:#a0a0a0;font-size:12px}
+ .hr{height:1px;background:#2a2f3a;margin:12px 0}
+ code{background:#1b2230;padding:2px 6px;border-radius:6px}
 </style>
-</head><body>
-<main>
-  <h1>Level (Open Channel)</h1>
-  <section>
-    <h3>V-notch weir (flow from head)</h3>
-    <div class="row">
-      <div class="col"><label>Notch Angle (deg)<input id="angle" type="number" step="any" value="90"></label></div>
-      <div class="col"><label>Head over crest, H (in)<input id="head" type="number" step="any" placeholder="e.g., 6"></label></div>
-      <div class="col"><label>Discharge Coefficient, C<sub>d</sub><input id="cd" type="number" step="any" value="0.62"></label></div>
-    </div>
-    <div class="row">
-      <div class="col"><label>Output Units
-        <select id="units"><option value="gpm">gpm</option><option value="lps">L/s</option></select>
-      </label></div>
-    </div>
-    <div class="row"><div class="col"><button class="btn" onclick="calc()">Calculate</button></div></div>
-    <table><tbody id="out"><tr><th>Result</th><td>—</td></tr></tbody></table>
-    <p class="muted">
-      Formula (SI): Q = (8/15)·C<sub>d</sub>·√(2g) · tan(θ/2) · H<sup>5/2</sup>.<br>
-      We take H in meters internally; outputs shown in selected units. g = 9.80665 m/s².
-    </p>
-  </section>
-</main>
+</head><body><main>
+<h1>Level — Open Tank (tap-to-tap)</h1>
+<section>
+  <div class="row">
+    <div class="col"><label>Tap-to-tap height (level span)
+      <input id="span" type="number" step="any" placeholder="e.g., 72"></label></div>
+    <div class="col"><label>Span units
+      <select id="spanUnits"><option value="in">in</option><option value="ft">ft</option><option value="m">m</option></select></label></div>
+    <div class="col"><label>Specific gravity (SG)
+      <input id="sg" type="number" step="any" value="1.0"></label></div>
+  </div>
+
+  <div class="row">
+    <div class="col"><label>dP units
+      <select id="dpUnits"><option value="inh2o">inH₂O</option><option value="psi">psi</option><option value="kpa">kPa</option></select></label></div>
+    <div class="col"><label>LRV (dP at 0%) <small class="muted">(blank = 0)</small>
+      <input id="lrv" type="number" step="any" placeholder="optional"></label></div>
+    <div class="col"><label>URV (dP at 100%) <small class="muted">(blank = auto)</small>
+      <input id="urv" type="number" step="any" placeholder="optional"></label></div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="row">
+    <div class="col"><label>Current level (same units as span)
+      <input id="lvl" type="number" step="any" placeholder="enter level to get mA"></label></div>
+    <div class="col"><button class="btn" onclick="levelToMa()">Level → mA</button></div>
+    <div class="col"><label>or mA
+      <input id="ma" type="number" step="any" placeholder="enter mA to get level"></label></div>
+    <div class="col"><button class="btn" onclick="maToLevel()">mA → Level</button></div>
+  </div>
+  <p id="result" class="muted"></p>
+
+  <div class="btn"><button class="btn" onclick="buildSteps()">Build 0/25/50/75/100 Table</button></div>
+  <table id="steps"><thead><tr><th>%</th><th>Level (span units)</th><th>dP (chosen units)</th><th>mA</th></tr></thead><tbody></tbody></table>
+
+  <p class="muted">Open tank: <code>ΔP = ρ g h</code>. With specific gravity SG (water=1.0), inH₂O@100% ≈ <code>SG × span(in)</code>. Conversions handle psi/kPa too.</p>
+</section>
+
 <script>
- const G=9.80665; // m/s^2
- function fmt(n){const x=Number(n); if(!isFinite(x)) return '-'; return (Math.abs(x)>=1000||x===0)?x.toFixed(2).replace(/\.00$/,''):x.toFixed(4).replace(/0+$/,'').replace(/\.$/,'');}
- function calc(){
-   const deg=parseFloat(document.getElementById('angle').value);
-   const H_in=parseFloat(document.getElementById('head').value);
-   const Cd=parseFloat(document.getElementById('cd').value);
-   const units=document.getElementById('units').value;
-   if(isNaN(deg)||isNaN(H_in)||isNaN(Cd)||H_in<0){ alert('Enter angle, head, and Cd'); return; }
-   // Convert head inches -> meters
-   const H = H_in * 0.0254;
-   // Q (m^3/s)
-   const Q = (8/15) * Cd * Math.sqrt(2*G) * Math.tan((deg*Math.PI/180)/2) * Math.pow(H, 2.5);
-   let out;
-   if(units==='gpm'){
-     const gpm = Q * 15850.323141; // 1 m^3/s = 15850.323 gpm
-     out = fmt(gpm) + ' gpm';
-   } else {
-     const lps = Q * 1000; // 1 m^3/s = 1000 L/s
-     out = fmt(lps) + ' L/s';
-   }
-   document.getElementById('out').innerHTML = `<tr><th>Flow</th><td>${out}</td></tr>
-     <tr><th>Inputs</th><td>θ=${fmt(deg)}°, H=${fmt(H_in)} in, C<sub>d</sub>=${Cd}</td></tr>`;
- }
+// --- units/conv
+const INH2O_PER_PSI = 27.679904842545;   // 1 psi = 27.6799 inH2O
+const KPA_PER_PSI   = 6.894757293168;
+const IN_PER_FT     = 12;
+const IN_PER_M      = 39.37007874;
+
+const q = id => document.getElementById(id);
+const fmt = n => {
+  const x=Number(n); if(!Number.isFinite(x)) return '';
+  return (Math.abs(x)>=1000||x===0)?x.toFixed(2).replace(/\.00$/,''):x.toFixed(4).replace(/0+$/,'').replace(/\.$/,'');
+};
+
+// level span → URV (inH2O)
+function spanToInH2O(spanVal, spanUnits, sg){
+  let spanIn = Number(spanVal);
+  if (spanUnits==='ft') spanIn *= IN_PER_FT;
+  if (spanUnits==='m')  spanIn *= IN_PER_M;
+  return sg * spanIn; // water head rule (inches of water)
+}
+function convFromInH2O(x, dpUnits){
+  if (dpUnits==='inh2o') return x;
+  if (dpUnits==='psi')   return x / INH2O_PER_PSI;
+  if (dpUnits==='kpa')   return (x / INH2O_PER_PSI) * KPA_PER_PSI;
+  return x;
+}
+function convToInH2O(x, dpUnits){
+  if (dpUnits==='inh2o') return x;
+  if (dpUnits==='psi')   return x * INH2O_PER_PSI;
+  if (dpUnits==='kpa')   return (x / KPA_PER_PSI) * INH2O_PER_PSI;
+  return x;
+}
+
+// compute LRV/URV dP in chosen units
+function computeLRVandURV(){
+  const span = parseFloat(q('span').value);
+  const spanU = q('spanUnits').value;
+  const sg   = parseFloat(q('sg').value||'1');
+  const dpU  = q('dpUnits').value;
+
+  if (isNaN(span) || span<=0 || isNaN(sg) || sg<=0) { alert('Enter span and SG'); return null; }
+
+  // default theoretical URV (inH2O) then convert
+  const urv_inh2o = spanToInH2O(span, spanU, sg);
+  let URV = parseFloat(q('urv').value);
+  if (isNaN(URV)) URV = convFromInH2O(urv_inh2o, dpU);
+
+  let LRV = parseFloat(q('lrv').value);
+  if (isNaN(LRV)) LRV = 0;
+
+  return {LRV, URV, dpU, span, spanU, sg};
+}
+
+function pctToDP(pct, LRV, URV){ return LRV + (URV-LRV)*(pct/100); }
+function dpToPct(dp, LRV, URV){ if (URV===LRV) return 0; return (dp-LRV)/(URV-LRV)*100; }
+function pctToMA(p){ return 4 + 16*(p/100); }
+function maToPct(ma){ return (ma-4)/16*100; }
+
+function levelToMa(){
+  const cfg = computeLRVandURV(); if(!cfg) return;
+  const lvl = parseFloat(q('lvl').value);
+  if (isNaN(lvl)) { alert('Enter level'); return; }
+
+  // level → percent of span
+  let spanIn = cfg.span;
+  if (cfg.spanU==='ft') spanIn *= IN_PER_FT;
+  if (cfg.spanU==='m')  spanIn *= IN_PER_M;
+
+  let lvlIn = lvl;
+  if (cfg.spanU==='ft') lvlIn = lvl * IN_PER_FT;
+  if (cfg.spanU==='m')  lvlIn = lvl * IN_PER_M;
+
+  const pct = Math.min(Math.max((lvlIn/spanIn)*100,0),100);
+  const dp  = pctToDP(pct, cfg.LRV, cfg.URV);
+  const ma  = pctToMA(pct);
+  q('result').innerText = `Level ${fmt(lvl)} ${cfg.spanU} → ${fmt(pct)}% → ${fmt(dp)} ${cfg.dpU} → ${fmt(ma)} mA`;
+}
+function maToLevel(){
+  const cfg = computeLRVandURV(); if(!cfg) return;
+  const ma = parseFloat(q('ma').value);
+  if (isNaN(ma)) { alert('Enter mA'); return; }
+  const pct = Math.min(Math.max(maToPct(ma),0),100);
+  const dp  = pctToDP(pct, cfg.LRV, cfg.URV);
+
+  let spanIn = cfg.span;
+  if (cfg.spanU==='ft') spanIn *= IN_PER_FT;
+  if (cfg.spanU==='m')  spanIn *= IN_PER_M;
+
+  const lvlIn = (pct/100)*spanIn;
+  let lvl = lvlIn;
+  if (cfg.spanU==='ft') lvl = lvlIn/IN_PER_FT;
+  if (cfg.spanU==='m')  lvl = lvlIn/IN_PER_M;
+
+  q('result').innerText = `${fmt(ma)} mA → ${fmt(pct)}% → ${fmt(dp)} ${cfg.dpU} → Level ${fmt(lvl)} ${cfg.spanU}`;
+}
+function buildSteps(){
+  const cfg = computeLRVandURV(); if(!cfg) return;
+  const span = cfg.span;
+  const steps=[0,25,50,75,100];
+  const tbody = q('steps').querySelector('tbody');
+  tbody.innerHTML='';
+  steps.forEach(p=>{
+    const dp = pctToDP(p, cfg.LRV, cfg.URV);
+    let lvl = (p/100)*span;
+    tbody.insertAdjacentHTML('beforeend',
+      `<tr><td>${p}%</td><td>${fmt(lvl)} ${cfg.spanU}</td><td>${fmt(dp)} ${cfg.dpU}</td><td>${fmt(pctToMA(p))} mA</td></tr>`);
+  });
+}
 </script>
-</body></html>
+</main></body></html>
