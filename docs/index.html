@@ -82,20 +82,20 @@
   </header>
 
   <nav>
-    <button data-target="percent" class="active">Percent</button>
-    <button data-target="signal">Signal</button>
-    <button data-target="level_open">Level — Open</button>
-    <button data-target="level_closed">Level — Closed</button>
-    <button data-target="pressure">Pressure</button>
-    <button data-target="temp">Temp</button>
-    <button data-target="ip">I/P 3–15</button>
-    <button data-target="cal">Calibration</button>
-    <button data-target="loop">Loop Log</button>
-    <button data-target="tickets">Tickets</button>
-    <button data-target="qr">QR Scan</button>
-    <button data-target="backup">Backup</button>
-    <button data-target="settings">Settings</button>
-  </nav>
+  <button data-target="percent" class="active">🧮 Percent</button>
+  <button data-target="signal">📈 Signal</button>
+  <button data-target="level_open">🫙 Level — Open</button>
+  <button data-target="level_closed">🔒 Level — Closed</button>
+  <button data-target="pressure">⛽ Pressure</button>
+  <button data-target="temp">🌡️ Temp</button>
+  <button data-target="ip">🎛️ I/P 3–15</button>
+  <button data-target="cal">📝 Calibration</button>
+  <button data-target="loop">🔄 Loop Log</button>
+  <button data-target="tickets">🎫 Tickets</button>
+  <button data-target="qr">📷 QR Scan</button>
+  <button data-target="backup">💾 Backup</button>
+  <button data-target="settings">⚙️ Settings</button>
+</nav>
 
   <main>
     <!-- Percent Steps -->
@@ -489,19 +489,45 @@
     </section>
   </main>
 
-  <!-- Number pad overlay -->
-  <div id="numpad" class="numpad" aria-hidden="true">
-    <div class="numpad-grid">
-      <div class="np-btn">7</div><div class="np-btn">8</div><div class="np-btn">9</div><div class="np-btn" data-act="back">⌫</div>
-      <div class="np-btn">4</div><div class="np-btn">5</div><div class="np-btn">6</div><div class="np-btn" data-act="clear">C</div>
-      <div class="np-btn">1</div><div class="np-btn">2</div><div class="np-btn">3</div><div class="np-btn" data-val="-">−</div>
-      <div class="np-btn np-wide">0</div><div class="np-btn">.</div><div class="np-btn np-wide" data-act="done">Done</div>
-    </div>
-  </div>
+  /* Number pad (floating under active input, flips if near bottom) */
+.numpad {
+  position: fixed;
+  display: none;
+  z-index: 50;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+.numpad.show { display: block; }
+.numpad::after {
+  content: '';
+  position: absolute;
+  width: 14px; height: 14px;
+  background: var(--card);
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  transform: rotate(45deg);
+}
+.numpad-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  min-width: 260px;
+  max-width: min(520px, 96vw);
+}
+.np-btn {
+  padding: 16px; font-size: 18px;
+  border-radius: 10px; border:1px solid var(--border);
+  background: var(--btn); color: var(--btn-fg);
+  text-align: center; user-select: none;
+}
+.np-wide { grid-column: span 2; }
 
-  <footer class="muted">PockeTech — v0.80</footer>
-
-  <script>
+/* Keep inputs comfy to avoid iOS zoom */
+input, select, textarea { font-size: 16px; }
+  
     // ------- Settings store -------
     const SKEY='pocketech.settings';
     const DEF={atm:14.7,punit:'psi',lunit:'in',haptics:false,theme:'auto'};
