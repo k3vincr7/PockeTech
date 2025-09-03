@@ -489,44 +489,155 @@
     </section>
   </main>
 
-  /* Number pad (floating under active input, flips if near bottom) */
-.numpad {
-  position: fixed;
-  display: none;
-  z-index: 50;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 8px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.35);
-}
-.numpad.show { display: block; }
-.numpad::after {
-  content: '';
-  position: absolute;
-  width: 14px; height: 14px;
-  background: var(--card);
-  border-left: 1px solid var(--border);
-  border-top: 1px solid var(--border);
-  transform: rotate(45deg);
-}
-.numpad-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  min-width: 260px;
-  max-width: min(520px, 96vw);
-}
-.np-btn {
-  padding: 16px; font-size: 18px;
-  border-radius: 10px; border:1px solid var(--border);
-  background: var(--btn); color: var(--btn-fg);
-  text-align: center; user-select: none;
-}
-.np-wide { grid-column: span 2; }
+  <script>
+  // ---------- Number Pad (floating + auto-docking) ----------
+  const numpad = document.getElementById('numpad');
+  let npTarget = null, npFlip = false;
 
-/* Keep inputs comfy to avoid iOS zoom */
-input, select, textarea { font-size: 16px; }
+  function buzz(ms=10){ try{ if(getS().haptics && navigator.vibrate) navigator.vibrate(ms); }catch{} }
+
+  function padDims(){ // approximate height from grid rows; safer to measure
+    const rect = numpad.getBoundingClientRect();
+    return { w: rect.width || 320, h: rect.height || 260 };
+  }
+
+  function computePadPosition(inputEl){
+    const r = inputEl.getBoundingClientRect();
+    const pad = padDims();
+    const gap = 8;
+    const vw = window.innerWidth, vh = window.innerHeight;
+
+    let left = Math.max(8, Math.min(r.left, vw - pad.w - 8));
+    // prefer same width as input (but clamp to pad max)
+    const idealW = Math.min(Math.max(r.width, 260), Math.min(520, vw - 16));
+    numpad.style.width = idealW + 'px';
+
+    // default: below
+    let top = r.bottom + gap;
+    npFlip = false;
+    if (top + pad.h + 12 > vh) { // not enough space below -> flip above
+      top = r.top - pad.h - gap;
+      npFlip = true;
+    }
+
+    // caret
+    const caret = 10;
+    numpad.style.left = Math.round(left) + 'px';
+    numpad.style.top  = Math.round(top)  + 'px';
+    numpad.style.setProperty('--caret-offset', Math.round(Math.min(Math.max(16, (r.left - left) + Math.min(r.width, idealW)/2), idealW - 16)) + 'px');
+
+    // place caret triangle
+    const after = numpad.style;
+    const caretPos = parseInt(getComputedStyle(numpad).getPropertyValue('--caret-offset') || '24');
+    after.setProperty('--caret-left', caretPos + 'px');
+    numpad.style.setProperty('clip-path',''); // reset any old hacks
+
+    // style the ::after triangle location
+    numpad.style.setProperty('--caret-left', caretPos + 'px');
+    // position caret depending on flip
+    numpad.style.setProperty('--caret-top', npFlip ? (pad.h - caret/2 - 1) + 'px' : (-caret/2) + 'px');
+    numpad.style.setProperty('--caret-rotate', npFlip ? '225deg' : '45deg');
+    numpad.style.setProperty('--caret-display', 'block');
+    numpad.style.setProperty('--caret-size', caret + 'px');
+  }
+
+  // Inject caret positioning via inline style (works across browsers)
+  const numpadStyle = document.createElement('style');
+  numpadStyle.textContent = `
+    #numpad::after {
+      left: var(--caret-left, 24px);
+      top: var(--caret-top, -7px);
+      transform: rotate(var(--caret-rotate, 45deg));
+      display: var(--caret-display, block);
+      width: var(--caret-size, 14px); height: var(--caret-size, 14px);
+    }
+  `;
+  document.head.appendChild(numpadStyle);
+
+  function showPad(forInput){
+    npTarget = forInput;
+    // prevent iOS auto-scroll by focusing first, then positioning
+    try { npTarget.focus({ preventScroll: true }); } catch {}
+    numpad.classList.add('show'); numpad.setAttribute('aria-hidden','false');
+    // size may change once visible, then position
+    requestAnimationFrame(()=> computePadPosition(npTarget));
+    // keep caret at end
+    const v = npTarget.value; try{ npTarget.setSelectionRange(v.length, v.length); }catch{}
+  }
+
+  function hidePad(){
+    numpad.classList.remove('show'); numpad.setAttribute('aria-hidden','true');
+    npTarget = null;
+  }
+
+  function insertVal(s){
+    if(!npTarget) return;
+    buzz(8);
+    const el=npTarget;
+    const start = el.selectionStart ?? el.value.length;
+    const end = el.selectionEnd ?? el.value.length;
+    let v = el.value;
+    if(s==='.' && v.includes('.')) return;
+    if(s==='-'){ v = v.startsWith('-') ? v.slice(1) : ('-'+v); el.value=v; el.dispatchEvent(new Event('input',{bubbles:true})); return; }
+    el.value = v.slice(0,start) + s + v.slice(end);
+    const pos = start + s.length;
+    try{ el.setSelectionRange(pos,pos); }catch{}
+    el.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+
+  function wireNumpadFloating(){
+    // make .num fields readOnly and attach handlers
+    document.querySelectorAll('input.num').forEach(inp=>{
+      inp.readOnly = true;
+      inp.addEventListener('focus', ()=> showPad(inp));
+      inp.addEventListener('click', ()=> showPad(inp));
+      // reposition while typing via hardware keyboard (if toggled)
+      inp.addEventListener('input', ()=> { if(numpad.classList.contains('show')) computePadPosition(inp); });
+    });
+
+    // optional keyboard toggle buttons
+    document.querySelectorAll('.kbd-toggle').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const id = btn.getAttribute('data-for'); const el = document.getElementById(id);
+        if(!el) return;
+        el.readOnly = !el.readOnly;
+        if(!el.readOnly){ hidePad(); el.focus(); } else { el.blur(); }
+        btn.textContent = el.readOnly ? 'kbd' : 'done';
+      });
+    });
+
+    // outside tap closes pad
+    document.addEventListener('pointerdown', (e)=>{
+      if(!numpad.classList.contains('show')) return;
+      const withinPad = e.target.closest('#numpad');
+      const withinNum = e.target.closest('input.num');
+      if(!withinPad && !withinNum){ hidePad(); }
+    });
+
+    // reposition on scroll/resize
+    window.addEventListener('scroll', ()=> { if(npTarget && numpad.classList.contains('show')) computePadPosition(npTarget); }, {passive:true});
+    window.addEventListener('resize', ()=> { if(npTarget && numpad.classList.contains('show')) computePadPosition(npTarget); });
+  }
+
+  // keypad button clicks
+  numpad.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.np-btn'); if(!btn||!npTarget) return;
+    const act = btn.dataset.act; const explicitVal = btn.dataset.val;
+    if(act==='back'){
+      const el=npTarget; const start=el.selectionStart??el.value.length; const end=el.selectionEnd??el.value.length;
+      if(start!==end){ el.value = el.value.slice(0,start) + el.value.slice(end); try{ el.setSelectionRange(start,start); }catch{} el.dispatchEvent(new Event('input',{bubbles:true})); return; }
+      if(start>0){ el.value = el.value.slice(0,start-1) + el.value.slice(start); try{ el.setSelectionRange(start-1,start-1);}catch{} el.dispatchEvent(new Event('input',{bubbles:true})); }
+      return;
+    }
+    if(act==='clear'){ npTarget.value=''; npTarget.dispatchEvent(new Event('input',{bubbles:true})); return; }
+    if(act==='done'){ hidePad(); return; }
+    const text = explicitVal || btn.textContent.trim();
+    insertVal(text);
+  });
+
+  // call this instead of the old wireNumpad()
+  wireNumpadFloating();
+</script>
   
     // ------- Settings store -------
     const SKEY='pocketech.settings';
