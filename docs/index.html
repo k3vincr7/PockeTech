@@ -1,9 +1,10 @@
 <!DOCTYPE html><html lang="en" data-theme="auto"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>PockeTech — Field Tools v0.81</title>
+<title>PockeTech — Field Tools v0.82</title>
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0f1115">
 <style>
 :root{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--border:#2a2f3a;--accent:#3a7afe;--btn:#2b3240;--btn-fg:#e8e8e8}
+*{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
 header{background:var(--card);padding:12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 header h1{margin:0;font-size:18px}
@@ -253,12 +254,125 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
     </div>
   </section>
 
-  <!-- Calibration / Loop / Tickets / QR / Backup / Settings (UI kept; data handlers unchanged) -->
-  <section id="cal"><h2>Calibration Tracker</h2><p class="muted">UI + CSV handlers from previous version remain; data stays local.</p></section>
-  <section id="loop"><h2>Loop Check Log</h2><p class="muted">UI + CSV handlers from previous version remain; data stays local.</p></section>
-  <section id="tickets"><h2>Tickets</h2><p class="muted">UI + CSV handlers from previous version remain; photos stored locally.</p></section>
-  <section id="qr"><h2>QR Scan</h2><p class="muted">Hook to loop filter; camera/live and photo import as before.</p></section>
-  <section id="backup"><h2>Backup & Restore</h2><p class="muted">Export/Import JSON for all local data.</p></section>
+  <!-- Calibration -->
+  <section id="cal">
+    <h2>Calibration Tracker</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="row">
+          <div class="col"><label>Date <input id="cal_date" type="date"></label></div>
+          <div class="col"><label>Tag <input id="cal_tag" placeholder="PT-101"></label></div>
+          <div class="col"><label>Device <input id="cal_dev" placeholder="3051, I/P, Thermo"></label></div>
+        </div>
+        <div class="row">
+          <div class="col"><label>LRV <input id="cal_lrv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="cal_lrv">kbd</button></div>
+          <div class="col"><label>URV <input id="cal_urv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="cal_urv">kbd</button></div>
+          <div class="col"><label>As-Found <input id="cal_af" class="num" inputmode="decimal" placeholder="error % or EU"></label><button class="kbd-toggle" data-for="cal_af">kbd</button></div>
+        </div>
+        <div class="row">
+          <div class="col"><label>As-Left <input id="cal_al" class="num" inputmode="decimal" placeholder="error % or EU"></label><button class="kbd-toggle" data-for="cal_al">kbd</button></div>
+          <div class="col"><label>Tech <input id="cal_tech" placeholder="Initials"></label></div>
+          <div class="col"><label>Notes <input id="cal_notes" placeholder="optional note"></label></div>
+        </div>
+        <div class="row">
+          <div class="col"><button class="btn ok" id="cal_add">Add</button></div>
+          <div class="col"><button class="btn" id="cal_export">Export CSV</button></div>
+          <div class="col"><button class="btn danger" id="cal_clear">Clear All</button></div>
+        </div>
+      </div>
+      <div class="card">
+        <table id="cal_tbl"><thead>
+          <tr><th>Date</th><th>Tag</th><th>Device</th><th>LRV</th><th>URV</th><th>As-Found</th><th>As-Left</th><th>Tech</th><th>Notes</th><th></th></tr>
+        </thead><tbody></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Loop Log -->
+  <section id="loop">
+    <h2>Loop Check Log</h2>
+    <div class="card">
+      <div class="row">
+        <div class="col"><label>Date <input id="lp_date" type="date"></label></div>
+        <div class="col"><label>Tag <input id="lp_tag" placeholder="LT-204"></label></div>
+        <div class="col"><label>Point (AI/AO/DI/DO) <input id="lp_point" placeholder="AI-101"></label></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>Expected <input id="lp_exp" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_exp">kbd</button></div>
+        <div class="col"><label>Measured <input id="lp_meas" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_meas">kbd</button></div>
+        <div class="col"><label>OK? <select id="lp_ok"><option value="YES">YES</option><option value="NO">NO</option></select></label></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>Notes <input id="lp_notes" placeholder="optional note"></label></div>
+        <div class="col"><button class="btn ok" id="lp_add">Add</button></div>
+        <div class="col"><button class="btn" id="lp_export">Export CSV</button></div>
+        <div class="col"><button class="btn danger" id="lp_clear">Clear All</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <table id="lp_tbl"><thead>
+        <tr><th>Date</th><th>Tag</th><th>Point</th><th>Expected</th><th>Measured</th><th>OK</th><th>Notes</th><th></th></tr>
+      </thead><tbody></tbody></table>
+    </div>
+  </section>
+
+  <!-- Tickets -->
+  <section id="tickets">
+    <h2>Tickets</h2>
+    <div class="card">
+      <div class="row">
+        <div class="col"><label>Date <input id="tk_date" type="date"></label></div>
+        <div class="col"><label>Area/Unit <input id="tk_area" placeholder="Unit A"></label></div>
+        <div class="col"><label>Tag <input id="tk_tag" placeholder="PT-101"></label></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>Summary <input id="tk_sum" placeholder="Short description"></label></div>
+        <div class="col"><label>Status <select id="tk_status"><option>OPEN</option><option>WIP</option><option>CLOSED</option></select></label></div>
+        <div class="col"><label>Photo <input id="tk_photo" type="file" accept="image/*"></label></div>
+      </div>
+      <div class="row">
+        <div class="col"><button class="btn ok" id="tk_add">Add</button></div>
+        <div class="col"><button class="btn" id="tk_export">Export CSV</button></div>
+        <div class="col"><button class="btn danger" id="tk_clear">Clear All</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <table id="tk_tbl"><thead>
+        <tr><th>Date</th><th>Area</th><th>Tag</th><th>Summary</th><th>Status</th><th>Photo</th><th></th></tr>
+      </thead><tbody></tbody></table>
+    </div>
+  </section>
+
+  <!-- QR -->
+  <section id="qr">
+    <h2>QR Scan</h2>
+    <div class="card">
+      <div class="row">
+        <div class="col"><button class="btn" id="qr_live_btn">Start Live Scan</button></div>
+        <div class="col"><label>or Import Photo <input id="qr_file" type="file" accept="image/*"></label></div>
+      </div>
+      <video id="qr_video" playsinline style="width:100%;max-height:260px;border:1px solid var(--border);border-radius:8px;display:none"></video>
+      <canvas id="qr_canvas" style="display:none"></canvas>
+      <div class="hr"></div>
+      <div class="rowline"><div class="big" id="qr_out">—</div><span class="copy" data-copy="#qr_out">copy</span></div>
+      <p class="muted">If your browser doesn’t support live QR, use “Import Photo”.</p>
+    </div>
+  </section>
+
+  <!-- Backup -->
+  <section id="backup">
+    <h2>Backup & Restore</h2>
+    <div class="card">
+      <div class="row">
+        <div class="col"><button class="btn" id="bk_export">Export All (JSON)</button></div>
+        <div class="col"><label>Restore JSON <input id="bk_file" type="file" accept="application/json"></label></div>
+        <div class="col"><button class="btn danger" id="bk_wipe">Wipe All Data</button></div>
+      </div>
+      <p class="muted">Included: Settings, Calibration, Loop Log, Tickets (with embedded photos).</p>
+    </div>
+  </section>
+
+  <!-- Settings -->
   <section id="settings">
     <h2>Settings</h2>
     <div class="row">
@@ -281,15 +395,14 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
   </div>
 </div>
 
-<footer class="muted">PockeTech — v0.81</footer>
+<footer class="muted">PockeTech — v0.82</footer>
 
 <script>
 /* ---------- Settings store + theme ---------- */
 const SKEY='pocketech.settings', DEF={atm:14.7,punit:'psi',lunit:'in',haptics:false,theme:'auto'};
 const getS=()=>({...DEF, ...(JSON.parse(localStorage.getItem(SKEY)||'{}'))});
 const setS=o=>localStorage.setItem(SKEY, JSON.stringify(o));
-function syncTheme(){document.documentElement.setAttribute('data-theme', getS().theme);}
-syncTheme();
+function syncTheme(){document.documentElement.setAttribute('data-theme', getS().theme);} syncTheme();
 document.getElementById('themeToggle').addEventListener('click',()=>{const s=getS();s.theme=s.theme==='auto'?'dark':(s.theme==='dark'?'light':'auto');setS(s);syncTheme();});
 
 /* ---------- PWA install ---------- */
@@ -405,7 +518,71 @@ document.getElementById('ip_from_pct').addEventListener('click',()=>{const p=par
 document.getElementById('ip_from_psi').addEventListener('click',()=>{const x=parseFloat(val('ip_psi')); if(isNaN(x)){alert('Enter psi');return;} ip_fromPsi(x);});
 document.querySelectorAll('.ipstep').forEach(b=>b.addEventListener('click',()=>ip_fromPct(parseFloat(b.dataset.p))));
 
-/* ---------- Settings wiring ---------- */
+/* ---------- Storage keys for logs ---------- */
+const K_CAL='pocketech.cal', K_LOOP='pocketech.loop', K_TIX='pocketech.tix';
+const load=(k)=>JSON.parse(localStorage.getItem(k)||'[]');
+const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+
+/* ---------- Calibration ---------- */
+function cal_render(){const rows=load(K_CAL); const tb=document.querySelector('#cal_tbl tbody'); tb.innerHTML=''; rows.forEach((r,i)=>{tb.insertAdjacentHTML('beforeend',`<tr><td>${r.date||''}</td><td>${r.tag||''}</td><td>${r.dev||''}</td><td>${fmt(r.lrv)}</td><td>${fmt(r.urv)}</td><td>${r.af||''}</td><td>${r.al||''}</td><td>${r.tech||''}</td><td>${r.notes||''}</td><td><button class="btn danger" data-cal-del="${i}">✖</button></td></tr>`);});}
+function cal_add(){const rec={date: val('cal_date') || new Date().toISOString().slice(0,10), tag: val('cal_tag'), dev: val('cal_dev'), lrv: parseFloat(val('cal_lrv')), urv: parseFloat(val('cal_urv')), af: val('cal_af'), al: val('cal_al'), tech: val('cal_tech'), notes: val('cal_notes')}; const rows=load(K_CAL); rows.push(rec); save(K_CAL,rows); cal_render();}
+function cal_csv(){const rows=load(K_CAL); const out=[['Date','Tag','Device','LRV','URV','As-Found','As-Left','Tech','Notes']]; rows.forEach(r=>out.push([r.date,r.tag,r.dev,r.lrv,r.urv,r.af,r.al,r.tech,r.notes])); downloadCSV('calibration.csv',out);}
+document.addEventListener('click',e=>{const d=e.target.getAttribute('data-cal-del'); if(d!==null){const rows=load(K_CAL); rows.splice(parseInt(d),1); save(K_CAL,rows); cal_render();}});
+document.getElementById('cal_add').addEventListener('click',cal_add);
+document.getElementById('cal_export').addEventListener('click',cal_csv);
+document.getElementById('cal_clear').addEventListener('click',()=>{if(confirm('Clear all calibration records?')){save(K_CAL,[]); cal_render();}});
+cal_render();
+
+/* ---------- Loop Log ---------- */
+function loop_render(){const rows=load(K_LOOP); const tb=document.querySelector('#lp_tbl tbody'); tb.innerHTML=''; rows.forEach((r,i)=>{tb.insertAdjacentHTML('beforeend',`<tr><td>${r.date||''}</td><td>${r.tag||''}</td><td>${r.point||''}</td><td>${fmt(r.exp)}</td><td>${fmt(r.meas)}</td><td>${r.ok||''}</td><td>${r.notes||''}</td><td><button class="btn danger" data-lp-del="${i}">✖</button></td></tr>`);});}
+function loop_add(){const rec={date: val('lp_date') || new Date().toISOString().slice(0,10), tag: val('lp_tag'), point: val('lp_point'), exp: parseFloat(val('lp_exp')), meas: parseFloat(val('lp_meas')), ok: document.getElementById('lp_ok').value, notes: val('lp_notes')}; const rows=load(K_LOOP); rows.push(rec); save(K_LOOP,rows); loop_render();}
+function loop_csv(){const rows=load(K_LOOP); const out=[['Date','Tag','Point','Expected','Measured','OK','Notes']]; rows.forEach(r=>out.push([r.date,r.tag,r.point,r.exp,r.meas,r.ok,r.notes])); downloadCSV('loop_log.csv',out);}
+document.addEventListener('click',e=>{const d=e.target.getAttribute('data-lp-del'); if(d!==null){const rows=load(K_LOOP); rows.splice(parseInt(d),1); save(K_LOOP,rows); loop_render();}});
+document.getElementById('lp_add').addEventListener('click',loop_add);
+document.getElementById('lp_export').addEventListener('click',loop_csv);
+document.getElementById('lp_clear').addEventListener('click',()=>{if(confirm('Clear all loop rows?')){save(K_LOOP,[]); loop_render();}});
+loop_render();
+
+/* ---------- Tickets (photos embedded) ---------- */
+async function fileToDataURL(file){return new Promise(res=>{const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.readAsDataURL(file);});}
+function tix_render(){const rows=load(K_TIX); const tb=document.querySelector('#tk_tbl tbody'); tb.innerHTML=''; rows.forEach((r,i)=>{const img=r.photo?`<img src="${r.photo}" alt="photo" style="max-height:36px;border-radius:6px;border:1px solid var(--border)">`:''; tb.insertAdjacentHTML('beforeend',`<tr><td>${r.date||''}</td><td>${r.area||''}</td><td>${r.tag||''}</td><td>${r.sum||''}</td><td>${r.status||''}</td><td>${img}</td><td><button class="btn danger" data-tk-del="${i}">✖</button></td></tr>`);});}
+async function tix_add(){const f=document.getElementById('tk_photo').files[0]; const photo=f?await fileToDataURL(f):''; const rec={date: val('tk_date')||new Date().toISOString().slice(0,10), area: val('tk_area'), tag: val('tk_tag'), sum: val('tk_sum'), status: document.getElementById('tk_status').value, photo}; const rows=load(K_TIX); rows.push(rec); save(K_TIX,rows); tix_render();}
+function tix_csv(){const rows=load(K_TIX); const out=[['Date','Area','Tag','Summary','Status','Photo(dataURL)']]; rows.forEach(r=>out.push([r.date,r.area,r.tag,r.sum,r.status,r.photo?('[embedded]'):''])); downloadCSV('tickets.csv',out);}
+document.addEventListener('click',e=>{const d=e.target.getAttribute('data-tk-del'); if(d!==null){const rows=load(K_TIX); rows.splice(parseInt(d),1); save(K_TIX,rows); tix_render();}});
+document.getElementById('tk_add').addEventListener('click',tix_add);
+document.getElementById('tk_export').addEventListener('click',tix_csv);
+document.getElementById('tk_clear').addEventListener('click',()=>{if(confirm('Clear all tickets?')){save(K_TIX,[]); tix_render();}});
+tix_render();
+
+/* ---------- QR Scanner ---------- */
+const qrVideo=document.getElementById('qr_video'), qrCanvas=document.getElementById('qr_canvas'), qrOut=document.getElementById('qr_out');
+let qrStream=null, qrTimer=null;
+async function startLiveQR(){
+  if(!('BarcodeDetector' in window)){ alert('Live QR not supported in this browser. Use “Import Photo”.'); return; }
+  try{
+    qrVideo.style.display='block';
+    qrStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    qrVideo.srcObject=qrStream; await qrVideo.play();
+    const det=new BarcodeDetector({formats:['qr_code']});
+    qrTimer=setInterval(async()=>{
+      const w=qrVideo.videoWidth,h=qrVideo.videoHeight; if(!w||!h) return;
+      qrCanvas.width=w; qrCanvas.height=h; const ctx=qrCanvas.getContext('2d'); ctx.drawImage(qrVideo,0,0,w,h);
+      const bmp=await createImageBitmap(qrCanvas); const codes=await det.detect(bmp);
+      if(codes&&codes[0]){ qrOut.textContent=codes[0].rawValue; navigator.clipboard?.writeText(codes[0].rawValue).catch(()=>{}); stopLiveQR(); document.getElementById('qr_live_btn').textContent='Start Live Scan'; }
+    },300);
+  }catch{ alert('Camera blocked or unavailable'); }
+}
+function stopLiveQR(){ if(qrTimer){clearInterval(qrTimer);qrTimer=null;} if(qrStream){qrStream.getTracks().forEach(t=>t.stop()); qrStream=null;} qrVideo.pause(); qrVideo.removeAttribute('src'); qrVideo.style.display='none'; }
+document.getElementById('qr_live_btn').addEventListener('click',()=>{ if(qrStream){ stopLiveQR(); document.getElementById('qr_live_btn').textContent='Start Live Scan'; } else { startLiveQR(); document.getElementById('qr_live_btn').textContent='Stop Live Scan'; }});
+document.getElementById('qr_file').addEventListener('change',async(e)=>{const f=e.target.files[0]; if(!f)return; if(!('BarcodeDetector' in window)){alert('QR not supported for images on this browser');return;} const det=new BarcodeDetector({formats:['qr_code']}); const img=await createImageBitmap(f); const codes=await det.detect(img); if(codes&&codes[0]){qrOut.textContent=codes[0].rawValue; navigator.clipboard?.writeText(codes[0].rawValue).catch(()=>{});} else alert('No QR found in image');});
+
+/* ---------- Backup / Restore ---------- */
+function snapshotAll(){ return {version:'0.82',settings:getS(),calibration:load(K_CAL),loop:load(K_LOOP),tickets:load(K_TIX)}; }
+document.getElementById('bk_export').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(snapshotAll(),null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='pocketech_backup.json'; a.click(); URL.revokeObjectURL(url);});
+document.getElementById('bk_file').addEventListener('change',async(e)=>{const f=e.target.files[0]; if(!f)return; try{const txt=await f.text(); const data=JSON.parse(txt); if(data.settings) setS({...DEF,...data.settings}); if(Array.isArray(data.calibration)) save(K_CAL,data.calibration); if(Array.isArray(data.loop)) save(K_LOOP,data.loop); if(Array.isArray(data.tickets)) save(K_TIX,data.tickets); loadSettingsUI(); cal_render(); loop_render(); tix_render(); alert('Restore complete');}catch{alert('Invalid backup file');}});
+document.getElementById('bk_wipe').addEventListener('click',()=>{if(!confirm('Wipe ALL app data (settings, logs, tickets)?')) return; localStorage.removeItem(SKEY); localStorage.removeItem(K_CAL); localStorage.removeItem(K_LOOP); localStorage.removeItem(K_TIX); loadSettingsUI(); cal_render(); loop_render(); tix_render(); alert('Wiped');});
+
+/* ---------- Settings UI ---------- */
 function loadSettingsUI(){const s=getS(); setVal('s_atm',s.atm); document.getElementById('s_punit').value=s.punit; document.getElementById('s_lunit').value=s.lunit; document.getElementById('s_haptics').checked=!!s.haptics; setVal('atm', s.atm);}
 loadSettingsUI();
 document.getElementById('s_save').addEventListener('click',()=>{const s=getS(); const a=parseFloat(val('s_atm')); if(!isNaN(a)) s.atm=a; s.punit=document.getElementById('s_punit').value; s.lunit=document.getElementById('s_lunit').value; s.haptics=document.getElementById('s_haptics').checked; setS(s); setVal('atm', s.atm); alert('Saved');});
