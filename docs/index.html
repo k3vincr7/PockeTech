@@ -4,7 +4,38 @@
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0f1115">
 <style>
 :root{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--border:#2a2f3a;--accent:#3a7afe;--btn:#2b3240;--btn-fg:#e8e8e8}
-*{box-sizing:border-box}
+/* Light defaults */
+:root { color-scheme: light dark; }
+
+/* When forced light */
+html[data-theme="light"]{
+  --bg:#f6f8fc; --fg:#0c1116; --muted:#5a6572;
+  --card:#ffffff; --border:#d6dbe3; --accent:#1f6bff;
+  --btn:#eef2f7; --btn-fg:#0c1116;
+}
+
+/* When forced dark (your current palette already matches) */
+html[data-theme="dark"]{
+  --bg:#0f1115; --fg:#e8e8e8; --muted:#a0a0a0;
+  --card:#151922; --border:#2a2f3a; --accent:#3a7afe;
+  --btn:#2b3240; --btn-fg:#e8e8e8;
+}
+
+/* Auto: follow system preference unless the user picked light/dark */
+@media (prefers-color-scheme: light){
+  html[data-theme="auto"]{
+    --bg:#f6f8fc; --fg:#0c1116; --muted:#5a6572;
+    --card:#ffffff; --border:#d6dbe3; --accent:#1f6bff;
+    --btn:#eef2f7; --btn-fg:#0c1116;
+  }
+}
+@media (prefers-color-scheme: dark){
+  html[data-theme="auto"]{
+    --bg:#0f1115; --fg:#e8e8e8; --muted:#a0a0a0;
+    --card:#151922; --border:#2a2f3a; --accent:#3a7afe;
+    --btn:#2b3240; --btn-fg:#e8e8e8;
+  }
+}*{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
 header{background:var(--card);padding:12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 header h1{margin:0;font-size:18px}
