@@ -621,5 +621,44 @@ document.getElementById('s_reset').addEventListener('click',()=>{setS(DEF); load
 
 /* ---------- Defaults ---------- */
 document.getElementById('pct_slider').value=50; setVal('sh_pct',50); document.getElementById('read_pct').textContent='50%'; document.getElementById('read_ma').textContent='12'; setVal('atm', getS().atm);
+<script>
+let deferredPrompt=null;
+const installBtn=document.getElementById('installBtn');
+installBtn.disabled=true;
+
+function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
+function isSafari(){ return /^((?!chrome|android).)*safari/i.test(navigator.userAgent); }
+
+window.addEventListener('beforeinstallprompt',(e)=>{
+  e.preventDefault(); deferredPrompt=e; installBtn.disabled=false;
+});
+
+// iOS/Safari: always enable button (uses instruction modal)
+if(isIOS() && isSafari()){ installBtn.disabled=false; }
+
+installBtn.addEventListener('click', async ()=>{
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    try{ await deferredPrompt.userChoice; }catch{}
+    deferredPrompt=null; installBtn.disabled=true;
+    return;
+  }
+  if(isIOS() && isSafari()){
+    document.getElementById('iosInstallTip').style.display='flex';
+    return;
+  }
+  alert('Your browser does not support direct install. Try Chrome/Edge or Add to Home Screen.');
+});
+
+// Close iOS tip
+document.getElementById('iosTipClose').addEventListener('click',()=>(
+  document.getElementById('iosInstallTip').style.display='none'
+));
+
+// Minimal service worker for installability
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
 </script>
-</body></html>
+</body>
+</html>
