@@ -433,8 +433,33 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
 const SKEY='pocketech.settings', DEF={atm:14.7,punit:'psi',lunit:'in',haptics:false,theme:'auto'};
 const getS=()=>({...DEF, ...(JSON.parse(localStorage.getItem(SKEY)||'{}'))});
 const setS=o=>localStorage.setItem(SKEY, JSON.stringify(o));
-function syncTheme(){document.documentElement.setAttribute('data-theme', getS().theme);} syncTheme();
-document.getElementById('themeToggle').addEventListener('click',()=>{const s=getS();s.theme=s.theme==='auto'?'dark':(s.theme==='dark'?'light':'auto');setS(s);syncTheme();});
+
+function applyTheme(){
+  const t = getS().theme || 'auto';
+  document.documentElement.setAttribute('data-theme', t);
+}
+applyTheme();
+
+// Follow OS theme while in Auto
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{
+  if(getS().theme==='auto') applyTheme();
+});
+
+// Cycle Auto → Dark → Light
+document.getElementById('themeToggle').addEventListener('click',()=>{
+  const s=getS();
+  s.theme = (s.theme==='auto') ? 'dark' : (s.theme==='dark' ? 'light' : 'auto');
+  setS(s); applyTheme();
+  const label = s.theme==='auto'?'🌓 Auto':(s.theme==='dark'?'🌑 Dark':'🌕 Light');
+  document.getElementById('themeToggle').textContent = label;
+});
+
+// Label on load
+(()=>{
+  const t=getS().theme || 'auto';
+  document.getElementById('themeToggle').textContent =
+    t==='auto'?'🌓 Auto':(t==='dark'?'🌑 Dark':'🌕 Light');
+})();
 
 /* ---------- PWA install ---------- */
 let deferredPrompt=null; const installBtn=document.getElementById('installBtn'); installBtn.disabled=true;
