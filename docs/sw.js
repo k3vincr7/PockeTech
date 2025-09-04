@@ -1,10 +1,10 @@
-// docs/sw.js
-const CACHE = 'pocketech-v2'; // bump on each release
+const CACHE = 'pocketech-v3'; // <— bump this
 const ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
   './sw.js',
+];
   // add icons when you have them, e.g.:
   // './icons/pwa-192.png',
   // './icons/pwa-512.png',
