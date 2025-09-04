@@ -460,13 +460,7 @@ document.getElementById('themeToggle').addEventListener('click',()=>{
   document.getElementById('themeToggle').textContent =
     t==='auto'?'🌓 Auto':(t==='dark'?'🌑 Dark':'🌕 Light');
 })();
-
-/* ---------- PWA install ---------- */
-let deferredPrompt=null; const installBtn=document.getElementById('installBtn'); installBtn.disabled=true;
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;installBtn.disabled=false;});
-installBtn.addEventListener('click',async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;installBtn.disabled=true;});
-if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js');}
-
+  
 /* ---------- Nav ---------- */
 document.querySelectorAll('nav button').forEach(btn=>{
   btn.addEventListener('click',()=>{
