@@ -620,45 +620,69 @@ document.getElementById('s_save').addEventListener('click',()=>{const s=getS(); 
 document.getElementById('s_reset').addEventListener('click',()=>{setS(DEF); loadSettingsUI(); alert('Reset');});
 
 /* ---------- Defaults ---------- */
-document.getElementById('pct_slider').value=50; setVal('sh_pct',50); document.getElementById('read_pct').textContent='50%'; document.getElementById('read_ma').textContent='12'; setVal('atm', getS().atm);
-<script>
-let deferredPrompt=null;
-const installBtn=document.getElementById('installBtn');
-installBtn.disabled=true;
+document.getElementById('pct_slider').value = 50;
+setVal('sh_pct', 50);
+document.getElementById('read_pct').textContent = '50%';
+document.getElementById('read_ma').textContent = '12';
+setVal('atm', getS().atm);
+
+/* ---------- Install Logic ---------- */
+let deferredPrompt = null;
+const installBtn = document.getElementById('installBtn');
+if (installBtn) installBtn.disabled = true;
 
 function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
 function isSafari(){ return /^((?!chrome|android).)*safari/i.test(navigator.userAgent); }
 
-window.addEventListener('beforeinstallprompt',(e)=>{
-  e.preventDefault(); deferredPrompt=e; installBtn.disabled=false;
+window.addEventListener('beforeinstallprompt', (e)=>{
+  e.preventDefault(); deferredPrompt = e; if (installBtn) installBtn.disabled = false;
 });
 
-// iOS/Safari: always enable button (uses instruction modal)
-if(isIOS() && isSafari()){ installBtn.disabled=false; }
+// iOS/Safari: enable button (uses instruction modal)
+if (isIOS() && isSafari() && installBtn){ installBtn.disabled = false; }
 
-installBtn.addEventListener('click', async ()=>{
-  if(deferredPrompt){
+installBtn?.addEventListener('click', async ()=>{
+  if (deferredPrompt){
     deferredPrompt.prompt();
-    try{ await deferredPrompt.userChoice; }catch{}
-    deferredPrompt=null; installBtn.disabled=true;
+    try { await deferredPrompt.userChoice; } catch {}
+    deferredPrompt = null; installBtn.disabled = true;
     return;
   }
-  if(isIOS() && isSafari()){
-    document.getElementById('iosInstallTip').style.display='flex';
+  if (isIOS() && isSafari()){
+    document.getElementById('iosInstallTip').style.display = 'flex';
     return;
   }
   alert('Your browser does not support direct install. Try Chrome/Edge or Add to Home Screen.');
 });
 
 // Close iOS tip
-document.getElementById('iosTipClose').addEventListener('click',()=>(
-  document.getElementById('iosInstallTip').style.display='none'
-));
+document.getElementById('iosTipClose')?.addEventListener('click', ()=>{
+  document.getElementById('iosInstallTip').style.display = 'none';
+});
 
-// Minimal service worker for installability
-if('serviceWorker' in navigator){
+// Hide Install button if already running as an app (PWA/native webview)
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+if (isStandalone) { installBtn?.style && (installBtn.style.display = 'none'); }
+
+// Service worker (installability)
+if ('serviceWorker' in navigator){
   navigator.serviceWorker.register('./sw.js').catch(()=>{});
 }
 </script>
+
+<!-- iOS Add-to-Home instructions modal -->
+<div id="iosInstallTip" style="display:none;position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.55);align-items:center;justify-content:center">
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;max-width:520px;padding:16px">
+    <h3 style="margin-top:0">Add to Home Screen</h3>
+    <ol style="line-height:1.6">
+      <li>Tap the <strong>Share</strong> icon in Safari.</li>
+      <li>Choose <strong>Add to Home Screen</strong>.</li>
+      <li>Tap <strong>Add</strong>.</li>
+    </ol>
+    <p class="muted">On iPhone/iPad, installation is done via Share → Add to Home Screen.</p>
+    <div style="text-align:right;margin-top:10px"><button class="btn" id="iosTipClose">Close</button></div>
+  </div>
+</div>
+
 </body>
 </html>
