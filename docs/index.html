@@ -591,10 +591,52 @@ const load=(k)=>JSON.parse(localStorage.getItem(k)||'[]');
 const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 
 /* ---------- Calibration ---------- */
-function cal_render(){const rows=load(K_CAL); const tb=document.querySelector('#cal_tbl tbody'); tb.innerHTML=''; rows.forEach((r,i)=>{tb.insertAdjacentHTML('beforeend',`<tr><td>${r.date||''}</td><td>${r.tag||''}</td><td>${r.dev||''}</td><td>${fmt(r.lrv)}</td><td>${fmt(r.urv)}</td><td>${r.af||''}</td><td>${r.al||''}</td><td>${r.tech||''}</td><td>${r.notes||''}</td><td><button class="btn danger" data-cal-del="${i}">✖</button></td></tr>`);});}
-function cal_add(){const rec={date: val('cal_date') || new Date().toISOString().slice(0,10), tag: val('cal_tag'), dev: val('cal_dev'), lrv: parseFloat(val('cal_lrv')), urv: parseFloat(val('cal_urv')), af: val('cal_af'), al: val('cal_al'), tech: val('cal_tech'), notes: val('cal_notes')}; const rows=load(K_CAL); rows.push(rec); save(K_CAL,rows); cal_render();}
-function cal_csv(){const rows=load(K_CAL); const out=[['Date','Tag','Device','LRV','URV','As-Found','As-Left','Tech','Notes']]; rows.forEach(r=>out.push([r.date,r.tag,r.dev,r.lrv,r.urv,r.af,r.al,r.tech,r.notes])); downloadCSV('calibration.csv',out);}
-document.addEventListener('click',e=>{const d=e.target.getAttribute('data-cal-del'); if(d!==null){const rows=load(K_CAL); rows.splice(parseInt(d),1); save(K_CAL,rows); cal_render();}});
+// RENDER
+function cal_render(){
+  const rows=load(K_CAL);
+  const tb=document.querySelector('#cal_tbl tbody');
+  tb.innerHTML='';
+  rows.forEach((r,i)=>{
+    const pill = r.status==="OVERDUE" ? "pill pill-red" : (r.status==="DUE SOON" ? "pill pill-yellow" : "pill");
+    tb.insertAdjacentHTML('beforeend',
+      `<tr>
+        <td>${r.date||''}</td><td>${r.tag||''}</td><td>${r.dev||''}</td>
+        <td>${fmt(r.lrv)}</td><td>${fmt(r.urv)}</td><td>${r.af||''}</td><td>${r.al||''}</td>
+        <td>${r.tech||''}</td><td>${r.notes||''}</td>
+        <td>${r.nextDueISO||''}</td><td><span class="${pill}">${r.status||''}</span></td>
+        <td><button class="btn danger" data-cal-del="${i}">✖</button></td>
+      </tr>`);
+  });
+}
+
+// ADD
+function cal_add(){
+  const date = val('cal_date') || new Date().toISOString().slice(0,10);
+  const intervalM = parseInt(document.getElementById('cal_interval').value||"0",10);
+  const nextDueISO = addMonthsISO(date, intervalM);
+  const status = dueStatus(nextDueISO);
+  const rec={
+    date, tag:val('cal_tag'), dev:val('cal_dev'),
+    lrv: parseFloat(val('cal_lrv')), urv: parseFloat(val('cal_urv')),
+    af: val('cal_af'), al: val('cal_al'), tech: val('cal_tech'),
+    notes: val('cal_notes'), intervalM, nextDueISO, status
+  };
+  const rows=load(K_CAL); rows.push(rec); save(K_CAL,rows); cal_render();
+}
+
+// CSV
+function cal_csv(){
+  const rows=load(K_CAL);
+  const out=[['Date','Tag','Device','LRV','URV','As-Found','As-Left','Tech','Notes','NextDue','Status','IntervalMonths']];
+  rows.forEach(r=>out.push([r.date,r.tag,r.dev,r.lrv,r.urv,r.af,r.al,r.tech,r.notes,r.nextDueISO||'',r.status||'',r.intervalM||0]));
+  downloadCSV('calibration.csv',out);
+}
+
+// listeners (keep as you have)
+document.addEventListener('click',e=>{
+  const d=e.target.getAttribute('data-cal-del');
+  if(d!==null){const rows=load(K_CAL); rows.splice(parseInt(d),1); save(K_CAL,rows); cal_render();}
+});
 document.getElementById('cal_add').addEventListener('click',cal_add);
 document.getElementById('cal_export').addEventListener('click',cal_csv);
 document.getElementById('cal_clear').addEventListener('click',()=>{if(confirm('Clear all calibration records?')){save(K_CAL,[]); cal_render();}});
