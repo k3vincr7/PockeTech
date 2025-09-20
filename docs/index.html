@@ -101,6 +101,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
   <button data-target="qr">📷 QR Scan</button>
   <button data-target="backup">💾 Backup</button>
   <button data-target="settings">⚙️ Settings</button>
+  <button data-target="jrtech">🧰 Jr Tech</button>
 </nav>
 
 <main>
@@ -293,6 +294,164 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
       <div class="card"><div class="rowline"><div class="big" id="ip_read_psi">—</div><span class="copy" data-copy="#ip_read_psi">copy</span></div><div class="muted">psi (3–15)</div></div>
     </div>
   </section>
+
+  <section id="jrtech">
+  <h2>Jr Tech Quick Reference</h2>
+
+  <!-- Search -->
+  <div class="row">
+    <div class="col">
+      <label>Search this page
+        <input id="jt_search" placeholder="filter tables and notes…">
+      </label>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-top:10px">
+
+    <!-- 2) Thermocouple & RTD Color Codes -->
+    <div class="card jt-card">
+      <h3 style="margin-top:0">Thermocouple &amp; RTD Color Codes</h3>
+      <div class="row">
+        <div class="col">
+          <label>Standard
+            <select id="tc_std">
+              <option value="ANSI">ANSI (US)</option>
+              <option value="IEC">IEC (International)</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <table id="tc_tbl">
+        <thead>
+          <tr><th>Type</th><th>+ Lead</th><th>– Lead</th><th>Notes</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="muted" style="margin-top:6px">
+        Tip: Red is **negative** in ANSI thermocouples. Always follow site standards/drawings if they differ.
+      </div>
+      <div class="hr"></div>
+      <h4 style="margin-bottom:6px">RTD (Pt100) common wiring</h4>
+      <table id="rtd_tbl">
+        <thead>
+          <tr><th>Wires</th><th>Common Colors</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>2-wire</td><td>Any pair (vendor specific)</td><td>Lead resistance adds error; rarely used for precision.</td></tr>
+          <tr><td>3-wire</td><td>ANSI: Red, Red, White • IEC: Red, Red, White (or Red, White, White)</td><td>Controller compensates one lead.</td></tr>
+          <tr><td>4-wire</td><td>Pairs of same colors</td><td>Best accuracy; two sense, two drive.</td></tr>
+        </tbody>
+      </table>
+      <p class="muted">Vendors vary; check the instrument datasheet.</p>
+    </div>
+
+    <!-- 3) 24 VDC Loop Wiring Cheats -->
+    <div class="card jt-card">
+      <h3 style="margin-top:0">24 VDC Loop Wiring Cheats</h3>
+      <ul>
+        <li><strong>4–20 mA 2-wire TX:</strong> +24V → <em>TX +</em> → <em>TX –</em> → AI+</li>
+        <li><strong>Insert ammeter (series):</strong> break the loop on the **positive** side and wire meter **in series** (observe polarity).</li>
+        <li><strong>Shields:</strong> land at one end only (typically at the marshaling/DAI end) unless your site spec says otherwise.</li>
+        <li><strong>Source vs Sink AIs:</strong> check card manual; wrong polarity = flatline 0 or card fault.</li>
+      </ul>
+      <pre class="muted" style="white-space:pre; overflow:auto; padding:8px; border:1px dashed var(--border); border-radius:8px;">
++24V ──┬─────────────┐
+       │             │
+       │         ( + ) Transmitter ( – )
+       │             │
+      AI+           AI–
+       │             │
+      0V ────────────┘
+(Series meter goes between +24V and TX+ when measuring loop current)
+      </pre>
+    </div>
+
+    <!-- 4) Control Valve Actions -->
+    <div class="card jt-card">
+      <h3 style="margin-top:0">Control Valve Actions</h3>
+      <table>
+        <thead>
+          <tr><th>Action</th><th>Fail Position</th><th>Controller Tuning Hint</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Air-to-Open (ATO)</td>
+            <td>Fail Close (FC)</td>
+            <td>Controller often <strong>reverse-acting</strong></td>
+            <td>As air ↑, valve opens. Spring pushes it closed on air loss.</td>
+          </tr>
+          <tr>
+            <td>Air-to-Close (ATC)</td>
+            <td>Fail Open (FO)</td>
+            <td>Controller often <strong>direct-acting</strong></td>
+            <td>As air ↑, valve closes. Spring opens on air loss.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="muted">Bench set typically around 3–15 psi via I/P. Confirm action/fail in P&amp;ID or actuator tag.</p>
+    </div>
+
+    <!-- 5) Instrument Tag Abbreviations -->
+    <div class="card jt-card">
+      <h3 style="margin-top:0">Instrument Tag Abbreviations (ISA-style)</h3>
+      <table id="isa_tbl">
+        <thead><tr><th>Tag</th><th>Plain English</th></tr></thead>
+        <tbody>
+          <tr><td>LIC</td><td>Level Indicating Controller</td></tr>
+          <tr><td>FIC</td><td>Flow Indicating Controller</td></tr>
+          <tr><td>PIC</td><td>Pressure Indicating Controller</td></tr>
+          <tr><td>TIC</td><td>Temperature Indicating Controller</td></tr>
+          <tr><td>PSV</td><td>Pressure Safety Valve (relief)</td></tr>
+          <tr><td>LSHH / LSLL</td><td>Level Switch High-High / Low-Low</td></tr>
+          <tr><td>LT / PT / TT / FT</td><td>Level / Pressure / Temperature / Flow Transmitter</td></tr>
+          <tr><td>XV / CV</td><td>On/Off Valve / Control Valve</td></tr>
+        </tbody>
+      </table>
+      <p class="muted">Local site conventions can differ. Always follow the legend on the project’s P&amp;IDs.</p>
+    </div>
+
+    <!-- 6) Common Signal Sanity Checks -->
+    <div class="card jt-card">
+      <h3 style="margin-top:0">Common Signal Sanity Checks</h3>
+      <ul>
+        <li><strong>4–20 mA → %:</strong> (mA − 4) / 16 × 100</li>
+        <li><strong>% → 4–20 mA:</strong> 4 + 16 × (% / 100)</li>
+        <li><strong>0–10 V → %:</strong> V / 10 × 100</li>
+        <li><strong>3–15 psi (I/P):</strong> 3 + 12 × (% / 100)</li>
+        <li><strong>Square-root?</strong> Use for DP-flow; level/pressure are linear.</li>
+      </ul>
+      <div class="row">
+        <div class="col">
+          <button class="btn" data-jt-nav="#signal">Open 4–20 mA Helper</button>
+        </div>
+      </div>
+      <p class="muted">If reading is off: verify TX range (LRV/URV), wiring polarity, loop power, and card type (source/sink).</p>
+    </div>
+
+    <!-- 8) Torque & Thread Seal Notes -->
+    <div class="card jt-card">
+      <h3 style="margin-top:0">Torque &amp; Thread Seal Notes</h3>
+      <ul>
+        <li>Prefer the **manufacturer torque table**. Over-torque can distort manifolds and impulse fittings.</li>
+        <li>For tapered threads: apply sealant in the **tightening direction** and keep the first thread clean.</li>
+        <li>Avoid tape on small tubing/compression fittings; use proper ferrule fittings per spec.</li>
+        <li>Never mix imperial/metric threads. If in doubt, gauge it.</li>
+      </ul>
+      <p class="muted">If a connection keeps weeping, inspect surface finish, replace ferrules, and confirm thread form.</p>
+    </div>
+
+    <!-- (No duplicates for Radio Spelling / SI Prefix) -->
+    <div class="card jt-card">
+      <h3 style="margin-top:0">More Field Lingo</h3>
+      <p>Need Radio Spelling (A = Alpha, B = Bravo, …) or SI Prefix cheats? Use the main tools in the app.</p>
+      <div class="row">
+        <div class="col"><button class="btn" data-jt-nav="#signal">Go to 4–20 mA Helper</button></div>
+      </div>
+    </div>
+
+  </div>
+</section>
 
   <!-- Calibration -->
 <section id="cal">
@@ -805,6 +964,76 @@ function loadSettingsUI(){const s=getS(); setVal('s_atm',s.atm); document.getEle
 loadSettingsUI();
 document.getElementById('s_save').addEventListener('click',()=>{const s=getS(); const a=parseFloat(val('s_atm')); if(!isNaN(a)) s.atm=a; s.punit=document.getElementById('s_punit').value; s.lunit=document.getElementById('s_lunit').value; s.haptics=document.getElementById('s_haptics').checked; setS(s); setVal('atm', s.atm); alert('Saved');});
 document.getElementById('s_reset').addEventListener('click',()=>{setS(DEF); loadSettingsUI(); alert('Reset');});
+
+/* ---------- Jr Tech (search + content) ---------- */
+(function(){
+  // Thermocouple table data
+  const TC = {
+    ANSI: [
+      {type:'K', plus:'Yellow', minus:'Red', notes:'Nickel-Chromium / Nickel-Alumel'},
+      {type:'J', plus:'White',  minus:'Red', notes:'Iron / Constantan'},
+      {type:'T', plus:'Blue',   minus:'Red', notes:'Copper / Constantan'},
+      {type:'E', plus:'Purple', minus:'Red', notes:'Chromel / Constantan'},
+      {type:'N', plus:'Orange', minus:'Red', notes:'Nicrosil / Nisil'},
+      {type:'R', plus:'Black',  minus:'Red', notes:'Pt-Rh / Pt (high temp)'},
+      {type:'S', plus:'Black',  minus:'Red', notes:'Pt-Rh / Pt (high temp)'}
+    ],
+    IEC: [
+      {type:'K', plus:'Green',  minus:'White', notes:'Nickel-Chromium / Nickel-Alumel'},
+      {type:'J', plus:'Black',  minus:'White', notes:'Iron / Constantan'},
+      {type:'T', plus:'Brown',  minus:'White', notes:'Copper / Constantan'},
+      {type:'E', plus:'Purple', minus:'White', notes:'Chromel / Constantan'},
+      {type:'N', plus:'Pink',   minus:'White', notes:'Nicrosil / Nisil'},
+      {type:'R', plus:'Orange', minus:'White', notes:'Pt-Rh / Pt (high temp)'},
+      {type:'S', plus:'Orange', minus:'White', notes:'Pt-Rh / Pt (high temp)'}
+    ]
+  };
+
+  function renderTCTable(std){
+    const tb = document.querySelector('#tc_tbl tbody');
+    if(!tb) return;
+    tb.innerHTML = '';
+    (TC[std]||[]).forEach(row=>{
+      tb.insertAdjacentHTML('beforeend',
+        `<tr><td>${row.type}</td><td>${row.plus}</td><td>${row.minus}</td><td>${row.notes}</td></tr>`);
+    });
+  }
+
+  document.getElementById('tc_std')?.addEventListener('change', e=>{
+    renderTCTable(e.target.value || 'ANSI');
+  });
+  // initial
+  renderTCTable('ANSI');
+
+  // Local nav jumpers
+  document.querySelectorAll('[data-jt-nav]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const sel = btn.getAttribute('data-jt-nav');
+      if(!sel) return;
+      // switch nav tab
+      const targetId = sel.replace('#','');
+      document.querySelectorAll('nav button').forEach(b=>{
+        if(b.dataset.target===targetId){ b.click(); }
+      });
+      // focus optional element
+      const el = document.querySelector(sel);
+      if(el && el.scrollIntoView) el.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+
+  // Search filter (filters text within the Jr Tech section)
+  const search = document.getElementById('jt_search');
+  const section = document.getElementById('jrtech');
+  function filterJrTech(q){
+    const query = (q||'').trim().toLowerCase();
+    section.querySelectorAll('.jt-card').forEach(card=>{
+      if(!query){ card.style.display=''; return; }
+      const text = card.innerText.toLowerCase();
+      card.style.display = text.includes(query)? '' : 'none';
+    });
+  }
+  search?.addEventListener('input', e=>filterJrTech(e.target.value));
+})();
 
 /* ---------- Defaults ---------- */
 document.getElementById('pct_slider').value = 50;
