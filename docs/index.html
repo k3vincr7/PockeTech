@@ -145,43 +145,105 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
   </section>
 
   <!-- Signal (nice) -->
-  <section id="signal">
-    <h2>4–20 mA Helper (Pro)</h2>
-    <div class="row">
-      <div class="col"><label>LRV (EU) <input id="sh_lrv" class="num" inputmode="decimal" placeholder="0"></label><button class="kbd-toggle" data-for="sh_lrv">kbd</button></div>
-      <div class="col"><label>URV (EU) <input id="sh_urv" class="num" inputmode="decimal" placeholder="200"></label><button class="kbd-toggle" data-for="sh_urv">kbd</button></div>
-      <div class="col"><label>EU Label <input id="sh_eulbl" placeholder="e.g., gpm, °F, psi"></label></div>
+<section id="signal">
+  <h2>4–20 mA Helper (Pro)</h2>
+
+  <div class="row">
+    <div class="col">
+      <label>LRV (EU) 
+        <input id="sh_lrv" class="num" inputmode="decimal" placeholder="0">
+      </label>
+      <button class="kbd-toggle" data-for="sh_lrv">kbd</button>
     </div>
-    <div class="row">
-      <div class="col"><label>mA <input id="sh_ma" class="num" inputmode="decimal" placeholder="12"></label><button class="kbd-toggle" data-for="sh_ma">kbd</button></div>
-      <div class="col"><label>% <input id="sh_pct" class="num" inputmode="decimal" placeholder="50"></label><button class="kbd-toggle" data-for="sh_pct">kbd</button></div>
-      <div class="col"><label>EU <input id="sh_eu" class="num" inputmode="decimal" placeholder="100"></label><button class="kbd-toggle" data-for="sh_eu">kbd</button></div>
+    <div class="col">
+      <label>URV (EU) 
+        <input id="sh_urv" class="num" inputmode="decimal" placeholder="200">
+      </label>
+      <button class="kbd-toggle" data-for="sh_urv">kbd</button>
     </div>
-    <div class="row">
-      <div class="col"><button class="btn" id="sh_from_ma">From mA</button></div>
-      <div class="col"><button class="btn" id="sh_from_pct">From %</button></div>
-      <div class="col"><button class="btn" id="sh_from_eu">From EU</button></div>
+    <div class="col">
+      <label>EU Label 
+        <input id="sh_eulbl" placeholder="e.g., gpm, °F, psi">
+      </label>
     </div>
-    <div class="hr"></div>
-    <div class="grid">
-      <div class="card"><div class="rowline"><div class="big" id="read_ma">—</div><span class="copy" data-copy="#read_ma">copy</span></div><div class="muted">mA</div></div>
-      <div class="card">
-        <div class="rowline"><div class="big" id="read_pct">—</div><span class="copy" data-copy="#read_pct">copy</span></div>
-        <div class="muted">Percent</div>
-        <div class="steps" style="margin-top:8px">
-          <button class="btn step" data-p="0">0%</button><button class="btn step" data-p="25">25%</button>
-          <button class="btn step" data-p="50">50%</button><button class="btn step" data-p="75">75%</button><button class="btn step" data-p="100">100%</button>
-        </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <label>mA 
+        <input id="sh_ma" class="num" inputmode="decimal" placeholder="12">
+      </label>
+      <button class="kbd-toggle" data-for="sh_ma">kbd</button>
+    </div>
+    <div class="col">
+      <label>% 
+        <input id="sh_pct" class="num" inputmode="decimal" placeholder="50">
+      </label>
+      <button class="kbd-toggle" data-for="sh_pct">kbd</button>
+    </div>
+    <div class="col">
+      <label>EU 
+        <input id="sh_eu" class="num" inputmode="decimal" placeholder="100">
+      </label>
+      <button class="kbd-toggle" data-for="sh_eu">kbd</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col"><button class="btn" id="sh_from_ma">From mA</button></div>
+    <div class="col"><button class="btn" id="sh_from_pct">From %</button></div>
+    <div class="col"><button class="btn" id="sh_from_eu">From EU</button></div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="grid">
+    <!-- mA card -->
+    <div class="card">
+      <div class="rowline">
+        <div class="big" id="read_ma">—</div>
+        <span class="copy" data-copy="#read_ma">copy</span>
       </div>
-      <div class="card">
-        <div class="rowline"><div class="big" id="read_eu">—</div><span class="copy" data-copy="#read_eu">copy</span></div>
-        <div class="muted">Eng Units</div>
-        <label class="rowline" style="margin-top:8px"flex-wrap:wrap;><input type="checkbox" id="sqrt_mode"> square-root (flow)</label>
+      <div class="muted">mA</div>
+    </div>
+
+    <!-- Percent card -->
+    <div class="card">
+      <div class="rowline">
+        <div class="big" id="read_pct">—</div>
+        <span class="copy" data-copy="#read_pct">copy</span>
+      </div>
+      <div class="muted">Percent</div>
+      <div class="steps" style="margin-top:8px">
+        <button class="btn step" data-p="0">0%</button>
+        <button class="btn step" data-p="25">25%</button>
+        <button class="btn step" data-p="50">50%</button>
+        <button class="btn step" data-p="75">75%</button>
+        <button class="btn step" data-p="100">100%</button>
       </div>
     </div>
-    <div class="row" style="margin-top:10px"><div class="col"><input id="pct_slider" type="range" min="0" max="100" step="0.1" value="50"></div></div>
-    <p class="muted">Slider drives % ⇄ mA ⇄ EU live.</p>
-  </section>
+
+    <!-- EU card -->
+    <div class="card">
+      <div class="rowline">
+        <div class="big" id="read_eu">—</div>
+        <span class="copy" data-copy="#read_eu">copy</span>
+      </div>
+      <div class="muted">Eng Units</div>
+      <label class="rowline" style="margin-top:8px; flex-wrap:wrap">
+        <input type="checkbox" id="sqrt_mode">
+        <span style="flex:1 1 140px; min-width:0">square-root (flow)</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top:10px">
+    <div class="col">
+      <input id="pct_slider" type="range" min="0" max="100" step="0.1" value="50">
+    </div>
+  </div>
+  <p class="muted">Slider drives % ⇄ mA ⇄ EU live.</p>
+</section>
   
   <!-- Level — Closed -->
   <section id="level_closed">
