@@ -95,13 +95,15 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
   <button data-target="pressure">⛽ Pressure</button>
   <button data-target="temp">🌡️ Temp</button>
   <button data-target="ip">🎛️ I/P 3–15</button>
+  <button data-target="field_lingo">🗣️ Field Lingo</button>
+  <button data-target="ohm_drop">⚡ Ohm’s Law & Drop</button>
+  <button data-target="jrtech">🧰 Jr Tech</button>
   <button data-target="cal">📝 Calibration</button>
   <button data-target="loop">🔄 Loop Log</button>
   <button data-target="tickets">🎫 Tickets</button>
   <button data-target="qr">📷 QR Scan</button>
   <button data-target="backup">💾 Backup</button>
   <button data-target="settings">⚙️ Settings</button>
-  <button data-target="jrtech">🧰 Jr Tech</button>
 </nav>
 
 <main>
@@ -450,6 +452,177 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
       </div>
     </div>
 
+  </div>
+</section>
+
+  <!-- Field Lingo -->
+<section id="field_lingo">
+  <h2>Field Lingo</h2>
+  <div class="row">
+    <div class="col"><label>Quick Search <input id="fl_search" placeholder="type to filter…"></label></div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3 style="margin-top:0">Spelling Alphabet</h3>
+      <table id="fl_alpha">
+        <thead><tr><th>Char</th><th>Word</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td>Alpha</td><td></td></tr>
+          <tr><td>B</td><td>Bravo</td><td>B vs P: pause</td></tr>
+          <tr><td>C</td><td>Charlie</td><td></td></tr>
+          <tr><td>D</td><td>Delta</td><td></td></tr>
+          <tr><td>E</td><td>Echo</td><td></td></tr>
+          <tr><td>F</td><td>Foxtrot</td><td>F vs S: enunciate</td></tr>
+          <tr><td>G</td><td>Golf</td><td></td></tr>
+          <tr><td>H</td><td>Hotel</td><td></td></tr>
+          <tr><td>I</td><td>India</td><td></td></tr>
+          <tr><td>J</td><td>Juliett</td><td></td></tr>
+          <tr><td>K</td><td>Kilo</td><td></td></tr>
+          <tr><td>L</td><td>Lima</td><td></td></tr>
+          <tr><td>M</td><td>Mike</td><td>M vs N: slow</td></tr>
+          <tr><td>N</td><td>November</td><td></td></tr>
+          <tr><td>O</td><td>Oscar</td><td></td></tr>
+          <tr><td>P</td><td>Papa</td><td></td></tr>
+          <tr><td>Q</td><td>Quebec</td><td></td></tr>
+          <tr><td>R</td><td>Romeo</td><td></td></tr>
+          <tr><td>S</td><td>Sierra</td><td></td></tr>
+          <tr><td>T</td><td>Tango</td><td></td></tr>
+          <tr><td>U</td><td>Uniform</td><td></td></tr>
+          <tr><td>V</td><td>Victor</td><td></td></tr>
+          <tr><td>W</td><td>Whiskey</td><td></td></tr>
+          <tr><td>X</td><td>X-ray</td><td></td></tr>
+          <tr><td>Y</td><td>Yankee</td><td></td></tr>
+          <tr><td>Z</td><td>Zulu</td><td></td></tr>
+          <tr><td>0</td><td>Zero</td><td>say “zero”</td></tr>
+          <tr><td>1</td><td>One</td><td></td></tr>
+          <tr><td>2</td><td>Two</td><td>say “too” clearly</td></tr>
+          <tr><td>3</td><td>Tree</td><td>radio “three”</td></tr>
+          <tr><td>4</td><td>Fower</td><td>radio “four”</td></tr>
+          <tr><td>5</td><td>Fife</td><td>radio “five”</td></tr>
+          <tr><td>6</td><td>Six</td><td></td></tr>
+          <tr><td>7</td><td>Seven</td><td></td></tr>
+          <tr><td>8</td><td>Eight</td><td></td></tr>
+          <tr><td>9</td><td>Niner</td><td>radio “nine”</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Radio Prowords</h3>
+      <table id="fl_prowords">
+        <thead><tr><th>Word</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>Affirmative</td><td>Yes</td></tr>
+          <tr><td>Negative</td><td>No</td></tr>
+          <tr><td>Say again</td><td>Repeat</td></tr>
+          <tr><td>Standby</td><td>Wait</td></tr>
+          <tr><td>Copy</td><td>Received/understood</td></tr>
+          <tr><td>Over</td><td>My turn done; your turn</td></tr>
+          <tr><td>Out</td><td>Conversation complete</td></tr>
+          <tr><td>Wilco</td><td>Will comply</td></tr>
+          <tr><td>Break</td><td>New subject or separation</td></tr>
+        </tbody>
+      </table>
+      <p class="muted">Avoid “yeah/uh-huh”. Use clear numbers and “point” for decimals.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">SI Prefixes</h3>
+      <table id="fl_prefix">
+        <thead><tr><th>Prefix</th><th>Symbol</th><th>×10^</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>nano</td><td>n</td><td>−9</td><td>nA</td></tr>
+          <tr><td>micro</td><td>µ</td><td>−6</td><td>µA</td></tr>
+          <tr><td>milli</td><td>m</td><td>−3</td><td>mA, mV</td></tr>
+          <tr><td>kilo</td><td>k</td><td>+3</td><td>kPa, kΩ</td></tr>
+          <tr><td>mega</td><td>M</td><td>+6</td><td>MW, MΩ</td></tr>
+          <tr><td>giga</td><td>G</td><td>+9</td><td>GΩ</td></tr>
+          <tr><td>tera</td><td>T</td><td>+12</td><td>TΩ</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Unit Shorthands</h3>
+      <p class="muted">psi, kPa, bar, °F, °C, V, mA, mV, Ω, kΩ, kW, rpm, gpm, inH₂O, inHg, mmHg</p>
+    </div>
+  </div>
+</section>
+
+<!-- Ohm’s Law & Voltage Drop -->
+<section id="ohm_drop">
+  <h2>Ohm’s Law & Voltage Drop</h2>
+
+  <div class="grid">
+    <div class="card">
+      <h3 style="margin-top:0">Ohm’s Law Solver</h3>
+      <div class="row">
+        <div class="col"><label>V (volts) <input id="ol_v" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="ol_v">kbd</button></div>
+        <div class="col"><label>I (amps) <input id="ol_i" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="ol_i">kbd</button></div>
+        <div class="col"><label>R (ohms) <input id="ol_r" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="ol_r">kbd</button></div>
+        <div class="col"><label>P (watts) <input id="ol_p" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="ol_p">kbd</button></div>
+      </div>
+      <div class="row">
+        <div class="col"><button class="btn" id="ol_solve">Solve</button></div>
+        <div class="col"><button class="btn danger" id="ol_clear">Clear</button></div>
+      </div>
+      <div class="grid" style="margin-top:8px">
+        <div class="card"><div class="rowline"><div class="big" id="ol_out_v">—</div><span class="copy" data-copy="#ol_out_v">copy</span></div><div class="muted">V</div></div>
+        <div class="card"><div class="rowline"><div class="big" id="ol_out_i">—</div><span class="copy" data-copy="#ol_out_i">copy</span></div><div class="muted">I</div></div>
+        <div class="card"><div class="rowline"><div class="big" id="ol_out_r">—</div><span class="copy" data-copy="#ol_out_r">copy</span></div><div class="muted">R</div></div>
+        <div class="card"><div class="rowline"><div class="big" id="ol_out_p">—</div><span class="copy" data-copy="#ol_out_p">copy</span></div><div class="muted">P</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Voltage Drop</h3>
+      <div class="row">
+        <div class="col">
+          <label>System
+            <select id="vd_sys"><option value="dc">DC / 1-φ</option><option value="3ph">3-phase</option></select>
+          </label>
+        </div>
+        <div class="col"><label>Supply V <input id="vd_v" class="num" inputmode="decimal" placeholder="24"></label><button class="kbd-toggle" data-for="vd_v">kbd</button></div>
+        <div class="col"><label>Load I (A) <input id="vd_i" class="num" inputmode="decimal" placeholder="0.02"></label><button class="kbd-toggle" data-for="vd_i">kbd</button></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>Run length <input id="vd_len" class="num" inputmode="decimal" placeholder="200"></label><button class="kbd-toggle" data-for="vd_len">kbd</button></div>
+        <div class="col">
+          <label>Units
+            <select id="vd_units"><option value="ft">ft</option><option value="m">m</option></select>
+          </label>
+        </div>
+        <div class="col">
+          <label>Material
+            <select id="vd_mat"><option value="cu">Copper</option><option value="al">Aluminum</option></select>
+          </label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label>Conductor size
+            <select id="vd_awg">
+              <option>18</option><option>16</option><option>14</option><option selected>12</option>
+              <option>10</option><option>8</option><option>6</option><option>4</option>
+              <option>2</option><option>1</option><option>1/0</option><option>2/0</option>
+              <option>3/0</option><option>4/0</option>
+            </select>
+          </label>
+        </div>
+        <div class="col"><label>Target drop (%) <input id="vd_target" class="num" inputmode="decimal" placeholder="3"></label><button class="kbd-toggle" data-for="vd_target">kbd</button></div>
+      </div>
+      <div class="row">
+        <div class="col"><button class="btn" id="vd_calc">Calculate</button></div>
+      </div>
+
+      <div class="grid" style="margin-top:8px">
+        <div class="card"><div class="rowline"><div class="big" id="vd_out_vd">—</div><span class="copy" data-copy="#vd_out_vd">copy</span></div><div class="muted">Drop (V)</div></div>
+        <div class="card"><div class="rowline"><div class="big" id="vd_out_pct">—</div><span class="copy" data-copy="#vd_out_pct">copy</span></div><div class="muted">% Drop</div></div>
+        <div class="card"><div class="rowline"><div class="big" id="vd_out_end">—</div><span class="copy" data-copy="#vd_out_end">copy</span></div><div class="muted">End Voltage (V)</div></div>
+      </div>
+      <p class="muted" id="vd_suggest"></p>
+    </div>
   </div>
 </section>
 
@@ -1079,6 +1252,155 @@ document.getElementById('iosTipClose')?.addEventListener('click', ()=>{
 // Hide Install button if already running as an app (PWA/native webview)
 const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 if (isStandalone) { installBtn?.style && (installBtn.style.display = 'none'); }
+
+  /* ---------- Field Lingo logic ---------- */
+(function(){
+  const q = document.getElementById('fl_search');
+  if (!q) return;
+  const tables = ['fl_alpha','fl_prowords','fl_prefix'].map(id=>document.getElementById(id));
+  q.addEventListener('input', ()=>{
+    const needle = q.value.trim().toLowerCase();
+    tables.forEach(t=>{
+      t.querySelectorAll('tbody tr').forEach(tr=>{
+        const hit = tr.textContent.toLowerCase().includes(needle);
+        tr.style.display = hit ? '' : 'none';
+      });
+    });
+  });
+})();
+
+/* ---------- Ohm’s Law ---------- */
+function ol_solve(){
+  const V = parseFloat(val('ol_v'));
+  const I = parseFloat(val('ol_i'));
+  const R = parseFloat(val('ol_r'));
+  const P = parseFloat(val('ol_p'));
+  const have = { V:!isNaN(V), I:!isNaN(I), R:!isNaN(R), P:!isNaN(P) };
+  let v=V,i=I,r=R,p=P;
+
+  // Need any 2 independent values
+  const count = Object.values(have).filter(Boolean).length;
+  if (count < 2){ alert('Enter any two of V, I, R, P'); return; }
+
+  // Compute systematically
+  if (!have.V){
+    if (have.I && have.R) v = i*r;
+    else if (have.P && have.I) v = p/i;
+    else if (have.P && have.R) v = Math.sqrt(p*r);
+  }
+  if (!have.I){
+    if (have.V && have.R) i = v/r;
+    else if (have.P && have.V) i = p/v;
+    else if (have.P && have.R) i = Math.sqrt(p/r);
+  }
+  if (!have.R){
+    if (have.V && have.I) r = v/i;
+    else if (have.V && have.P) r = v*v/p;
+    else if (have.P && have.I) r = p/(i*i);
+  }
+  if (!have.P){
+    if (have.V && have.I) p = v*i;
+    else if (have.V && have.R) p = v*v/r;
+    else if (have.I && have.R) p = i*i*r;
+  }
+
+  // Output
+  document.getElementById('ol_out_v').textContent = fmt(v);
+  document.getElementById('ol_out_i').textContent = fmt(i);
+  document.getElementById('ol_out_r').textContent = fmt(r);
+  document.getElementById('ol_out_p').textContent = fmt(p);
+  // Fill blanks back into inputs for convenience
+  if (!have.V) setVal('ol_v', fmt(v));
+  if (!have.I) setVal('ol_i', fmt(i));
+  if (!have.R) setVal('ol_r', fmt(r));
+  if (!have.P) setVal('ol_p', fmt(p));
+}
+document.getElementById('ol_solve').addEventListener('click', ol_solve);
+document.getElementById('ol_clear').addEventListener('click', ()=>{
+  ['ol_v','ol_i','ol_r','ol_p'].forEach(id=>setVal(id,''));
+  ['ol_out_v','ol_out_i','ol_out_r','ol_out_p'].forEach(id=>document.getElementById(id).textContent='—');
+});
+
+/* ---------- Voltage Drop ---------- */
+// Ohms per 1000 ft at ~20°C (approx. solid) — field-grade values
+const RES_1000FT_CU = {
+  '18':6.385,'16':4.016,'14':2.525,'12':1.588,'10':0.999,
+  '8':0.6282,'6':0.3953,'4':0.2485,'2':0.1563,'1':0.1239,
+  '1/0':0.0983,'2/0':0.0779,'3/0':0.0618,'4/0':0.0490
+};
+const RES_1000FT_AL = {
+  // Aluminum common sizes (smaller than 12 AWG typically not used)
+  '12':2.628,'10':1.65,'8':1.036,'6':0.653,'4':0.409,'2':0.321,'1':0.255,
+  '1/0':0.202,'2/0':0.160,'3/0':0.128,'4/0':0.102
+};
+function feetFrom(len, units){ return units==='m' ? (len*3.28084) : len; }
+
+function vd_calc(){
+  const sys = document.getElementById('vd_sys').value;   // dc or 3ph
+  const Vs  = parseFloat(val('vd_v'));
+  const I   = parseFloat(val('vd_i'));
+  const L   = parseFloat(val('vd_len'));
+  const units = document.getElementById('vd_units').value;
+  const mat = document.getElementById('vd_mat').value;
+  const awg = document.getElementById('vd_awg').value;
+  const targetPct = parseFloat(val('vd_target')); // optional
+
+  if ([Vs,I,L].some(x=>isNaN(x))){ alert('Enter supply V, load A, and length'); return; }
+
+  const ft = feetFrom(L, units);
+  const table = (mat==='cu') ? RES_1000FT_CU : RES_1000FT_AL;
+  let ohmPer1000 = table[awg];
+  if (ohmPer1000===undefined){ alert('Selected AWG not available for that material'); return; }
+
+  // Path resistance for line conductor (per 1000 ft → per ft)
+  const R_per_ft = ohmPer1000 / 1000;
+  // DC/1φ returns loop length = out and back → factor 2.
+  // 3φ uses line-to-line method: ΔV = √3 · I · R(line)
+  const loopFactor = (sys==='3ph') ? 1 : 2;
+
+  const R_line = R_per_ft * ft * loopFactor;
+  const dropV = (sys==='3ph') ? (Math.sqrt(3) * I * R_per_ft * ft) : (I * R_line);
+  const pct   = (dropV / Vs) * 100;
+  const endV  = Vs - dropV;
+
+  document.getElementById('vd_out_vd').textContent  = fmt(dropV);
+  document.getElementById('vd_out_pct').textContent = fmt(pct);
+  document.getElementById('vd_out_end').textContent = fmt(endV);
+
+  // Suggest thicker wire if target provided
+  const suggest = document.getElementById('vd_suggest');
+  suggest.textContent = '';
+  if (!isNaN(targetPct) && targetPct>0){
+    // iterate to lower resistance (thicker) sizes
+    const order = Object.keys(table).map(k=>k);
+    // Build an ordered list from fine → thick using a predefined ranking
+    const rank = ['18','16','14','12','10','8','6','4','2','1','1/0','2/0','3/0','4/0'];
+    const sizes = rank.filter(s=>table[s]!==undefined);
+    const idx = sizes.indexOf(awg);
+    let meets = null;
+    for (let j=Math.max(idx,0); j<sizes.length; j++){
+      const s = sizes[j];
+      const rpf = (table[s]/1000);
+      const dropV2 = (sys==='3ph') ? (Math.sqrt(3)*I*rpf*ft) : (I * rpf * ft * loopFactor);
+      const pct2 = (dropV2 / Vs) * 100;
+      if (pct2 <= targetPct){ meets = s; break; }
+    }
+    if (meets && meets!==awg){
+      suggest.textContent = `To meet ~${targetPct}%: try ${meets} ${mat.toUpperCase()}.`;
+    } else if (!meets) {
+      suggest.textContent = `Even 4/0 ${mat.toUpperCase()} still above ${targetPct}%. Reduce length/current, raise supply, or parallel conductors.`;
+    } else {
+      suggest.textContent = `Selected size already meets ~${targetPct}% target.`;
+    }
+  }
+}
+document.getElementById('vd_calc').addEventListener('click', vd_calc);
+
+// Reuse your existing copy chips
+document.querySelectorAll('.copy').forEach(c=>c.addEventListener('click',async()=>{
+  const sel=c.getAttribute('data-copy'); const el=document.querySelector(sel);
+  if(!el) return; try{ await navigator.clipboard.writeText(el.textContent.trim()); c.textContent='copied'; setTimeout(()=>c.textContent='copy',900);}catch{}
+}));
 
 // Service worker (installability)
 if ('serviceWorker' in navigator){
