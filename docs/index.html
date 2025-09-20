@@ -598,25 +598,6 @@ const load=(k)=>JSON.parse(localStorage.getItem(k)||'[]');
 const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 
 /* ---------- Calibration ---------- */
-// RENDER
-function cal_render(){
-  const rows=load(K_CAL);
-  const tb=document.querySelector('#cal_tbl tbody');
-  tb.innerHTML='';
-  rows.forEach((r,i)=>{
-    const pill = r.status==="OVERDUE" ? "pill pill-red" : (r.status==="DUE SOON" ? "pill pill-yellow" : "pill");
-    tb.insertAdjacentHTML('beforeend',
-      `<tr>
-        <td>${r.date||''}</td><td>${r.tag||''}</td><td>${r.dev||''}</td>
-        <td>${fmt(r.lrv)}</td><td>${fmt(r.urv)}</td><td>${r.af||''}</td><td>${r.al||''}</td>
-        <td>${r.tech||''}</td><td>${r.notes||''}</td>
-        <td>${r.nextDueISO||''}</td><td><span class="${pill}">${r.status||''}</span></td>
-        <td><button class="btn danger" data-cal-del="${i}">✖</button></td>
-      </tr>`);
-  });
-}
-
-// ADD
 function cal_add(){
   const date = val('cal_date') || new Date().toISOString().slice(0,10);
   const intervalM = parseInt(document.getElementById('cal_interval').value||"0",10);
@@ -639,7 +620,7 @@ function cal_csv(){
   downloadCSV('calibration.csv',out);
 }
 
-// listeners (keep as you have)
+// listeners
 document.addEventListener('click',e=>{
   const d=e.target.getAttribute('data-cal-del');
   if(d!==null){const rows=load(K_CAL); rows.splice(parseInt(d),1); save(K_CAL,rows); cal_render();}
@@ -650,10 +631,48 @@ document.getElementById('cal_clear').addEventListener('click',()=>{if(confirm('C
 cal_render();
 
 /* ---------- Loop Log ---------- */
-function loop_render(){const rows=load(K_LOOP); const tb=document.querySelector('#lp_tbl tbody'); tb.innerHTML=''; rows.forEach((r,i)=>{tb.insertAdjacentHTML('beforeend',`<tr><td>${r.date||''}</td><td>${r.tag||''}</td><td>${r.point||''}</td><td>${fmt(r.exp)}</td><td>${fmt(r.meas)}</td><td>${r.ok||''}</td><td>${r.notes||''}</td><td><button class="btn danger" data-lp-del="${i}">✖</button></td></tr>`);});}
-function loop_add(){const rec={date: val('lp_date') || new Date().toISOString().slice(0,10), tag: val('lp_tag'), point: val('lp_point'), exp: parseFloat(val('lp_exp')), meas: parseFloat(val('lp_meas')), ok: document.getElementById('lp_ok').value, notes: val('lp_notes')}; const rows=load(K_LOOP); rows.push(rec); save(K_LOOP,rows); loop_render();}
-function loop_csv(){const rows=load(K_LOOP); const out=[['Date','Tag','Point','Expected','Measured','OK','Notes']]; rows.forEach(r=>out.push([r.date,r.tag,r.point,r.exp,r.meas,r.ok,r.notes])); downloadCSV('loop_log.csv',out);}
-document.addEventListener('click',e=>{const d=e.target.getAttribute('data-lp-del'); if(d!==null){const rows=load(K_LOOP); rows.splice(parseInt(d),1); save(K_LOOP,rows); loop_render();}});
+function updateLoopCounters(list){
+  const pass=list.filter(x=>x.ok==='YES').length;
+  const fail=list.length-pass;
+  document.getElementById('loop-pass').textContent = `Pass: ${pass}`;
+  document.getElementById('loop-fail').textContent = `Fail: ${fail}`;
+}
+function loop_render(){
+  const rows=load(K_LOOP);
+  const tb=document.querySelector('#lp_tbl tbody');
+  tb.innerHTML='';
+  rows.forEach((r,i)=>{
+    tb.insertAdjacentHTML('beforeend',
+      `<tr><td>${r.date||''}</td><td>${r.tag||''}</td><td>${r.point||''}</td>
+      <td>${fmt(r.exp)}</td><td>${fmt(r.meas)}</td><td>${r.units||''}</td>
+      <td>${r.ok||''}</td><td>${r.notes||''}</td>
+      <td><button class="btn danger" data-lp-del="${i}">✖</button></td></tr>`);
+  });
+  updateLoopCounters(rows);
+}
+function loop_add(){
+  const rec={
+    date: val('lp_date') || new Date().toISOString().slice(0,10),
+    tag: val('lp_tag'),
+    point: val('lp_point'),
+    exp: parseFloat(val('lp_exp')),
+    meas: parseFloat(val('lp_meas')),
+    units: document.getElementById('lp_units').value || 'EU',
+    ok: document.getElementById('lp_ok').value,
+    notes: val('lp_notes')
+  };
+  const rows=load(K_LOOP); rows.push(rec); save(K_LOOP,rows); loop_render();
+}
+function loop_csv(){
+  const rows=load(K_LOOP);
+  const out=[['Date','Tag','Point','Expected','Measured','Units','OK','Notes']];
+  rows.forEach(r=>out.push([r.date,r.tag,r.point,r.exp,r.meas,r.units||'',r.ok,r.notes]));
+  downloadCSV('loop_log.csv',out);
+}
+document.addEventListener('click',e=>{
+  const d=e.target.getAttribute('data-lp-del');
+  if(d!==null){const rows=load(K_LOOP); rows.splice(parseInt(d),1); save(K_LOOP,rows); loop_render();}
+});
 document.getElementById('lp_add').addEventListener('click',loop_add);
 document.getElementById('lp_export').addEventListener('click',loop_csv);
 document.getElementById('lp_clear').addEventListener('click',()=>{if(confirm('Clear all loop rows?')){save(K_LOOP,[]); loop_render();}});
