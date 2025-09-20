@@ -119,6 +119,31 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
     <p class="muted">Outputs 0, 25, 50, 75, 100% of your range.</p>
   </section>
 
+  <!-- Level — Open -->
+  <section id="level_open">
+    <h2>Level — Open Tank (tap-to-tap)</h2>
+    <div class="row">
+      <div class="col"><label>Tap-to-tap span <input id="lo_span" class="num" inputmode="decimal" placeholder="72"></label><button class="kbd-toggle" data-for="lo_span">kbd</button></div>
+      <div class="col"><label>Units <select id="lo_units"><option value="in">in</option><option value="ft">ft</option><option value="m">m</option></select></label></div>
+      <div class="col"><label>Specific Gravity <input id="lo_sg" class="num" inputmode="decimal" value="1.0"></label><button class="kbd-toggle" data-for="lo_sg">kbd</button></div>
+    </div>
+    <div class="row">
+      <div class="col"><label>dP Units <select id="lo_dpU"><option value="inh2o">inH₂O</option><option value="psi">psi</option><option value="kpa">kPa</option></select></label></div>
+      <div class="col"><label>LRV <input id="lo_lrv" class="num" inputmode="decimal" placeholder="0"></label><button class="kbd-toggle" data-for="lo_lrv">kbd</button></div>
+      <div class="col"><label>URV <input id="lo_urv" class="num" inputmode="decimal" placeholder="auto"></label><button class="kbd-toggle" data-for="lo_urv">kbd</button></div>
+    </div>
+    <div class="hr"></div>
+    <div class="row">
+      <div class="col"><label>Level <input id="lo_lvl" class="num" inputmode="decimal" placeholder="same units as span"></label><button class="kbd-toggle" data-for="lo_lvl">kbd</button></div>
+      <div class="col"><button class="btn" onclick="LO_levelToMa()">Level → mA</button></div>
+      <div class="col"><label>mA <input id="lo_ma" class="num" inputmode="decimal" placeholder="12"></label><button class="kbd-toggle" data-for="lo_ma">kbd</button></div>
+      <div class="col"><button class="btn" onclick="LO_maToLevel()">mA → Level</button></div>
+    </div>
+    <p id="lo_result" class="muted"></p>
+    <div class="row"><div class="col"><button class="btn" onclick="LO_buildSteps()">Build 0/25/50/75/100 Table</button></div></div>
+    <table id="lo_steps"><thead><tr><th>%</th><th>Level</th><th>dP</th><th>mA</th></tr></thead><tbody></tbody></table>
+  </section>
+
   <!-- Signal (nice) -->
   <section id="signal">
     <h2>4–20 mA Helper (Pro)</h2>
@@ -157,32 +182,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
     <div class="row" style="margin-top:10px"><div class="col"><input id="pct_slider" type="range" min="0" max="100" step="0.1" value="50"></div></div>
     <p class="muted">Slider drives % ⇄ mA ⇄ EU live.</p>
   </section>
-
-  <!-- Level — Open -->
-  <section id="level_open">
-    <h2>Level — Open Tank (tap-to-tap)</h2>
-    <div class="row">
-      <div class="col"><label>Tap-to-tap span <input id="lo_span" class="num" inputmode="decimal" placeholder="72"></label><button class="kbd-toggle" data-for="lo_span">kbd</button></div>
-      <div class="col"><label>Units <select id="lo_units"><option value="in">in</option><option value="ft">ft</option><option value="m">m</option></select></label></div>
-      <div class="col"><label>Specific Gravity <input id="lo_sg" class="num" inputmode="decimal" value="1.0"></label><button class="kbd-toggle" data-for="lo_sg">kbd</button></div>
-    </div>
-    <div class="row">
-      <div class="col"><label>dP Units <select id="lo_dpU"><option value="inh2o">inH₂O</option><option value="psi">psi</option><option value="kpa">kPa</option></select></label></div>
-      <div class="col"><label>LRV <input id="lo_lrv" class="num" inputmode="decimal" placeholder="0"></label><button class="kbd-toggle" data-for="lo_lrv">kbd</button></div>
-      <div class="col"><label>URV <input id="lo_urv" class="num" inputmode="decimal" placeholder="auto"></label><button class="kbd-toggle" data-for="lo_urv">kbd</button></div>
-    </div>
-    <div class="hr"></div>
-    <div class="row">
-      <div class="col"><label>Level <input id="lo_lvl" class="num" inputmode="decimal" placeholder="same units as span"></label><button class="kbd-toggle" data-for="lo_lvl">kbd</button></div>
-      <div class="col"><button class="btn" onclick="LO_levelToMa()">Level → mA</button></div>
-      <div class="col"><label>mA <input id="lo_ma" class="num" inputmode="decimal" placeholder="12"></label><button class="kbd-toggle" data-for="lo_ma">kbd</button></div>
-      <div class="col"><button class="btn" onclick="LO_maToLevel()">mA → Level</button></div>
-    </div>
-    <p id="lo_result" class="muted"></p>
-    <div class="row"><div class="col"><button class="btn" onclick="LO_buildSteps()">Build 0/25/50/75/100 Table</button></div></div>
-    <table id="lo_steps"><thead><tr><th>%</th><th>Level</th><th>dP</th><th>mA</th></tr></thead><tbody></tbody></table>
-  </section>
-
+  
   <!-- Level — Closed -->
   <section id="level_closed">
     <h2>Level — Closed Tank (tap-to-tap)</h2>
