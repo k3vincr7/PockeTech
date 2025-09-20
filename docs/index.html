@@ -69,6 +69,13 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
 .np-wide{grid-column:span 2}
 .kbd-toggle{margin-top:6px;font-size:12px;border:1px dashed var(--border);background:transparent;color:var(--muted)}
 .badge{border:1px solid var(--border);border-radius:6px;padding:.1rem .35rem;margin-left:.5rem;font-size:.8rem;opacity:.9}
+.chipbar{display:flex;gap:.5rem;margin:.5rem 0}
+.chip{padding:.25rem .5rem;border:1px solid var(--border);border-radius:999px;font-size:.85rem}
+.chip.green{background:rgba(0,200,0,.12)}
+.chip.red{background:rgba(200,0,0,.12)}
+.pill{padding:.15rem .5rem;border-radius:999px;border:1px solid var(--border)}
+.pill-yellow{background:rgba(255,200,0,.15)}
+.pill-red{background:rgba(255,0,0,.15)}
 </style>
 </head><body>
 <header>
@@ -288,38 +295,46 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
   </section>
 
   <!-- Calibration -->
-  <section id="cal">
-    <h2>Calibration Tracker</h2>
-    <div class="grid">
-      <div class="card">
-        <div class="row">
-          <div class="col"><label>Date <input id="cal_date" type="date"></label></div>
-          <div class="col"><label>Tag <input id="cal_tag" placeholder="PT-101"></label></div>
-          <div class="col"><label>Device <input id="cal_dev" placeholder="3051, I/P, Thermo"></label></div>
-        </div>
-        <div class="row">
-          <div class="col"><label>LRV <input id="cal_lrv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="cal_lrv">kbd</button></div>
-          <div class="col"><label>URV <input id="cal_urv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="cal_urv">kbd</button></div>
-          <div class="col"><label>As-Found <input id="cal_af" class="num" inputmode="decimal" placeholder="error % or EU"></label><button class="kbd-toggle" data-for="cal_af">kbd</button></div>
-        </div>
-        <div class="row">
-          <div class="col"><label>As-Left <input id="cal_al" class="num" inputmode="decimal" placeholder="error % or EU"></label><button class="kbd-toggle" data-for="cal_al">kbd</button></div>
-          <div class="col"><label>Tech <input id="cal_tech" placeholder="Initials"></label></div>
-          <div class="col"><label>Notes <input id="cal_notes" placeholder="optional note"></label></div>
-        </div>
-        <div class="row">
-          <div class="col"><button class="btn ok" id="cal_add">Add</button></div>
-          <div class="col"><button class="btn" id="cal_export">Export CSV</button></div>
-          <div class="col"><button class="btn danger" id="cal_clear">Clear All</button></div>
+<section id="cal">
+  <h2>Calibration Tracker</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="row">
+        <div class="col"><label>Date <input id="cal_date" type="date"></label></div>
+        <div class="col"><label>Tag <input id="cal_tag" placeholder="PT-101"></label></div>
+        <div class="col"><label>Device <input id="cal_dev" placeholder="3051, I/P, Thermo"></label></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>LRV <input id="cal_lrv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="cal_lrv">kbd</button></div>
+        <div class="col"><label>URV <input id="cal_urv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="cal_urv">kbd</button></div>
+        <div class="col"><label>As-Found <input id="cal_af" class="num" inputmode="decimal" placeholder="error % or EU"></label><button class="kbd-toggle" data-for="cal_af">kbd</button></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>As-Left <input id="cal_al" class="num" inputmode="decimal" placeholder="error % or EU"></label><button class="kbd-toggle" data-for="cal_al">kbd</button></div>
+        <div class="col"><label>Tech <input id="cal_tech" placeholder="Initials"></label></div>
+        <div class="col"><label>Interval
+          <select id="cal_interval">
+            <option value="0">None</option>
+            <option value="3">3 months</option>
+            <option value="6">6 months</option>
+            <option value="12">12 months</option>
+          </select></label>
         </div>
       </div>
-      <div class="card">
-        <table id="cal_tbl"><thead>
-          <tr><th>Date</th><th>Tag</th><th>Device</th><th>LRV</th><th>URV</th><th>As-Found</th><th>As-Left</th><th>Tech</th><th>Notes</th><th></th></tr>
-        </thead><tbody></tbody></table>
+      <div class="row">
+        <div class="col"><label>Notes <input id="cal_notes" placeholder="optional note"></label></div>
+        <div class="col"><button class="btn ok" id="cal_add">Add</button></div>
+        <div class="col"><button class="btn" id="cal_export">Export CSV</button></div>
+        <div class="col"><button class="btn danger" id="cal_clear">Clear All</button></div>
       </div>
     </div>
-  </section>
+    <div class="card">
+      <table id="cal_tbl"><thead>
+        <tr><th>Date</th><th>Tag</th><th>Device</th><th>LRV</th><th>URV</th><th>As-Found</th><th>As-Left</th><th>Tech</th><th>Notes</th><th>Next Due</th><th>Status</th><th></th></tr>
+      </thead><tbody></tbody></table>
+    </div>
+  </div>
+</section>
 
   <!-- Loop Log -->
   <section id="loop">
