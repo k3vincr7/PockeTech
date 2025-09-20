@@ -594,8 +594,8 @@ document.querySelectorAll('.ipstep').forEach(b=>b.addEventListener('click',()=>i
 
 /* ---------- Storage keys for logs ---------- */
 const K_CAL='pocketech.cal', K_LOOP='pocketech.loop', K_TIX='pocketech.tix';
-const load=(k)=>JSON.parse(localStorage.getItem(k)||'[]');
-const save=(k,v)=>localStorage.setItem(k,JSON.stringify(
+const load = (k) => JSON.parse(localStorage.getItem(k) || '[]');
+const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
 
 /* ---------- Calibration ---------- */
 
@@ -617,8 +617,6 @@ function dueStatus(nextISO){
   if (diffDays <= 30) return "DUE SOON";
   return "OK";
 }
-
-const K_CAL='pocketech.cal';
 
 // Add row
 function cal_add(){
@@ -797,7 +795,7 @@ document.getElementById('qr_live_btn').addEventListener('click',()=>{ if(qrStrea
 document.getElementById('qr_file').addEventListener('change',async(e)=>{const f=e.target.files[0]; if(!f)return; if(!('BarcodeDetector' in window)){alert('QR not supported for images on this browser');return;} const det=new BarcodeDetector({formats:['qr_code']}); const img=await createImageBitmap(f); const codes=await det.detect(img); if(codes&&codes[0]){qrOut.textContent=codes[0].rawValue; navigator.clipboard?.writeText(codes[0].rawValue).catch(()=>{});} else alert('No QR found in image');});
 
 /* ---------- Backup / Restore ---------- */
-function snapshotAll(){ return {version:'0.82',settings:getS(),calibration:load(K_CAL),loop:load(K_LOOP),tickets:load(K_TIX)}; }
+function snapshotAll(){ return {version:'0.83',settings:getS(),calibration:load(K_CAL),loop:load(K_LOOP),tickets:load(K_TIX)}; }
 document.getElementById('bk_export').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(snapshotAll(),null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='pocketech_backup.json'; a.click(); URL.revokeObjectURL(url);});
 document.getElementById('bk_file').addEventListener('change',async(e)=>{const f=e.target.files[0]; if(!f)return; try{const txt=await f.text(); const data=JSON.parse(txt); if(data.settings) setS({...DEF,...data.settings}); if(Array.isArray(data.calibration)) save(K_CAL,data.calibration); if(Array.isArray(data.loop)) save(K_LOOP,data.loop); if(Array.isArray(data.tickets)) save(K_TIX,data.tickets); loadSettingsUI(); cal_render(); loop_render(); tix_render(); alert('Restore complete');}catch{alert('Invalid backup file');}});
 document.getElementById('bk_wipe').addEventListener('click',()=>{if(!confirm('Wipe ALL app data (settings, logs, tickets)?')) return; localStorage.removeItem(SKEY); localStorage.removeItem(K_CAL); localStorage.removeItem(K_LOOP); localStorage.removeItem(K_TIX); loadSettingsUI(); cal_render(); loop_render(); tix_render(); alert('Wiped');});
