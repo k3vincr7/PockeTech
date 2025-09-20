@@ -595,41 +595,126 @@ document.querySelectorAll('.ipstep').forEach(b=>b.addEventListener('click',()=>i
 /* ---------- Storage keys for logs ---------- */
 const K_CAL='pocketech.cal', K_LOOP='pocketech.loop', K_TIX='pocketech.tix';
 const load=(k)=>JSON.parse(localStorage.getItem(k)||'[]');
-const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const save=(k,v)=>localStorage.setItem(k,JSON.stringify(
 
 /* ---------- Calibration ---------- */
+
+// Helpers (hoisted)
+function addMonthsISO(iso, m){
+  if(!m || m <= 0) return "";
+  const d = new Date(iso);
+  const day = d.getDate();
+  d.setMonth(d.getMonth() + m);
+  if (d.getDate() < day) d.setDate(0);          // end-of-month safe
+  return d.toISOString().slice(0,10);
+}
+function dueStatus(nextISO){
+  if(!nextISO) return "";
+  const today = new Date(); today.setHours(0,0,0,0);
+  const next  = new Date(nextISO);
+  const diffDays = Math.floor((next - today)/(1000*60*60*24));
+  if (diffDays < 0)  return "OVERDUE";
+  if (diffDays <= 30) return "DUE SOON";
+  return "OK";
+}
+
+const K_CAL='pocketech.cal';
+
+// Add row
 function cal_add(){
   const date = val('cal_date') || new Date().toISOString().slice(0,10);
-  const intervalM = parseInt(document.getElementById('cal_interval').value||"0",10);
-  const nextDueISO = addMonthsISO(date, intervalM);
+  const intervalM = parseInt(document.getElementById('cal_interval').value || "0", 10);
+  const nextDueISO = intervalM ? addMonthsISO(date, intervalM) : "";
   const status = dueStatus(nextDueISO);
-  const rec={
-    date, tag:val('cal_tag'), dev:val('cal_dev'),
-    lrv: parseFloat(val('cal_lrv')), urv: parseFloat(val('cal_urv')),
-    af: val('cal_af'), al: val('cal_al'), tech: val('cal_tech'),
-    notes: val('cal_notes'), intervalM, nextDueISO, status
+
+  const rec = {
+    date,
+    tag:  val('cal_tag'),
+    dev:  val('cal_dev'),
+    lrv:  parseFloat(val('cal_lrv')),
+    urv:  parseFloat(val('cal_urv')),
+    af:   val('cal_af'),
+    al:   val('cal_al'),
+    tech: val('cal_tech'),
+    notes: val('cal_notes'),
+    intervalM,
+    nextDueISO,
+    status
   };
-  const rows=load(K_CAL); rows.push(rec); save(K_CAL,rows); cal_render();
+
+  const rows = load(K_CAL);
+  rows.push(rec);
+  save(K_CAL, rows);
+  cal_render();
 }
 
-// CSV
+// CSV export
 function cal_csv(){
-  const rows=load(K_CAL);
-  const out=[['Date','Tag','Device','LRV','URV','As-Found','As-Left','Tech','Notes','NextDue','Status','IntervalMonths']];
-  rows.forEach(r=>out.push([r.date,r.tag,r.dev,r.lrv,r.urv,r.af,r.al,r.tech,r.notes,r.nextDueISO||'',r.status||'',r.intervalM||0]));
-  downloadCSV('calibration.csv',out);
+  const rows = load(K_CAL);
+  const out = [['Date','Tag','Device','LRV','URV','As-Found','As-Left','Tech','Notes','NextDue','Status','IntervalMonths']];
+  rows.forEach(r => out.push([
+    r.date, r.tag, r.dev, r.lrv, r.urv, r.af, r.al, r.tech, r.notes,
+    r.nextDueISO || '', r.status || '', r.intervalM || 0
+  ]));
+  downloadCSV('calibration.csv', out);
 }
 
-// listeners
-document.addEventListener('click',e=>{
-  const d=e.target.getAttribute('data-cal-del');
-  if(d!==null){const rows=load(K_CAL); rows.splice(parseInt(d),1); save(K_CAL,rows); cal_render();}
-});
-document.getElementById('cal_add').addEventListener('click',cal_add);
-document.getElementById('cal_export').addEventListener('click',cal_csv);
-document.getElementById('cal_clear').addEventListener('click',()=>{if(confirm('Clear all calibration records?')){save(K_CAL,[]); cal_render();}});
-cal_render();
+// Render table (also refresh status each time)
+function cal_render(){
+  const rows = load(K_CAL);
+  const tb = document.querySelector('#cal_tbl tbody');
+  tb.innerHTML = '';
 
+  // Recompute status live so pills stay accurate over time
+  let mutated = false;
+  rows.forEach(r => {
+    const newStatus = dueStatus(r.nextDueISO || "");
+    if (newStatus !== (r.status || "")) { r.status = newStatus; mutated = true; }
+  });
+  if (mutated) save(K_CAL, rows);
+
+  rows.forEach((r,i) => {
+    const pill = r.status==="OVERDUE" ? "pill pill-red"
+              : r.status==="DUE SOON" ? "pill pill-yellow" : "pill";
+    tb.insertAdjacentHTML('beforeend', `
+      <tr>
+        <td>${r.date||''}</td>
+        <td>${r.tag||''}</td>
+        <td>${r.dev||''}</td>
+        <td>${fmt(r.lrv)}</td>
+        <td>${fmt(r.urv)}</td>
+        <td>${r.af||''}</td>
+        <td>${r.al||''}</td>
+        <td>${r.tech||''}</td>
+        <td>${r.notes||''}</td>
+        <td>${r.intervalM ? (r.nextDueISO||'') : ''}</td>
+        <td>${r.intervalM ? `<span class="${pill}">${r.status||''}</span>` : ''}</td>
+        <td><button class="btn danger" data-cal-del="${i}">✖</button></td>
+      </tr>
+    `);
+  });
+}
+
+// Listeners
+document.addEventListener('click', e => {
+  const d = e.target.getAttribute('data-cal-del');
+  if (d !== null){
+    const rows = load(K_CAL);
+    rows.splice(parseInt(d),1);
+    save(K_CAL, rows);
+    cal_render();
+  }
+});
+document.getElementById('cal_add').addEventListener('click', cal_add);
+document.getElementById('cal_export').addEventListener('click', cal_csv);
+document.getElementById('cal_clear').addEventListener('click', () => {
+  if (confirm('Clear all calibration records?')){
+    save(K_CAL, []);
+    cal_render();
+  }
+});
+cal_render();
+  
 /* ---------- Loop Log ---------- */
 function updateLoopCounters(list){
   const pass=list.filter(x=>x.ok==='YES').length;
