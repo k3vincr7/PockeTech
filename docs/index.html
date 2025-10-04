@@ -110,24 +110,25 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
 </header>
 
 <main>
-  <!-- Home (Main Menu) -->
-<section id="home" class="active">
-  <h2 style="margin-top:0">Field Tools</h2>
-  <div class="home-grid">
-    <button class="tile" data-goto="percent">🧮<span>Percent</span></button>
-    <button class="tile" data-goto="signal">📈<span>4–20 mA</span></button>
-    <button class="tile" data-goto="level_open">🫙<span>Level — Open</span></button>
-    <button class="tile" data-goto="level_closed">🔒<span>Level — Closed</span></button>
-    <button class="tile" data-goto="pressure">⛽<span>Pressure</span></button>
-    <button class="tile" data-goto="temp">🌡️<span>Temperature</span></button>
-    <button class="tile" data-goto="ip">🎛️<span>I/P 3–15</span></button>
-    <button class="tile" data-goto="cal">📝<span>Calibration</span></button>
-    <button class="tile" data-goto="loop">🔄<span>Loop Log</span></button>
-    <button class="tile" data-goto="tickets">🎫<span>Tickets</span></button>
-    <button class="tile" data-goto="qr">📷<span>QR Scan</span></button>
-    <button class="tile" data-goto="backup">💾<span>Backup</span></button>
-    <button class="tile" data-goto="settings">⚙️<span>Settings</span></button>
-    <!-- We’ll add Field Lingo + Ohm’s Law tiles when we add those sections -->
+  <section id="home">
+  <h2>Field Tools</h2>
+  <div class="grid">
+    <button class="card" data-go="percent">🧮 Percent</button>
+    <button class="card" data-go="signal">📈 4–20 mA</button>
+    <button class="card" data-go="level_open">🫙 Level — Open</button>
+    <button class="card" data-go="level_closed">🔒 Level — Closed</button>
+    <button class="card" data-go="pressure">⛽ Pressure</button>
+    <button class="card" data-go="temp">🌡️ Temp</button>
+    <button class="card" data-go="ip">🎛️ I/P 3–15</button>
+    <button class="card" data-go="jr">👩‍🔧 Jr Tech</button>
+    <button class="card" data-go="lingo">📻 Field Lingo</button>
+    <button class="card" data-go="ohms">⚡ Ohm’s Law</button>
+    <button class="card" data-go="cal">📝 Calibration</button>
+    <button class="card" data-go="loop">🔄 Loop Log</button>
+    <button class="card" data-go="tickets">🎫 Tickets</button>
+    <button class="card" data-go="qr">📷 QR Scan</button>
+    <button class="card" data-go="backup">💾 Backup</button>
+    <button class="card" data-go="settings">⚙️ Settings</button>
   </div>
 </section>
   
@@ -919,6 +920,47 @@ function downloadCSV(name,rows){const blob=new Blob([toCSV(rows)],{type:'text/cs
 const val=id=>document.getElementById(id).value, setVal=(id,v)=>document.getElementById(id).value=v;
 
 <script>
+/* --- Simple page router (menu <-> tool pages) --- */
+(function(){
+  // treat every main > section as a page; add id="home" to your menu section if you have one
+  const PAGES = Array.from(document.querySelectorAll('main section'));
+  const backBtn = document.querySelector('header a, header .back, header .back-btn, header button.back');
+
+  function showPage(id){
+    PAGES.forEach(s => s.style.display = (s.id === id ? 'block' : 'none'));
+    // show back if not home
+    if (backBtn) backBtn.style.display = (id === 'home' ? 'none' : 'inline-block');
+    // push state
+    if (location.hash.replace('#','') !== id){
+      history.pushState({id}, '', '#'+id);
+    }
+    // focus top
+    window.scrollTo(0,0);
+  }
+
+  // click handlers for any element with data-go="sectionId"
+  document.addEventListener('click', (e)=>{
+    const go = e.target.closest('[data-go]');
+    if (!go) return;
+    e.preventDefault();
+    showPage(go.getAttribute('data-go'));
+  });
+
+  // back button (top-left)
+  backBtn?.addEventListener('click', (e)=>{ e.preventDefault(); showPage('home'); });
+
+  // init: default to hash or home (if you don’t have a menu yet, pick one default like 'percent')
+  const initial = (location.hash || '#home').replace('#','');
+  const safeInitial = PAGES.some(s=>s.id===initial) ? initial : 'home';
+  showPage(safeInitial);
+
+  // support browser back/forward
+  window.addEventListener('popstate', (e)=>{
+    const id = e.state?.id || (location.hash||'#home').replace('#','');
+    showPage(PAGES.some(s=>s.id===id)? id : 'home');
+  });
+})();
+
 // ---------- Simple router: Home <-> Sections ----------
 function showScreen(id){
   // hide all sections
