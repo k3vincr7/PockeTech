@@ -3,6 +3,25 @@
 <title>PockeTech — Field Tools v0.83</title>
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0f1115">
 <style>
+/* Home grid menu */
+#home { background: var(--card); border:1px solid var(--border); border-radius:10px; padding:12px; }
+.home-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:10px;
+  margin-top:10px;
+}
+.tile{
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:6px; padding:14px 10px;
+  background:var(--btn); color:var(--btn-fg);
+  border:1px solid var(--border); border-radius:12px; cursor:pointer;
+  font-size:16px;
+}
+.tile:hover{ outline:2px solid var(--accent); box-shadow:0 0 0 3px rgba(58,122,254,.15) }
+.tile:active{ transform:translateY(1px) }
+.tile span{ font-size:14px; opacity:.9 }
+.tile::first-child{ font-size:22px } /* emoji size */
 :root{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--border:#2a2f3a;--accent:#3a7afe;--btn:#2b3240;--btn-fg:#e8e8e8}
 /* Light defaults */
 :root { color-scheme: light dark; }
