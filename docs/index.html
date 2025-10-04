@@ -79,32 +79,16 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
 </style>
 </head><body>
 <header>
-  <h1>PockeTech — Field Tools</h1>
+  <div class="row" style="gap:6px;align-items:center">
+    <button id="backBtn" class="btnlike">← Back</button>
+    <h1 id="appTitle" style="margin:0;font-size:18px">PockeTech — Field Tools</h1>
+  </div>
   <div class="row" style="gap:6px">
     <button id="installBtn" class="toggle">⬇️ Install</button>
     <button id="themeToggle" class="toggle">🌓 Theme</button>
     <span class="badge" id="build-badge">v0.83</span>
   </div>
 </header>
-
-<nav>
-  <button data-target="percent" class="active">🧮 Percent</button>
-  <button data-target="signal">📈 Signal</button>
-  <button data-target="level_open">🫙 Level — Open</button>
-  <button data-target="level_closed">🔒 Level — Closed</button>
-  <button data-target="pressure">⛽ Pressure</button>
-  <button data-target="temp">🌡️ Temp</button>
-  <button data-target="ip">🎛️ I/P 3–15</button>
-  <button data-target="field_lingo">🗣️ Field Lingo</button>
-  <button data-target="ohm_drop">⚡ Ohm’s Law & Drop</button>
-  <button data-target="jrtech">🧰 Jr Tech</button>
-  <button data-target="cal">📝 Calibration</button>
-  <button data-target="loop">🔄 Loop Log</button>
-  <button data-target="tickets">🎫 Tickets</button>
-  <button data-target="qr">📷 QR Scan</button>
-  <button data-target="backup">💾 Backup</button>
-  <button data-target="settings">⚙️ Settings</button>
-</nav>
 
 <main>
   <!-- Percent -->
