@@ -918,6 +918,43 @@ function toCSV(rows){return rows.map(r=>r.map(c=>{const s=(c??'').toString();ret
 function downloadCSV(name,rows){const blob=new Blob([toCSV(rows)],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
 const val=id=>document.getElementById(id).value, setVal=(id,v)=>document.getElementById(id).value=v;
 
+<script>
+// ---------- Simple router: Home <-> Sections ----------
+function showScreen(id){
+  // hide all sections
+  document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
+  // show requested
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+
+  // Header: title + back button visibility
+  const titleEl = document.getElementById('appTitle');
+  const backBtn = document.getElementById('backBtn');
+  if (id === 'home'){
+    backBtn.style.display = 'none';
+    titleEl.textContent = 'PockeTech — Field Tools';
+  } else {
+    backBtn.style.display = 'inline-block';
+    // Try to read section's <h2> text for the title fallback
+    const h2 = el?.querySelector('h2');
+    titleEl.textContent = h2 ? h2.textContent : 'PockeTech — Field Tools';
+  }
+}
+
+// Home tiles → navigate
+document.addEventListener('click', (e)=>{
+  const t = e.target.closest('.tile');
+  if (!t) return;
+  const to = t.getAttribute('data-goto');
+  if (to) showScreen(to);
+});
+
+// Back button → Home
+document.getElementById('backBtn')?.addEventListener('click', ()=>showScreen('home'));
+
+// Initial state: start at Home
+showScreen('home');
+
 /* ---------- Number pad (floating dock) ---------- */
 const numpad=document.getElementById('numpad'); let npTarget=null;
 function buzz(ms=10){try{ if(getS().haptics && navigator.vibrate) navigator.vibrate(ms);}catch{}}
