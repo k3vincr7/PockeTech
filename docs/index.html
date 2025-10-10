@@ -950,6 +950,20 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
 
 <footer class="muted">PockeTech — v0.83</footer>
 
+  <!-- iOS Add-to-Home instructions modal -->
+<div id="iosInstallTip" style="display:none;position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.55);align-items:center;justify-content:center">
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;max-width:520px;padding:16px">
+    <h3 style="margin-top:0">Add to Home Screen</h3>
+    <ol style="line-height:1.6">
+      <li>Tap the <strong>Share</strong> icon in Safari.</li>
+      <li>Choose <strong>Add to Home Screen</strong>.</li>
+      <li>Tap <strong>Add</strong>.</li>
+    </ol>
+    <p class="muted">On iPhone/iPad, installation is via Share → Add to Home Screen.</p>
+    <div style="text-align:right;margin-top:10px"><button class="btn" id="iosTipClose">Close</button></div>
+  </div>
+</div>
+
 <script>
 /* ========= SETTINGS + THEME ========= */
 const SKEY='pocketech.settings';
@@ -1398,19 +1412,5 @@ document.getElementById('s_reset')?.addEventListener('click',()=>{setS(DEF); loa
 const slider=document.getElementById('pct_slider'); if(slider){ slider.value=50; }
 setVal('sh_pct', 50); const rp=document.getElementById('read_pct'); if(rp) rp.textContent='50%'; const rm=document.getElementById('read_ma'); if(rm) rm.textContent='12';
 </script>
-  
-  <!-- iOS Add-to-Home instructions modal -->
-<div id="iosInstallTip" style="display:none;position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.55);align-items:center;justify-content:center">
-  <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;max-width:520px;padding:16px">
-    <h3 style="margin-top:0">Add to Home Screen</h3>
-    <ol style="line-height:1.6">
-      <li>Tap the <strong>Share</strong> icon in Safari.</li>
-      <li>Choose <strong>Add to Home Screen</strong>.</li>
-      <li>Tap <strong>Add</strong>.</li>
-    </ol>
-    <p class="muted">On iPhone/iPad, installation is via Share → Add to Home Screen.</p>
-    <div style="text-align:right;margin-top:10px"><button class="btn" id="iosTipClose">Close</button></div>
-  </div>
-</div>
 </body>
 </html>
