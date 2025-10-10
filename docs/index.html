@@ -770,6 +770,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
   <h2>Loop Check Log</h2>
 
   <div class="card">
+    <!-- Entry Fields -->
     <div class="row">
       <div class="col"><label>Date <input id="lp_date" type="date"></label></div>
       <div class="col"><label>Tag <input id="lp_tag" placeholder="LT-204"></label></div>
@@ -793,7 +794,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
       <div class="col"><label>OK? <select id="lp_ok"><option value="YES">YES</option><option value="NO">NO</option></select></label></div>
     </div>
 
-    <!-- Range and alarms -->
+    <!-- Range + Alarms -->
     <div class="row">
       <div class="col"><label>LRV <input id="lp_lrv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_lrv">kbd</button></div>
       <div class="col"><label>URV <input id="lp_urv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_urv">kbd</button></div>
@@ -801,20 +802,59 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
     </div>
 
     <div class="row">
-      <div class="col"><label>LLL <input id="lp_lll" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_lll">kbd</button></div>
-      <div class="col"><label>LL <input id="lp_ll" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_ll">kbd</button></div>
-      <div class="col"><label>L <input id="lp_l" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_l">kbd</button></div>
+      <div class="col"><label>LLL <input id="lp_lll" class="num"></label></div>
+      <div class="col"><label>LL <input id="lp_ll" class="num"></label></div>
+      <div class="col"><label>L <input id="lp_l" class="num"></label></div>
     </div>
 
     <div class="row">
-      <div class="col"><label>H <input id="lp_h" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_h">kbd</button></div>
-      <div class="col"><label>HH <input id="lp_hh" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_hh">kbd</button></div>
-      <div class="col"><label>HHH <input id="lp_hhh" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_hhh">kbd</button></div>
+      <div class="col"><label>H <input id="lp_h" class="num"></label></div>
+      <div class="col"><label>HH <input id="lp_hh" class="num"></label></div>
+      <div class="col"><label>HHH <input id="lp_hhh" class="num"></label></div>
     </div>
 
     <div class="row">
       <div class="col"><label>Device Range <input id="lp_dev" placeholder="e.g., 0–250 psi"></label></div>
       <div class="col"><label>Notes <input id="lp_notes" placeholder="optional note"></label></div>
+    </div>
+
+    <!-- Embedded mini 4–20 mA Helper -->
+    <div class="hr"></div>
+    <h3 style="margin-top:0;">mA Quick Helper</h3>
+    <div class="row">
+      <div class="col"><label>LRV <input id="sh_lrv" class="num" inputmode="decimal"></label></div>
+      <div class="col"><label>URV <input id="sh_urv" class="num" inputmode="decimal"></label></div>
+      <div class="col"><label>EU Units <input id="sh_eulbl" placeholder="psi, gpm, etc."></label></div>
+    </div>
+
+    <div class="row">
+      <div class="col"><label>mA <input id="sh_ma" class="num"></label><button class="btn" id="sh_from_ma">→</button></div>
+      <div class="col"><label>% <input id="sh_pct" class="num"></label><button class="btn" id="sh_from_pct">→</button></div>
+      <div class="col"><label>EU <input id="sh_eu" class="num"></label><button class="btn" id="sh_from_eu">→</button></div>
+    </div>
+
+    <div class="rowline">
+      <input type="checkbox" id="sqrt_mode">
+      <label for="sqrt_mode">Square Root Mode (Flow)</label>
+    </div>
+
+    <div class="rowline" style="margin-top:10px;">
+      <button class="step btn" data-p="0">0%</button>
+      <button class="step btn" data-p="25">25%</button>
+      <button class="step btn" data-p="50">50%</button>
+      <button class="step btn" data-p="75">75%</button>
+      <button class="step btn" data-p="100">100%</button>
+    </div>
+
+    <div class="rowline" style="margin-top:10px;">
+      <strong>mA:</strong> <span id="read_ma">12.00</span>
+      <strong>%:</strong> <span id="read_pct">50%</span>
+      <strong>EU:</strong> <span id="read_eu">125</span>
+    </div>
+    <input type="range" id="pct_slider" min="0" max="100" step="0.1" value="50">
+
+    <div class="hr"></div>
+    <div class="row">
       <div class="col"><button class="btn ok" id="lp_add">Add</button></div>
       <div class="col"><button class="btn" id="lp_export">Export CSV</button></div>
       <div class="col"><button class="btn danger" id="lp_clear">Clear All</button></div>
@@ -839,7 +879,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
     </table>
   </div>
 </section>
-
+  
   <!-- Tickets -->
   <section id="tickets">
     <h2>Tickets</h2>
