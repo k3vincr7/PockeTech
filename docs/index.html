@@ -772,44 +772,86 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
 <section id="loop">
   <h2>Loop Check Log</h2>
 
-  <!-- Entry form (no Expected/Measured) -->
+  <!-- Mini 4–20 mA Quick Calc (always visible) -->
+  <div class="card" id="ll_calc_card">
+    <h3 style="margin-top:0">4–20 mA Quick Calc</h3>
+    <div class="row">
+      <div class="col">
+        <label>LRV (EU)
+          <input id="ll_lrv" class="num" inputmode="decimal" placeholder="0">
+        </label>
+        <button class="kbd-toggle" data-for="ll_lrv">kbd</button>
+      </div>
+      <div class="col">
+        <label>URV (EU)
+          <input id="ll_urv" class="num" inputmode="decimal" placeholder="100">
+        </label>
+        <button class="kbd-toggle" data-for="ll_urv">kbd</button>
+      </div>
+      <div class="col">
+        <label>EU Label
+          <input id="ll_eulbl" placeholder="psi, °F, gpm…">
+        </label>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label>% <input id="ll_pct" class="num" inputmode="decimal" placeholder="50"></label>
+        <button class="kbd-toggle" data-for="ll_pct">kbd</button>
+      </div>
+      <div class="col">
+        <label>mA <input id="ll_ma" class="num" inputmode="decimal" placeholder="12"></label>
+        <button class="kbd-toggle" data-for="ll_ma">kbd</button>
+      </div>
+      <div class="col">
+        <label>EU <input id="ll_eu" class="num" inputmode="decimal" placeholder="—"></label>
+        <button class="kbd-toggle" data-for="ll_eu">kbd</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col"><button class="btn" id="ll_from_pct">From %</button></div>
+      <div class="col"><button class="btn" id="ll_from_ma">From mA</button></div>
+      <div class="col"><button class="btn" id="ll_from_eu">From EU</button></div>
+    </div>
+
+    <div class="hr"></div>
+    <div class="grid">
+      <div class="card"><div class="rowline"><div class="big" id="ll_read_ma">—</div><span class="copy" data-copy="#ll_read_ma">copy</span></div><div class="muted">mA</div></div>
+      <div class="card">
+        <div class="rowline"><div class="big" id="ll_read_pct">—</div><span class="copy" data-copy="#ll_read_pct">copy</span></div>
+        <div class="muted">Percent</div>
+        <div class="steps" style="margin-top:8px">
+          <button class="btn ll_step" data-p="0">0%</button>
+          <button class="btn ll_step" data-p="25">25%</button>
+          <button class="btn ll_step" data-p="50">50%</button>
+          <button class="btn ll_step" data-p="75">75%</button>
+          <button class="btn ll_step" data-p="100">100%</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="rowline"><div class="big" id="ll_read_eu">—</div><span class="copy" data-copy="#ll_read_eu">copy</span></div>
+        <div class="muted">Eng Units</div>
+        <label class="rowline" style="margin-top:8px;flex-wrap:wrap">
+          <input type="checkbox" id="ll_sqrt_mode"><span style="flex:1 1 140px;min-width:0">square-root (flow)</span>
+        </label>
+      </div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div class="col"><input id="ll_slider" type="range" min="0" max="100" step="0.1" value="50"></div>
+    </div>
+    <p class="muted">This quick calc is just for convenience while logging loops; it doesn’t overwrite your main 4–20 tool.</p>
+  </div>
+
+  <!-- Range & Alarms (for the loop/device context snapshot) -->
   <div class="card">
-    <div class="row">
-      <div class="col"><label>Date <input id="lp_date" type="date"></label></div>
-      <div class="col"><label>Tag <input id="lp_tag" placeholder="LT-204"></label></div>
-      <div class="col"><label>Point (AI/AO/DI/DO) <input id="lp_point" placeholder="AI-101"></label></div>
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <label>Units
-          <select id="lp_units">
-            <option value="%">%</option>
-            <option value="mA">mA</option>
-            <option value="psi">psi</option>
-            <option value="°F">°F</option>
-            <option value="EU">EU</option>
-          </select>
-        </label>
-      </div>
-      <div class="col">
-        <label>OK?
-          <select id="lp_ok">
-            <option value="YES">YES</option>
-            <option value="NO">NO</option>
-          </select>
-        </label>
-      </div>
-      <div class="col"><label>Notes <input id="lp_notes" placeholder="optional note"></label></div>
-    </div>
-
-    <!-- Range & alarms snapshot -->
+    <h3 style="margin-top:0">Range & Alarms (Snapshot)</h3>
     <div class="row">
       <div class="col"><label>LRV <input id="lp_lrv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_lrv">kbd</button></div>
       <div class="col"><label>URV <input id="lp_urv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_urv">kbd</button></div>
       <div class="col"><label>EU Units <input id="lp_eu_units" placeholder="psi, °F, etc."></label></div>
     </div>
-
     <div class="row">
       <div class="col"><label>LLL <input id="lp_lll" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_lll">kbd</button></div>
       <div class="col"><label>LL <input id="lp_ll" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_ll">kbd</button></div>
@@ -823,20 +865,38 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
     <div class="row">
       <div class="col"><label>Device Range <input id="lp_dev" placeholder="e.g., 0–250 psi"></label></div>
     </div>
+  </div>
 
+  <!-- Entry form (Expected/Measured removed) -->
+  <div class="card">
+    <h3 style="margin-top:0">Add Loop Entry</h3>
+    <div class="row">
+      <div class="col"><label>Date <input id="lp_date" type="date"></label></div>
+      <div class="col"><label>Tag <input id="lp_tag" placeholder="LT-204"></label></div>
+      <div class="col"><label>Point (AI/AO/DI/DO) <input id="lp_point" placeholder="AI-101"></label></div>
+    </div>
+    <div class="row">
+      <div class="col"><label>Units
+        <select id="lp_units">
+          <option value="%">%</option><option value="mA">mA</option><option value="psi">psi</option>
+          <option value="°F">°F</option><option value="EU">EU</option>
+        </select></label>
+      </div>
+      <div class="col"><label>OK? <select id="lp_ok"><option value="YES">YES</option><option value="NO">NO</option></select></label></div>
+      <div class="col"><label>Notes <input id="lp_notes" placeholder="optional note"></label></div>
+    </div>
     <div class="row">
       <div class="col"><button class="btn ok" id="lp_add">Add</button></div>
       <div class="col"><button class="btn" id="lp_export">Export CSV</button></div>
       <div class="col"><button class="btn danger" id="lp_clear">Clear All</button></div>
     </div>
-
     <div class="chipbar">
       <span class="chip green" id="loop-pass">Pass: 0</span>
       <span class="chip red" id="loop-fail">Fail: 0</span>
     </div>
   </div>
 
-  <!-- Table w/ collapsible Details -->
+  <!-- Table -->
   <div class="card">
     <table id="lp_tbl">
       <thead>
@@ -1224,127 +1284,164 @@ function vd_calc(){
 }
 document.getElementById('vd_calc')?.addEventListener('click',vd_calc);
 
-/* ========= LOOP LOG (Fancy, no Expected/Measured) ========= */
-const K_LOOP = 'pocketech.loop';
+/* ===== Loop Log + Mini 4–20 Calc (no Expected/Measured) ===== */
+const K_LOOP='pocketech.loop';
+const load = k => JSON.parse(localStorage.getItem(k)||'[]');
+const save = (k,v) => localStorage.setItem(k, JSON.stringify(v));
+const FMT = v => {
+  if (v===null || v===undefined || v==='') return '';
+  const n = Number(v);
+  return Number.isFinite(n) ? (Math.abs(n)>=1000||n===0 ? n.toFixed(2).replace(/\.00$/,'')
+                                                   : n.toFixed(4).replace(/0+$/,'').replace(/\.$/,'')) : v;
+};
 
-// helpers assumed elsewhere: load(k), save(k), fmt(v)
+/* -------- Mini 4–20 mA helper (IDs prefixed ll_) -------- */
+function ll_getRange(){
+  const l = parseFloat(document.getElementById('ll_lrv').value);
+  const u = parseFloat(document.getElementById('ll_urv').value);
+  if (!Number.isFinite(l) || !Number.isFinite(u) || l===u){ alert('Enter valid LRV & URV for the mini calc.'); return null; }
+  return {l,u};
+}
+function ll_euLabel(){ const s=(document.getElementById('ll_eulbl').value||'').trim(); return s?(' '+s):''; }
+function ll_updateFromPct(p){
+  const r=ll_getRange(); if(!r) return;
+  const pct=Math.min(Math.max(Number(p)||0,0),100);
+  const sqrt=document.getElementById('ll_sqrt_mode').checked;
+  const ma = 4 + 16*(pct/100);
+  const eu = r.l + (r.u-r.l) * (sqrt ? Math.sqrt(pct/100) : (pct/100));
+  document.getElementById('ll_pct').value = FMT(pct);
+  document.getElementById('ll_ma').value  = FMT(ma);
+  document.getElementById('ll_eu').value  = FMT(eu);
+  document.getElementById('ll_read_pct').textContent = FMT(pct) + '%';
+  document.getElementById('ll_read_ma').textContent  = FMT(ma);
+  document.getElementById('ll_read_eu').textContent  = FMT(eu) + ll_euLabel();
+  const slider=document.getElementById('ll_slider'); if(slider) slider.value=pct;
+}
+function ll_fromMA(){
+  const r=ll_getRange(); if(!r) return;
+  const m=parseFloat(document.getElementById('ll_ma').value);
+  if(!Number.isFinite(m)){ alert('Enter mA'); return; }
+  ll_updateFromPct(Math.min(Math.max((m-4)/16*100,0),100));
+}
+function ll_fromPct(){
+  const p=parseFloat(document.getElementById('ll_pct').value);
+  if(!Number.isFinite(p)){ alert('Enter %'); return; }
+  ll_updateFromPct(p);
+}
+function ll_fromEU(){
+  const r=ll_getRange(); if(!r) return;
+  const e=parseFloat(document.getElementById('ll_eu').value);
+  if(!Number.isFinite(e)){ alert('Enter EU'); return; }
+  const sqrt=document.getElementById('ll_sqrt_mode').checked;
+  const en=(e-r.l)/(r.u-r.l);
+  const pct = Math.min(Math.max( (sqrt? Math.pow(Math.max(en,0),2) : en)*100 ,0),100);
+  ll_updateFromPct(pct);
+}
+/* wire mini helper */
+document.getElementById('ll_from_pct')?.addEventListener('click', ll_fromPct);
+document.getElementById('ll_from_ma')?.addEventListener('click', ll_fromMA);
+document.getElementById('ll_from_eu')?.addEventListener('click', ll_fromEU);
+document.getElementById('ll_slider')?.addEventListener('input', e=> ll_updateFromPct(e.target.value));
+document.getElementById('ll_sqrt_mode')?.addEventListener('change', ()=>{
+  const slider=document.getElementById('ll_slider'); ll_updateFromPct(slider?slider.value:50);
+});
+document.querySelectorAll('.ll_step').forEach(b=> b.addEventListener('click', ()=> ll_updateFromPct(b.dataset.p)));
+document.querySelectorAll('#ll_calc_card .copy').forEach(c=>c.addEventListener('click', async ()=>{
+  const sel=c.getAttribute('data-copy'); const el=document.querySelector(sel); if(!el) return;
+  try{ await navigator.clipboard.writeText(el.textContent.trim()); c.textContent='copied'; setTimeout(()=>c.textContent='copy',900);}catch{}
+}));
+/* init mini helper */
+(function(){ const s=document.getElementById('ll_slider'); if(s) s.value=50; ll_updateFromPct(50); })();
+
+/* -------- Loop add/render/CSV (no Expected/Measured) -------- */
 function loop_add(){
   const safe = id => document.getElementById(id)?.value ?? "";
 
   const rec = {
-    // core
     date: safe('lp_date') || new Date().toISOString().slice(0,10),
-    tag: safe('lp_tag'),
-    point: safe('lp_point'),
-    units: safe('lp_units'),
-    ok: safe('lp_ok'),
-    notes: safe('lp_notes'),
-
-    // range/alarms snapshot
-    lrv: safe('lp_lrv'), urv: safe('lp_urv'),
+    tag:  safe('lp_tag'),
+    point:safe('lp_point'),
+    units:safe('lp_units'),
+    ok:   safe('lp_ok'),
+    notes:safe('lp_notes'),
+    // snapshot context
+    lrv:  parseFloat(safe('lp_lrv')),
+    urv:  parseFloat(safe('lp_urv')),
     euUnits: safe('lp_eu_units'),
-    lll: safe('lp_lll'), ll: safe('lp_ll'), l: safe('lp_l'),
-    h: safe('lp_h'), hh: safe('lp_hh'), hhh: safe('lp_hhh'),
+    lll:  parseFloat(safe('lp_lll')),
+    ll:   parseFloat(safe('lp_ll')),
+    l:    parseFloat(safe('lp_l')),
+    h:    parseFloat(safe('lp_h')),
+    hh:   parseFloat(safe('lp_hh')),
+    hhh:  parseFloat(safe('lp_hhh')),
     devRange: safe('lp_dev'),
-
-    // snapshot 4–20 mA helper (including sqrt)
-    sh_lrv: document.getElementById('sh_lrv')?.value ?? '',
-    sh_urv: document.getElementById('sh_urv')?.value ?? '',
-    sh_eulbl: document.getElementById('sh_eulbl')?.value ?? '',
-    sh_ma: document.getElementById('sh_ma')?.value ?? '',
-    sh_pct: document.getElementById('sh_pct')?.value ?? '',
-    sh_eu: document.getElementById('sh_eu')?.value ?? '',
-    sh_sqrt: !!document.getElementById('sqrt_mode')?.checked
+    // snapshot mini-helper sqrt mode
+    sqrt: !!document.getElementById('ll_sqrt_mode')?.checked
   };
 
-  const rows = load(K_LOOP);
+  const rows=load(K_LOOP);
   rows.push(rec);
   save(K_LOOP, rows);
   loop_render();
 }
 
-function pillClass(ok){
-  return ok==='YES' ? 'pill pill-green' : 'pill pill-red';
-}
-
 function loop_render(){
-  const rows = load(K_LOOP);
-  const tbody = document.querySelector('#lp_tbl tbody');
-  if (!tbody) return;
-
-  tbody.innerHTML = '';
-  let pass = 0, fail = 0;
+  const rows=load(K_LOOP);
+  const tb=document.querySelector('#lp_tbl tbody');
+  tb.innerHTML='';
+  let pass=0, fail=0;
 
   rows.forEach((r,i)=>{
-    // main row
-    const tr = document.createElement('tr');
+    const tr=document.createElement('tr');
     tr.innerHTML = `
       <td>${r.date||''}</td>
       <td>${r.tag||''}</td>
       <td>${r.point||''}</td>
       <td>${r.units||''}</td>
-      <td><span class="${pillClass(r.ok)}">${r.ok||''}</span></td>
+      <td><span class="pill ${r.ok==='YES'?'pill-green':'pill-red'}">${r.ok||''}</span></td>
       <td>${r.notes||''}</td>
       <td>
         <button class="btn" onclick="toggleDetails(${i}, this)">▶ Details</button>
         <button class="btn danger" onclick="loop_delete(${i})">✖</button>
       </td>`;
-    tbody.appendChild(tr);
+    tb.appendChild(tr);
 
-    // details row
-    const detailRow = document.createElement('tr');
-    detailRow.className = 'details';
-    detailRow.style.display = 'none';
+    const detailRow=document.createElement('tr');
+    detailRow.style.display='none';
     detailRow.innerHTML = `
       <td colspan="7">
         <div class="grid">
-          <div class="card">
-            <h4 style="margin:0 0 6px">Range & Alarms</h4>
-            <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px">
-              <div><div class="muted">LRV</div><div class="big">${fmt(r.lrv)||'—'}</div></div>
-              <div><div class="muted">URV</div><div class="big">${fmt(r.urv)||'—'}</div></div>
-              <div><div class="muted">EU Units</div><div class="big">${r.euUnits||'—'}</div></div>
-              <div><div class="muted">Device Range</div><div class="big">${r.devRange||'—'}</div></div>
-              <div><div class="muted">LLL</div><div class="big">${fmt(r.lll)||'—'}</div></div>
-              <div><div class="muted">LL</div><div class="big">${fmt(r.ll)||'—'}</div></div>
-              <div><div class="muted">L</div><div class="big">${fmt(r.l)||'—'}</div></div>
-              <div><div class="muted">H</div><div class="big">${fmt(r.h)||'—'}</div></div>
-              <div><div class="muted">HH</div><div class="big">${fmt(r.hh)||'—'}</div></div>
-              <div><div class="muted">HHH</div><div class="big">${fmt(r.hhh)||'—'}</div></div>
-            </div>
-          </div>
-          <div class="card">
-            <h4 style="margin:0 0 6px">4–20 mA Helper Snapshot</h4>
-            <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px">
-              <div><div class="muted">LRV(EU)</div><div class="big">${fmt(r.sh_lrv)||'—'}</div></div>
-              <div><div class="muted">URV(EU)</div><div class="big">${fmt(r.sh_urv)||'—'}</div></div>
-              <div><div class="muted">EU Label</div><div class="big">${r.sh_eulbl||'—'}</div></div>
-              <div><div class="muted">mA</div><div class="big">${fmt(r.sh_ma)||'—'}</div></div>
-              <div><div class="muted">%</div><div class="big">${fmt(r.sh_pct)||'—'}%</div></div>
-              <div><div class="muted">EU</div><div class="big">${fmt(r.sh_eu)||'—'}</div></div>
-              <div><div class="muted">√ Flow Mode</div><div class="big">${r.sh_sqrt?'ON':'OFF'}</div></div>
-            </div>
-          </div>
+          <div class="kv"><span>LRV</span><strong>${FMT(r.lrv)||'—'}</strong></div>
+          <div class="kv"><span>URV</span><strong>${FMT(r.urv)||'—'}</strong></div>
+          <div class="kv"><span>EU</span><strong>${r.euUnits||'—'}</strong></div>
+          <div class="kv"><span>Device Range</span><strong>${r.devRange||'—'}</strong></div>
+          <div class="kv"><span>LLL</span><strong>${FMT(r.lll)||'—'}</strong></div>
+          <div class="kv"><span>LL</span><strong>${FMT(r.ll)||'—'}</strong></div>
+          <div class="kv"><span>L</span><strong>${FMT(r.l)||'—'}</strong></div>
+          <div class="kv"><span>H</span><strong>${FMT(r.h)||'—'}</strong></div>
+          <div class="kv"><span>HH</span><strong>${FMT(r.hh)||'—'}</strong></div>
+          <div class="kv"><span>HHH</span><strong>${FMT(r.hhh)||'—'}</strong></div>
+          <div class="kv"><span>SQRT</span><strong>${r.sqrt?'ON':'OFF'}</strong></div>
         </div>
       </td>`;
-    tbody.appendChild(detailRow);
+    tb.appendChild(detailRow);
 
-    if (r.ok==='YES') pass++; else fail++;
+    if(r.ok==='YES') pass++; else fail++;
   });
 
-  document.getElementById('loop-pass').textContent=`Pass: ${pass}`;
-  document.getElementById('loop-fail').textContent=`Fail: ${fail}`;
+  document.getElementById('loop-pass').textContent = `Pass: ${pass}`;
+  document.getElementById('loop-fail').textContent = `Fail: ${fail}`;
 }
 
 function toggleDetails(index, btn){
-  const detailsRow = btn.closest('tr').nextElementSibling;
-  const open = detailsRow.style.display === 'table-row';
-  detailsRow.style.display = open ? 'none' : 'table-row';
+  const row = btn.closest('tr').nextElementSibling;
+  const open = row.style.display === 'table-row';
+  row.style.display = open ? 'none' : 'table-row';
   btn.textContent = open ? '▶ Details' : '▼ Hide';
 }
 
 function loop_delete(i){
-  const rows = load(K_LOOP);
+  const rows=load(K_LOOP);
   rows.splice(i,1);
   save(K_LOOP,rows);
   loop_render();
@@ -1354,25 +1451,25 @@ function loop_csv(){
   const rows=load(K_LOOP);
   const out=[[
     'Date','Tag','Point','Units','OK','Notes',
-    'LRV','URV','EU Units','Device Range','LLL','LL','L','H','HH','HHH',
-    'Helper LRV','Helper URV','Helper EU Label','Helper mA','Helper %','Helper EU','Helper sqrt'
+    'LRV','URV','EU Units','LLL','LL','L','H','HH','HHH','Device Range','SQRT'
   ]];
-  rows.forEach(r=>{
-    out.push([
-      r.date,r.tag,r.point,r.units,r.ok,r.notes,
-      r.lrv,r.urv,r.euUnits,r.devRange,r.lll,r.ll,r.l,r.h,r.hh,r.hhh,
-      r.sh_lrv,r.sh_urv,r.sh_eulbl,r.sh_ma,r.sh_pct,r.sh_eu,(r.sh_sqrt?'ON':'OFF')
-    ]);
-  });
-  downloadCSV('loop_log.csv', out);
+  rows.forEach(r=>out.push([
+    r.date||'', r.tag||'', r.point||'', r.units||'', r.ok||'', r.notes||'',
+    FMT(r.lrv), FMT(r.urv), r.euUnits||'', FMT(r.lll), FMT(r.ll), FMT(r.l),
+    FMT(r.h), FMT(r.hh), FMT(r.hhh), r.devRange||'', r.sqrt?'ON':'OFF'
+  ]));
+  const csv = out.map(row=>row.map(cell=>{
+    const s=(cell??'').toString(); return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s;
+  }).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='loop_log.csv'; a.click(); URL.revokeObjectURL(url);
 }
 
+/* wire buttons */
 document.getElementById('lp_add')?.addEventListener('click', loop_add);
 document.getElementById('lp_export')?.addEventListener('click', loop_csv);
-document.getElementById('lp_clear')?.addEventListener('click', ()=>{
-  if(confirm('Clear all loop rows?')){ save(K_LOOP,[]); loop_render(); }
-});
-
+document.getElementById('lp_clear')?.addEventListener('click', ()=>{ if(confirm('Clear all loop rows?')){ save(K_LOOP,[]); loop_render(); }});
+/* render on load */
 loop_render();
 
 /* ========= TICKETS ========= */
