@@ -951,21 +951,36 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
 <footer class="muted">PockeTech — v0.83</footer>
 
 <script>
-/* ======= SETTINGS + THEME ======= */
-const SKEY='pocketech.settings', DEF={atm:14.7,punit:'psi',lunit:'in',haptics:false,theme:'auto'};
+/* ========= SETTINGS + THEME ========= */
+const SKEY='pocketech.settings';
+const DEF={atm:14.7,punit:'psi',lunit:'in',haptics:false,theme:'auto'};
 const getS=()=>({...DEF, ...(JSON.parse(localStorage.getItem(SKEY)||'{}'))});
 const setS=o=>localStorage.setItem(SKEY, JSON.stringify(o));
 function applyTheme(){ document.documentElement.setAttribute('data-theme', getS().theme||'auto'); }
 applyTheme();
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{ if(getS().theme==='auto') applyTheme(); });
 
-/* ======= SIMPLE ROUTER (Home <-> Pages) ======= */
+/* ========= STORAGE HELPERS ========= */
+const load=(k)=>{ try{return JSON.parse(localStorage.getItem(k))||[]}catch{return[]} };
+const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+function fmt(v){
+  if(v===null||v===undefined||v==='')return '';
+  const n=Number(v);
+  if(!Number.isFinite(n)) return String(v);
+  return (Math.abs(n)>=1000||n===0) ? n.toFixed(2).replace(/\.00$/,'')
+                                   : n.toFixed(4).replace(/0+$/,'').replace(/\.$/,'');
+}
+function toCSV(rows){return rows.map(r=>r.map(c=>{const s=(c??'').toString();return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}).join(',')).join('\n');}
+function downloadCSV(name,rows){const blob=new Blob([toCSV(rows)],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
+const val=id=>document.getElementById(id)?.value||''; const setVal=(id,v)=>{const el=document.getElementById(id); if(el) el.value=v};
+
+/* ========= SIMPLE ROUTER (Home <-> Pages) ========= */
 (function(){
   const PAGES=[...document.querySelectorAll('main section')];
   const backBtn=document.getElementById('backBtn');
   const titleEl=document.getElementById('appTitle');
-  const ALIAS={ jr:'jrtech', ohms:'ohm_drop', lingo:'field_lingo' }; // map tiles -> real ids
-  function resolveId(id){ return ALIAS[id]||id; }
+  const ALIAS={ jr:'jrtech', ohms:'ohm_drop', lingo:'field_lingo' };
+  const resolveId=id=>ALIAS[id]||id;
 
   function showPage(id){
     const target=resolveId(id);
@@ -976,13 +991,12 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{ if(ge
     if(location.hash.replace('#','')!==target) history.pushState({id:target},'', '#'+target);
     window.scrollTo(0,0);
   }
+
   document.addEventListener('click',e=>{
-    const go=e.target.closest('[data-go]');
-    if(!go) return;
-    e.preventDefault();
-    showPage(go.getAttribute('data-go'));
+    const go=e.target.closest('[data-go]'); if(!go) return;
+    e.preventDefault(); showPage(go.getAttribute('data-go'));
   });
-  backBtn.addEventListener('click',e=>{e.preventDefault();showPage('home');});
+  backBtn?.addEventListener('click',e=>{e.preventDefault();showPage('home');});
   window.addEventListener('popstate',e=>{
     const id=e.state?.id || (location.hash||'#home').replace('#','');
     showPage(PAGES.some(s=>s.id===resolveId(id))?id:'home');
@@ -991,13 +1005,7 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{ if(ge
   showPage(PAGES.some(s=>s.id===resolveId(initial))?initial:'home');
 })();
 
-/* ======= SMALL UTILS ======= */
-const fmt=n=>{const x=Number(n);if(!Number.isFinite(x))return'';return (Math.abs(x)>=1000||x===0)?x.toFixed(2).replace(/\.00$/,''):x.toFixed(4).replace(/0+$/,'').replace(/\.$/,'');};
-function toCSV(rows){return rows.map(r=>r.map(c=>{const s=(c??'').toString();return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}).join(',')).join('\n');}
-function downloadCSV(name,rows){const blob=new Blob([toCSV(rows)],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
-const val=id=>document.getElementById(id).value, setVal=(id,v)=>document.getElementById(id).value=v;
-
-/* ======= FLOATING NUMBER PAD ======= */
+/* ========= FLOATING NUMBER PAD ========= */
 const numpad=document.getElementById('numpad'); let npTarget=null;
 function buzz(ms=10){try{ if(getS().haptics && navigator.vibrate) navigator.vibrate(ms);}catch{}}
 function padRect(){const r=numpad.getBoundingClientRect();return {w:r.width||320,h:r.height||260};}
@@ -1010,10 +1018,12 @@ function placePad(el){
   const caretPos=Math.round(Math.min(Math.max(16,(r.left-left)+Math.min(r.width,idealW)/2), idealW-16));
   numpad.style.setProperty('--caret-left', caretPos+'px'); numpad.style.setProperty('--caret-top', flip? (pad.h-7)+'px':'-7px'); numpad.style.setProperty('--caret-rotate', flip?'225deg':'45deg');
 }
-const caretStyle=document.createElement('style'); caretStyle.textContent=`#numpad::after{left:var(--caret-left,24px);top:var(--caret-top,-7px);transform:rotate(var(--caret-rotate,45deg));}`; document.head.appendChild(caretStyle);
+const caretStyle=document.createElement('style');
+caretStyle.textContent=`#numpad::after{left:var(--caret-left,24px);top:var(--caret-top,-7px);transform:rotate(var(--caret-rotate,45deg));}`;
+document.head.appendChild(caretStyle);
 function showPad(el){npTarget=el; try{el.focus({preventScroll:true});}catch{} numpad.classList.add('show'); requestAnimationFrame(()=>placePad(el)); const v=el.value; try{el.setSelectionRange(v.length,v.length);}catch{}}
 function hidePad(){numpad.classList.remove('show'); npTarget=null;}
-numpad.addEventListener('click',e=>{
+numpad?.addEventListener('click',e=>{
   const b=e.target.closest('.np-btn'); if(!b||!npTarget) return;
   const act=b.dataset.act, set=b.dataset.val||b.textContent.trim();
   if(act==='done'){hidePad();return;}
@@ -1022,34 +1032,52 @@ numpad.addEventListener('click',e=>{
   if(set==='-'){npTarget.value = npTarget.value.startsWith('-')?npTarget.value.slice(1):('-'+npTarget.value); npTarget.dispatchEvent(new Event('input',{bubbles:true})); return;}
   const el=npTarget; const s=el.selectionStart??el.value.length; const epos=el.selectionEnd??el.value.length; let v=el.value; if(set==='.' && v.includes('.')) return; el.value=v.slice(0,s)+set+v.slice(epos); const pos=s+set.length; try{el.setSelectionRange(pos,pos);}catch{} el.dispatchEvent(new Event('input',{bubbles:true})); buzz(8);
 });
-document.addEventListener('pointerdown',e=>{ if(!numpad.classList.contains('show')) return; if(!e.target.closest('#numpad') && !e.target.closest('input.num')) hidePad(); });
-addEventListener('scroll',()=>{ if(npTarget && numpad.classList.contains('show')) placePad(npTarget); }, {passive:true});
-addEventListener('resize',()=>{ if(npTarget && numpad.classList.contains('show')) placePad(npTarget); });
+document.addEventListener('pointerdown',e=>{ if(!numpad?.classList.contains('show')) return; if(!e.target.closest('#numpad') && !e.target.closest('input.num')) hidePad(); });
+addEventListener('scroll',()=>{ if(npTarget && numpad?.classList.contains('show')) placePad(npTarget); }, {passive:true});
+addEventListener('resize',()=>{ if(npTarget && numpad?.classList.contains('show')) placePad(npTarget); });
 document.querySelectorAll('input.num').forEach(inp=>{ inp.readOnly=true; inp.addEventListener('focus',()=>showPad(inp)); inp.addEventListener('click',()=>showPad(inp)); });
 
-/* ======= STORAGE KEYS ======= */
-const K_CAL='pocketech.cal', K_LOOP='pocketech.loop', K_TIX='pocketech.tix';
+/* ========= PERCENT ========= */
+function calcPercent(){
+  const L=parseFloat(val('lrv')),U=parseFloat(val('urv'));
+  if(isNaN(L)||isNaN(U)||L===U){alert('Enter valid LRV/URV');return;}
+  const steps=[0,25,50,75,100]; const rows=[['%','EU']];
+  steps.forEach(p=>rows.push([p+'%',fmt(L+(U-L)*(p/100))]));
+  document.getElementById('percentTable').innerHTML=rows.map((r,i)=>`<tr>${r.map(c=>`<${i?'td':'th'}>${c}</${i?'td':'th'}>`).join('')}</tr>`).join('');
+}
+function exportPercentCSV(){
+  const L=parseFloat(val('lrv')),U=parseFloat(val('urv'));
+  if(isNaN(L)||isNaN(U)||L===U){alert('Enter valid LRV/URV');return;}
+  downloadCSV('percent_steps.csv', [['%','EU'],['0%',L],['25%',L+(U-L)*.25],['50%',L+(U-L)*.5],['75%',L+(U-L)*.75],['100%',U]]);
+}
 
-/* ======= PERCENT ======= */
-function calcPercent(){const L=parseFloat(val('lrv')),U=parseFloat(val('urv')); if(isNaN(L)||isNaN(U)||L===U){alert('Enter valid LRV/URV');return;} const steps=[0,25,50,75,100]; const rows=[['%','EU']]; steps.forEach(p=>rows.push([p+'%',fmt(L+(U-L)*(p/100))])); document.getElementById('percentTable').innerHTML=rows.map((r,i)=>`<tr>${r.map(c=>`<${i?'td':'th'}>${c}</${i?'td':'th'}>`).join('')}</tr>`).join('');}
-function exportPercentCSV(){const L=parseFloat(val('lrv')),U=parseFloat(val('urv')); if(isNaN(L)||isNaN(U)||L===U){alert('Enter valid LRV/URV');return;} downloadCSV('percent_steps.csv', [['%','EU'],['0%',L],['25%',L+(U-L)*.25],['50%',L+(U-L)*.5],['75%',L+(U-L)*.75],['100%',U]]);}
-
-/* ======= SIGNAL (4–20 mA) ======= */
+/* ========= SIGNAL (4–20 mA) with √ option ========= */
 function sh_getRange(){const l=parseFloat(val('sh_lrv')),u=parseFloat(val('sh_urv')); if(isNaN(l)||isNaN(u)||l===u){alert('Enter valid LRV/URV');return null;} return {l,u};}
-const EUlbl=()=>{const s=document.getElementById('sh_eulbl').value.trim();return s?(' '+s):'';}
-function sh_updateFromPct(p){const r=sh_getRange(); if(!r) return; const sqrt=document.getElementById('sqrt_mode').checked; const pct=Math.min(Math.max(Number(p),0),100); const ma=4+16*(pct/100); let eu; if(!sqrt){eu=r.l+(r.u-r.l)*(pct/100);} else {eu=r.l+(r.u-r.l)*Math.sqrt(pct/100);} setVal('sh_pct',fmt(pct)); setVal('sh_ma',fmt(ma)); setVal('sh_eu',fmt(eu)); document.getElementById('read_ma').textContent=fmt(ma); document.getElementById('read_pct').textContent=fmt(pct)+'%'; document.getElementById('read_eu').textContent=fmt(eu)+EUlbl(); document.getElementById('pct_slider').value=pct;}
+const EUlbl=()=>{const s=document.getElementById('sh_eulbl')?.value.trim();return s?(' '+s):'';}
+function sh_updateFromPct(p){
+  const r=sh_getRange(); if(!r) return;
+  const sqrt=document.getElementById('sqrt_mode')?.checked;
+  const pct=Math.min(Math.max(Number(p),0),100);
+  const ma=4+16*(pct/100);
+  const eu = sqrt ? (r.l+(r.u-r.l)*Math.sqrt(pct/100))
+                  : (r.l+(r.u-r.l)*(pct/100));
+  setVal('sh_pct',fmt(pct)); setVal('sh_ma',fmt(ma)); setVal('sh_eu',fmt(eu));
+  const rm=document.getElementById('read_ma'), rp=document.getElementById('read_pct'), re=document.getElementById('read_eu');
+  if(rm) rm.textContent=fmt(ma); if(rp) rp.textContent=fmt(pct)+'%'; if(re) re.textContent=fmt(eu)+EUlbl();
+  const s=document.getElementById('pct_slider'); if(s) s.value=pct;
+}
 function sh_fromMA(){const r=sh_getRange(); if(!r)return; const m=parseFloat(val('sh_ma')); if(isNaN(m)){alert('Enter mA');return;} sh_updateFromPct(Math.min(Math.max((m-4)/16*100,0),100));}
 function sh_fromPct(){const p=parseFloat(val('sh_pct')); if(isNaN(p)){alert('Enter %');return;} sh_updateFromPct(p);}
-function sh_fromEU(){const r=sh_getRange(); if(!r)return; const e=parseFloat(val('sh_eu')); if(isNaN(e)){alert('Enter EU');return;} const sqrt=document.getElementById('sqrt_mode').checked; let pct; if(!sqrt){pct=(e-r.l)/(r.u-r.l)*100;} else {const en=(e-r.l)/(r.u-r.l); pct=Math.pow(Math.max(en,0),2)*100;} sh_updateFromPct(pct);}
+function sh_fromEU(){const r=sh_getRange(); if(!r)return; const e=parseFloat(val('sh_eu')); if(isNaN(e)){alert('Enter EU');return;} const sqrt=document.getElementById('sqrt_mode')?.checked; let pct; if(!sqrt){pct=(e-r.l)/(r.u-r.l)*100;} else {const en=(e-r.l)/(r.u-r.l); pct=Math.pow(Math.max(en,0),2)*100;} sh_updateFromPct(pct);}
 document.getElementById('sh_from_ma')?.addEventListener('click',sh_fromMA);
 document.getElementById('sh_from_pct')?.addEventListener('click',sh_fromPct);
 document.getElementById('sh_from_eu')?.addEventListener('click',sh_fromEU);
 document.getElementById('pct_slider')?.addEventListener('input',e=>sh_updateFromPct(e.target.value));
-document.getElementById('sqrt_mode')?.addEventListener('change',()=>{const p=parseFloat(document.getElementById('pct_slider').value||'0'); sh_updateFromPct(p);});
+document.getElementById('sqrt_mode')?.addEventListener('change',()=>{const p=parseFloat(document.getElementById('pct_slider')?.value||'0'); sh_updateFromPct(p);});
 document.querySelectorAll('.step').forEach(b=>b.addEventListener('click',()=>sh_updateFromPct(b.dataset.p)));
 document.querySelectorAll('.copy').forEach(c=>c.addEventListener('click',async()=>{const sel=c.getAttribute('data-copy');const el=document.querySelector(sel); if(!el)return; try{await navigator.clipboard.writeText(el.textContent.trim()); c.textContent='copied'; setTimeout(()=>c.textContent='copy',900);}catch{}}));
 
-/* ======= PRESSURE ======= */
+/* ========= PRESSURE ========= */
 const KPA_PER_PSI=6.894757293168;
 const P2PA={pa:1,kpa:1000,mpa:1e6,bar:100000,psi:6894.757293168,inh2o:249.08891,mmh2o:9.80665,inhg:3386.389,mmhg:133.322387415};
 function convertP(v,from,to){if(!Number.isFinite(v))return'';const pa=v*P2PA[from];return pa/P2PA[to];}
@@ -1065,9 +1093,12 @@ function fromInHg(){const inhg=parseFloat(val('vac_inhg')),atm=parseFloat(val('a
 function fromPSIA(){const psia=parseFloat(val('vac_psia')),atm=parseFloat(val('atm')); if(isNaN(psia)||isNaN(atm)){alert('Enter psia & atm');return;} const inhg=(atm-psia)*(29.92/atm); const psig=psia-atm; setVal('vac_inhg',fmt(inhg)); setVal('vac_psig',fmt(psig));}
 function fromPSIG(){const psig=parseFloat(val('vac_psig')),atm=parseFloat(val('atm')); if(isNaN(psig)||isNaN(atm)){alert('Enter psig & atm');return;} const psia=psig+atm; const inhg=(atm-psia)*(29.92/atm); setVal('vac_psia',fmt(psia)); setVal('vac_inhg',fmt(inhg));}
 
-/* ======= LEVEL HELPERS ======= */
+/* ========= LEVEL HELPERS ========= */
 const IN_PER_FT=12, IN_PER_M=39.37007874, INH2O_PER_PSI=27.679904842545, KPA_PER_PSI2=6.894757293168;
-function pctToDP(p,LRV,URV){return LRV+(URV-LRV)*(p/100)} function pctToMA(p){return 4+16*(p/100)} function maToPct(ma){return (ma-4)/16*100;}
+function pctToDP(p,LRV,URV){return LRV+(URV-LRV)*(p/100)}
+function pctToMA(p){return 4+16*(p/100)}
+function maToPct(ma){return (ma-4)/16*100;}
+
 function LO_cfg(){const s=getS(); let span=parseFloat(val('lo_span')); const u=document.getElementById('lo_units').value||s.lunit; const sg=parseFloat(val('lo_sg')||'1'); const dpU=document.getElementById('lo_dpU').value; if(isNaN(span)||span<=0||isNaN(sg)||sg<=0){alert('Enter span & SG');return null;} let spanIn=span; if(u==='ft') spanIn*=IN_PER_FT; if(u==='m') spanIn*=IN_PER_M; const urv_inh2o=sg*spanIn; let LRV=parseFloat(val('lo_lrv')); if(isNaN(LRV)) LRV=0; let URV=parseFloat(val('lo_urv')); if(isNaN(URV)) URV=(dpU==='inh2o')?urv_inh2o:(dpU==='psi'? urv_inh2o/INH2O_PER_PSI : (urv_inh2o/INH2O_PER_PSI)*KPA_PER_PSI2 ); return {span,u,spanIn,sg,dpU,LRV,URV};}
 function LO_levelToMa(){const c=LO_cfg(); if(!c)return; let lvl=parseFloat(val('lo_lvl')); if(isNaN(lvl)){alert('Enter level');return;} let lvlIn=lvl; if(c.u==='ft') lvlIn*=IN_PER_FT; if(c.u==='m') lvlIn*=IN_PER_M; const pct=Math.min(Math.max((lvlIn/c.spanIn)*100,0),100); const dp=pctToDP(pct,c.LRV,c.URV); const ma=pctToMA(pct); document.getElementById('lo_result').innerText=`Level ${fmt(lvl)} ${c.u} → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → ${fmt(ma)} mA`; }
 function LO_maToLevel(){const c=LO_cfg(); if(!c)return; const ma=parseFloat(val('lo_ma')); if(isNaN(ma)){alert('Enter mA');return;} const pct=Math.min(Math.max(maToPct(ma),0),100); const dp=pctToDP(pct,c.LRV,c.URV); let lvlIn=(pct/100)*c.spanIn; let lvl=lvlIn; if(c.u==='ft') lvl=lvlIn/IN_PER_FT; if(c.u==='m') lvl=lvlIn/IN_PER_M; document.getElementById('lo_result').innerText=`${fmt(ma)} mA → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → Level ${fmt(lvl)} ${c.u}`;}
@@ -1080,332 +1111,20 @@ function LC_levelToMa(){const c=LC_cfg(); if(!c)return; const lvl=parseFloat(val
 function LC_maToLevel(){const c=LC_cfg(); if(!c)return; const ma=parseFloat(val('lc_ma')); if(isNaN(ma)){alert('Enter mA');return;} const pct=Math.min(Math.max(maToPct(ma),0),100); const dp=pctToDP(pct,c.LRV,c.URV); const lvl_in=(pct/100)*c.span_in; let lvl=lvl_in; if(c.u==='ft') lvl=lvl_in/IN_PER_FT; if(c.u==='m') lvl=lvl_in/IN_PER_M; document.getElementById('lc_result').innerText=`${fmt(ma)} mA → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → Level ${fmt(lvl)} ${c.u}`;}
 function LC_buildSteps(){const c=LC_cfg(); if(!c)return; const tb=document.querySelector('#lc_steps tbody'); tb.innerHTML=''; [0,25,50,75,100].forEach(p=>{ const dp=pctToDP(p,c.LRV,c.URV); const lvl=(p/100)*c.span; tb.insertAdjacentHTML('beforeend',`<tr><td>${p}%</td><td>${fmt(lvl)} ${c.u}</td><td>${fmt(dp)} ${c.dpU}</td><td>${fmt(pctToMA(p))} mA</td></tr>`);});}
 
-/* ======= TEMP ======= */
-function T_toK(v,u){if(u==='C')return v+273.15; if(u==='F')return (v-32)*5/9+273.15; return v;}
-function K_to(v,u){if(u==='C')return v-273.15; if(u==='F')return (v-273.15)*9/5+32; return v;}
-document.getElementById('tc_conv_btn')?.addEventListener('click',()=>{const v=parseFloat(val('tc_val')); if(isNaN(v)){alert('Enter temperature');return;} const k=T_toK(v,document.getElementById('tc_from').value); setVal('tc_out',fmt(K_to(k,document.getElementById('tc_to').value)));});
-document.getElementById('td_conv_btn')?.addEventListener('click',()=>{const v=parseFloat(val('td_val')); if(isNaN(v)){alert('Enter ΔT');return;} const f=document.getElementById('td_from').value,t=document.getElementById('td_to').value; let c; if(f==='F') c=v*5/9; else if(f==='K') c=v; else c=v; let out; if(t==='F') out=c*9/5; else if(t==='K') out=c; else out=c; setVal('td_out',fmt(out));});
-
-/* ======= I/P ======= */
+/* ========= I/P ========= */
 function ip_fromPct(p){const psi=3+12*(p/100); setVal('ip_psi',fmt(psi)); document.getElementById('ip_read_pct').textContent=fmt(p)+'%'; document.getElementById('ip_read_psi').textContent=fmt(psi)+' psi';}
 function ip_fromPsi(psi){const p=(psi-3)/12*100; setVal('ip_pct',fmt(p)); document.getElementById('ip_read_pct').textContent=fmt(p)+'%'; document.getElementById('ip_read_psi').textContent=fmt(psi)+' psi';}
 document.getElementById('ip_from_pct')?.addEventListener('click',()=>{const p=parseFloat(val('ip_pct')); if(isNaN(p)){alert('Enter %');return;} ip_fromPct(p);});
 document.getElementById('ip_from_psi')?.addEventListener('click',()=>{const x=parseFloat(val('ip_psi')); if(isNaN(x)){alert('Enter psi');return;} ip_fromPsi(x);});
 document.querySelectorAll('.ipstep').forEach(b=>b.addEventListener('click',()=>ip_fromPct(parseFloat(b.dataset.p))));
 
-/* ======= CALIBRATION ======= */
-const load=(k)=>JSON.parse(localStorage.getItem(k)||'[]');
-const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
-function addMonthsISO(iso,m){ if(!m||m<=0) return ""; const d=new Date(iso); const day=d.getDate(); d.setMonth(d.getMonth()+m); if(d.getDate()<day) d.setDate(0); return d.toISOString().slice(0,10); }
-function dueStatus(nextISO){ if(!nextISO) return ""; const today=new Date(); today.setHours(0,0,0,0); const next=new Date(nextISO); const diffDays=Math.floor((next-today)/(1000*60*60*24)); if(diffDays<0) return "OVERDUE"; if(diffDays<=30) return "DUE SOON"; return "OK"; }
-function cal_add(){ const date=val('cal_date')||new Date().toISOString().slice(0,10); const intervalM=parseInt(document.getElementById('cal_interval').value||"0",10); const nextDueISO=intervalM?addMonthsISO(date, intervalM):""; const status=dueStatus(nextDueISO); const rec={date, tag:val('cal_tag'), dev:val('cal_dev'), lrv:parseFloat(val('cal_lrv')), urv:parseFloat(val('cal_urv')), af:val('cal_af'), al:val('cal_al'), tech:val('cal_tech'), notes:val('cal_notes'), intervalM, nextDueISO, status}; const rows=load(K_CAL); rows.push(rec); save(K_CAL,rows); cal_render(); }
-function cal_csv(){ const rows=load(K_CAL); const out=[['Date','Tag','Device','LRV','URV','As-Found','As-Left','Tech','Notes','NextDue','Status','IntervalMonths']]; rows.forEach(r=>out.push([r.date,r.tag,r.dev,r.lrv,r.urv,r.af,r.al,r.tech,r.notes,r.intervalM?(r.nextDueISO||''):'',r.intervalM?(r.status||''):'',r.intervalM||0])); downloadCSV('calibration.csv',out);}
-function cal_render(){ const rows=load(K_CAL); const tb=document.querySelector('#cal_tbl tbody'); if(!tb) return; tb.innerHTML=''; let mutated=false; rows.forEach(r=>{ const ns=dueStatus(r.nextDueISO||""); if(ns!==(r.status||"")){r.status=ns; mutated=true;} }); if(mutated) save(K_CAL,rows);
-  rows.forEach((r,i)=>{ const pill=r.status==="OVERDUE"?"pill pill-red":(r.status==="DUE SOON"?"pill pill-yellow":"pill"); tb.insertAdjacentHTML('beforeend', `<tr><td>${r.date||''}</td><td>${r.tag||''}</td><td>${r.dev||''}</td><td>${fmt(r.lrv)}</td><td>${fmt(r.urv)}</td><td>${r.af||''}</td><td>${r.al||''}</td><td>${r.tech||''}</td><td>${r.notes||''}</td><td>${r.intervalM?(r.nextDueISO||''):''}</td><td>${r.intervalM?`<span class="${pill}">${r.status||''}</span>`:''}</td><td><button class="btn danger" data-cal-del="${i}">✖</button></td></tr>`); });
-}
-document.addEventListener('click',e=>{
-  const d=e.target.getAttribute('data-cal-del');
-  if(d!==null){ const rows=load(K_CAL); rows.splice(parseInt(d),1); save(K_CAL,rows); cal_render(); }
-});
-document.getElementById('cal_add')?.addEventListener('click',cal_add);
-document.getElementById('cal_export')?.addEventListener('click',cal_csv);
-document.getElementById('cal_clear')?.addEventListener('click',()=>{if(confirm('Clear all calibration records?')){save(K_CAL,[]); cal_render();}});
-cal_render();
-
-/* ========= STORAGE HELPERS ========= */
-const K_LOOP = 'pocketech.loop';
-function load(k){ try{return JSON.parse(localStorage.getItem(k))||[]}catch{return[]} }
-function save(k,v){ localStorage.setItem(k,JSON.stringify(v)) }
-function fmt(v){ if(v===null||v===undefined||v==='')return ''; const n=Number(v); return Number.isFinite(n)? n.toFixed(2).replace(/\.00$/,''): v; }
-
-/* ========= LOOP LOG ========= */
-function loop_add(){
-  const safe = id => document.getElementById(id)?.value ?? "";
-  const rec = {
-    date: safe('lp_date') || new Date().toISOString().slice(0,10),
-    tag: safe('lp_tag'),
-    point: safe('lp_point'),
-    exp: safe('lp_exp'),
-    meas: safe('lp_meas'),
-    units: safe('lp_units'),
-    ok: safe('lp_ok'),
-    notes: safe('lp_notes'),
-    lrv: safe('lp_lrv'), urv: safe('lp_urv'),
-    euUnits: safe('lp_eu_units'),
-    lll: safe('lp_lll'), ll: safe('lp_ll'), l: safe('lp_l'),
-    al: safe('lp_al'), ah: safe('lp_ah'),
-    h: safe('lp_h'), hh: safe('lp_hh'), hhh: safe('lp_hhh'),
-    devRange: safe('lp_dev')
-  };
-  const rows = load(K_LOOP);
-  rows.push(rec);
-  save(K_LOOP, rows);
-  loop_render();
-}
-
-function loop_render(){
-  const rows = load(K_LOOP);
-  const tbody = document.querySelector('#lp_tbl tbody');
-  tbody.innerHTML = '';
-  let pass=0, fail=0;
-  rows.forEach((r,i)=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${r.date}</td>
-      <td>${r.tag}</td>
-      <td>${r.point}</td>
-      <td>${fmt(r.exp)}</td>
-      <td>${fmt(r.meas)}</td>
-      <td>${r.units}</td>
-      <td><span class="pill ${r.ok==='YES'?'green':''}">${r.ok}</span></td>
-      <td>${r.notes||''}</td>
-      <td>
-        <button class="btn" onclick="toggleDetails(${i}, this)">▶ Details</button>
-        <button class="btn danger" onclick="loop_delete(${i})">✖</button>
-      </td>`;
-    tbody.appendChild(tr);
-
-    const detailRow = document.createElement('tr');
-    detailRow.className = 'details';
-    detailRow.style.display = 'none';
-    detailRow.innerHTML = `
-      <td colspan="9">
-        <div class="grid">
-          <div class="kv"><span>LRV</span><strong>${fmt(r.lrv)||'—'}</strong></div>
-          <div class="kv"><span>URV</span><strong>${fmt(r.urv)||'—'}</strong></div>
-          <div class="kv"><span>Device Range</span><strong>${r.devRange||'—'}</strong></div>
-          <div class="kv"><span>LLL</span><strong>${fmt(r.lll)||'—'}</strong></div>
-          <div class="kv"><span>LL</span><strong>${fmt(r.ll)||'—'}</strong></div>
-          <div class="kv"><span>L</span><strong>${fmt(r.l)||'—'}</strong></div>
-          <div class="kv"><span>AL</span><strong>${fmt(r.al)||'—'}</strong></div>
-          <div class="kv"><span>AH</span><strong>${fmt(r.ah)||'—'}</strong></div>
-          <div class="kv"><span>H</span><strong>${fmt(r.h)||'—'}</strong></div>
-          <div class="kv"><span>HH</span><strong>${fmt(r.hh)||'—'}</strong></div>
-          <div class="kv"><span>HHH</span><strong>${fmt(r.hhh)||'—'}</strong></div>
-        </div>
-      </td>`;
-    tbody.appendChild(detailRow);
-
-    if(r.ok==='YES') pass++;
-    else fail++;
-  });
-  document.getElementById('loop-pass').textContent=`Pass: ${pass}`;
-  document.getElementById('loop-fail').textContent=`Fail: ${fail}`;
-}
-
-function toggleDetails(index, btn){
-  const detailsRow = btn.closest('tr').nextElementSibling;
-  const open = detailsRow.style.display === 'table-row';
-  detailsRow.style.display = open ? 'none' : 'table-row';
-  btn.textContent = open ? '▶ Details' : '▼ Hide';
-}
-
-function loop_delete(i){
-  const rows = load(K_LOOP);
-  rows.splice(i,1);
-  save(K_LOOP,rows);
-  loop_render();
-}
-
-function loop_csv(){
-  const rows=load(K_LOOP);
-  const out=[[
-    'Date','Tag','Point','Expected','Measured','Units','OK','Notes',
-    'LRV','URV','LLL','LL','L','AL','AH','H','HH','HHH','EU Units','Device Range'
-  ]];
-  rows.forEach(r=>{
-    out.push([
-      r.date,r.tag,r.point,fmt(r.exp),fmt(r.meas),r.units,r.ok,r.notes,
-      fmt(r.lrv),fmt(r.urv),fmt(r.lll),fmt(r.ll),fmt(r.l),fmt(r.al),
-      fmt(r.ah),fmt(r.h),fmt(r.hh),fmt(r.hhh),r.euUnits,r.devRange
-    ]);
-  });
-  downloadCSV('loop_log.csv', out);
-}
-
-document.getElementById('lp_add')?.addEventListener('click', loop_add);
-document.getElementById('lp_export')?.addEventListener('click', loop_csv);
-document.getElementById('lp_clear')?.addEventListener('click', ()=>{
-  if(confirm('Clear all loop rows?')){ save(K_LOOP,[]); loop_render(); }
-});
-loop_render();
-
-/* ========= 4–20 mA Helper ========= */
-const sh_lrv=document.getElementById('sh_lrv');
-const sh_urv=document.getElementById('sh_urv');
-const sh_ma=document.getElementById('sh_ma');
-const sh_pct=document.getElementById('sh_pct');
-const sh_eu=document.getElementById('sh_eu');
-
-function fromMA(){
-  const LRV=parseFloat(sh_lrv.value)||0;
-  const URV=parseFloat(sh_urv.value)||100;
-  const span=URV-LRV;
-  const ma=parseFloat(sh_ma.value)||4;
-  const pct=((ma-4)/16)*100;
-  const isSqrt=document.getElementById('sqrt_mode').checked;
-  const eu=isSqrt ? LRV+span*Math.pow(pct/100,2) : LRV+span*(pct/100);
-  sh_pct.value=pct.toFixed(2);
-  sh_eu.value=eu.toFixed(2);
-  document.getElementById('read_ma').textContent=ma.toFixed(2);
-  document.getElementById('read_pct').textContent=pct.toFixed(2);
-  document.getElementById('read_eu').textContent=eu.toFixed(2);
-}
-
-function fromPct(){
-  const LRV=parseFloat(sh_lrv.value)||0;
-  const URV=parseFloat(sh_urv.value)||100;
-  const span=URV-LRV;
-  const pct=parseFloat(sh_pct.value)||0;
-  const isSqrt=document.getElementById('sqrt_mode').checked;
-  const eu=isSqrt ? LRV+span*Math.pow(pct/100,2) : LRV+span*(pct/100);
-  const ma=4+(pct/100)*16;
-  sh_ma.value=ma.toFixed(2);
-  sh_eu.value=eu.toFixed(2);
-  document.getElementById('read_ma').textContent=ma.toFixed(2);
-  document.getElementById('read_pct').textContent=pct.toFixed(2);
-  document.getElementById('read_eu').textContent=eu.toFixed(2);
-}
-
-function fromEU(){
-  const LRV=parseFloat(sh_lrv.value)||0;
-  const URV=parseFloat(sh_urv.value)||100;
-  const span=URV-LRV;
-  const eu=parseFloat(sh_eu.value)||0;
-  const isSqrt=document.getElementById('sqrt_mode').checked;
-  let pct = ((eu - LRV)/span)*100;
-  if(isSqrt) pct = Math.sqrt((eu - LRV)/span)*100;
-  const ma=4+(pct/100)*16;
-  sh_ma.value=ma.toFixed(2);
-  sh_pct.value=pct.toFixed(2);
-  document.getElementById('read_ma').textContent=ma.toFixed(2);
-  document.getElementById('read_pct').textContent=pct.toFixed(2);
-  document.getElementById('read_eu').textContent=eu.toFixed(2);
-}
-
-document.getElementById('sh_from_ma')?.addEventListener('click', fromMA);
-document.getElementById('sh_from_pct')?.addEventListener('click', fromPct);
-document.getElementById('sh_from_eu')?.addEventListener('click', fromEU);
-document.getElementById('sqrt_mode')?.addEventListener('change', fromMA);
-  
-/* ======= TICKETS ======= */
-async function fileToDataURL(file){return new Promise(res=>{const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.readAsDataURL(file);});}
-function tix_render(){const rows=load(K_TIX); const tb=document.querySelector('#tk_tbl tbody'); if(!tb) return; tb.innerHTML=''; rows.forEach((r,i)=>{const img=r.photo?`<img src="${r.photo}" alt="photo" style="max-height:36px;border-radius:6px;border:1px solid var(--border)">`:''; tb.insertAdjacentHTML('beforeend',`<tr><td>${r.date||''}</td><td>${r.area||''}</td><td>${r.tag||''}</td><td>${r.sum||''}</td><td>${r.status||''}</td><td>${img}</td><td><button class="btn danger" data-tk-del="${i}">✖</button></td></tr>`);});}
-async function tix_add(){const f=document.getElementById('tk_photo').files[0]; const photo=f?await fileToDataURL(f):''; const rec={date: val('tk_date')||new Date().toISOString().slice(0,10), area: val('tk_area'), tag: val('tk_tag'), sum: val('tk_sum'), status: document.getElementById('tk_status').value, photo}; const rows=load(K_TIX); rows.push(rec); save(K_TIX,rows); tix_render();}
-function tix_csv(){const rows=load(K_TIX); const out=[['Date','Area','Tag','Summary','Status','Photo(dataURL)']]; rows.forEach(r=>out.push([r.date,r.area,r.tag,r.sum,r.status,r.photo?('[embedded]'):''])); downloadCSV('tickets.csv',out);}
-document.addEventListener('click',e=>{const d=e.target.getAttribute('data-tk-del'); if(d!==null){const rows=load(K_TIX); rows.splice(parseInt(d),1); save(K_TIX,rows); tix_render();}});
-document.getElementById('tk_add')?.addEventListener('click',tix_add);
-document.getElementById('tk_export')?.addEventListener('click',tix_csv);
-document.getElementById('tk_clear')?.addEventListener('click',()=>{if(confirm('Clear all tickets?')){save(K_TIX,[]); tix_render();}});
-tix_render();
-
-/* ======= QR SCAN ======= */
-const qrVideo=document.getElementById('qr_video'), qrCanvas=document.getElementById('qr_canvas'), qrOut=document.getElementById('qr_out');
-let qrStream=null, qrTimer=null;
-async function startLiveQR(){
-  if(!('BarcodeDetector' in window)){ alert('Live QR not supported in this browser. Use “Import Photo”.'); return; }
-  try{
-    qrVideo.style.display='block';
-    qrStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
-    qrVideo.srcObject=qrStream; await qrVideo.play();
-    const det=new BarcodeDetector({formats:['qr_code']});
-    qrTimer=setInterval(async()=>{
-      const w=qrVideo.videoWidth,h=qrVideo.videoHeight; if(!w||!h) return;
-      qrCanvas.width=w; qrCanvas.height=h; const ctx=qrCanvas.getContext('2d'); ctx.drawImage(qrVideo,0,0,w,h);
-      const bmp=await createImageBitmap(qrCanvas); const codes=await det.detect(bmp);
-      if(codes&&codes[0]){ qrOut.textContent=codes[0].rawValue; navigator.clipboard?.writeText(codes[0].rawValue).catch(()=>{}); stopLiveQR(); document.getElementById('qr_live_btn').textContent='Start Live Scan'; }
-    },300);
-  }catch{ alert('Camera blocked or unavailable'); }
-}
-function stopLiveQR(){ if(qrTimer){clearInterval(qrTimer);qrTimer=null;} if(qrStream){qrStream.getTracks().forEach(t=>t.stop()); qrStream=null;} qrVideo.pause(); qrVideo.removeAttribute('src'); qrVideo.style.display='none'; }
-document.getElementById('qr_live_btn')?.addEventListener('click',()=>{ if(qrStream){ stopLiveQR(); document.getElementById('qr_live_btn').textContent='Start Live Scan'; } else { startLiveQR(); document.getElementById('qr_live_btn').textContent='Stop Live Scan'; }});
-document.getElementById('qr_file')?.addEventListener('change',async(e)=>{const f=e.target.files[0]; if(!f)return; if(!('BarcodeDetector' in window)){alert('QR not supported for images on this browser');return;} const det=new BarcodeDetector({formats:['qr_code']}); const img=await createImageBitmap(f); const codes=await det.detect(img); if(codes&&codes[0]){qrOut.textContent=codes[0].rawValue; navigator.clipboard?.writeText(codes[0].rawValue).catch(()=>{});} else alert('No QR found in image');});
-
-/* ======= BACKUP / RESTORE ======= */
-function snapshotAll(){ return {version:'0.83',settings:getS(),calibration:load(K_CAL),loop:load(K_LOOP),tickets:load(K_TIX)}; }
-document.getElementById('bk_export')?.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(snapshotAll(),null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='pocketech_backup.json'; a.click(); URL.revokeObjectURL(url);});
-document.getElementById('bk_file')?.addEventListener('change',async(e)=>{const f=e.target.files[0]; if(!f)return; try{const txt=await f.text(); const data=JSON.parse(txt); if(data.settings) setS({...DEF,...data.settings}); if(Array.isArray(data.calibration)) save(K_CAL,data.calibration); if(Array.isArray(data.loop)) save(K_LOOP,data.loop); if(Array.isArray(data.tickets)) save(K_TIX,data.tickets); loadSettingsUI(); cal_render(); loop_render(); tix_render(); alert('Restore complete');}catch{alert('Invalid backup file');}});
-document.getElementById('bk_wipe')?.addEventListener('click',()=>{if(!confirm('Wipe ALL app data (settings, logs, tickets)?')) return; localStorage.removeItem(SKEY); localStorage.removeItem(K_CAL); localStorage.removeItem(K_LOOP); localStorage.removeItem(K_TIX); loadSettingsUI(); cal_render(); loop_render(); tix_render(); alert('Wiped');});
-
-/* ======= SETTINGS UI ======= */
-function loadSettingsUI(){const s=getS(); setVal('s_atm',s.atm); document.getElementById('s_punit').value=s.punit; document.getElementById('s_lunit').value=s.lunit; document.getElementById('s_haptics').checked=!!s.haptics; const atmEl=document.getElementById('atm'); if(atmEl) setVal('atm', s.atm);}
-loadSettingsUI();
-document.getElementById('s_save')?.addEventListener('click',()=>{const s=getS(); const a=parseFloat(val('s_atm')); if(!isNaN(a)) s.atm=a; s.punit=document.getElementById('s_punit').value; s.lunit=document.getElementById('s_lunit').value; s.haptics=document.getElementById('s_haptics').checked; setS(s); const atmEl=document.getElementById('atm'); if(atmEl) setVal('atm', s.atm); alert('Saved');});
-document.getElementById('s_reset')?.addEventListener('click',()=>{setS(DEF); loadSettingsUI(); alert('Reset');});
-
-/* ======= DEFAULTS ======= */
-const slider=document.getElementById('pct_slider'); if(slider){ slider.value=50; }
-setVal('sh_pct', 50); const rp=document.getElementById('read_pct'); if(rp) rp.textContent='50%'; const rm=document.getElementById('read_ma'); if(rm) rm.textContent='12';
-const installBtn=document.getElementById('installBtn'); if(installBtn) installBtn.disabled=true;
-
-/* ======= INSTALL / PWA ======= */
-let deferredPrompt=null;
-function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
-function isSafari(){ return /^((?!chrome|android).)*safari/i.test(navigator.userAgent); }
-window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferredPrompt=e; if (installBtn) installBtn.disabled=false; });
-if (isIOS() && isSafari() && installBtn){ installBtn.disabled=false; }
-installBtn?.addEventListener('click', async ()=>{
-  if (deferredPrompt){
-    deferredPrompt.prompt(); try{ await deferredPrompt.userChoice; }catch{} deferredPrompt=null; installBtn.disabled=true; return;
-  }
-  if (isIOS() && isSafari()){
-    alert('On iPhone/iPad: Share → Add to Home Screen'); return;
-  }
-  alert('Your browser may not support direct install. Try Chrome/Edge or Add to Home Screen.');
-});
-const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-if (isStandalone) { installBtn?.style && (installBtn.style.display='none'); }
-if ('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
-
-/* ======= FIELD LINGO FILTER ======= */
-function filterTableRows(tbody, q){
-  const rows=[...tbody.querySelectorAll('tr')];
-  rows.forEach(tr=>{
-    const text=tr.textContent.toLowerCase();
-    tr.style.display = text.includes(q) ? '' : 'none';
-  });
-}
-document.getElementById('fl_search')?.addEventListener('input',e=>{
-  const q=e.target.value.trim().toLowerCase();
-  ['fl_alpha','fl_prowords','fl_prefix'].forEach(id=>{
-    const tb=document.querySelector('#'+id+' tbody'); if(tb) filterTableRows(tb,q);
-  });
-});
-
-/* ======= JR TECH: Thermocouple/RTD + Page Search ======= */
+/* ========= JR TECH (T/C + RTD + search) ========= */
 const TCTABLE={
-  ANSI:[
-    ['J','White','Red','Iron/Constantan'],
-    ['K','Yellow','Red','Chromel/Alumel'],
-    ['T','Blue','Red','Copper/Constantan'],
-    ['E','Purple','Red','Chromel/Constantan'],
-    ['N','Orange','Red','Nicrosil/Nisil'],
-    ['R','Black','Red','PtRh/Pt (high temp)'],
-    ['S','Black','Red','PtRh/Pt (high temp)'],
-    ['B','Grey','Red','PtRh/Pt (very high temp)'],
-  ],
-  IEC:[
-    ['J','Black','White','Iron/Constantan'],
-    ['K','Green','White','Chromel/Alumel'],
-    ['T','Brown','White','Copper/Constantan'],
-    ['E','Purple','White','Chromel/Constantan'],
-    ['N','Pink','White','Nicrosil/Nisil'],
-    ['R','Orange','White','PtRh/Pt (high temp)'],
-    ['S','Orange','White','PtRh/Pt (high temp)'],
-    ['B','Grey','White','PtRh/Pt (very high temp)'],
-  ]
+  ANSI:[['J','White','Red','Iron/Constantan'],['K','Yellow','Red','Chromel/Alumel'],['T','Blue','Red','Copper/Constantan'],['E','Purple','Red','Chromel/Constantan'],['N','Orange','Red','Nicrosil/Nisil'],['R','Black','Red','PtRh/Pt (high temp)'],['S','Black','Red','PtRh/Pt (high temp)'],['B','Grey','Red','PtRh/Pt (very high temp)']],
+  IEC :[['J','Black','White','Iron/Constantan'],['K','Green','White','Chromel/Alumel'],['T','Brown','White','Copper/Constantan'],['E','Purple','White','Chromel/Constantan'],['N','Pink','White','Nicrosil/Nisil'],['R','Orange','White','PtRh/Pt (high temp)'],['S','Orange','White','PtRh/Pt (high temp)'],['B','Grey','White','PtRh/Pt (very high temp)']]
 };
-function renderTC(){
-  const std=document.getElementById('tc_std')?.value||'ANSI';
-  const tb=document.querySelector('#tc_tbl tbody'); if(!tb) return;
-  tb.innerHTML='';
-  (TCTABLE[std]||[]).forEach(r=>{
-    tb.insertAdjacentHTML('beforeend', `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`);
-  });
-}
-document.getElementById('tc_std')?.addEventListener('change',renderTC);
-renderTC();
-
+function renderTC(){ const std=document.getElementById('tc_std')?.value||'ANSI'; const tb=document.querySelector('#tc_tbl tbody'); if(!tb) return; tb.innerHTML=''; (TCTABLE[std]||[]).forEach(r=>tb.insertAdjacentHTML('beforeend',`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`)); }
+document.getElementById('tc_std')?.addEventListener('change',renderTC); renderTC();
 document.getElementById('jt_search')?.addEventListener('input',e=>{
   const q=e.target.value.trim().toLowerCase();
   document.querySelectorAll('#jrtech .jt-card, #jrtech table tbody tr').forEach(el=>{
@@ -1414,7 +1133,7 @@ document.getElementById('jt_search')?.addEventListener('input',e=>{
   });
 });
 
-/* ======= OHM’S LAW ======= */
+/* ========= OHM’S LAW ========= */
 function solveOhms(){
   let V=parseFloat(val('ol_v')), I=parseFloat(val('ol_i')), R=parseFloat(val('ol_r')), P=parseFloat(val('ol_p'));
   const known=[!isNaN(V),!isNaN(I),!isNaN(R),!isNaN(P)].filter(Boolean).length;
@@ -1440,8 +1159,7 @@ function clearOhms(){ ['ol_v','ol_i','ol_r','ol_p'].forEach(id=>setVal(id,'')); 
 document.getElementById('ol_solve')?.addEventListener('click',solveOhms);
 document.getElementById('ol_clear')?.addEventListener('click',clearOhms);
 
-/* ======= VOLTAGE DROP ======= */
-/* Ω per 1000 ft (approx, 75°C) per conductor */
+/* ========= VOLTAGE DROP ========= */
 const AWG_OHM_1000FT_CU={'18':6.385,'16':4.016,'14':2.525,'12':1.588,'10':0.999,'8':0.6282,'6':0.3951,'4':0.2485,'2':0.1563,'1':0.1239,'1/0':0.0983,'2/0':0.0779,'3/0':0.0618,'4/0':0.0490};
 const AWG_OHM_1000FT_AL={'12':2.57,'10':1.62,'8':1.02,'6':0.64,'4':0.40,'2':0.25,'1':0.20,'1/0':0.16,'2/0':0.13,'3/0':0.10,'4/0':0.08};
 function ohmPerLength(awg,mat,units,len){
@@ -1459,7 +1177,7 @@ function vd_calc(){
   const target=parseFloat(val('vd_target'));
   if([Vs,I,L].some(isNaN)){ alert('Enter supply V, current, and run length'); return; }
   const R_one=ohmPerLength(awg,mat,units,L); if(!isFinite(R_one)) return;
-  const factor=(sys==='3ph')?Math.sqrt(3):2;            // 3φ: √3 * I * R_line ; DC/1φ: 2 * I * R_line
+  const factor=(sys==='3ph')?Math.sqrt(3):2;
   const Vdrop = I * R_one * factor;
   const pct = (Vdrop/ Vs) * 100;
   const Vend = Vs - Vdrop;
@@ -1473,10 +1191,183 @@ function vd_calc(){
 }
 document.getElementById('vd_calc')?.addEventListener('click',vd_calc);
 
-// Register SW (keep your existing register code; just ensure it’s here)
+/* ========= LOOP LOG (with Range Helper + CSV) ========= */
+const K_LOOP='pocketech.loop';
+
+function updateLoopCounters(list){
+  const pass=list.filter(x=>x.ok==='YES').length;
+  const fail=list.length-pass;
+  document.getElementById('loop-pass').textContent = `Pass: ${pass}`;
+  document.getElementById('loop-fail').textContent = `Fail: ${fail}`;
+}
+
+function loop_render(){
+  const rows = load(K_LOOP);
+  const tb = document.querySelector('#lp_tbl tbody'); if(!tb) return;
+  tb.innerHTML = '';
+  rows.forEach((r,i)=>{
+    tb.insertAdjacentHTML('beforeend', `
+      <tr>
+        <td>${r.date||''}</td>
+        <td>${r.tag||''}</td>
+        <td>${r.point||''}</td>
+        <td>${fmt(r.exp)}</td>
+        <td>${fmt(r.meas)}</td>
+        <td>${r.units||''}</td>
+        <td>${r.ok||''}</td>
+        <td>${r.notes||''}</td>
+        <td>
+          <button class="btn" onclick="toggleDetails(${i}, this)">▶ Details</button>
+          <button class="btn danger" onclick="loop_delete(${i})">✖</button>
+        </td>
+      </tr>
+      <tr class="details" style="display:none">
+        <td colspan="9">
+          <div class="grid">
+            <div class="kv"><span>LRV</span><strong>${fmt(r.lrv)||'—'}</strong></div>
+            <div class="kv"><span>URV</span><strong>${fmt(r.urv)||'—'}</strong></div>
+            <div class="kv"><span>Device Range</span><strong>${r.devRange||'—'}</strong></div>
+            <div class="kv"><span>LLL</span><strong>${fmt(r.lll)||'—'}</strong></div>
+            <div class="kv"><span>LL</span><strong>${fmt(r.ll)||'—'}</strong></div>
+            <div class="kv"><span>L</span><strong>${fmt(r.l)||'—'}</strong></div>
+            <div class="kv"><span>AL</span><strong>${fmt(r.al)||'—'}</strong></div>
+            <div class="kv"><span>AH</span><strong>${fmt(r.ah)||'—'}</strong></div>
+            <div class="kv"><span>H</span><strong>${fmt(r.h)||'—'}</strong></div>
+            <div class="kv"><span>HH</span><strong>${fmt(r.hh)||'—'}</strong></div>
+            <div class="kv"><span>HHH</span><strong>${fmt(r.hhh)||'—'}</strong></div>
+          </div>
+        </td>
+      </tr>
+    `);
+  });
+  updateLoopCounters(rows);
+}
+function toggleDetails(_i, btn){ const row=btn.closest('tr').nextElementSibling; const open=row.style.display==='table-row'; row.style.display=open?'none':'table-row'; btn.textContent=open?'▶ Details':'▼ Hide'; }
+function loop_delete(i){ const rows=load(K_LOOP); rows.splice(i,1); save(K_LOOP,rows); loop_render(); }
+
+function loop_add(){
+  const gv=id=>document.getElementById(id)?.value ?? "";
+  const rec = {
+    date: gv('lp_date') || new Date().toISOString().slice(0,10),
+    tag: gv('lp_tag'), point: gv('lp_point'),
+    exp: parseFloat(gv('lp_exp')), meas: parseFloat(gv('lp_meas')),
+    units: gv('lp_units'), ok: gv('lp_ok'), notes: gv('lp_notes'),
+    lrv: parseFloat(gv('lp_lrv')), urv: parseFloat(gv('lp_urv')),
+    euUnits: gv('lp_eu_units'),
+    lll: parseFloat(gv('lp_lll')), ll: parseFloat(gv('lp_ll')), l: parseFloat(gv('lp_l')),
+    al: parseFloat(gv('lp_al')), ah: parseFloat(gv('lp_ah')),
+    h: parseFloat(gv('lp_h')), hh: parseFloat(gv('lp_hh')), hhh: parseFloat(gv('lp_hhh')),
+    devRange: gv('lp_dev')
+  };
+  const rows=load(K_LOOP); rows.push(rec); save(K_LOOP,rows); loop_render();
+}
+
+function loop_csv(){
+  const rows=load(K_LOOP);
+  const out=[[
+    'Date','Tag','Point','Expected','Measured','Units','OK','Notes',
+    'LRV','URV','LLL','LL','L','AL','AH','H','HH','HHH','EU Units','Device Range'
+  ]];
+  rows.forEach(r=>out.push([
+    r.date,r.tag,r.point,fmt(r.exp),fmt(r.meas),r.units,r.ok,r.notes,
+    fmt(r.lrv),fmt(r.urv),fmt(r.lll),fmt(r.ll),fmt(r.l),fmt(r.al),
+    fmt(r.ah),fmt(r.h),fmt(r.hh),fmt(r.hhh),r.euUnits||'',r.devRange||''
+  ]));
+  downloadCSV('loop_log.csv', out);
+}
+document.getElementById('lp_add')?.addEventListener('click', loop_add);
+document.getElementById('lp_export')?.addEventListener('click', loop_csv);
+document.getElementById('lp_clear')?.addEventListener('click', ()=>{ if(confirm('Clear all loop rows?')){ save(K_LOOP,[]); loop_render(); }});
+loop_render();
+
+/* ========= TICKETS ========= */
+const K_TIX='pocketech.tix';
+async function fileToDataURL(file){return new Promise(res=>{const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.readAsDataURL(file);});}
+function tix_render(){const rows=load(K_TIX); const tb=document.querySelector('#tk_tbl tbody'); if(!tb) return; tb.innerHTML=''; rows.forEach((r,i)=>{const img=r.photo?`<img src="${r.photo}" alt="photo" style="max-height:36px;border-radius:6px;border:1px solid var(--border)">`:''; tb.insertAdjacentHTML('beforeend',`<tr><td>${r.date||''}</td><td>${r.area||''}</td><td>${r.tag||''}</td><td>${r.sum||''}</td><td>${r.status||''}</td><td>${img}</td><td><button class="btn danger" data-tk-del="${i}">✖</button></td></tr>`);});}
+async function tix_add(){const f=document.getElementById('tk_photo').files[0]; const photo=f?await fileToDataURL(f):''; const rec={date: val('tk_date')||new Date().toISOString().slice(0,10), area: val('tk_area'), tag: val('tk_tag'), sum: val('tk_sum'), status: document.getElementById('tk_status').value, photo}; const rows=load(K_TIX); rows.push(rec); save(K_TIX,rows); tix_render();}
+function tix_csv(){const rows=load(K_TIX); const out=[['Date','Area','Tag','Summary','Status','Photo(dataURL)']]; rows.forEach(r=>out.push([r.date,r.area,r.tag,r.sum,r.status,r.photo?('[embedded]'):''])); downloadCSV('tickets.csv',out);}
+document.addEventListener('click',e=>{const d=e.target.getAttribute('data-tk-del'); if(d!==null){const rows=load(K_TIX); rows.splice(parseInt(d),1); save(K_TIX,rows); tix_render();}});
+document.getElementById('tk_add')?.addEventListener('click',tix_add);
+document.getElementById('tk_export')?.addEventListener('click',tix_csv);
+document.getElementById('tk_clear')?.addEventListener('click',()=>{if(confirm('Clear all tickets?')){save(K_TIX,[]); tix_render();}});
+tix_render();
+
+/* ========= QR SCAN ========= */
+const qrVideo=document.getElementById('qr_video'), qrCanvas=document.getElementById('qr_canvas'), qrOut=document.getElementById('qr_out');
+let qrStream=null, qrTimer=null;
+async function startLiveQR(){
+  if(!('BarcodeDetector' in window)){ alert('Live QR not supported in this browser. Use “Import Photo”.'); return; }
+  try{
+    qrVideo.style.display='block';
+    qrStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    qrVideo.srcObject=qrStream; await qrVideo.play();
+    const det=new BarcodeDetector({formats:['qr_code']});
+    qrTimer=setInterval(async()=>{
+      const w=qrVideo.videoWidth,h=qrVideo.videoHeight; if(!w||!h) return;
+      qrCanvas.width=w; qrCanvas.height=h; const ctx=qrCanvas.getContext('2d'); ctx.drawImage(qrVideo,0,0,w,h);
+      const bmp=await createImageBitmap(qrCanvas); const codes=await det.detect(bmp);
+      if(codes&&codes[0]){ qrOut.textContent=codes[0].rawValue; navigator.clipboard?.writeText(codes[0].rawValue).catch(()=>{}); stopLiveQR(); document.getElementById('qr_live_btn').textContent='Start Live Scan'; }
+    },300);
+  }catch{ alert('Camera blocked or unavailable'); }
+}
+function stopLiveQR(){ if(qrTimer){clearInterval(qrTimer);qrTimer=null;} if(qrStream){qrStream.getTracks().forEach(t=>t.stop()); qrStream=null;} qrVideo.pause(); qrVideo.removeAttribute('src'); qrVideo.style.display='none'; }
+document.getElementById('qr_live_btn')?.addEventListener('click',()=>{ if(qrStream){ stopLiveQR(); document.getElementById('qr_live_btn').textContent='Start Live Scan'; } else { startLiveQR(); document.getElementById('qr_live_btn').textContent='Stop Live Scan'; }});
+document.getElementById('qr_file')?.addEventListener('change',async(e)=>{const f=e.target.files[0]; if(!f)return; if(!('BarcodeDetector' in window)){alert('QR not supported for images on this browser');return;} const det=new BarcodeDetector({formats:['qr_code']}); const img=await createImageBitmap(f); const codes=await det.detect(img); if(codes&&codes[0]){qrOut.textContent=codes[0].rawValue; navigator.clipboard?.writeText(codes[0].rawValue).catch(()=>{});} else alert('No QR found in image');});
+
+/* ========= BACKUP / RESTORE + SETTINGS UI ========= */
+const K_CAL='pocketech.cal';
+function snapshotAll(){ return {version:'0.83',settings:getS(),calibration:load(K_CAL),loop:load(K_LOOP),tickets:load(K_TIX)}; }
+document.getElementById('bk_export')?.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(snapshotAll(),null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='pocketech_backup.json'; a.click(); URL.revokeObjectURL(url);});
+document.getElementById('bk_file')?.addEventListener('change',async(e)=>{const f=e.target.files[0]; if(!f)return; try{const txt=await f.text(); const data=JSON.parse(txt); if(data.settings) setS({...DEF,...data.settings}); if(Array.isArray(data.calibration)) save(K_CAL,data.calibration); if(Array.isArray(data.loop)) save(K_LOOP,data.loop); if(Array.isArray(data.tickets)) save(K_TIX,data.tickets); loadSettingsUI(); cal_render(); loop_render(); tix_render(); alert('Restore complete');}catch{alert('Invalid backup file');}});
+document.getElementById('bk_wipe')?.addEventListener('click',()=>{if(!confirm('Wipe ALL app data (settings, logs, tickets)?')) return; localStorage.removeItem(SKEY); localStorage.removeItem(K_CAL); localStorage.removeItem(K_LOOP); localStorage.removeItem(K_TIX); loadSettingsUI(); cal_render(); loop_render(); tix_render(); alert('Wiped');});
+
+function addMonthsISO(iso,m){ if(!m||m<=0) return ""; const d=new Date(iso); const day=d.getDate(); d.setMonth(d.getMonth()+m); if(d.getDate()<day) d.setDate(0); return d.toISOString().slice(0,10); }
+function dueStatus(nextISO){ if(!nextISO) return ""; const today=new Date(); today.setHours(0,0,0,0); const next=new Date(nextISO); const diffDays=Math.floor((next-today)/(1000*60*60*24)); if(diffDays<0) return "OVERDUE"; if(diffDays<=30) return "DUE SOON"; return "OK"; }
+function cal_add(){ const date=val('cal_date')||new Date().toISOString().slice(0,10); const intervalM=parseInt(document.getElementById('cal_interval').value||"0",10); const nextDueISO=intervalM?addMonthsISO(date, intervalM):""; const status=dueStatus(nextDueISO); const rec={date, tag:val('cal_tag'), dev:val('cal_dev'), lrv:parseFloat(val('cal_lrv')), urv:parseFloat(val('cal_urv')), af:val('cal_af'), al:val('cal_al'), tech:val('cal_tech'), notes:val('cal_notes'), intervalM, nextDueISO, status}; const rows=load(K_CAL); rows.push(rec); save(K_CAL,rows); cal_render(); }
+function cal_csv(){ const rows=load(K_CAL); const out=[['Date','Tag','Device','LRV','URV','As-Found','As-Left','Tech','Notes','NextDue','Status','IntervalMonths']]; rows.forEach(r=>out.push([r.date,r.tag,r.dev,r.lrv,r.urv,r.af,r.al,r.tech,r.notes,r.intervalM?(r.nextDueISO||''):'',r.intervalM?(r.status||''):'',r.intervalM||0])); downloadCSV('calibration.csv',out);}
+function cal_render(){ const rows=load(K_CAL); const tb=document.querySelector('#cal_tbl tbody'); if(!tb) return; tb.innerHTML=''; let mutated=false; rows.forEach(r=>{ const ns=dueStatus(r.nextDueISO||""); if(ns!==(r.status||"")){r.status=ns; mutated=true;} }); if(mutated) save(K_CAL,rows);
+  rows.forEach((r,i)=>{ const pill=r.status==="OVERDUE"?"pill pill-red":(r.status==="DUE SOON"?"pill pill-yellow":"pill"); tb.insertAdjacentHTML('beforeend', `<tr><td>${r.date||''}</td><td>${r.tag||''}</td><td>${r.dev||''}</td><td>${fmt(r.lrv)}</td><td>${fmt(r.urv)}</td><td>${r.af||''}</td><td>${r.al||''}</td><td>${r.tech||''}</td><td>${r.notes||''}</td><td>${r.intervalM?(r.nextDueISO||''):''}</td><td>${r.intervalM?`<span class="${pill}">${r.status||''}</span>`:''}</td><td><button class="btn danger" data-cal-del="${i}">✖</button></td></tr>`); });
+}
+document.addEventListener('click',e=>{ const d=e.target.getAttribute('data-cal-del'); if(d!==null){ const rows=load(K_CAL); rows.splice(parseInt(d,10),1); save(K_CAL,rows); cal_render(); }});
+document.getElementById('cal_add')?.addEventListener('click',cal_add);
+document.getElementById('cal_export')?.addEventListener('click',cal_csv);
+document.getElementById('cal_clear')?.addEventListener('click',()=>{if(confirm('Clear all calibration records?')){save(K_CAL,[]); cal_render();}});
+cal_render();
+
+/* ========= FIELD LINGO FILTER ========= */
+function filterTableRows(tbody, q){
+  const rows=[...tbody.querySelectorAll('tr')];
+  rows.forEach(tr=>{ const text=tr.textContent.toLowerCase(); tr.style.display = text.includes(q) ? '' : 'none'; });
+}
+document.getElementById('fl_search')?.addEventListener('input',e=>{
+  const q=e.target.value.trim().toLowerCase();
+  ['fl_alpha','fl_prowords','fl_prefix'].forEach(id=>{
+    const tb=document.querySelector('#'+id+' tbody'); if(tb) filterTableRows(tb,q);
+  });
+});
+
+/* ========= INSTALL / PWA + UPDATE / RESET ========= */
+const installBtn=document.getElementById('installBtn'); if(installBtn) installBtn.disabled=true;
+let deferredPrompt=null;
+function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
+function isSafari(){ return /^((?!chrome|android).)*safari/i.test(navigator.userAgent); }
+window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferredPrompt=e; if (installBtn) installBtn.disabled=false; });
+if (isIOS() && isSafari() && installBtn){ installBtn.disabled=false; }
+installBtn?.addEventListener('click', async ()=>{
+  if (deferredPrompt){
+    deferredPrompt.prompt(); try{ await deferredPrompt.userChoice; }catch{} deferredPrompt=null; installBtn.disabled=true; return;
+  }
+  if (isIOS() && isSafari()){ document.getElementById('iosInstallTip')?.style && (document.getElementById('iosInstallTip').style.display='flex'); return; }
+  alert('Your browser may not support direct install. Try Chrome/Edge or Add to Home Screen.');
+});
+document.getElementById('iosTipClose')?.addEventListener('click',()=>{ const m=document.getElementById('iosInstallTip'); if(m) m.style.display='none'; });
+
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+if (isStandalone) { installBtn?.style && (installBtn.style.display='none'); }
+
+/* Service worker + update/reset */
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').then(reg => {
-    // If a new SW is found, auto-activate it and reload
     reg.addEventListener('updatefound', () => {
       const nw = reg.installing;
       nw?.addEventListener('statechange', () => {
@@ -1485,44 +1376,30 @@ if ('serviceWorker' in navigator) {
         }
       });
     });
-
-    // When the new worker becomes controller, reload to get fresh app
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      window.location.reload();
-    });
+    navigator.serviceWorker.addEventListener('controllerchange', () => { window.location.reload(); });
   }).catch(()=>{});
 }
-
-// Manual “Update” button
 document.getElementById('checkUpdate')?.addEventListener('click', async () => {
-  try {
-    const reg = await navigator.serviceWorker.getRegistration();
-    await reg?.update();
-    reg?.waiting?.postMessage('SKIP_WAITING');
-    alert('Checking for updates… if found, the app will refresh.');
-  } catch {}
+  try { const reg = await navigator.serviceWorker.getRegistration(); await reg?.update(); reg?.waiting?.postMessage('SKIP_WAITING'); alert('Checking for updates… if found, the app will refresh.'); } catch {}
+});
+document.getElementById('resetApp')?.addEventListener('click', async () => {
+  if (!confirm('This will clear app cache. Continue?')) return;
+  try { const names = await caches.keys(); await Promise.all(names.map(n => caches.delete(n))); const reg = await navigator.serviceWorker.getRegistration(); await reg?.unregister(); } catch {}
+  alert('Cache reset complete. Reloading…'); location.reload();
 });
 
-// “Reset” button: nuke caches + unregister SW + clear local data
-document.getElementById('resetApp')?.addEventListener('click', async () => {
-  if (!confirm('This will clear app cache and local data. Continue?')) return;
-  try {
-    // Clear caches
-    const names = await caches.keys();
-    await Promise.all(names.map(n => caches.delete(n)));
-    // Unregister SW
-    const reg = await navigator.serviceWorker.getRegistration();
-    await reg?.unregister();
-  } catch {}
-  try {
-    // Clear local storage (keep if you don’t want data loss)
-    // localStorage.clear();
-  } catch {}
-  alert('Cache reset complete. The app will reload.');
-  location.reload();
-});
+/* ========= SETTINGS UI ========= */
+function loadSettingsUI(){const s=getS(); setVal('s_atm',s.atm); const p=document.getElementById('s_punit'); if(p) p.value=s.punit; const lu=document.getElementById('s_lunit'); if(lu) lu.value=s.lunit; const hh=document.getElementById('s_haptics'); if(hh) hh.checked=!!s.haptics; const atmEl=document.getElementById('atm'); if(atmEl) setVal('atm', s.atm);}
+loadSettingsUI();
+document.getElementById('s_save')?.addEventListener('click',()=>{const s=getS(); const a=parseFloat(val('s_atm')); if(!isNaN(a)) s.atm=a; const pu=document.getElementById('s_punit'); if(pu) s.punit=pu.value; const lu=document.getElementById('s_lunit'); if(lu) s.lunit=lu.value; const hh=document.getElementById('s_haptics'); if(hh) s.haptics=hh.checked; setS(s); const atmEl=document.getElementById('atm'); if(atmEl) setVal('atm', s.atm); alert('Saved');});
+document.getElementById('s_reset')?.addEventListener('click',()=>{setS(DEF); loadSettingsUI(); alert('Reset');});
+
+/* ========= DEFAULTS ========= */
+const slider=document.getElementById('pct_slider'); if(slider){ slider.value=50; }
+setVal('sh_pct', 50); const rp=document.getElementById('read_pct'); if(rp) rp.textContent='50%'; const rm=document.getElementById('read_ma'); if(rm) rm.textContent='12';
+</script>
   
-<!-- iOS Add-to-Home instructions modal -->
+  <!-- iOS Add-to-Home instructions modal -->
 <div id="iosInstallTip" style="display:none;position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.55);align-items:center;justify-content:center">
   <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;max-width:520px;padding:16px">
     <h3 style="margin-top:0">Add to Home Screen</h3>
@@ -1531,10 +1408,9 @@ document.getElementById('resetApp')?.addEventListener('click', async () => {
       <li>Choose <strong>Add to Home Screen</strong>.</li>
       <li>Tap <strong>Add</strong>.</li>
     </ol>
-    <p class="muted">On iPhone/iPad, installation is done via Share → Add to Home Screen.</p>
+    <p class="muted">On iPhone/iPad, installation is via Share → Add to Home Screen.</p>
     <div style="text-align:right;margin-top:10px"><button class="btn" id="iosTipClose">Close</button></div>
   </div>
 </div>
-  </script>
 </body>
 </html>
