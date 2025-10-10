@@ -1,113 +1,76 @@
-// sw.js — PockeTech v0.83
-// ----------------------------------------------------
-// Strategy:
-// - Precache the app shell (index, manifest, icons)
-// - Navigation requests -> network first, fallback to cached index.html
-// - Same-origin GET requests -> stale-while-revalidate
-// - Clean up old caches on activate
-// ----------------------------------------------------
+// sw.js — robust update + sane caching
+const CACHE_VERSION = 'pocketech-v0.83.3';
+const HTML_CACHE = CACHE_VERSION + '-html';
+const ASSET_CACHE = CACHE_VERSION + '-assets';
 
-const SW_VERSION = 'v0.83';
-const CACHE_NAME = `pocketech-${SW_VERSION}`;
-const PRECACHE_ASSETS = [
-  './',                 // GH Pages root
+// files you want cached on install (add/trim as needed)
+const PRECACHE = [
+  '/',              // if your site is a root (GitHub Pages may need '/PockeTech/')
   './index.html',
   './manifest.webmanifest',
-  './sw.js',
-  // (optional) comment out if you don't have these:
+  './',             // GH Pages quirk
   './icons/icon-192.png',
   './icons/icon-512.png',
-  './favicon.ico'
 ];
 
-// Install: precache core assets
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_ASSETS))
-  );
+// Immediately take control on new SW
+self.addEventListener('install', (evt) => {
   self.skipWaiting();
-});
-
-// Activate: drop old caches
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((k) => k.startsWith('pocketech-') && k !== CACHE_NAME)
-          .map((k) => caches.delete(k))
-      )
-    )
+  evt.waitUntil(
+    caches.open(ASSET_CACHE).then((cache) => cache.addAll(PRECACHE).catch(()=>{}))
   );
-  self.clients.claim();
 });
 
-// Fetch handler
-self.addEventListener('fetch', (event) => {
-  const req = event.request;
+self.addEventListener('activate', (evt) => {
+  evt.waitUntil((async () => {
+    // Delete old caches
+    const names = await caches.keys();
+    await Promise.all(names.map(n => {
+      if (!n.startsWith(CACHE_VERSION)) return caches.delete(n);
+    }));
+    await self.clients.claim();
+  })());
+});
 
-  // Only handle GETs
-  if (req.method !== 'GET') return;
-
+// Network-first for HTML (so app updates), cache-first for assets
+self.addEventListener('fetch', (evt) => {
+  const req = evt.request;
   const url = new URL(req.url);
-  const isSameOrigin = url.origin === self.location.origin;
+  const isHTML = req.mode === 'navigate' ||
+    (req.headers.get('accept') || '').includes('text/html');
 
-  // 1) Navigation requests: Network first, fallback to cached index.html
-  if (req.mode === 'navigate') {
-    event.respondWith(
-      fetch(req)
-        .then((res) => {
-          // Cache a copy of index.html opportunistically
-          const resClone = res.clone();
-          caches.open(CACHE_NAME).then((c) => c.put('./index.html', resClone)).catch(()=>{});
-          return res;
-        })
-        .catch(() =>
-          caches.match('./index.html').then((cached) => cached || new Response('Offline', { status: 503 }))
-        )
-    );
+  if (isHTML) {
+    evt.respondWith((async () => {
+      try {
+        const fresh = await fetch(req, { cache: 'no-store' });
+        const cache = await caches.open(HTML_CACHE);
+        cache.put(req, fresh.clone());
+        return fresh;
+      } catch {
+        const cache = await caches.open(HTML_CACHE);
+        const cached = await cache.match(req);
+        return cached || caches.match('./index.html');
+      }
+    })());
     return;
   }
 
-  // 2) Same-origin static files: stale-while-revalidate
-  if (isSameOrigin) {
-    event.respondWith(staleWhileRevalidate(req));
-    return;
-  }
-
-  // 3) Cross-origin: try network, fall back to cache if we somehow precached it
-  event.respondWith(
-    fetch(req).catch(() => caches.match(req))
-  );
+  // assets: cache-first, then network
+  evt.respondWith((async () => {
+    const cached = await caches.match(req);
+    if (cached) return cached;
+    try {
+      const res = await fetch(req);
+      const cache = await caches.open(ASSET_CACHE);
+      cache.put(req, res.clone());
+      return res;
+    } catch {
+      return new Response('', { status: 503, statusText: 'Offline' });
+    }
+  })());
 });
 
-// Stale-while-revalidate helper
-async function staleWhileRevalidate(req) {
-  const cache = await caches.open(CACHE_NAME);
-  const cached = await cache.match(req);
-
-  const networkPromise = fetch(req)
-    .then((res) => {
-      // Only cache successful, basic/opaque responses for GET
-      if (res && res.status === 200 && (res.type === 'basic' || res.type === 'opaque')) {
-        cache.put(req, res.clone()).catch(()=>{});
-      }
-      return res;
-    })
-    .catch(() => null);
-
-  // Return cached immediately if we have it; otherwise wait for network
-  return cached || networkPromise || new Response('Offline', { status: 503 });
-}
-
-// Optional: handle messages from the page to control the SW
-self.addEventListener('message', (event) => {
-  const msg = event.data;
-  if (msg === 'SKIP_WAITING') {
-    self.skipWaiting();
-  } else if (msg === 'CLEAR_CACHE') {
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k.startsWith('pocketech-')).map((k) => caches.delete(k)))
-    );
-  }
+// Allow page to tell SW to activate now
+self.addEventListener('message', (evt) => {
+  if (evt.data === 'SKIP_WAITING') self.skipWaiting();
 });
