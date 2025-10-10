@@ -764,10 +764,11 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
     </div>
   </div>
 </section>
-
+  
 <!-- Loop Log -->
 <section id="loop">
   <h2>Loop Check Log</h2>
+
   <div class="card">
     <div class="row">
       <div class="col"><label>Date <input id="lp_date" type="date"></label></div>
@@ -778,9 +779,17 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
     <div class="row">
       <div class="col"><label>Expected <input id="lp_exp" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_exp">kbd</button></div>
       <div class="col"><label>Measured <input id="lp_meas" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_meas">kbd</button></div>
-      <div class="col"><label>Units
-        <select id="lp_units"><option value="%">%</option><option value="mA">mA</option><option value="psi">psi</option><option value="°F">°F</option><option value="EU">EU</option></select>
-      </label></div>
+      <div class="col">
+        <label>Units
+          <select id="lp_units">
+            <option value="%">%</option>
+            <option value="mA">mA</option>
+            <option value="psi">psi</option>
+            <option value="°F">°F</option>
+            <option value="EU">EU</option>
+          </select>
+        </label>
+      </div>
       <div class="col"><label>OK? <select id="lp_ok"><option value="YES">YES</option><option value="NO">NO</option></select></label></div>
     </div>
 
@@ -796,72 +805,34 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
       <div class="col"><label>LL <input id="lp_ll" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_ll">kbd</button></div>
       <div class="col"><label>L <input id="lp_l" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_l">kbd</button></div>
     </div>
+
     <div class="row">
-      <div class="col"><label>AL <input id="lp_al" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_al">kbd</button></div>
-      <div class="col"><label>AH <input id="lp_ah" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_ah">kbd</button></div>
       <div class="col"><label>H <input id="lp_h" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_h">kbd</button></div>
-    </div>
-    <div class="row">
       <div class="col"><label>HH <input id="lp_hh" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_hh">kbd</button></div>
       <div class="col"><label>HHH <input id="lp_hhh" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_hhh">kbd</button></div>
+    </div>
+
+    <div class="row">
       <div class="col"><label>Device Range <input id="lp_dev" placeholder="e.g., 0–250 psi"></label></div>
-    </div>
-
-    <div class="row">
       <div class="col"><label>Notes <input id="lp_notes" placeholder="optional note"></label></div>
       <div class="col"><button class="btn ok" id="lp_add">Add</button></div>
       <div class="col"><button class="btn" id="lp_export">Export CSV</button></div>
       <div class="col"><button class="btn danger" id="lp_clear">Clear All</button></div>
     </div>
+
     <div class="chipbar">
       <span class="chip green" id="loop-pass">Pass: 0</span>
       <span class="chip red" id="loop-fail">Fail: 0</span>
     </div>
   </div>
 
-  <div class="card">
-    <table id="lp_tbl"><thead>
-      <tr><th>Date</th><th>Tag</th><th>Point</th><th>Expected</th><th>Measured</th><th>Units</th><th>OK</th><th>Notes</th><th></th></tr>
-    </thead><tbody></tbody></table>
-  </div>
-</section>
-  
-  <!-- Entry form -->
-  <div class="card">
-    <div class="row">
-      <div class="col"><label>Date <input id="lp_date" type="date"></label></div>
-      <div class="col"><label>Tag <input id="lp_tag" placeholder="LT-204"></label></div>
-      <div class="col"><label>Point (AI/AO/DI/DO) <input id="lp_point" placeholder="AI-101"></label></div>
-    </div>
-    <div class="row">
-      <div class="col"><label>Expected <input id="lp_exp" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_exp">kbd</button></div>
-      <div class="col"><label>Measured <input id="lp_meas" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_meas">kbd</button></div>
-      <div class="col"><label>Units
-        <select id="lp_units">
-          <option value="%">%</option><option value="mA">mA</option><option value="psi">psi</option>
-          <option value="°F">°F</option><option value="EU">EU</option>
-        </select></label>
-      </div>
-      <div class="col"><label>OK? <select id="lp_ok"><option value="YES">YES</option><option value="NO">NO</option></select></label></div>
-    </div>
-    <div class="row">
-      <div class="col"><label>Notes <input id="lp_notes" placeholder="optional note"></label></div>
-      <div class="col"><button class="btn ok" id="lp_add">Add</button></div>
-      <div class="col"><button class="btn" id="lp_export">Export CSV</button></div>
-      <div class="col"><button class="btn danger" id="lp_clear">Clear All</button></div>
-    </div>
-    <div class="chipbar">
-      <span class="chip green" id="loop-pass">Pass: 0</span>
-      <span class="chip red" id="loop-fail">Fail: 0</span>
-    </div>
-  </div>
-
-  <!-- Table -->
   <div class="card">
     <table id="lp_tbl">
       <thead>
         <tr>
-          <th>Date</th><th>Tag</th><th>Point</th><th>Expected</th><th>Measured</th><th>Units</th><th>OK</th><th>Notes</th><th></th>
+          <th>Date</th><th>Tag</th><th>Point</th>
+          <th>Expected</th><th>Measured</th><th>Units</th>
+          <th>OK</th><th>Notes</th><th></th>
         </tr>
       </thead>
       <tbody></tbody>
