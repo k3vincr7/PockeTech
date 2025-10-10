@@ -111,6 +111,8 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
   <div class="row" style="gap:6px">
     <button id="installBtn" class="toggle">⬇️ Install</button>
     <button id="themeToggle" class="toggle">🌓 Theme</button>
+    <button id="checkUpdate" class="toggle">🔄 Update</button>
+    <button id="resetApp" class="toggle">🧨 Reset</button>
     <span class="badge" id="build-badge">v0.83</span>
   </div>
 </header>
@@ -1468,7 +1470,55 @@ function vd_calc(){
   }else s.textContent='';
 }
 document.getElementById('vd_calc')?.addEventListener('click',vd_calc);
-</script>
+
+// Register SW (keep your existing register code; just ensure it’s here)
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').then(reg => {
+    // If a new SW is found, auto-activate it and reload
+    reg.addEventListener('updatefound', () => {
+      const nw = reg.installing;
+      nw?.addEventListener('statechange', () => {
+        if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+          reg.waiting?.postMessage('SKIP_WAITING');
+        }
+      });
+    });
+
+    // When the new worker becomes controller, reload to get fresh app
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      window.location.reload();
+    });
+  }).catch(()=>{});
+}
+
+// Manual “Update” button
+document.getElementById('checkUpdate')?.addEventListener('click', async () => {
+  try {
+    const reg = await navigator.serviceWorker.getRegistration();
+    await reg?.update();
+    reg?.waiting?.postMessage('SKIP_WAITING');
+    alert('Checking for updates… if found, the app will refresh.');
+  } catch {}
+});
+
+// “Reset” button: nuke caches + unregister SW + clear local data
+document.getElementById('resetApp')?.addEventListener('click', async () => {
+  if (!confirm('This will clear app cache and local data. Continue?')) return;
+  try {
+    // Clear caches
+    const names = await caches.keys();
+    await Promise.all(names.map(n => caches.delete(n)));
+    // Unregister SW
+    const reg = await navigator.serviceWorker.getRegistration();
+    await reg?.unregister();
+  } catch {}
+  try {
+    // Clear local storage (keep if you don’t want data loss)
+    // localStorage.clear();
+  } catch {}
+  alert('Cache reset complete. The app will reload.');
+  location.reload();
+});
   
 <!-- iOS Add-to-Home instructions modal -->
 <div id="iosInstallTip" style="display:none;position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.55);align-items:center;justify-content:center">
@@ -1483,6 +1533,6 @@ document.getElementById('vd_calc')?.addEventListener('click',vd_calc);
     <div style="text-align:right;margin-top:10px"><button class="btn" id="iosTipClose">Close</button></div>
   </div>
 </div>
-
+  </script>
 </body>
 </html>
