@@ -761,36 +761,67 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
   </div>
 </section>
 
-  <!-- Loop Log -->
+<!-- Loop Log -->
 <section id="loop">
   <h2>Loop Check Log</h2>
-
-  <!-- Range Helper (optional context you can snapshot per row) -->
   <div class="card">
-    <h3 style="margin-top:0">Range Helper</h3>
     <div class="row">
-      <div class="col"><label>LRV (EU) <input id="lp_lrv" class="num" inputmode="decimal" placeholder="0"></label><button class="kbd-toggle" data-for="lp_lrv">kbd</button></div>
-      <div class="col"><label>URV (EU) <input id="lp_urv" class="num" inputmode="decimal" placeholder="100"></label><button class="kbd-toggle" data-for="lp_urv">kbd</button></div>
-      <div class="col"><label>EU Units <input id="lp_eu_units" placeholder="psi, °F, gpm…"></label></div>
-    </div>
-    <div class="row">
-      <div class="col"><label>Alarm Low (AL) <input id="lp_al" class="num" inputmode="decimal" placeholder="optional"></label><button class="kbd-toggle" data-for="lp_al">kbd</button></div>
-      <div class="col"><label>Alarm High (AH) <input id="lp_ah" class="num" inputmode="decimal" placeholder="optional"></label><button class="kbd-toggle" data-for="lp_ah">kbd</button></div>
-      <div class="col"><label>Device Range <input id="lp_dev" placeholder="e.g., 0–250 psi (3051)"></label></div>
-    </div>
-    <div class="row">
-      <div class="col"><button class="btn" id="lp_build">Build 0/25/50/75/100</button></div>
+      <div class="col"><label>Date <input id="lp_date" type="date"></label></div>
+      <div class="col"><label>Tag <input id="lp_tag" placeholder="LT-204"></label></div>
+      <div class="col"><label>Point (AI/AO/DI/DO) <input id="lp_point" placeholder="AI-101"></label></div>
     </div>
 
-    <div class="scroll-x" style="margin-top:8px">
-      <table id="lp_range_tbl">
-        <thead><tr><th>Label</th><th>EU</th><th>% Span</th><th>mA</th><th></th></tr></thead>
-        <tbody id="lp_range_tbody"></tbody>
-      </table>
+    <div class="row">
+      <div class="col"><label>Expected <input id="lp_exp" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_exp">kbd</button></div>
+      <div class="col"><label>Measured <input id="lp_meas" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_meas">kbd</button></div>
+      <div class="col"><label>Units
+        <select id="lp_units"><option value="%">%</option><option value="mA">mA</option><option value="psi">psi</option><option value="°F">°F</option><option value="EU">EU</option></select>
+      </label></div>
+      <div class="col"><label>OK? <select id="lp_ok"><option value="YES">YES</option><option value="NO">NO</option></select></label></div>
     </div>
-    <p class="muted" id="lp_range_note">Enter LRV/URV to populate. Tap “↘ Expected” to push a value into the Expected box.</p>
+
+    <!-- Range and alarms -->
+    <div class="row">
+      <div class="col"><label>LRV <input id="lp_lrv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_lrv">kbd</button></div>
+      <div class="col"><label>URV <input id="lp_urv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_urv">kbd</button></div>
+      <div class="col"><label>EU Units <input id="lp_eu_units" placeholder="psi, °F, etc."></label></div>
+    </div>
+
+    <div class="row">
+      <div class="col"><label>LLL <input id="lp_lll" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_lll">kbd</button></div>
+      <div class="col"><label>LL <input id="lp_ll" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_ll">kbd</button></div>
+      <div class="col"><label>L <input id="lp_l" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_l">kbd</button></div>
+    </div>
+    <div class="row">
+      <div class="col"><label>AL <input id="lp_al" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_al">kbd</button></div>
+      <div class="col"><label>AH <input id="lp_ah" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_ah">kbd</button></div>
+      <div class="col"><label>H <input id="lp_h" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_h">kbd</button></div>
+    </div>
+    <div class="row">
+      <div class="col"><label>HH <input id="lp_hh" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_hh">kbd</button></div>
+      <div class="col"><label>HHH <input id="lp_hhh" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_hhh">kbd</button></div>
+      <div class="col"><label>Device Range <input id="lp_dev" placeholder="e.g., 0–250 psi"></label></div>
+    </div>
+
+    <div class="row">
+      <div class="col"><label>Notes <input id="lp_notes" placeholder="optional note"></label></div>
+      <div class="col"><button class="btn ok" id="lp_add">Add</button></div>
+      <div class="col"><button class="btn" id="lp_export">Export CSV</button></div>
+      <div class="col"><button class="btn danger" id="lp_clear">Clear All</button></div>
+    </div>
+    <div class="chipbar">
+      <span class="chip green" id="loop-pass">Pass: 0</span>
+      <span class="chip red" id="loop-fail">Fail: 0</span>
+    </div>
   </div>
 
+  <div class="card">
+    <table id="lp_tbl"><thead>
+      <tr><th>Date</th><th>Tag</th><th>Point</th><th>Expected</th><th>Measured</th><th>Units</th><th>OK</th><th>Notes</th><th></th></tr>
+    </thead><tbody></tbody></table>
+  </div>
+</section>
+  
   <!-- Entry form -->
   <div class="card">
     <div class="row">
@@ -1077,65 +1108,98 @@ document.getElementById('cal_export')?.addEventListener('click',cal_csv);
 document.getElementById('cal_clear')?.addEventListener('click',()=>{if(confirm('Clear all calibration records?')){save(K_CAL,[]); cal_render();}});
 cal_render();
 
-/* ---------- Loop Log (with Range Helper) ---------- */
-/* Assumes: fmt(), load(), save(), and K_LOOP exist. If not, uncomment:
-const K_LOOP='pocketech.loop';
-*/
+/* ========= STORAGE HELPERS ========= */
+const K_LOOP = 'pocketech.loop';
+function load(k){ try{return JSON.parse(localStorage.getItem(k))||[]}catch{return[]} }
+function save(k,v){ localStorage.setItem(k,JSON.stringify(v)) }
+function fmt(v){ if(v===null||v===undefined||v==='')return ''; const n=Number(v); return Number.isFinite(n)? n.toFixed(2).replace(/\.00$/,''): v; }
 
-function updateLoopCounters(list){
-  const pass=list.filter(x=>x.ok==='YES').length;
-  const fail=list.length-pass;
-  document.getElementById('loop-pass').textContent = `Pass: ${pass}`;
-  document.getElementById('loop-fail').textContent = `Fail: ${fail}`;
+/* ========= LOOP LOG ========= */
+function loop_add(){
+  const safe = id => document.getElementById(id)?.value ?? "";
+  const rec = {
+    date: safe('lp_date') || new Date().toISOString().slice(0,10),
+    tag: safe('lp_tag'),
+    point: safe('lp_point'),
+    exp: safe('lp_exp'),
+    meas: safe('lp_meas'),
+    units: safe('lp_units'),
+    ok: safe('lp_ok'),
+    notes: safe('lp_notes'),
+    lrv: safe('lp_lrv'), urv: safe('lp_urv'),
+    euUnits: safe('lp_eu_units'),
+    lll: safe('lp_lll'), ll: safe('lp_ll'), l: safe('lp_l'),
+    al: safe('lp_al'), ah: safe('lp_ah'),
+    h: safe('lp_h'), hh: safe('lp_hh'), hhh: safe('lp_hhh'),
+    devRange: safe('lp_dev')
+  };
+  const rows = load(K_LOOP);
+  rows.push(rec);
+  save(K_LOOP, rows);
+  loop_render();
 }
 
 function loop_render(){
   const rows = load(K_LOOP);
-  const tb = document.querySelector('#lp_tbl tbody');
-  tb.innerHTML = '';
+  const tbody = document.querySelector('#lp_tbl tbody');
+  tbody.innerHTML = '';
+  let pass=0, fail=0;
   rows.forEach((r,i)=>{
-    tb.insertAdjacentHTML('beforeend', `
-      <tr>
-        <td>${r.date||''}</td>
-        <td>${r.tag||''}</td>
-        <td>${r.point||''}</td>
-        <td>${fmt(r.exp)}</td>
-        <td>${fmt(r.meas)}</td>
-        <td>${r.units||''}</td>
-        <td>${r.ok||''}</td>
-        <td>${r.notes||''}</td>
-        <td><button class="btn danger" data-lp-del="${i}">✖</button></td>
-      </tr>
-    `);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${r.date}</td>
+      <td>${r.tag}</td>
+      <td>${r.point}</td>
+      <td>${fmt(r.exp)}</td>
+      <td>${fmt(r.meas)}</td>
+      <td>${r.units}</td>
+      <td><span class="pill ${r.ok==='YES'?'green':''}">${r.ok}</span></td>
+      <td>${r.notes||''}</td>
+      <td>
+        <button class="btn" onclick="toggleDetails(${i}, this)">▶ Details</button>
+        <button class="btn danger" onclick="loop_delete(${i})">✖</button>
+      </td>`;
+    tbody.appendChild(tr);
+
+    const detailRow = document.createElement('tr');
+    detailRow.className = 'details';
+    detailRow.style.display = 'none';
+    detailRow.innerHTML = `
+      <td colspan="9">
+        <div class="grid">
+          <div class="kv"><span>LRV</span><strong>${fmt(r.lrv)||'—'}</strong></div>
+          <div class="kv"><span>URV</span><strong>${fmt(r.urv)||'—'}</strong></div>
+          <div class="kv"><span>Device Range</span><strong>${r.devRange||'—'}</strong></div>
+          <div class="kv"><span>LLL</span><strong>${fmt(r.lll)||'—'}</strong></div>
+          <div class="kv"><span>LL</span><strong>${fmt(r.ll)||'—'}</strong></div>
+          <div class="kv"><span>L</span><strong>${fmt(r.l)||'—'}</strong></div>
+          <div class="kv"><span>AL</span><strong>${fmt(r.al)||'—'}</strong></div>
+          <div class="kv"><span>AH</span><strong>${fmt(r.ah)||'—'}</strong></div>
+          <div class="kv"><span>H</span><strong>${fmt(r.h)||'—'}</strong></div>
+          <div class="kv"><span>HH</span><strong>${fmt(r.hh)||'—'}</strong></div>
+          <div class="kv"><span>HHH</span><strong>${fmt(r.hhh)||'—'}</strong></div>
+        </div>
+      </td>`;
+    tbody.appendChild(detailRow);
+
+    if(r.ok==='YES') pass++;
+    else fail++;
   });
-  updateLoopCounters(rows);
+  document.getElementById('loop-pass').textContent=`Pass: ${pass}`;
+  document.getElementById('loop-fail').textContent=`Fail: ${fail}`;
 }
 
-function loop_add(){
-  const safe = id => document.getElementById(id)?.value ?? "";
+function toggleDetails(index, btn){
+  const detailsRow = btn.closest('tr').nextElementSibling;
+  const open = detailsRow.style.display === 'table-row';
+  detailsRow.style.display = open ? 'none' : 'table-row';
+  btn.textContent = open ? '▶ Details' : '▼ Hide';
+}
 
-  const rec = {
-    date:  document.getElementById('lp_date').value || new Date().toISOString().slice(0,10),
-    tag:   safe('lp_tag'),
-    point: safe('lp_point'),
-    exp:   parseFloat(safe('lp_exp')),
-    meas:  parseFloat(safe('lp_meas')),
-    units: document.getElementById('lp_units').value || 'EU',
-    ok:    document.getElementById('lp_ok').value,
-    notes: safe('lp_notes'),
-
-    // Snapshot the current context
-    lrv:   parseFloat(safe('lp_lrv')),
-    urv:   parseFloat(safe('lp_urv')),
-    al:    parseFloat(safe('lp_al')),
-    ah:    parseFloat(safe('lp_ah')),
-    euUnits: safe('lp_eu_units').trim(),
-    devRange: safe('lp_dev').trim()
-  };
-
+function loop_delete(i){
   const rows = load(K_LOOP);
-  rows.push(rec);
-  save(K_LOOP, rows);
+  rows.splice(i,1);
+  save(K_LOOP,rows);
   loop_render();
 }
 
@@ -1143,108 +1207,83 @@ function loop_csv(){
   const rows=load(K_LOOP);
   const out=[[
     'Date','Tag','Point','Expected','Measured','Units','OK','Notes',
-    'LRV','URV','AL','AH','EU Units','Device Range'
+    'LRV','URV','LLL','LL','L','AL','AH','H','HH','HHH','EU Units','Device Range'
   ]];
-  rows.forEach(r=>out.push([
-    r.date, r.tag, r.point,
-    r.exp, r.meas, r.units||'',
-    r.ok, r.notes||'',
-    Number.isFinite(r.lrv)?r.lrv:'', Number.isFinite(r.urv)?r.urv:'',
-    Number.isFinite(r.al)?r.al:'',  Number.isFinite(r.ah)?r.ah:'',
-    r.euUnits||'', r.devRange||''
-  ]));
+  rows.forEach(r=>{
+    out.push([
+      r.date,r.tag,r.point,fmt(r.exp),fmt(r.meas),r.units,r.ok,r.notes,
+      fmt(r.lrv),fmt(r.urv),fmt(r.lll),fmt(r.ll),fmt(r.l),fmt(r.al),
+      fmt(r.ah),fmt(r.h),fmt(r.hh),fmt(r.hhh),r.euUnits,r.devRange
+    ]);
+  });
   downloadCSV('loop_log.csv', out);
 }
 
-// Delete / buttons
-document.addEventListener('click', e=>{
-  const d=e.target.getAttribute('data-lp-del');
-  if (d!==null){
-    const rows=load(K_LOOP);
-    rows.splice(parseInt(d,10),1);
-    save(K_LOOP,rows);
-    loop_render();
-  }
-});
-document.getElementById('lp_add').addEventListener('click', loop_add);
-document.getElementById('lp_export').addEventListener('click', loop_csv);
-document.getElementById('lp_clear').addEventListener('click', ()=>{
+document.getElementById('lp_add')?.addEventListener('click', loop_add);
+document.getElementById('lp_export')?.addEventListener('click', loop_csv);
+document.getElementById('lp_clear')?.addEventListener('click', ()=>{
   if(confirm('Clear all loop rows?')){ save(K_LOOP,[]); loop_render(); }
 });
-
-// ---------- Range Helper logic ----------
-function pctToMA(p){ return 4 + 16*(p/100); }
-function lp_build_rows(){
-  const L = parseFloat(document.getElementById('lp_lrv').value);
-  const U = parseFloat(document.getElementById('lp_urv').value);
-  const eu = (document.getElementById('lp_eu_units').value||'').trim();
-  const tb = document.getElementById('lp_range_tbody');
-  tb.innerHTML = '';
-
-  if (!Number.isFinite(L) || !Number.isFinite(U) || L===U){
-    document.getElementById('lp_range_note').textContent = 'Enter valid LRV and URV.';
-    return;
-  }
-
-  document.getElementById('lp_range_note').textContent =
-    'Tap a row’s “↘ Expected” to push into Expected.';
-
-  [0,25,50,75,100].forEach(p=>{
-    const euv = L + (U-L)*(p/100);
-    const ma  = pctToMA(p);
-    tb.insertAdjacentHTML('beforeend', `
-      <tr>
-        <td>${p}%</td>
-        <td>${fmt(euv)} ${eu}</td>
-        <td>${fmt(p)}%</td>
-        <td>${fmt(ma)} mA</td>
-        <td><button class="btn" data-push-exp="${euv}">↘ Expected</button></td>
-      </tr>
-    `);
-  });
-
-  // include alarms if present
-  const AL = parseFloat(document.getElementById('lp_al').value);
-  const AH = parseFloat(document.getElementById('lp_ah').value);
-  if (Number.isFinite(AL) || Number.isFinite(AH)){
-    if (Number.isFinite(AL)){
-      const p = ((AL - L)/(U-L))*100;
-      tb.insertAdjacentHTML('beforeend', `
-        <tr>
-          <td>AL</td><td>${fmt(AL)} ${eu}</td><td>${fmt(p)}%</td><td>${fmt(pctToMA(p))} mA</td>
-          <td><button class="btn" data-push-exp="${AL}">↘ Expected</button></td>
-        </tr>`);
-    }
-    if (Number.isFinite(AH)){
-      const p = ((AH - L)/(U-L))*100;
-      tb.insertAdjacentHTML('beforeend', `
-        <tr>
-          <td>AH</td><td>${fmt(AH)} ${eu}</td><td>${fmt(p)}%</td><td>${fmt(pctToMA(p))} mA</td>
-          <td><button class="btn" data-push-exp="${AH}">↘ Expected</button></td>
-        </tr>`);
-    }
-  }
-}
-
-// push-to-Expected handler
-document.addEventListener('click', e=>{
-  const v = e.target.getAttribute('data-push-exp');
-  if (v!==null){
-    document.getElementById('lp_exp').value = fmt(parseFloat(v));
-  }
-});
-
-document.getElementById('lp_build').addEventListener('click', lp_build_rows);
-
-// optional: live rebuild when LRV/URV change
-['lp_lrv','lp_urv','lp_al','lp_ah','lp_eu_units'].forEach(id=>{
-  const el=document.getElementById(id);
-  el?.addEventListener('input', ()=>{ /* debounce-lite */ clearTimeout(el._t); el._t=setTimeout(lp_build_rows,150); });
-});
-
-// Initial render
 loop_render();
 
+/* ========= 4–20 mA Helper ========= */
+const sh_lrv=document.getElementById('sh_lrv');
+const sh_urv=document.getElementById('sh_urv');
+const sh_ma=document.getElementById('sh_ma');
+const sh_pct=document.getElementById('sh_pct');
+const sh_eu=document.getElementById('sh_eu');
+
+function fromMA(){
+  const LRV=parseFloat(sh_lrv.value)||0;
+  const URV=parseFloat(sh_urv.value)||100;
+  const span=URV-LRV;
+  const ma=parseFloat(sh_ma.value)||4;
+  const pct=((ma-4)/16)*100;
+  const isSqrt=document.getElementById('sqrt_mode').checked;
+  const eu=isSqrt ? LRV+span*Math.pow(pct/100,2) : LRV+span*(pct/100);
+  sh_pct.value=pct.toFixed(2);
+  sh_eu.value=eu.toFixed(2);
+  document.getElementById('read_ma').textContent=ma.toFixed(2);
+  document.getElementById('read_pct').textContent=pct.toFixed(2);
+  document.getElementById('read_eu').textContent=eu.toFixed(2);
+}
+
+function fromPct(){
+  const LRV=parseFloat(sh_lrv.value)||0;
+  const URV=parseFloat(sh_urv.value)||100;
+  const span=URV-LRV;
+  const pct=parseFloat(sh_pct.value)||0;
+  const isSqrt=document.getElementById('sqrt_mode').checked;
+  const eu=isSqrt ? LRV+span*Math.pow(pct/100,2) : LRV+span*(pct/100);
+  const ma=4+(pct/100)*16;
+  sh_ma.value=ma.toFixed(2);
+  sh_eu.value=eu.toFixed(2);
+  document.getElementById('read_ma').textContent=ma.toFixed(2);
+  document.getElementById('read_pct').textContent=pct.toFixed(2);
+  document.getElementById('read_eu').textContent=eu.toFixed(2);
+}
+
+function fromEU(){
+  const LRV=parseFloat(sh_lrv.value)||0;
+  const URV=parseFloat(sh_urv.value)||100;
+  const span=URV-LRV;
+  const eu=parseFloat(sh_eu.value)||0;
+  const isSqrt=document.getElementById('sqrt_mode').checked;
+  let pct = ((eu - LRV)/span)*100;
+  if(isSqrt) pct = Math.sqrt((eu - LRV)/span)*100;
+  const ma=4+(pct/100)*16;
+  sh_ma.value=ma.toFixed(2);
+  sh_pct.value=pct.toFixed(2);
+  document.getElementById('read_ma').textContent=ma.toFixed(2);
+  document.getElementById('read_pct').textContent=pct.toFixed(2);
+  document.getElementById('read_eu').textContent=eu.toFixed(2);
+}
+
+document.getElementById('sh_from_ma')?.addEventListener('click', fromMA);
+document.getElementById('sh_from_pct')?.addEventListener('click', fromPct);
+document.getElementById('sh_from_eu')?.addEventListener('click', fromEU);
+document.getElementById('sqrt_mode')?.addEventListener('change', fromMA);
+  
 /* ======= TICKETS ======= */
 async function fileToDataURL(file){return new Promise(res=>{const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.readAsDataURL(file);});}
 function tix_render(){const rows=load(K_TIX); const tb=document.querySelector('#tk_tbl tbody'); if(!tb) return; tb.innerHTML=''; rows.forEach((r,i)=>{const img=r.photo?`<img src="${r.photo}" alt="photo" style="max-height:36px;border-radius:6px;border:1px solid var(--border)">`:''; tb.insertAdjacentHTML('beforeend',`<tr><td>${r.date||''}</td><td>${r.area||''}</td><td>${r.tag||''}</td><td>${r.sum||''}</td><td>${r.status||''}</td><td>${img}</td><td><button class="btn danger" data-tk-del="${i}">✖</button></td></tr>`);});}
