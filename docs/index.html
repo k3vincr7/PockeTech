@@ -988,35 +988,74 @@ function toCSV(rows){return rows.map(r=>r.map(c=>{const s=(c??'').toString();ret
 function downloadCSV(name,rows){const blob=new Blob([toCSV(rows)],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
 const val=id=>document.getElementById(id)?.value||''; const setVal=(id,v)=>{const el=document.getElementById(id); if(el) el.value=v};
 
-/* ========= SIMPLE ROUTER (Home <-> Pages) ========= */
+/* ======= SIMPLE ROUTER (Home <-> Pages) — hardened ======= */
 (function(){
-  const PAGES=[...document.querySelectorAll('main section')];
-  const backBtn=document.getElementById('backBtn');
-  const titleEl=document.getElementById('appTitle');
-  const ALIAS={ jr:'jrtech', ohms:'ohm_drop', lingo:'field_lingo' };
-  const resolveId=id=>ALIAS[id]||id;
+  // Grab ALL <section> elements anywhere in the document
+  const PAGES = [...document.querySelectorAll('section')];
+  const backBtn = document.getElementById('backBtn');
+  const titleEl = document.getElementById('appTitle');
+
+  // Short aliases used by home tiles -> real section IDs
+  const ALIAS = { jr:'jrtech', ohms:'ohm_drop', lingo:'field_lingo' };
+  const resolveId = id => ALIAS[id] || id;
 
   function showPage(id){
-    const target=resolveId(id);
-    PAGES.forEach(s=> s.style.display = (s.id===target?'block':'none'));
-    backBtn.style.display = (target==='home'?'none':'inline-block');
-    const h2=document.querySelector(`section#${target} > h2`);
+    const target = resolveId(id);
+    // Hide everything except the target
+    PAGES.forEach(s => { s.style.display = (s.id === target ? 'block' : 'none'); });
+
+    // Back button + title
+    backBtn.style.display = (target === 'home' ? 'none' : 'inline-block');
+    const h2 = document.querySelector(`section#${target} > h2`);
     titleEl.textContent = h2 ? `PockeTech — ${h2.textContent}` : 'PockeTech — Field Tools';
-    if(location.hash.replace('#','')!==target) history.pushState({id:target},'', '#'+target);
+
+    // Update hash (avoid loops)
+    if (location.hash.replace('#','') !== target) {
+      history.pushState({id: target}, '', '#'+target);
+    }
+
+    // Always jump to top
     window.scrollTo(0,0);
   }
 
-  document.addEventListener('click',e=>{
-    const go=e.target.closest('[data-go]'); if(!go) return;
-    e.preventDefault(); showPage(go.getAttribute('data-go'));
+  // Generic nav helper: accepts id or "#id"
+  function navTo(raw){
+    if (!raw) return;
+    const id = raw.replace('#','');
+    const ok = PAGES.some(s => s.id === resolveId(id));
+    showPage(ok ? id : 'home');
+  }
+
+  // Clicks: support multiple attributes and anchor links
+  document.addEventListener('click', e => {
+    // data-go (home tiles)
+    const go = e.target.closest('[data-go]');
+    if (go) { e.preventDefault(); return navTo(go.getAttribute('data-go')); }
+
+    // data-nav / data-jt-nav (buttons inside pages)
+    const dn = e.target.closest('[data-nav],[data-jt-nav]');
+    if (dn) { 
+      e.preventDefault(); 
+      return navTo(dn.getAttribute('data-nav') || dn.getAttribute('data-jt-nav')); 
+    }
+
+    // <a href="#section">
+    const a = e.target.closest('a[href^="#"]');
+    if (a) { e.preventDefault(); return navTo(a.getAttribute('href')); }
   });
-  backBtn?.addEventListener('click',e=>{e.preventDefault();showPage('home');});
-  window.addEventListener('popstate',e=>{
-    const id=e.state?.id || (location.hash||'#home').replace('#','');
-    showPage(PAGES.some(s=>s.id===resolveId(id))?id:'home');
+
+  // Back button
+  backBtn.addEventListener('click', e => { e.preventDefault(); navTo('home'); });
+
+  // Browser back/forward
+  window.addEventListener('popstate', e => {
+    const id = e.state?.id || (location.hash || '#home').replace('#','');
+    navTo(id);
   });
-  const initial=(location.hash||'#home').replace('#','');
-  showPage(PAGES.some(s=>s.id===resolveId(initial))?initial:'home');
+
+  // Initial load
+  const initial = (location.hash || '#home').replace('#','');
+  navTo(initial);
 })();
 
 /* ========= FLOATING NUMBER PAD ========= */
