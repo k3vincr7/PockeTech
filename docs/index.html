@@ -95,6 +95,9 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
 .pill{padding:.15rem .5rem;border-radius:999px;border:1px solid var(--border)}
 .pill-yellow{background:rgba(255,200,0,.15)}
 .pill-red{background:rgba(255,0,0,.15)}
+.pill{padding:.15rem .5rem;border-radius:999px;border:1px solid var(--border)}
+.pill-green{background:rgba(0,200,0,.12)}
+.pill-red{background:rgba(200,0,0,.12)}
 
 /* Loop Range Helper: mobile-safe wide table */
 .scroll-x{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
@@ -765,200 +768,86 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
   </div>
 </section>
   
-/* ================= Loop Log (with Helper Snapshot) ================= */
+<!-- Loop Log -->
+<section id="loop">
+  <h2>Loop Check Log</h2>
 
-const K_LOOP = 'pocketech.loop';
+  <!-- Entry form (no Expected/Measured) -->
+  <div class="card">
+    <div class="row">
+      <div class="col"><label>Date <input id="lp_date" type="date"></label></div>
+      <div class="col"><label>Tag <input id="lp_tag" placeholder="LT-204"></label></div>
+      <div class="col"><label>Point (AI/AO/DI/DO) <input id="lp_point" placeholder="AI-101"></label></div>
+    </div>
 
-/* Add a row */
-function loop_add(){
-  const safe = id => document.getElementById(id)?.value ?? "";
+    <div class="row">
+      <div class="col">
+        <label>Units
+          <select id="lp_units">
+            <option value="%">%</option>
+            <option value="mA">mA</option>
+            <option value="psi">psi</option>
+            <option value="°F">°F</option>
+            <option value="EU">EU</option>
+          </select>
+        </label>
+      </div>
+      <div class="col">
+        <label>OK?
+          <select id="lp_ok">
+            <option value="YES">YES</option>
+            <option value="NO">NO</option>
+          </select>
+        </label>
+      </div>
+      <div class="col"><label>Notes <input id="lp_notes" placeholder="optional note"></label></div>
+    </div>
 
-  const rec = {
-    // Core
-    date: safe('lp_date') || new Date().toISOString().slice(0,10),
-    tag: safe('lp_tag'),
-    point: safe('lp_point'),
-    exp: safe('lp_exp'),
-    meas: safe('lp_meas'),
-    units: safe('lp_units'),
-    ok: safe('lp_ok'),
-    notes: safe('lp_notes'),
+    <!-- Range & alarms snapshot -->
+    <div class="row">
+      <div class="col"><label>LRV <input id="lp_lrv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_lrv">kbd</button></div>
+      <div class="col"><label>URV <input id="lp_urv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_urv">kbd</button></div>
+      <div class="col"><label>EU Units <input id="lp_eu_units" placeholder="psi, °F, etc."></label></div>
+    </div>
 
-    // Range & alarms (no AL/AH)
-    lrv: safe('lp_lrv'),
-    urv: safe('lp_urv'),
-    euUnits: safe('lp_eu_units'),
-    lll: safe('lp_lll'),
-    ll:  safe('lp_ll'),
-    l:   safe('lp_l'),
-    h:   safe('lp_h'),
-    hh:  safe('lp_hh'),
-    hhh: safe('lp_hhh'),
-    devRange: safe('lp_dev'),
+    <div class="row">
+      <div class="col"><label>LLL <input id="lp_lll" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_lll">kbd</button></div>
+      <div class="col"><label>LL <input id="lp_ll" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_ll">kbd</button></div>
+      <div class="col"><label>L <input id="lp_l" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_l">kbd</button></div>
+    </div>
+    <div class="row">
+      <div class="col"><label>H <input id="lp_h" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_h">kbd</button></div>
+      <div class="col"><label>HH <input id="lp_hh" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_hh">kbd</button></div>
+      <div class="col"><label>HHH <input id="lp_hhh" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_hhh">kbd</button></div>
+    </div>
+    <div class="row">
+      <div class="col"><label>Device Range <input id="lp_dev" placeholder="e.g., 0–250 psi"></label></div>
+    </div>
 
-    // 4–20 mA Helper snapshot
-    sh_lrv:   safe('sh_lrv'),
-    sh_urv:   safe('sh_urv'),
-    sh_eulbl: safe('sh_eulbl'),
-    sh_ma:    safe('sh_ma'),
-    sh_pct:   safe('sh_pct'),
-    sh_eu:    safe('sh_eu')
-  };
+    <div class="row">
+      <div class="col"><button class="btn ok" id="lp_add">Add</button></div>
+      <div class="col"><button class="btn" id="lp_export">Export CSV</button></div>
+      <div class="col"><button class="btn danger" id="lp_clear">Clear All</button></div>
+    </div>
 
-  const rows = load(K_LOOP);
-  rows.push(rec);
-  save(K_LOOP, rows);
-  loop_render();
-}
+    <div class="chipbar">
+      <span class="chip green" id="loop-pass">Pass: 0</span>
+      <span class="chip red" id="loop-fail">Fail: 0</span>
+    </div>
+  </div>
 
-/* Render table + counters */
-function loop_render(){
-  const rows = load(K_LOOP);
-  const tbody = document.querySelector('#lp_tbl tbody');
-  if (!tbody) return;
-  tbody.innerHTML = '';
-
-  let pass=0, fail=0;
-
-  rows.forEach((r,i)=>{
-    // Main row
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${r.date||''}</td>
-      <td>${r.tag||''}</td>
-      <td>${r.point||''}</td>
-      <td>${fmt(r.exp)}</td>
-      <td>${fmt(r.meas)}</td>
-      <td>${r.units||''}</td>
-      <td>${r.ok||''}</td>
-      <td>${r.notes||''}</td>
-      <td>
-        <button class="btn" onclick="toggleDetails(${i}, this)">▶ Details</button>
-        <button class="btn danger" onclick="loop_delete(${i})">✖</button>
-      </td>`;
-    tbody.appendChild(tr);
-
-    // Details row
-    const detailRow = document.createElement('tr');
-    detailRow.className = 'details';
-    detailRow.style.display = 'none';
-    detailRow.innerHTML = `
-      <td colspan="9">
-        <div class="grid">
-
-          <div class="card">
-            <div class="rowline"><strong>Range & EU</strong></div>
-            <div class="row" style="margin-top:6px">
-              <div class="col"><div class="muted">LRV</div><div class="big">${fmt(r.lrv)||'—'}</div></div>
-              <div class="col"><div class="muted">URV</div><div class="big">${fmt(r.urv)||'—'}</div></div>
-              <div class="col"><div class="muted">EU Units</div><div class="big">${r.euUnits||'—'}</div></div>
-              <div class="col"><div class="muted">Device Range</div><div class="big">${r.devRange||'—'}</div></div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="rowline"><strong>Alarms</strong></div>
-            <div class="row" style="margin-top:6px">
-              <div class="col"><div class="muted">LLL</div><div class="big">${fmt(r.lll)||'—'}</div></div>
-              <div class="col"><div class="muted">LL</div><div class="big">${fmt(r.ll)||'—'}</div></div>
-              <div class="col"><div class="muted">L</div><div class="big">${fmt(r.l)||'—'}</div></div>
-              <div class="col"><div class="muted">H</div><div class="big">${fmt(r.h)||'—'}</div></div>
-              <div class="col"><div class="muted">HH</div><div class="big">${fmt(r.hh)||'—'}</div></div>
-              <div class="col"><div class="muted">HHH</div><div class="big">${fmt(r.hhh)||'—'}</div></div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="rowline"><strong>4–20 mA Helper Snapshot</strong></div>
-            <div class="row" style="margin-top:6px">
-              <div class="col"><div class="muted">Helper LRV</div><div class="big">${fmt(r.sh_lrv)||'—'}</div></div>
-              <div class="col"><div class="muted">Helper URV</div><div class="big">${fmt(r.sh_urv)||'—'}</div></div>
-              <div class="col"><div class="muted">EU Label</div><div class="big">${r.sh_eulbl||'—'}</div></div>
-              <div class="col"><div class="muted">mA</div><div class="big">${fmt(r.sh_ma)||'—'}</div></div>
-              <div class="col"><div class="muted">%</div><div class="big">${fmt(r.sh_pct)||'—'}</div></div>
-              <div class="col"><div class="muted">EU</div><div class="big">${fmt(r.sh_eu)||'—'}</div></div>
-            </div>
-          </div>
-
-        </div>
-      </td>`;
-    tbody.appendChild(detailRow);
-
-    if (r.ok==='YES') pass++; else fail++;
-  });
-
-  const pEl=document.getElementById('loop-pass');
-  const fEl=document.getElementById('loop-fail');
-  if(pEl) pEl.textContent = `Pass: ${pass}`;
-  if(fEl) fEl.textContent = `Fail: ${fail}`;
-}
-
-/* Toggle details row */
-function toggleDetails(index, btn){
-  const detailsRow = btn.closest('tr').nextElementSibling;
-  const open = detailsRow.style.display === 'table-row';
-  detailsRow.style.display = open ? 'none' : 'table-row';
-  btn.textContent = open ? '▶ Details' : '▼ Hide';
-}
-
-/* Delete one row */
-function loop_delete(i){
-  const rows = load(K_LOOP);
-  rows.splice(i,1);
-  save(K_LOOP,rows);
-  loop_render();
-}
-
-/* Export CSV (no AL/AH) + helper snapshot */
-function loop_csv(){
-  const rows = load(K_LOOP);
-  const out = [[
-    'Date','Tag','Point','Expected','Measured','Units','OK','Notes',
-    'LRV','URV','LLL','LL','L','H','HH','HHH','EU Units','Device Range',
-    'Helper LRV','Helper URV','Helper EU Units','Helper mA','Helper %','Helper EU'
-  ]];
-
-  rows.forEach(r=>{
-    out.push([
-      r.date || '',
-      r.tag || '',
-      r.point || '',
-      fmt(r.exp),
-      fmt(r.meas),
-      r.units || '',
-      r.ok || '',
-      r.notes || '',
-      fmt(r.lrv),
-      fmt(r.urv),
-      fmt(r.lll),
-      fmt(r.ll),
-      fmt(r.l),
-      fmt(r.h),
-      fmt(r.hh),
-      fmt(r.hhh),
-      r.euUnits || '',
-      r.devRange || '',
-      fmt(r.sh_lrv),
-      fmt(r.sh_urv),
-      r.sh_eulbl || '',
-      fmt(r.sh_ma),
-      fmt(r.sh_pct),
-      fmt(r.sh_eu)
-    ]);
-  });
-
-  downloadCSV('loop_log.csv', out);
-}
-
-/* Wire buttons */
-document.getElementById('lp_add')?.addEventListener('click', loop_add);
-document.getElementById('lp_export')?.addEventListener('click', loop_csv);
-document.getElementById('lp_clear')?.addEventListener('click', ()=>{
-  if(confirm('Clear all loop rows?')){ save(K_LOOP,[]); loop_render(); }
-});
-
-/* First paint */
-loop_render();
+  <!-- Table w/ collapsible Details -->
+  <div class="card">
+    <table id="lp_tbl">
+      <thead>
+        <tr>
+          <th>Date</th><th>Tag</th><th>Point</th><th>Units</th><th>OK</th><th>Notes</th><th></th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
   
   <!-- Tickets -->
   <section id="tickets">
@@ -1335,93 +1224,155 @@ function vd_calc(){
 }
 document.getElementById('vd_calc')?.addEventListener('click',vd_calc);
 
-/* ========= LOOP LOG (with Range Helper + CSV) ========= */
-const K_LOOP='pocketech.loop';
+/* ========= LOOP LOG (Fancy, no Expected/Measured) ========= */
+const K_LOOP = 'pocketech.loop';
 
-function updateLoopCounters(list){
-  const pass=list.filter(x=>x.ok==='YES').length;
-  const fail=list.length-pass;
-  document.getElementById('loop-pass').textContent = `Pass: ${pass}`;
-  document.getElementById('loop-fail').textContent = `Fail: ${fail}`;
+// helpers assumed elsewhere: load(k), save(k), fmt(v)
+function loop_add(){
+  const safe = id => document.getElementById(id)?.value ?? "";
+
+  const rec = {
+    // core
+    date: safe('lp_date') || new Date().toISOString().slice(0,10),
+    tag: safe('lp_tag'),
+    point: safe('lp_point'),
+    units: safe('lp_units'),
+    ok: safe('lp_ok'),
+    notes: safe('lp_notes'),
+
+    // range/alarms snapshot
+    lrv: safe('lp_lrv'), urv: safe('lp_urv'),
+    euUnits: safe('lp_eu_units'),
+    lll: safe('lp_lll'), ll: safe('lp_ll'), l: safe('lp_l'),
+    h: safe('lp_h'), hh: safe('lp_hh'), hhh: safe('lp_hhh'),
+    devRange: safe('lp_dev'),
+
+    // snapshot 4–20 mA helper (including sqrt)
+    sh_lrv: document.getElementById('sh_lrv')?.value ?? '',
+    sh_urv: document.getElementById('sh_urv')?.value ?? '',
+    sh_eulbl: document.getElementById('sh_eulbl')?.value ?? '',
+    sh_ma: document.getElementById('sh_ma')?.value ?? '',
+    sh_pct: document.getElementById('sh_pct')?.value ?? '',
+    sh_eu: document.getElementById('sh_eu')?.value ?? '',
+    sh_sqrt: !!document.getElementById('sqrt_mode')?.checked
+  };
+
+  const rows = load(K_LOOP);
+  rows.push(rec);
+  save(K_LOOP, rows);
+  loop_render();
+}
+
+function pillClass(ok){
+  return ok==='YES' ? 'pill pill-green' : 'pill pill-red';
 }
 
 function loop_render(){
   const rows = load(K_LOOP);
-  const tb = document.querySelector('#lp_tbl tbody'); if(!tb) return;
-  tb.innerHTML = '';
-  rows.forEach((r,i)=>{
-    tb.insertAdjacentHTML('beforeend', `
-      <tr>
-        <td>${r.date||''}</td>
-        <td>${r.tag||''}</td>
-        <td>${r.point||''}</td>
-        <td>${fmt(r.exp)}</td>
-        <td>${fmt(r.meas)}</td>
-        <td>${r.units||''}</td>
-        <td>${r.ok||''}</td>
-        <td>${r.notes||''}</td>
-        <td>
-          <button class="btn" onclick="toggleDetails(${i}, this)">▶ Details</button>
-          <button class="btn danger" onclick="loop_delete(${i})">✖</button>
-        </td>
-      </tr>
-      <tr class="details" style="display:none">
-        <td colspan="9">
-          <div class="grid">
-            <div class="kv"><span>LRV</span><strong>${fmt(r.lrv)||'—'}</strong></div>
-            <div class="kv"><span>URV</span><strong>${fmt(r.urv)||'—'}</strong></div>
-            <div class="kv"><span>Device Range</span><strong>${r.devRange||'—'}</strong></div>
-            <div class="kv"><span>LLL</span><strong>${fmt(r.lll)||'—'}</strong></div>
-            <div class="kv"><span>LL</span><strong>${fmt(r.ll)||'—'}</strong></div>
-            <div class="kv"><span>L</span><strong>${fmt(r.l)||'—'}</strong></div>
-            <div class="kv"><span>AL</span><strong>${fmt(r.al)||'—'}</strong></div>
-            <div class="kv"><span>AH</span><strong>${fmt(r.ah)||'—'}</strong></div>
-            <div class="kv"><span>H</span><strong>${fmt(r.h)||'—'}</strong></div>
-            <div class="kv"><span>HH</span><strong>${fmt(r.hh)||'—'}</strong></div>
-            <div class="kv"><span>HHH</span><strong>${fmt(r.hhh)||'—'}</strong></div>
-          </div>
-        </td>
-      </tr>
-    `);
-  });
-  updateLoopCounters(rows);
-}
-function toggleDetails(_i, btn){ const row=btn.closest('tr').nextElementSibling; const open=row.style.display==='table-row'; row.style.display=open?'none':'table-row'; btn.textContent=open?'▶ Details':'▼ Hide'; }
-function loop_delete(i){ const rows=load(K_LOOP); rows.splice(i,1); save(K_LOOP,rows); loop_render(); }
+  const tbody = document.querySelector('#lp_tbl tbody');
+  if (!tbody) return;
 
-function loop_add(){
-  const gv=id=>document.getElementById(id)?.value ?? "";
-  const rec = {
-    date: gv('lp_date') || new Date().toISOString().slice(0,10),
-    tag: gv('lp_tag'), point: gv('lp_point'),
-    exp: parseFloat(gv('lp_exp')), meas: parseFloat(gv('lp_meas')),
-    units: gv('lp_units'), ok: gv('lp_ok'), notes: gv('lp_notes'),
-    lrv: parseFloat(gv('lp_lrv')), urv: parseFloat(gv('lp_urv')),
-    euUnits: gv('lp_eu_units'),
-    lll: parseFloat(gv('lp_lll')), ll: parseFloat(gv('lp_ll')), l: parseFloat(gv('lp_l')),
-    al: parseFloat(gv('lp_al')), ah: parseFloat(gv('lp_ah')),
-    h: parseFloat(gv('lp_h')), hh: parseFloat(gv('lp_hh')), hhh: parseFloat(gv('lp_hhh')),
-    devRange: gv('lp_dev')
-  };
-  const rows=load(K_LOOP); rows.push(rec); save(K_LOOP,rows); loop_render();
+  tbody.innerHTML = '';
+  let pass = 0, fail = 0;
+
+  rows.forEach((r,i)=>{
+    // main row
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${r.date||''}</td>
+      <td>${r.tag||''}</td>
+      <td>${r.point||''}</td>
+      <td>${r.units||''}</td>
+      <td><span class="${pillClass(r.ok)}">${r.ok||''}</span></td>
+      <td>${r.notes||''}</td>
+      <td>
+        <button class="btn" onclick="toggleDetails(${i}, this)">▶ Details</button>
+        <button class="btn danger" onclick="loop_delete(${i})">✖</button>
+      </td>`;
+    tbody.appendChild(tr);
+
+    // details row
+    const detailRow = document.createElement('tr');
+    detailRow.className = 'details';
+    detailRow.style.display = 'none';
+    detailRow.innerHTML = `
+      <td colspan="7">
+        <div class="grid">
+          <div class="card">
+            <h4 style="margin:0 0 6px">Range & Alarms</h4>
+            <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px">
+              <div><div class="muted">LRV</div><div class="big">${fmt(r.lrv)||'—'}</div></div>
+              <div><div class="muted">URV</div><div class="big">${fmt(r.urv)||'—'}</div></div>
+              <div><div class="muted">EU Units</div><div class="big">${r.euUnits||'—'}</div></div>
+              <div><div class="muted">Device Range</div><div class="big">${r.devRange||'—'}</div></div>
+              <div><div class="muted">LLL</div><div class="big">${fmt(r.lll)||'—'}</div></div>
+              <div><div class="muted">LL</div><div class="big">${fmt(r.ll)||'—'}</div></div>
+              <div><div class="muted">L</div><div class="big">${fmt(r.l)||'—'}</div></div>
+              <div><div class="muted">H</div><div class="big">${fmt(r.h)||'—'}</div></div>
+              <div><div class="muted">HH</div><div class="big">${fmt(r.hh)||'—'}</div></div>
+              <div><div class="muted">HHH</div><div class="big">${fmt(r.hhh)||'—'}</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <h4 style="margin:0 0 6px">4–20 mA Helper Snapshot</h4>
+            <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px">
+              <div><div class="muted">LRV(EU)</div><div class="big">${fmt(r.sh_lrv)||'—'}</div></div>
+              <div><div class="muted">URV(EU)</div><div class="big">${fmt(r.sh_urv)||'—'}</div></div>
+              <div><div class="muted">EU Label</div><div class="big">${r.sh_eulbl||'—'}</div></div>
+              <div><div class="muted">mA</div><div class="big">${fmt(r.sh_ma)||'—'}</div></div>
+              <div><div class="muted">%</div><div class="big">${fmt(r.sh_pct)||'—'}%</div></div>
+              <div><div class="muted">EU</div><div class="big">${fmt(r.sh_eu)||'—'}</div></div>
+              <div><div class="muted">√ Flow Mode</div><div class="big">${r.sh_sqrt?'ON':'OFF'}</div></div>
+            </div>
+          </div>
+        </div>
+      </td>`;
+    tbody.appendChild(detailRow);
+
+    if (r.ok==='YES') pass++; else fail++;
+  });
+
+  document.getElementById('loop-pass').textContent=`Pass: ${pass}`;
+  document.getElementById('loop-fail').textContent=`Fail: ${fail}`;
+}
+
+function toggleDetails(index, btn){
+  const detailsRow = btn.closest('tr').nextElementSibling;
+  const open = detailsRow.style.display === 'table-row';
+  detailsRow.style.display = open ? 'none' : 'table-row';
+  btn.textContent = open ? '▶ Details' : '▼ Hide';
+}
+
+function loop_delete(i){
+  const rows = load(K_LOOP);
+  rows.splice(i,1);
+  save(K_LOOP,rows);
+  loop_render();
 }
 
 function loop_csv(){
   const rows=load(K_LOOP);
   const out=[[
-    'Date','Tag','Point','Expected','Measured','Units','OK','Notes',
-    'LRV','URV','LLL','LL','L','AL','AH','H','HH','HHH','EU Units','Device Range'
+    'Date','Tag','Point','Units','OK','Notes',
+    'LRV','URV','EU Units','Device Range','LLL','LL','L','H','HH','HHH',
+    'Helper LRV','Helper URV','Helper EU Label','Helper mA','Helper %','Helper EU','Helper sqrt'
   ]];
-  rows.forEach(r=>out.push([
-    r.date,r.tag,r.point,fmt(r.exp),fmt(r.meas),r.units,r.ok,r.notes,
-    fmt(r.lrv),fmt(r.urv),fmt(r.lll),fmt(r.ll),fmt(r.l),fmt(r.al),
-    fmt(r.ah),fmt(r.h),fmt(r.hh),fmt(r.hhh),r.euUnits||'',r.devRange||''
-  ]));
+  rows.forEach(r=>{
+    out.push([
+      r.date,r.tag,r.point,r.units,r.ok,r.notes,
+      r.lrv,r.urv,r.euUnits,r.devRange,r.lll,r.ll,r.l,r.h,r.hh,r.hhh,
+      r.sh_lrv,r.sh_urv,r.sh_eulbl,r.sh_ma,r.sh_pct,r.sh_eu,(r.sh_sqrt?'ON':'OFF')
+    ]);
+  });
   downloadCSV('loop_log.csv', out);
 }
+
 document.getElementById('lp_add')?.addEventListener('click', loop_add);
 document.getElementById('lp_export')?.addEventListener('click', loop_csv);
-document.getElementById('lp_clear')?.addEventListener('click', ()=>{ if(confirm('Clear all loop rows?')){ save(K_LOOP,[]); loop_render(); }});
+document.getElementById('lp_clear')?.addEventListener('click', ()=>{
+  if(confirm('Clear all loop rows?')){ save(K_LOOP,[]); loop_render(); }
+});
+
 loop_render();
 
 /* ========= TICKETS ========= */
