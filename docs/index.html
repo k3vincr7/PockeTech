@@ -397,7 +397,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
     </div>
   </section>
 
-  <section id="jrtech">
+<section id="jrtech">
   <h2>Jr Tech Quick Reference</h2>
 
   <!-- Search -->
@@ -411,7 +411,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
 
   <div class="grid" style="margin-top:10px">
 
-    <!-- 2) Thermocouple & RTD Color Codes -->
+    <!-- Thermocouple & RTD Color Codes -->
     <div class="card jt-card">
       <h3 style="margin-top:0">Thermocouple &amp; RTD Color Codes</h3>
       <div class="row">
@@ -431,7 +431,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
         <tbody></tbody>
       </table>
       <div class="muted" style="margin-top:6px">
-        Tip: Red is **negative** in ANSI thermocouples. Always follow site standards/drawings if they differ.
+        Tip: Red is <strong>negative</strong> in ANSI thermocouples. Always follow site standards/drawings if they differ.
       </div>
       <div class="hr"></div>
       <h4 style="margin-bottom:6px">RTD (Pt100) common wiring</h4>
@@ -448,12 +448,66 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
       <p class="muted">Vendors vary; check the instrument datasheet.</p>
     </div>
 
-    <!-- 3) 24 VDC Loop Wiring Cheats -->
+    <!-- NEW: Temperature Element Ranges -->
+    <div class="card jt-card" id="tr_card">
+      <h3 style="margin-top:0">Temperature Element Ranges</h3>
+
+      <div class="row">
+        <div class="col">
+          <label>Element Type
+            <select id="tr_type">
+              <optgroup label="Thermocouples">
+                <option value="TC_J">Type J</option>
+                <option value="TC_K" selected>Type K</option>
+                <option value="TC_T">Type T</option>
+                <option value="TC_E">Type E</option>
+                <option value="TC_N">Type N</option>
+                <option value="TC_R">Type R</option>
+                <option value="TC_S">Type S</option>
+                <option value="TC_B">Type B</option>
+              </optgroup>
+              <optgroup label="RTDs">
+                <option value="RTD_Pt100_A">Pt100 (Class A)</option>
+                <option value="RTD_Pt100_B">Pt100 (Class B)</option>
+                <option value="RTD_Pt1000_A">Pt1000 (Class A)</option>
+                <option value="RTD_Pt1000_B">Pt1000 (Class B)</option>
+              </optgroup>
+            </select>
+          </label>
+        </div>
+        <div class="col">
+          <label>Notes <input id="tr_notes_out" readonly></label>
+        </div>
+        <div class="col">
+          <button class="btn" id="tr_export">Export CSV</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <table id="tr_tbl">
+            <thead>
+              <tr>
+                <th>Min (°C)</th><th>Max (°C)</th>
+                <th>Min (°F)</th><th>Max (°F)</th>
+                <th>Typical Use</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <p class="muted" style="margin:.5rem 0 0">
+            Ranges are typical/practical values. Always check the specific sensor &amp; sheath rating.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 24 VDC Loop Wiring Cheats -->
     <div class="card jt-card">
       <h3 style="margin-top:0">24 VDC Loop Wiring Cheats</h3>
       <ul>
         <li><strong>4–20 mA 2-wire TX:</strong> +24V → <em>TX +</em> → <em>TX –</em> → AI+</li>
-        <li><strong>Insert ammeter (series):</strong> break the loop on the **positive** side and wire meter **in series** (observe polarity).</li>
+        <li><strong>Insert ammeter (series):</strong> break the loop on the <strong>positive</strong> side and wire meter <strong>in series</strong> (observe polarity).</li>
         <li><strong>Shields:</strong> land at one end only (typically at the marshaling/DAI end) unless your site spec says otherwise.</li>
         <li><strong>Source vs Sink AIs:</strong> check card manual; wrong polarity = flatline 0 or card fault.</li>
       </ul>
@@ -469,7 +523,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
       </pre>
     </div>
 
-    <!-- 4) Control Valve Actions -->
+    <!-- Control Valve Actions -->
     <div class="card jt-card">
       <h3 style="margin-top:0">Control Valve Actions</h3>
       <table>
@@ -494,7 +548,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
       <p class="muted">Bench set typically around 3–15 psi via I/P. Confirm action/fail in P&amp;ID or actuator tag.</p>
     </div>
 
-    <!-- 5) Instrument Tag Abbreviations -->
+    <!-- Instrument Tag Abbreviations -->
     <div class="card jt-card">
       <h3 style="margin-top:0">Instrument Tag Abbreviations (ISA-style)</h3>
       <table id="isa_tbl">
@@ -513,7 +567,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
       <p class="muted">Local site conventions can differ. Always follow the legend on the project’s P&amp;IDs.</p>
     </div>
 
-    <!-- 6) Common Signal Sanity Checks -->
+    <!-- Common Signal Sanity Checks -->
     <div class="card jt-card">
       <h3 style="margin-top:0">Common Signal Sanity Checks</h3>
       <ul>
@@ -531,19 +585,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
       <p class="muted">If reading is off: verify TX range (LRV/URV), wiring polarity, loop power, and card type (source/sink).</p>
     </div>
 
-    <!-- 8) Torque & Thread Seal Notes -->
-    <div class="card jt-card">
-      <h3 style="margin-top:0">Torque &amp; Thread Seal Notes</h3>
-      <ul>
-        <li>Prefer the **manufacturer torque table**. Over-torque can distort manifolds and impulse fittings.</li>
-        <li>For tapered threads: apply sealant in the **tightening direction** and keep the first thread clean.</li>
-        <li>Avoid tape on small tubing/compression fittings; use proper ferrule fittings per spec.</li>
-        <li>Never mix imperial/metric threads. If in doubt, gauge it.</li>
-      </ul>
-      <p class="muted">If a connection keeps weeping, inspect surface finish, replace ferrules, and confirm thread form.</p>
-    </div>
-
-    <!-- (No duplicates for Radio Spelling / SI Prefix) -->
+    <!-- More Field Lingo -->
     <div class="card jt-card">
       <h3 style="margin-top:0">More Field Lingo</h3>
       <p>Need Radio Spelling (A = Alpha, B = Bravo, …) or SI Prefix cheats? Use the main tools in the app.</p>
@@ -554,7 +596,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
 
   </div>
 </section>
-
+  
   <!-- Field Lingo -->
 <section id="field_lingo">
   <h2>Field Lingo</h2>
@@ -1131,11 +1173,40 @@ document.querySelectorAll('.ipstep').forEach(b=>b.addEventListener('click',()=>i
 
 /* ========= JR TECH (T/C + RTD table + search) ========= */
 const TCTABLE={
-  ANSI:[['J','White','Red','Iron/Constantan'],['K','Yellow','Red','Chromel/Alumel'],['T','Blue','Red','Copper/Constantan'],['E','Purple','Red','Chromel/Constantan'],['N','Orange','Red','Nicrosil/Nisil'],['R','Black','Red','PtRh/Pt (high temp)'],['S','Black','Red','PtRh/Pt (high temp)'],['B','Grey','Red','PtRh/Pt (very high temp)']],
-  IEC :[['J','Black','White','Iron/Constantan'],['K','Green','White','Chromel/Alumel'],['T','Brown','White','Copper/Constantan'],['E','Purple','White','Chromel/Constantan'],['N','Pink','White','Nicrosil/Nisil'],['R','Orange','White','PtRh/Pt (high temp)'],['S','Orange','White','PtRh/Pt (high temp)'],['B','Grey','White','PtRh/Pt (very high temp)']]
+  ANSI:[
+    ['J','White','Red','Iron/Constantan'],
+    ['K','Yellow','Red','Chromel/Alumel'],
+    ['T','Blue','Red','Copper/Constantan'],
+    ['E','Purple','Red','Chromel/Constantan'],
+    ['N','Orange','Red','Nicrosil/Nisil'],
+    ['R','Black','Red','PtRh/Pt (high temp)'],
+    ['S','Black','Red','PtRh/Pt (high temp)'],
+    ['B','Grey','Red','PtRh/Pt (very high temp)']
+  ],
+  IEC :[
+    ['J','Black','White','Iron/Constantan'],
+    ['K','Green','White','Chromel/Alumel'],
+    ['T','Brown','White','Copper/Constantan'],
+    ['E','Purple','White','Chromel/Constantan'],
+    ['N','Pink','White','Nicrosil/Nisil'],
+    ['R','Orange','White','PtRh/Pt (high temp)'],
+    ['S','Orange','White','PtRh/Pt (high temp)'],
+    ['B','Grey','White','PtRh/Pt (very high temp)']
+  ]
 };
-function renderTC(){ const std=document.getElementById('tc_std')?.value||'ANSI'; const tb=document.querySelector('#tc_tbl tbody'); if(!tb) return; tb.innerHTML=''; (TCTABLE[std]||[]).forEach(r=>tb.insertAdjacentHTML('beforeend',`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`)); }
-document.getElementById('tc_std')?.addEventListener('change',renderTC); renderTC();
+
+function renderTC(){
+  const std=document.getElementById('tc_std')?.value||'ANSI';
+  const tb=document.querySelector('#tc_tbl tbody');
+  if(!tb) return;
+  tb.innerHTML='';
+  (TCTABLE[std]||[]).forEach(r=>{
+    tb.insertAdjacentHTML('beforeend', `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`);
+  });
+}
+document.getElementById('tc_std')?.addEventListener('change',renderTC);
+renderTC();
+
 document.getElementById('jt_search')?.addEventListener('input',e=>{
   const q=e.target.value.trim().toLowerCase();
   document.querySelectorAll('#jrtech .jt-card, #jrtech table tbody tr').forEach(el=>{
@@ -1143,6 +1214,78 @@ document.getElementById('jt_search')?.addEventListener('input',e=>{
     el.style.display = text.includes(q)?'':'none';
   });
 });
+
+/* ========= JR TECH — Temperature Element Ranges ========= */
+/* Works with the HTML card that has: #tr_type, #tr_tbl, #tr_notes_out, #tr_export */
+function c2f(c){ return (c*9/5)+32; }
+
+const TEMP_RANGES = {
+  // Thermocouples (typical/practical)
+  TC_J: {name:'Type J',   cmin:-210, cmax:760,  note:'Iron/Constantan; avoid oxidizing >~540°C',           use:'General purpose, mid-range'},
+  TC_K: {name:'Type K',   cmin:-200, cmax:1260, note:'Chromel/Alumel; most common general-purpose',        use:'General purpose, wide range'},
+  TC_T: {name:'Type T',   cmin:-200, cmax:400,  note:'Copper/Constantan; stable at low temps',             use:'Cryogenic/low-temp'},
+  TC_E: {name:'Type E',   cmin:-200, cmax:900,  note:'Chromel/Constantan; high mV output',                 use:'Low temp, higher sensitivity'},
+  TC_N: {name:'Type N',   cmin:-200, cmax:1300, note:'Nicrosil/Nisil; better high-temp stability vs K',    use:'High-temp general purpose'},
+  TC_R: {name:'Type R',   cmin:-50,  cmax:1760, note:'PtRh/Pt; noble metal',                               use:'High-temp furnaces'},
+  TC_S: {name:'Type S',   cmin:-50,  cmax:1760, note:'PtRh/Pt; noble metal',                               use:'High-temp furnaces'},
+  TC_B: {name:'Type B',   cmin:0,    cmax:1820, note:'PtRh/Pt; low output below ~600°C',                   use:'Very high-temp, glass/steel'},
+
+  // RTDs (IEC 60751 sensor limits; instrument may be tighter)
+  RTD_Pt100_A:  {name:'Pt100 (Class A)',   cmin:-200, cmax:650, note:'±(0.15 + 0.002|t|)°C', use:'Process general purpose'},
+  RTD_Pt100_B:  {name:'Pt100 (Class B)',   cmin:-200, cmax:850, note:'±(0.30 + 0.005|t|)°C', use:'Wider range / lower accuracy'},
+  RTD_Pt1000_A: {name:'Pt1000 (Class A)',  cmin:-200, cmax:650, note:'Higher R → better lead-wire immunity', use:'HVAC/low-current loops'},
+  RTD_Pt1000_B: {name:'Pt1000 (Class B)',  cmin:-200, cmax:850, note:'Higher R → better lead-wire immunity', use:'HVAC/long runs'}
+};
+
+function tr_renderOne(key){
+  const d = TEMP_RANGES[key];
+  if(!d) return;
+  const tbody = document.querySelector('#tr_tbl tbody');
+  if(!tbody) return;
+
+  const fmin = c2f(d.cmin);
+  const fmax = c2f(d.cmax);
+  tbody.innerHTML = `
+    <tr>
+      <td>${d.cmin}</td>
+      <td>${d.cmax}</td>
+      <td>${fmin.toFixed(1)}</td>
+      <td>${fmax.toFixed(1)}</td>
+      <td>${d.use}</td>
+    </tr>
+  `;
+
+  const notes = document.getElementById('tr_notes_out');
+  if(notes) notes.value = `${d.name} — ${d.note}`;
+}
+
+function tr_exportCSV(){
+  const sel = document.getElementById('tr_type');
+  const key = sel?.value || 'TC_K';
+  const d = TEMP_RANGES[key];
+  if(!d) return;
+
+  const rows = [
+    ['Element','Min (°C)','Max (°C)','Min (°F)','Max (°F)','Notes','Typical Use'],
+    [d.name, d.cmin, d.cmax, c2f(d.cmin).toFixed(1), c2f(d.cmax).toFixed(1), d.note, d.use]
+  ];
+  const csv = rows.map(r=>r.map(c=>{
+    const s=(c??'').toString();
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s;
+  }).join(',')).join('\n');
+
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `temp_range_${d.name.replace(/\s+/g,'_')}.csv`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById('tr_type')?.addEventListener('change', e=> tr_renderOne(e.target.value));
+document.getElementById('tr_export')?.addEventListener('click', tr_exportCSV);
+
+// Initial paint (defaults to current select or Type K)
+tr_renderOne(document.getElementById('tr_type')?.value || 'TC_K');
 
 /* ========= OHM’S LAW ========= */
 function solveOhms(){
