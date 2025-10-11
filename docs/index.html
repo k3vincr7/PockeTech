@@ -149,6 +149,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
 <section id="percent">
   <h2>Percent → EU Steps</h2>
   <div class="card">
+    <!-- Inputs -->
     <div class="row">
       <div class="col">
         <label>LRV
@@ -169,13 +170,17 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
       </div>
     </div>
 
+    <!-- Square Root + Buttons -->
     <div class="row" style="align-items:flex-end">
       <div class="col">
         <label class="rowline">
           <input type="checkbox" id="pc_sqrt">
-          Square-root (flow DP): EU = LRV + (URV−LRV)·√(%/100)
+          <span>Square-root (flow DP)</span>
         </label>
-        <p class="muted" id="pc_span_note" style="margin:.4rem 0 0">Span: —</p>
+        <p class="muted" style="margin:.25rem 0 0">
+          EU = LRV + (URV − LRV) · √(%/100)
+        </p>
+        <p class="muted" id="pc_span_note" style="margin:.25rem 0 0">Span: —</p>
       </div>
       <div class="col">
         <button class="btn" id="pc_build">Build Steps</button>
@@ -185,6 +190,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
       </div>
     </div>
 
+    <!-- Table -->
     <div class="scroll-x" style="margin-top:10px">
       <table id="percentTable">
         <thead>
@@ -194,7 +200,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
             <th>mA</th>
           </tr>
         </thead>
-        <tbody><!-- filled by JS --></tbody>
+        <tbody><!-- JS fills this --></tbody>
       </table>
     </div>
     <p class="muted" style="margin-top:6px">
@@ -202,7 +208,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
     </p>
   </div>
 </section>
-
+  
   <!-- Level — Open -->
   <section id="level_open">
     <h2>Level — Open Tank (tap-to-tap)</h2>
@@ -1224,14 +1230,14 @@ function pc_export(){
 /* wire up */
 document.getElementById('pc_build')?.addEventListener('click', pc_build);
 document.getElementById('pc_export')?.addEventListener('click', pc_export);
-/* live rebuild on edits (nice on mobile) */
+/* live rebuild on edits */
 ['pc_lrv','pc_urv','pc_eu_units','pc_sqrt'].forEach(id=>{
   const el = document.getElementById(id);
   if(!el) return;
   el.addEventListener('input', ()=>{ clearTimeout(el._t); el._t = setTimeout(pc_build, 120); });
   el.addEventListener('change', pc_build);
 });
-
+  
 /* ========= SIGNAL (4–20 mA) w/ √ option ========= */
 function sh_getRange(){const l=parseFloat(val('sh_lrv')),u=parseFloat(val('sh_urv')); if(isNaN(l)||isNaN(u)||l===u){alert('Enter valid LRV/URV');return null;} return {l,u};}
 const EUlbl=()=>{const s=document.getElementById('sh_eulbl')?.value.trim();return s?(' '+s):'';}
