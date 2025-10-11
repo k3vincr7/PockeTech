@@ -1005,6 +1005,40 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
 </div>
 
 <script>   
+
+/* ======= SIMPLE ROUTER (Home <-> Pages) — hardened ======= */
+(function(){
+  const PAGES = [...document.querySelectorAll('section')];
+  const backBtn = document.getElementById('backBtn');
+  const titleEl = document.getElementById('appTitle');
+  const ALIAS = { jr:'jrtech', ohms:'ohm_drop', lingo:'field_lingo' };
+  const resolveId = id => ALIAS[id] || id;
+
+  function showPage(id){
+    const target = resolveId(id);
+    PAGES.forEach(s => { s.style.display = (s.id === target ? 'block' : 'none'); });
+    backBtn.style.display = (target === 'home' ? 'none' : 'inline-block');
+    const h2 = document.querySelector(`section#${target} > h2`);
+    titleEl.textContent = h2 ? `PockeTech — ${h2.textContent}` : 'PockeTech — Field Tools';
+    if (location.hash.replace('#','') !== target) history.pushState({id:target}, '', '#'+target);
+    window.scrollTo(0,0);
+  }
+  function navTo(raw){ if(!raw) return; const id = raw.replace('#',''); showPage(PAGES.some(s=>s.id===resolveId(id))?id:'home'); }
+
+  document.addEventListener('click', e => {
+    const go = e.target.closest('[data-go]');
+    if (go){ e.preventDefault(); return navTo(go.getAttribute('data-go')); }
+    const dn = e.target.closest('[data-nav],[data-jt-nav]');
+    if (dn){ e.preventDefault(); return navTo(dn.getAttribute('data-nav') || dn.getAttribute('data-jt-nav')); }
+    const a = e.target.closest('a[href^="#"]');
+    if (a){ e.preventDefault(); return navTo(a.getAttribute('href')); }
+  });
+
+  backBtn?.addEventListener('click', e => { e.preventDefault(); navTo('home'); });
+  window.addEventListener('popstate', e => { navTo(e.state?.id || (location.hash||'#home')); });
+  navTo((location.hash||'#home'));
+})();
+  
 /* ========= SETTINGS + THEME ========= */
 const SKEY='pocketech.settings';
 const DEF={atm:14.7,punit:'psi',lunit:'in',haptics:false,theme:'auto'};
@@ -1222,8 +1256,7 @@ const FMT = v => {
   if (v===null || v===undefined || v==='') return '';
   const n = Number(v);
   return Number.isFinite(n) ? (Math.abs(n)>=1000||n===0 ? n.toFixed(2).replace(/\.00$/,'')
-                                                   : n.toFixed(4).replace(/0+$/,'').replace(/\.$/,'')) : v;
-};
+                                                   : n.toFixed(4).replace(/0+$/,'').replace(/\.$/,'')) : v;};
 
 /* -------- Mini 4–20 mA helper (IDs prefixed ll_) -------- */
 function ll_getRange(){
