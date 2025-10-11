@@ -145,17 +145,63 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
   </div>
 </section>
   
-  <!-- Percent -->
-  <section id="percent" class="active">
-    <h2>Percent Steps</h2>
+<!-- Percent Steps -->
+<section id="percent">
+  <h2>Percent → EU Steps</h2>
+  <div class="card">
     <div class="row">
-      <div class="col"><label>LRV <input id="lrv" class="num" inputmode="decimal" placeholder="0"></label><button class="kbd-toggle" data-for="lrv">kbd</button></div>
-      <div class="col"><label>URV <input id="urv" class="num" inputmode="decimal" placeholder="200"></label><button class="kbd-toggle" data-for="urv">kbd</button></div>
+      <div class="col">
+        <label>LRV
+          <input id="pc_lrv" class="num" inputmode="decimal" placeholder="e.g., 0">
+        </label>
+        <button class="kbd-toggle" data-for="pc_lrv">kbd</button>
+      </div>
+      <div class="col">
+        <label>URV
+          <input id="pc_urv" class="num" inputmode="decimal" placeholder="e.g., 250">
+        </label>
+        <button class="kbd-toggle" data-for="pc_urv">kbd</button>
+      </div>
+      <div class="col">
+        <label>EU Units
+          <input id="pc_eu_units" placeholder="psi, °F, %RH, etc.">
+        </label>
+      </div>
     </div>
-    <div class="row"><div class="col"><button class="btn" onclick="calcPercent()">Calculate</button></div><div class="col"><button class="btn" onclick="exportPercentCSV()">Export CSV</button></div></div>
-    <table id="percentTable"></table>
-    <p class="muted">Outputs 0, 25, 50, 75, 100% of your range.</p>
-  </section>
+
+    <div class="row" style="align-items:flex-end">
+      <div class="col">
+        <label class="rowline">
+          <input type="checkbox" id="pc_sqrt">
+          Square-root (flow DP): EU = LRV + (URV−LRV)·√(%/100)
+        </label>
+        <p class="muted" id="pc_span_note" style="margin:.4rem 0 0">Span: —</p>
+      </div>
+      <div class="col">
+        <button class="btn" id="pc_build">Build Steps</button>
+      </div>
+      <div class="col">
+        <button class="btn" id="pc_export">Export CSV</button>
+      </div>
+    </div>
+
+    <div class="scroll-x" style="margin-top:10px">
+      <table id="percentTable">
+        <thead>
+          <tr>
+            <th>%</th>
+            <th>EU</th>
+            <th>mA</th>
+          </tr>
+        </thead>
+        <tbody><!-- filled by JS --></tbody>
+      </table>
+    </div>
+    <p class="muted" style="margin-top:6px">
+      mA is always linear to % (4–20 mA). Square-root only affects EU.
+    </p>
+  </div>
+</section>
 
   <!-- Level — Open -->
   <section id="level_open">
@@ -1102,19 +1148,89 @@ addEventListener('scroll',()=>{ if(npTarget && numpad?.classList.contains('show'
 addEventListener('resize',()=>{ if(npTarget && numpad?.classList.contains('show')) placePad(npTarget); });
 document.querySelectorAll('input.num').forEach(inp=>{ inp.readOnly=true; inp.addEventListener('focus',()=>showPad(inp)); inp.addEventListener('click',()=>showPad(inp)); });
 
-/* ========= PERCENT ========= */
-function calcPercent(){
-  const L=parseFloat(val('lrv')),U=parseFloat(val('urv'));
-  if(isNaN(L)||isNaN(U)||L===U){alert('Enter valid LRV/URV');return;}
-  const steps=[0,25,50,75,100]; const rows=[['%','EU']];
-  steps.forEach(p=>rows.push([p+'%',fmt(L+(U-L)*(p/100))]));
-  document.getElementById('percentTable').innerHTML=rows.map((r,i)=>`<tr>${r.map(c=>`<${i?'td':'th'}>${c}</${i?'td':'th'}>`).join('')}</tr>`).join('');
+/* ======= PERCENT (with Span, mA column, √ toggle) ======= */
+function pc_get(){
+  const L = parseFloat(document.getElementById('pc_lrv')?.value);
+  const U = parseFloat(document.getElementById('pc_urv')?.value);
+  if(!Number.isFinite(L) || !Number.isFinite(U) || L === U){
+    alert('Enter valid LRV and URV (cannot be equal).');
+    return null;
+  }
+  const eu = (document.getElementById('pc_eu_units')?.value || '').trim();
+  const sqrt = !!document.getElementById('pc_sqrt')?.checked;
+  return {L,U,span:U-L,eu,sqrt};
 }
-function exportPercentCSV(){
-  const L=parseFloat(val('lrv')),U=parseFloat(val('urv'));
-  if(isNaN(L)||isNaN(U)||L===U){alert('Enter valid LRV/URV');return;}
-  downloadCSV('percent_steps.csv', [['%','EU'],['0%',L],['25%',L+(U-L)*.25],['50%',L+(U-L)*.5],['75%',L+(U-L)*.75],['100%',U]]);
+
+function pc_fmt(n){
+  if(n===null || n===undefined || n==='') return '';
+  const x = Number(n);
+  if(!Number.isFinite(x)) return String(n);
+  return (Math.abs(x)>=1000 || x===0)
+    ? x.toFixed(2).replace(/\.00$/,'')
+    : x.toFixed(4).replace(/0+$/,'').replace(/\.$/,'');
 }
+
+function pc_build(){
+  const cfg = pc_get(); if(!cfg) return;
+  const steps = [0,25,50,75,100];
+  const tb = document.querySelector('#percentTable tbody');
+  const spanNote = document.getElementById('pc_span_note');
+  if(spanNote) spanNote.textContent = `Span: ${pc_fmt(cfg.span)} ${cfg.eu||'EU'}`;
+
+  tb.innerHTML = '';
+  steps.forEach(p=>{
+    const frac = cfg.sqrt ? Math.sqrt(p/100) : (p/100);
+    const euv  = cfg.L + cfg.span*frac;
+    const ma   = 4 + 16*(p/100);
+    tb.insertAdjacentHTML('beforeend', `
+      <tr>
+        <td>${p}%</td>
+        <td>${pc_fmt(euv)} ${cfg.eu}</td>
+        <td>${pc_fmt(ma)} mA</td>
+      </tr>
+    `);
+  });
+}
+
+function pc_export(){
+  const cfg = pc_get(); if(!cfg) return;
+  const rows = [['%','EU','Units','mA','LRV','URV','Span','SQRT']];
+  [0,25,50,75,100].forEach(p=>{
+    const frac = cfg.sqrt ? Math.sqrt(p/100) : (p/100);
+    const euv  = cfg.L + cfg.span*frac;
+    const ma   = 4 + 16*(p/100);
+    rows.push([
+      p,
+      pc_fmt(euv),
+      cfg.eu || '',
+      pc_fmt(ma),
+      pc_fmt(cfg.L),
+      pc_fmt(cfg.U),
+      pc_fmt(cfg.span),
+      cfg.sqrt ? 'ON' : 'OFF'
+    ]);
+  });
+  const csv = rows.map(r=>r.map(c=>{
+    const s=(c??'').toString();
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s;
+  }).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url  = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'percent_steps.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* wire up */
+document.getElementById('pc_build')?.addEventListener('click', pc_build);
+document.getElementById('pc_export')?.addEventListener('click', pc_export);
+/* live rebuild on edits (nice on mobile) */
+['pc_lrv','pc_urv','pc_eu_units','pc_sqrt'].forEach(id=>{
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('input', ()=>{ clearTimeout(el._t); el._t = setTimeout(pc_build, 120); });
+  el.addEventListener('change', pc_build);
+});
 
 /* ========= SIGNAL (4–20 mA) w/ √ option ========= */
 function sh_getRange(){const l=parseFloat(val('sh_lrv')),u=parseFloat(val('sh_urv')); if(isNaN(l)||isNaN(u)||l===u){alert('Enter valid LRV/URV');return null;} return {l,u};}
