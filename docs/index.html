@@ -1028,8 +1028,6 @@ function toCSV(rows){return rows.map(r=>r.map(c=>{const s=(c??'').toString();ret
 function downloadCSV(name,rows){const blob=new Blob([toCSV(rows)],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
 const val=id=>document.getElementById(id)?.value||''; const setVal=(id,v)=>{const el=document.getElementById(id); if(el) el.value=v};
 
-<script>
-  
 /* ========= FLOATING NUMBER PAD ========= */
 const numpad=document.getElementById('numpad'); let npTarget=null;
 function buzz(ms=10){try{ if(getS().haptics && navigator.vibrate) navigator.vibrate(ms);}catch{}}
