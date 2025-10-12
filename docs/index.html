@@ -684,360 +684,360 @@
         <p class="muted">If reading is off: verify TX range (LRV/URV), wiring polarity, loop power, and card type (source/sink).</p>
       </div>
   
-  <!-- Field Lingo -->
-<section id="field_lingo">
-  <h2>Field Lingo</h2>
-  <div class="row">
-    <div class="col"><label>Quick Search <input id="fl_search" placeholder="type to filter…"></label></div>
-  </div>
-
-  <div class="grid">
-    <div class="card">
-      <h3 style="margin-top:0">Spelling Alphabet</h3>
-      <table id="fl_alpha">
-        <thead><tr><th>Char</th><th>Word</th><th>Note</th></tr></thead>
-        <tbody>
-          <tr><td>A</td><td>Alpha</td><td></td></tr>
-          <tr><td>B</td><td>Bravo</td><td>B vs P: pause</td></tr>
-          <tr><td>C</td><td>Charlie</td><td></td></tr>
-          <tr><td>D</td><td>Delta</td><td></td></tr>
-          <tr><td>E</td><td>Echo</td><td></td></tr>
-          <tr><td>F</td><td>Foxtrot</td><td>F vs S: enunciate</td></tr>
-          <tr><td>G</td><td>Golf</td><td></td></tr>
-          <tr><td>H</td><td>Hotel</td><td></td></tr>
-          <tr><td>I</td><td>India</td><td></td></tr>
-          <tr><td>J</td><td>Juliett</td><td></td></tr>
-          <tr><td>K</td><td>Kilo</td><td></td></tr>
-          <tr><td>L</td><td>Lima</td><td></td></tr>
-          <tr><td>M</td><td>Mike</td><td>M vs N: slow</td></tr>
-          <tr><td>N</td><td>November</td><td></td></tr>
-          <tr><td>O</td><td>Oscar</td><td></td></tr>
-          <tr><td>P</td><td>Papa</td><td></td></tr>
-          <tr><td>Q</td><td>Quebec</td><td></td></tr>
-          <tr><td>R</td><td>Romeo</td><td></td></tr>
-          <tr><td>S</td><td>Sierra</td><td></td></tr>
-          <tr><td>T</td><td>Tango</td><td></td></tr>
-          <tr><td>U</td><td>Uniform</td><td></td></tr>
-          <tr><td>V</td><td>Victor</td><td></td></tr>
-          <tr><td>W</td><td>Whiskey</td><td></td></tr>
-          <tr><td>X</td><td>X-ray</td><td></td></tr>
-          <tr><td>Y</td><td>Yankee</td><td></td></tr>
-          <tr><td>Z</td><td>Zulu</td><td></td></tr>
-          <tr><td>0</td><td>Zero</td><td>say “zero”</td></tr>
-          <tr><td>1</td><td>One</td><td></td></tr>
-          <tr><td>2</td><td>Two</td><td>say “too” clearly</td></tr>
-          <tr><td>3</td><td>Tree</td><td>radio “three”</td></tr>
-          <tr><td>4</td><td>Fower</td><td>radio “four”</td></tr>
-          <tr><td>5</td><td>Fife</td><td>radio “five”</td></tr>
-          <tr><td>6</td><td>Six</td><td></td></tr>
-          <tr><td>7</td><td>Seven</td><td></td></tr>
-          <tr><td>8</td><td>Eight</td><td></td></tr>
-          <tr><td>9</td><td>Niner</td><td>radio “nine”</td></tr>
-        </tbody>
-      </table>
+    <!-- Field Lingo -->
+  <section id="field_lingo">
+    <h2>Field Lingo</h2>
+    <div class="row">
+      <div class="col"><label>Quick Search <input id="fl_search" placeholder="type to filter…"></label></div>
     </div>
 
-    <div class="card">
-      <h3 style="margin-top:0">Radio Prowords</h3>
-      <table id="fl_prowords">
-        <thead><tr><th>Word</th><th>Meaning</th></tr></thead>
-        <tbody>
-          <tr><td>Affirmative</td><td>Yes</td></tr>
-          <tr><td>Negative</td><td>No</td></tr>
-          <tr><td>Say again</td><td>Repeat</td></tr>
-          <tr><td>Standby</td><td>Wait</td></tr>
-          <tr><td>Copy</td><td>Received/understood</td></tr>
-          <tr><td>Over</td><td>My turn done; your turn</td></tr>
-          <tr><td>Out</td><td>Conversation complete</td></tr>
-          <tr><td>Wilco</td><td>Will comply</td></tr>
-          <tr><td>Break</td><td>New subject or separation</td></tr>
-        </tbody>
-      </table>
-      <p class="muted">Avoid “yeah/uh-huh”. Use clear numbers and “point” for decimals.</p>
-    </div>
-
-    <div class="card">
-      <h3 style="margin-top:0">SI Prefixes</h3>
-      <table id="fl_prefix">
-        <thead><tr><th>Prefix</th><th>Symbol</th><th>×10^</th><th>Example</th></tr></thead>
-        <tbody>
-          <tr><td>nano</td><td>n</td><td>−9</td><td>nA</td></tr>
-          <tr><td>micro</td><td>µ</td><td>−6</td><td>µA</td></tr>
-          <tr><td>milli</td><td>m</td><td>−3</td><td>mA, mV</td></tr>
-          <tr><td>kilo</td><td>k</td><td>+3</td><td>kPa, kΩ</td></tr>
-          <tr><td>mega</td><td>M</td><td>+6</td><td>MW, MΩ</td></tr>
-          <tr><td>giga</td><td>G</td><td>+9</td><td>GΩ</td></tr>
-          <tr><td>tera</td><td>T</td><td>+12</td><td>TΩ</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="card">
-      <h3 style="margin-top:0">Unit Shorthands</h3>
-      <p class="muted">psi, kPa, bar, °F, °C, V, mA, mV, Ω, kΩ, kW, rpm, gpm, inH₂O, inHg, mmHg</p>
-    </div>
-  </div>
-</section>
-
-<!-- Ohm’s Law & Voltage Drop -->
-<section id="ohm_drop">
-  <h2>Ohm’s Law & Voltage Drop</h2>
-
-  <div class="grid">
-    <div class="card">
-      <h3 style="margin-top:0">Ohm’s Law Solver</h3>
-      <div class="row">
-        <div class="col"><label>V (volts) <input id="ol_v" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="ol_v">kbd</button></div>
-        <div class="col"><label>I (amps) <input id="ol_i" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="ol_i">kbd</button></div>
-        <div class="col"><label>R (ohms) <input id="ol_r" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="ol_r">kbd</button></div>
-        <div class="col"><label>P (watts) <input id="ol_p" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="ol_p">kbd</button></div>
+    <div class="grid">
+      <div class="card">
+        <h3 style="margin-top:0">Spelling Alphabet</h3>
+        <table id="fl_alpha">
+          <thead><tr><th>Char</th><th>Word</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td>Alpha</td><td></td></tr>
+            <tr><td>B</td><td>Bravo</td><td>B vs P: pause</td></tr>
+            <tr><td>C</td><td>Charlie</td><td></td></tr>
+            <tr><td>D</td><td>Delta</td><td></td></tr>
+            <tr><td>E</td><td>Echo</td><td></td></tr>
+            <tr><td>F</td><td>Foxtrot</td><td>F vs S: enunciate</td></tr>
+            <tr><td>G</td><td>Golf</td><td></td></tr>
+            <tr><td>H</td><td>Hotel</td><td></td></tr>
+            <tr><td>I</td><td>India</td><td></td></tr>
+            <tr><td>J</td><td>Juliett</td><td></td></tr>
+            <tr><td>K</td><td>Kilo</td><td></td></tr>
+            <tr><td>L</td><td>Lima</td><td></td></tr>
+            <tr><td>M</td><td>Mike</td><td>M vs N: slow</td></tr>
+            <tr><td>N</td><td>November</td><td></td></tr>
+            <tr><td>O</td><td>Oscar</td><td></td></tr>
+            <tr><td>P</td><td>Papa</td><td></td></tr>
+            <tr><td>Q</td><td>Quebec</td><td></td></tr>
+            <tr><td>R</td><td>Romeo</td><td></td></tr>
+            <tr><td>S</td><td>Sierra</td><td></td></tr>
+            <tr><td>T</td><td>Tango</td><td></td></tr>
+            <tr><td>U</td><td>Uniform</td><td></td></tr>
+            <tr><td>V</td><td>Victor</td><td></td></tr>
+            <tr><td>W</td><td>Whiskey</td><td></td></tr>
+            <tr><td>X</td><td>X-ray</td><td></td></tr>
+            <tr><td>Y</td><td>Yankee</td><td></td></tr>
+            <tr><td>Z</td><td>Zulu</td><td></td></tr>
+            <tr><td>0</td><td>Zero</td><td>say “zero”</td></tr>
+            <tr><td>1</td><td>One</td><td></td></tr>
+            <tr><td>2</td><td>Two</td><td>say “too” clearly</td></tr>
+            <tr><td>3</td><td>Tree</td><td>radio “three”</td></tr>
+            <tr><td>4</td><td>Fower</td><td>radio “four”</td></tr>
+            <tr><td>5</td><td>Fife</td><td>radio “five”</td></tr>
+            <tr><td>6</td><td>Six</td><td></td></tr>
+            <tr><td>7</td><td>Seven</td><td></td></tr>
+            <tr><td>8</td><td>Eight</td><td></td></tr>
+            <tr><td>9</td><td>Niner</td><td>radio “nine”</td></tr>
+          </tbody>
+        </table>
       </div>
-      <div class="row">
-        <div class="col"><button class="btn" id="ol_solve">Solve</button></div>
-        <div class="col"><button class="btn danger" id="ol_clear">Clear</button></div>
+
+      <div class="card">
+        <h3 style="margin-top:0">Radio Prowords</h3>
+        <table id="fl_prowords">
+          <thead><tr><th>Word</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>Affirmative</td><td>Yes</td></tr>
+            <tr><td>Negative</td><td>No</td></tr>
+            <tr><td>Say again</td><td>Repeat</td></tr>
+            <tr><td>Standby</td><td>Wait</td></tr>
+            <tr><td>Copy</td><td>Received/understood</td></tr>
+            <tr><td>Over</td><td>My turn done; your turn</td></tr>
+            <tr><td>Out</td><td>Conversation complete</td></tr>
+            <tr><td>Wilco</td><td>Will comply</td></tr>
+            <tr><td>Break</td><td>New subject or separation</td></tr>
+          </tbody>
+        </table>
+        <p class="muted">Avoid “yeah/uh-huh”. Use clear numbers and “point” for decimals.</p>
       </div>
-      <div class="grid" style="margin-top:8px">
-        <div class="card"><div class="rowline"><div class="big" id="ol_out_v">—</div><span class="copy" data-copy="#ol_out_v">copy</span></div><div class="muted">V</div></div>
-        <div class="card"><div class="rowline"><div class="big" id="ol_out_i">—</div><span class="copy" data-copy="#ol_out_i">copy</span></div><div class="muted">I</div></div>
-        <div class="card"><div class="rowline"><div class="big" id="ol_out_r">—</div><span class="copy" data-copy="#ol_out_r">copy</span></div><div class="muted">R</div></div>
-        <div class="card"><div class="rowline"><div class="big" id="ol_out_p">—</div><span class="copy" data-copy="#ol_out_p">copy</span></div><div class="muted">P</div></div>
+
+      <div class="card">
+        <h3 style="margin-top:0">SI Prefixes</h3>
+        <table id="fl_prefix">
+          <thead><tr><th>Prefix</th><th>Symbol</th><th>×10^</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>nano</td><td>n</td><td>−9</td><td>nA</td></tr>
+            <tr><td>micro</td><td>µ</td><td>−6</td><td>µA</td></tr>
+            <tr><td>milli</td><td>m</td><td>−3</td><td>mA, mV</td></tr>
+            <tr><td>kilo</td><td>k</td><td>+3</td><td>kPa, kΩ</td></tr>
+            <tr><td>mega</td><td>M</td><td>+6</td><td>MW, MΩ</td></tr>
+            <tr><td>giga</td><td>G</td><td>+9</td><td>GΩ</td></tr>
+            <tr><td>tera</td><td>T</td><td>+12</td><td>TΩ</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0">Unit Shorthands</h3>
+        <p class="muted">psi, kPa, bar, °F, °C, V, mA, mV, Ω, kΩ, kW, rpm, gpm, inH₂O, inHg, mmHg</p>
       </div>
     </div>
+  </section>
 
-    <div class="card">
-      <h3 style="margin-top:0">Voltage Drop</h3>
-      <div class="row">
-        <div class="col">
-          <label>System
-            <select id="vd_sys"><option value="dc">DC / 1-φ</option><option value="3ph">3-phase</option></select>
-          </label>
+  <!-- Ohm’s Law & Voltage Drop -->
+  <section id="ohm_drop">
+    <h2>Ohm’s Law & Voltage Drop</h2>
+
+    <div class="grid">
+      <div class="card">
+        <h3 style="margin-top:0">Ohm’s Law Solver</h3>
+        <div class="row">
+          <div class="col"><label>V (volts) <input id="ol_v" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="ol_v">kbd</button></div>
+          <div class="col"><label>I (amps) <input id="ol_i" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="ol_i">kbd</button></div>
+          <div class="col"><label>R (ohms) <input id="ol_r" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="ol_r">kbd</button></div>
+          <div class="col"><label>P (watts) <input id="ol_p" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="ol_p">kbd</button></div>
         </div>
-        <div class="col"><label>Supply V <input id="vd_v" class="num" inputmode="decimal" placeholder="24"></label><button class="kbd-toggle" data-for="vd_v">kbd</button></div>
-        <div class="col"><label>Load I (A) <input id="vd_i" class="num" inputmode="decimal" placeholder="0.02"></label><button class="kbd-toggle" data-for="vd_i">kbd</button></div>
-      </div>
-      <div class="row">
-        <div class="col"><label>Run length <input id="vd_len" class="num" inputmode="decimal" placeholder="200"></label><button class="kbd-toggle" data-for="vd_len">kbd</button></div>
-        <div class="col">
-          <label>Units
-            <select id="vd_units"><option value="ft">ft</option><option value="m">m</option></select>
-          </label>
+        <div class="row">
+          <div class="col"><button class="btn" id="ol_solve">Solve</button></div>
+          <div class="col"><button class="btn danger" id="ol_clear">Clear</button></div>
         </div>
-        <div class="col">
-          <label>Material
-            <select id="vd_mat"><option value="cu">Copper</option><option value="al">Aluminum</option></select>
-          </label>
+        <div class="grid" style="margin-top:8px">
+          <div class="card"><div class="rowline"><div class="big" id="ol_out_v">—</div><span class="copy" data-copy="#ol_out_v">copy</span></div><div class="muted">V</div></div>
+          <div class="card"><div class="rowline"><div class="big" id="ol_out_i">—</div><span class="copy" data-copy="#ol_out_i">copy</span></div><div class="muted">I</div></div>
+          <div class="card"><div class="rowline"><div class="big" id="ol_out_r">—</div><span class="copy" data-copy="#ol_out_r">copy</span></div><div class="muted">R</div></div>
+          <div class="card"><div class="rowline"><div class="big" id="ol_out_p">—</div><span class="copy" data-copy="#ol_out_p">copy</span></div><div class="muted">P</div></div>
         </div>
       </div>
-      <div class="row">
-        <div class="col">
-          <label>Conductor size
-            <select id="vd_awg">
-              <option>18</option><option>16</option><option>14</option><option selected>12</option>
-              <option>10</option><option>8</option><option>6</option><option>4</option>
-              <option>2</option><option>1</option><option>1/0</option><option>2/0</option>
-              <option>3/0</option><option>4/0</option>
-            </select>
-          </label>
-        </div>
-        <div class="col"><label>Target drop (%) <input id="vd_target" class="num" inputmode="decimal" placeholder="3"></label><button class="kbd-toggle" data-for="vd_target">kbd</button></div>
-      </div>
-      <div class="row">
-        <div class="col"><button class="btn" id="vd_calc">Calculate</button></div>
-      </div>
 
-      <div class="grid" style="margin-top:8px">
-        <div class="card"><div class="rowline"><div class="big" id="vd_out_vd">—</div><span class="copy" data-copy="#vd_out_vd">copy</span></div><div class="muted">Drop (V)</div></div>
-        <div class="card"><div class="rowline"><div class="big" id="vd_out_pct">—</div><span class="copy" data-copy="#vd_out_pct">copy</span></div><div class="muted">% Drop</div></div>
-        <div class="card"><div class="rowline"><div class="big" id="vd_out_end">—</div><span class="copy" data-copy="#vd_out_end">copy</span></div><div class="muted">End Voltage (V)</div></div>
+      <div class="card">
+        <h3 style="margin-top:0">Voltage Drop</h3>
+        <div class="row">
+          <div class="col">
+            <label>System
+              <select id="vd_sys"><option value="dc">DC / 1-φ</option><option value="3ph">3-phase</option></select>
+            </label>
+          </div>
+          <div class="col"><label>Supply V <input id="vd_v" class="num" inputmode="decimal" placeholder="24"></label><button class="kbd-toggle" data-for="vd_v">kbd</button></div>
+          <div class="col"><label>Load I (A) <input id="vd_i" class="num" inputmode="decimal" placeholder="0.02"></label><button class="kbd-toggle" data-for="vd_i">kbd</button></div>
+        </div>
+        <div class="row">
+          <div class="col"><label>Run length <input id="vd_len" class="num" inputmode="decimal" placeholder="200"></label><button class="kbd-toggle" data-for="vd_len">kbd</button></div>
+          <div class="col">
+            <label>Units
+              <select id="vd_units"><option value="ft">ft</option><option value="m">m</option></select>
+            </label>
+          </div>
+          <div class="col">
+            <label>Material
+              <select id="vd_mat"><option value="cu">Copper</option><option value="al">Aluminum</option></select>
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <label>Conductor size
+              <select id="vd_awg">
+                <option>18</option><option>16</option><option>14</option><option selected>12</option>
+                <option>10</option><option>8</option><option>6</option><option>4</option>
+                <option>2</option><option>1</option><option>1/0</option><option>2/0</option>
+                <option>3/0</option><option>4/0</option>
+              </select>
+            </label>
+          </div>
+          <div class="col"><label>Target drop (%) <input id="vd_target" class="num" inputmode="decimal" placeholder="3"></label><button class="kbd-toggle" data-for="vd_target">kbd</button></div>
+        </div>
+        <div class="row">
+          <div class="col"><button class="btn" id="vd_calc">Calculate</button></div>
+        </div>
+
+        <div class="grid" style="margin-top:8px">
+          <div class="card"><div class="rowline"><div class="big" id="vd_out_vd">—</div><span class="copy" data-copy="#vd_out_vd">copy</span></div><div class="muted">Drop (V)</div></div>
+          <div class="card"><div class="rowline"><div class="big" id="vd_out_pct">—</div><span class="copy" data-copy="#vd_out_pct">copy</span></div><div class="muted">% Drop</div></div>
+          <div class="card"><div class="rowline"><div class="big" id="vd_out_end">—</div><span class="copy" data-copy="#vd_out_end">copy</span></div><div class="muted">End Voltage (V)</div></div>
+        </div>
+        <p class="muted" id="vd_suggest"></p>
       </div>
-      <p class="muted" id="vd_suggest"></p>
     </div>
-  </div>
-</section>
+  </section>
 
   <!-- Calibration -->
-<section id="cal">
-  <h2>Calibration Tracker</h2>
-  <div class="grid">
+  <section id="cal">
+    <h2>Calibration Tracker</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="row">
+          <div class="col"><label>Date <input id="cal_date" type="date"></label></div>
+          <div class="col"><label>Tag <input id="cal_tag" placeholder="PT-101"></label></div>
+          <div class="col"><label>Device <input id="cal_dev" placeholder="3051, I/P, Thermo"></label></div>
+        </div>
+        <div class="row">
+          <div class="col"><label>LRV <input id="cal_lrv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="cal_lrv">kbd</button></div>
+          <div class="col"><label>URV <input id="cal_urv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="cal_urv">kbd</button></div>
+          <div class="col"><label>As-Found <input id="cal_af" class="num" inputmode="decimal" placeholder="error % or EU"></label><button class="kbd-toggle" data-for="cal_af">kbd</button></div>
+        </div>
+        <div class="row">
+          <div class="col"><label>As-Left <input id="cal_al" class="num" inputmode="decimal" placeholder="error % or EU"></label><button class="kbd-toggle" data-for="cal_al">kbd</button></div>
+          <div class="col"><label>Tech <input id="cal_tech" placeholder="Initials"></label></div>
+          <div class="col"><label>Interval
+            <select id="cal_interval">
+              <option value="0">None</option>
+              <option value="3">3 months</option>
+              <option value="6">6 months</option>
+              <option value="12">12 months</option>
+            </select></label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col"><label>Notes <input id="cal_notes" placeholder="optional note"></label></div>
+          <div class="col"><button class="btn ok" id="cal_add">Add</button></div>
+          <div class="col"><button class="btn" id="cal_export">Export CSV</button></div>
+          <div class="col"><button class="btn danger" id="cal_clear">Clear All</button></div>
+        </div>
+      </div>
+      <div class="card">
+        <table id="cal_tbl"><thead>
+          <tr><th>Date</th><th>Tag</th><th>Device</th><th>LRV</th><th>URV</th><th>As-Found</th><th>As-Left</th><th>Tech</th><th>Notes</th><th>Next Due</th><th>Status</th><th></th></tr>
+        </thead><tbody></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Loop Log -->
+  <section id="loop">
+    <h2>Loop Check Log</h2>
+
+    <!-- Mini 4–20 mA Quick Calc (always visible) -->
+    <div class="card" id="ll_calc_card">
+      <h3 style="margin-top:0">4–20 mA Quick Calc</h3>
+      <div class="row">
+        <div class="col">
+          <label>LRV (EU)
+            <input id="ll_lrv" class="num" inputmode="decimal" placeholder="0">
+          </label>
+          <button class="kbd-toggle" data-for="ll_lrv">kbd</button>
+        </div>
+        <div class="col">
+          <label>URV (EU)
+            <input id="ll_urv" class="num" inputmode="decimal" placeholder="100">
+          </label>
+          <button class="kbd-toggle" data-for="ll_urv">kbd</button>
+        </div>
+        <div class="col">
+          <label>EU Label
+            <input id="ll_eulbl" placeholder="psi, °F, gpm…">
+          </label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <label>% <input id="ll_pct" class="num" inputmode="decimal" placeholder="50"></label>
+          <button class="kbd-toggle" data-for="ll_pct">kbd</button>
+        </div>
+        <div class="col">
+          <label>mA <input id="ll_ma" class="num" inputmode="decimal" placeholder="12"></label>
+          <button class="kbd-toggle" data-for="ll_ma">kbd</button>
+        </div>
+        <div class="col">
+          <label>EU <input id="ll_eu" class="num" inputmode="decimal" placeholder="—"></label>
+          <button class="kbd-toggle" data-for="ll_eu">kbd</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col"><button class="btn" id="ll_from_pct">From %</button></div>
+        <div class="col"><button class="btn" id="ll_from_ma">From mA</button></div>
+        <div class="col"><button class="btn" id="ll_from_eu">From EU</button></div>
+      </div>
+
+      <div class="hr"></div>
+      <div class="grid">
+        <div class="card"><div class="rowline"><div class="big" id="ll_read_ma">—</div><span class="copy" data-copy="#ll_read_ma">copy</span></div><div class="muted">mA</div></div>
+        <div class="card">
+          <div class="rowline"><div class="big" id="ll_read_pct">—</div><span class="copy" data-copy="#ll_read_pct">copy</span></div>
+          <div class="muted">Percent</div>
+          <div class="steps" style="margin-top:8px">
+            <button class="btn ll_step" data-p="0">0%</button>
+            <button class="btn ll_step" data-p="25">25%</button>
+            <button class="btn ll_step" data-p="50">50%</button>
+            <button class="btn ll_step" data-p="75">75%</button>
+            <button class="btn ll_step" data-p="100">100%</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="rowline"><div class="big" id="ll_read_eu">—</div><span class="copy" data-copy="#ll_read_eu">copy</span></div>
+          <div class="muted">Eng Units</div>
+          <label class="rowline" style="margin-top:8px;flex-wrap:wrap">
+            <input type="checkbox" id="ll_sqrt_mode"><span style="flex:1 1 140px;min-width:0">square-root (flow)</span>
+          </label>
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <div class="col"><input id="ll_slider" type="range" min="0" max="100" step="0.1" value="50"></div>
+      </div>
+      <p class="muted">This quick calc is just for convenience while logging loops; it doesn’t overwrite your main 4–20 tool.</p>
+    </div>
+
+    <!-- Range & Alarms (for the loop/device context snapshot) -->
     <div class="card">
+      <h3 style="margin-top:0">Range & Alarms (Snapshot)</h3>
       <div class="row">
-        <div class="col"><label>Date <input id="cal_date" type="date"></label></div>
-        <div class="col"><label>Tag <input id="cal_tag" placeholder="PT-101"></label></div>
-        <div class="col"><label>Device <input id="cal_dev" placeholder="3051, I/P, Thermo"></label></div>
+        <div class="col"><label>LRV <input id="lp_lrv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_lrv">kbd</button></div>
+        <div class="col"><label>URV <input id="lp_urv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_urv">kbd</button></div>
+        <div class="col"><label>EU Units <input id="lp_eu_units" placeholder="psi, °F, etc."></label></div>
       </div>
       <div class="row">
-        <div class="col"><label>LRV <input id="cal_lrv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="cal_lrv">kbd</button></div>
-        <div class="col"><label>URV <input id="cal_urv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="cal_urv">kbd</button></div>
-        <div class="col"><label>As-Found <input id="cal_af" class="num" inputmode="decimal" placeholder="error % or EU"></label><button class="kbd-toggle" data-for="cal_af">kbd</button></div>
+        <div class="col"><label>LLL <input id="lp_lll" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_lll">kbd</button></div>
+        <div class="col"><label>LL <input id="lp_ll" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_ll">kbd</button></div>
+        <div class="col"><label>L <input id="lp_l" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_l">kbd</button></div>
       </div>
       <div class="row">
-        <div class="col"><label>As-Left <input id="cal_al" class="num" inputmode="decimal" placeholder="error % or EU"></label><button class="kbd-toggle" data-for="cal_al">kbd</button></div>
-        <div class="col"><label>Tech <input id="cal_tech" placeholder="Initials"></label></div>
-        <div class="col"><label>Interval
-          <select id="cal_interval">
-            <option value="0">None</option>
-            <option value="3">3 months</option>
-            <option value="6">6 months</option>
-            <option value="12">12 months</option>
+        <div class="col"><label>H <input id="lp_h" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_h">kbd</button></div>
+        <div class="col"><label>HH <input id="lp_hh" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_hh">kbd</button></div>
+        <div class="col"><label>HHH <input id="lp_hhh" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_hhh">kbd</button></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>Device Range <input id="lp_dev" placeholder="e.g., 0–250 psi"></label></div>
+      </div>
+    </div>
+
+    <!-- Entry form (Expected/Measured removed) -->
+    <div class="card">
+      <h3 style="margin-top:0">Add Loop Entry</h3>
+      <div class="row">
+        <div class="col"><label>Date <input id="lp_date" type="date"></label></div>
+        <div class="col"><label>Tag <input id="lp_tag" placeholder="LT-204"></label></div>
+        <div class="col"><label>Point (AI/AO/DI/DO) <input id="lp_point" placeholder="AI-101"></label></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>Units
+          <select id="lp_units">
+            <option value="%">%</option><option value="mA">mA</option><option value="psi">psi</option>
+            <option value="°F">°F</option><option value="EU">EU</option>
           </select></label>
         </div>
+        <div class="col"><label>OK? <select id="lp_ok"><option value="YES">YES</option><option value="NO">NO</option></select></label></div>
+        <div class="col"><label>Notes <input id="lp_notes" placeholder="optional note"></label></div>
       </div>
       <div class="row">
-        <div class="col"><label>Notes <input id="cal_notes" placeholder="optional note"></label></div>
-        <div class="col"><button class="btn ok" id="cal_add">Add</button></div>
-        <div class="col"><button class="btn" id="cal_export">Export CSV</button></div>
-        <div class="col"><button class="btn danger" id="cal_clear">Clear All</button></div>
+        <div class="col"><button class="btn ok" id="lp_add">Add</button></div>
+        <div class="col"><button class="btn" id="lp_export">Export CSV</button></div>
+        <div class="col"><button class="btn danger" id="lp_clear">Clear All</button></div>
+      </div>
+      <div class="chipbar">
+        <span class="chip green" id="loop-pass">Pass: 0</span>
+        <span class="chip red" id="loop-fail">Fail: 0</span>
       </div>
     </div>
+
+    <!-- Table -->
     <div class="card">
-      <table id="cal_tbl"><thead>
-        <tr><th>Date</th><th>Tag</th><th>Device</th><th>LRV</th><th>URV</th><th>As-Found</th><th>As-Left</th><th>Tech</th><th>Notes</th><th>Next Due</th><th>Status</th><th></th></tr>
-      </thead><tbody></tbody></table>
+      <table id="lp_tbl">
+        <thead>
+          <tr>
+            <th>Date</th><th>Tag</th><th>Point</th><th>Units</th><th>OK</th><th>Notes</th><th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
-  </div>
-</section>
-  
-<!-- Loop Log -->
-<section id="loop">
-  <h2>Loop Check Log</h2>
+  </section>
 
-  <!-- Mini 4–20 mA Quick Calc (always visible) -->
-  <div class="card" id="ll_calc_card">
-    <h3 style="margin-top:0">4–20 mA Quick Calc</h3>
-    <div class="row">
-      <div class="col">
-        <label>LRV (EU)
-          <input id="ll_lrv" class="num" inputmode="decimal" placeholder="0">
-        </label>
-        <button class="kbd-toggle" data-for="ll_lrv">kbd</button>
-      </div>
-      <div class="col">
-        <label>URV (EU)
-          <input id="ll_urv" class="num" inputmode="decimal" placeholder="100">
-        </label>
-        <button class="kbd-toggle" data-for="ll_urv">kbd</button>
-      </div>
-      <div class="col">
-        <label>EU Label
-          <input id="ll_eulbl" placeholder="psi, °F, gpm…">
-        </label>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <label>% <input id="ll_pct" class="num" inputmode="decimal" placeholder="50"></label>
-        <button class="kbd-toggle" data-for="ll_pct">kbd</button>
-      </div>
-      <div class="col">
-        <label>mA <input id="ll_ma" class="num" inputmode="decimal" placeholder="12"></label>
-        <button class="kbd-toggle" data-for="ll_ma">kbd</button>
-      </div>
-      <div class="col">
-        <label>EU <input id="ll_eu" class="num" inputmode="decimal" placeholder="—"></label>
-        <button class="kbd-toggle" data-for="ll_eu">kbd</button>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col"><button class="btn" id="ll_from_pct">From %</button></div>
-      <div class="col"><button class="btn" id="ll_from_ma">From mA</button></div>
-      <div class="col"><button class="btn" id="ll_from_eu">From EU</button></div>
-    </div>
-
-    <div class="hr"></div>
-    <div class="grid">
-      <div class="card"><div class="rowline"><div class="big" id="ll_read_ma">—</div><span class="copy" data-copy="#ll_read_ma">copy</span></div><div class="muted">mA</div></div>
-      <div class="card">
-        <div class="rowline"><div class="big" id="ll_read_pct">—</div><span class="copy" data-copy="#ll_read_pct">copy</span></div>
-        <div class="muted">Percent</div>
-        <div class="steps" style="margin-top:8px">
-          <button class="btn ll_step" data-p="0">0%</button>
-          <button class="btn ll_step" data-p="25">25%</button>
-          <button class="btn ll_step" data-p="50">50%</button>
-          <button class="btn ll_step" data-p="75">75%</button>
-          <button class="btn ll_step" data-p="100">100%</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="rowline"><div class="big" id="ll_read_eu">—</div><span class="copy" data-copy="#ll_read_eu">copy</span></div>
-        <div class="muted">Eng Units</div>
-        <label class="rowline" style="margin-top:8px;flex-wrap:wrap">
-          <input type="checkbox" id="ll_sqrt_mode"><span style="flex:1 1 140px;min-width:0">square-root (flow)</span>
-        </label>
-      </div>
-    </div>
-    <div class="row" style="margin-top:10px">
-      <div class="col"><input id="ll_slider" type="range" min="0" max="100" step="0.1" value="50"></div>
-    </div>
-    <p class="muted">This quick calc is just for convenience while logging loops; it doesn’t overwrite your main 4–20 tool.</p>
-  </div>
-
-  <!-- Range & Alarms (for the loop/device context snapshot) -->
-  <div class="card">
-    <h3 style="margin-top:0">Range & Alarms (Snapshot)</h3>
-    <div class="row">
-      <div class="col"><label>LRV <input id="lp_lrv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_lrv">kbd</button></div>
-      <div class="col"><label>URV <input id="lp_urv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_urv">kbd</button></div>
-      <div class="col"><label>EU Units <input id="lp_eu_units" placeholder="psi, °F, etc."></label></div>
-    </div>
-    <div class="row">
-      <div class="col"><label>LLL <input id="lp_lll" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_lll">kbd</button></div>
-      <div class="col"><label>LL <input id="lp_ll" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_ll">kbd</button></div>
-      <div class="col"><label>L <input id="lp_l" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_l">kbd</button></div>
-    </div>
-    <div class="row">
-      <div class="col"><label>H <input id="lp_h" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_h">kbd</button></div>
-      <div class="col"><label>HH <input id="lp_hh" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_hh">kbd</button></div>
-      <div class="col"><label>HHH <input id="lp_hhh" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_hhh">kbd</button></div>
-    </div>
-    <div class="row">
-      <div class="col"><label>Device Range <input id="lp_dev" placeholder="e.g., 0–250 psi"></label></div>
-    </div>
-  </div>
-
-  <!-- Entry form (Expected/Measured removed) -->
-  <div class="card">
-    <h3 style="margin-top:0">Add Loop Entry</h3>
-    <div class="row">
-      <div class="col"><label>Date <input id="lp_date" type="date"></label></div>
-      <div class="col"><label>Tag <input id="lp_tag" placeholder="LT-204"></label></div>
-      <div class="col"><label>Point (AI/AO/DI/DO) <input id="lp_point" placeholder="AI-101"></label></div>
-    </div>
-    <div class="row">
-      <div class="col"><label>Units
-        <select id="lp_units">
-          <option value="%">%</option><option value="mA">mA</option><option value="psi">psi</option>
-          <option value="°F">°F</option><option value="EU">EU</option>
-        </select></label>
-      </div>
-      <div class="col"><label>OK? <select id="lp_ok"><option value="YES">YES</option><option value="NO">NO</option></select></label></div>
-      <div class="col"><label>Notes <input id="lp_notes" placeholder="optional note"></label></div>
-    </div>
-    <div class="row">
-      <div class="col"><button class="btn ok" id="lp_add">Add</button></div>
-      <div class="col"><button class="btn" id="lp_export">Export CSV</button></div>
-      <div class="col"><button class="btn danger" id="lp_clear">Clear All</button></div>
-    </div>
-    <div class="chipbar">
-      <span class="chip green" id="loop-pass">Pass: 0</span>
-      <span class="chip red" id="loop-fail">Fail: 0</span>
-    </div>
-  </div>
-
-  <!-- Table -->
-  <div class="card">
-    <table id="lp_tbl">
-      <thead>
-        <tr>
-          <th>Date</th><th>Tag</th><th>Point</th><th>Units</th><th>OK</th><th>Notes</th><th></th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-</section>
-  
   <!-- Tickets -->
   <section id="tickets">
     <h2>Tickets</h2>
@@ -1119,7 +1119,7 @@
 
 <footer class="muted">PockeTech — v0.83</footer>
 
-  <!-- iOS Add-to-Home instructions modal -->
+<!-- iOS Add-to-Home instructions modal -->
 <div id="iosInstallTip" style="display:none;position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.55);align-items:center;justify-content:center">
   <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;max-width:520px;padding:16px">
     <h3 style="margin-top:0">Add to Home Screen</h3>
