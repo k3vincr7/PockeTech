@@ -94,7 +94,6 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
 .chip.red{background:rgba(200,0,0,.12)}
 .pill{padding:.15rem .5rem;border-radius:999px;border:1px solid var(--border)}
 .pill-yellow{background:rgba(255,200,0,.15)}
-.pill-red{background:rgba(255,0,0,.15)}
 .pill-green{background:rgba(0,200,0,.12)}
 .pill-red{background:rgba(200,0,0,.12)}
 
@@ -1126,6 +1125,37 @@ const setS=o=>localStorage.setItem(SKEY, JSON.stringify(o));
 function applyTheme(){ document.documentElement.setAttribute('data-theme', getS().theme||'auto'); }
 applyTheme();
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{ if(getS().theme==='auto') applyTheme(); });
+
+/* ===== THEME: apply + toggle button ===== */
+const SKEY='pocketech.settings';
+const DEF={atm:14.7,punit:'psi',lunit:'in',haptics:false,theme:'auto'};
+
+const getS=()=>({...DEF, ...(JSON.parse(localStorage.getItem(SKEY)||'{}'))});
+const setS=o=>localStorage.setItem(SKEY, JSON.stringify(o));
+
+function applyTheme(){
+  const t=getS().theme||'auto';
+  document.documentElement.setAttribute('data-theme', t);
+  const btn=document.getElementById('themeToggle');
+  if(btn){
+    const label = t==='auto' ? '🌓 Auto' : (t==='light' ? '🌞 Light' : '🌚 Dark');
+    btn.textContent = label;
+  }
+}
+applyTheme();
+
+// If system changes and you're on Auto, re-apply
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ()=>{
+  if(getS().theme==='auto') applyTheme();
+});
+
+// Cycle Auto → Light → Dark → Auto
+document.getElementById('themeToggle')?.addEventListener('click', ()=>{
+  const s=getS();
+  s.theme = s.theme==='auto' ? 'light' : (s.theme==='light' ? 'dark' : 'auto');
+  setS(s);
+  applyTheme();
+});
 
 /* ========= STORAGE + UTILS (define ONCE) ========= */
 const load=(k)=>{ try{return JSON.parse(localStorage.getItem(k))||[]}catch{return[]} };
