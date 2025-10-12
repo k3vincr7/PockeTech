@@ -1134,6 +1134,7 @@
 </div>
 
 <script>
+<script>
 /* ========= SETTINGS + THEME ========= */
 const SKEY='pocketech.settings';
 const DEF={atm:14.7,punit:'psi',lunit:'in',haptics:false,theme:'auto'};
@@ -1142,6 +1143,25 @@ const setS=o=>localStorage.setItem(SKEY, JSON.stringify(o));
 function applyTheme(){ document.documentElement.setAttribute('data-theme', getS().theme||'auto'); }
 applyTheme();
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{ if(getS().theme==='auto') applyTheme(); });
+
+// Theme toggle (auto → light → dark)
+const themeBtn=document.getElementById('themeToggle');
+function setThemeBtnLabel(){
+  const t=getS().theme||'auto';
+  if(!themeBtn) return;
+  themeBtn.textContent = (t==='dark') ? '🌙 Dark'
+                        : (t==='light')? '☀️ Light'
+                        : '🌓 Theme';
+}
+function cycleTheme(){
+  const order=['auto','light','dark'];
+  const s=getS();
+  const idx=Math.max(0, order.indexOf(s.theme||'auto'));
+  s.theme=order[(idx+1)%order.length];
+  setS(s); applyTheme(); setThemeBtnLabel();
+}
+setThemeBtnLabel();
+themeBtn?.addEventListener('click', cycleTheme);
 
 /* ========= STORAGE + UTILS (define ONCE) ========= */
 const load=(k)=>{ try{return JSON.parse(localStorage.getItem(k))||[]}catch{return[]} };
@@ -1201,7 +1221,6 @@ function pc_get(){
   const sqrt = !!document.getElementById('pc_sqrt')?.checked;
   return {L,U,span:U-L,eu,sqrt};
 }
-
 function pc_fmt(n){
   if(n===null || n===undefined || n==='') return '';
   const x = Number(n);
@@ -1210,14 +1229,12 @@ function pc_fmt(n){
     ? x.toFixed(2).replace(/\.00$/,'')
     : x.toFixed(4).replace(/0+$/,'').replace(/\.$/,'');
 }
-
 function pc_build(){
   const cfg = pc_get(); if(!cfg) return;
   const steps = [0,25,50,75,100];
   const tb = document.querySelector('#percentTable tbody');
   const spanNote = document.getElementById('pc_span_note');
   if(spanNote) spanNote.textContent = `Span: ${pc_fmt(cfg.span)} ${cfg.eu||'EU'}`;
-
   tb.innerHTML = '';
   steps.forEach(p=>{
     const frac = cfg.sqrt ? Math.sqrt(p/100) : (p/100);
@@ -1232,7 +1249,6 @@ function pc_build(){
     `);
   });
 }
-
 function pc_export(){
   const cfg = pc_get(); if(!cfg) return;
   const rows = [['%','EU','Units','mA','LRV','URV','Span','SQRT']];
@@ -1240,16 +1256,7 @@ function pc_export(){
     const frac = cfg.sqrt ? Math.sqrt(p/100) : (p/100);
     const euv  = cfg.L + cfg.span*frac;
     const ma   = 4 + 16*(p/100);
-    rows.push([
-      p,
-      pc_fmt(euv),
-      cfg.eu || '',
-      pc_fmt(ma),
-      pc_fmt(cfg.L),
-      pc_fmt(cfg.U),
-      pc_fmt(cfg.span),
-      cfg.sqrt ? 'ON' : 'OFF'
-    ]);
+    rows.push([p, pc_fmt(euv), cfg.eu || '', pc_fmt(ma), pc_fmt(cfg.L), pc_fmt(cfg.U), pc_fmt(cfg.span), cfg.sqrt ? 'ON' : 'OFF']);
   });
   const csv = rows.map(r=>r.map(c=>{
     const s=(c??'').toString();
@@ -1261,18 +1268,17 @@ function pc_export(){
   a.href = url; a.download = 'percent_steps.csv'; a.click();
   URL.revokeObjectURL(url);
 }
-
-/* wire up */
 document.getElementById('pc_build')?.addEventListener('click', pc_build);
 document.getElementById('pc_export')?.addEventListener('click', pc_export);
-/* live rebuild on edits */
 ['pc_lrv','pc_urv','pc_eu_units','pc_sqrt'].forEach(id=>{
   const el = document.getElementById(id);
   if(!el) return;
   el.addEventListener('input', ()=>{ clearTimeout(el._t); el._t = setTimeout(pc_build, 120); });
   el.addEventListener('change', pc_build);
 });
-  
+// Initial build if LRV/URV already present
+(function(){ const L=parseFloat(val('pc_lrv')), U=parseFloat(val('pc_urv')); if(Number.isFinite(L)&&Number.isFinite(U)&&L!==U) pc_build(); })();
+
 /* ========= SIGNAL (4–20 mA) w/ √ option ========= */
 function sh_getRange(){const l=parseFloat(val('sh_lrv')),u=parseFloat(val('sh_urv')); if(isNaN(l)||isNaN(u)||l===u){alert('Enter valid LRV/URV');return null;} return {l,u};}
 const EUlbl=()=>{const s=document.getElementById('sh_eulbl')?.value.trim();return s?(' '+s):'';}
@@ -1351,7 +1357,6 @@ const TCTABLE={
     ['B','Grey','White','PtRh/Pt (very high temp)']
   ]
 };
-
 function renderTC(){
   const std=document.getElementById('tc_std')?.value||'ANSI';
   const tb=document.querySelector('#tc_tbl tbody');
@@ -1363,7 +1368,6 @@ function renderTC(){
 }
 document.getElementById('tc_std')?.addEventListener('change',renderTC);
 renderTC();
-
 document.getElementById('jt_search')?.addEventListener('input',e=>{
   const q=e.target.value.trim().toLowerCase();
   document.querySelectorAll('#jrtech .jt-card, #jrtech table tbody tr').forEach(el=>{
@@ -1373,11 +1377,8 @@ document.getElementById('jt_search')?.addEventListener('input',e=>{
 });
 
 /* ========= JR TECH — Temperature Element Ranges ========= */
-/* Works with the HTML card that has: #tr_type, #tr_tbl, #tr_notes_out, #tr_export */
 function c2f(c){ return (c*9/5)+32; }
-
 const TEMP_RANGES = {
-  // Thermocouples (typical/practical)
   TC_J: {name:'Type J',   cmin:-210, cmax:760,  note:'Iron/Constantan; avoid oxidizing >~540°C',           use:'General purpose, mid-range'},
   TC_K: {name:'Type K',   cmin:-200, cmax:1260, note:'Chromel/Alumel; most common general-purpose',        use:'General purpose, wide range'},
   TC_T: {name:'Type T',   cmin:-200, cmax:400,  note:'Copper/Constantan; stable at low temps',             use:'Cryogenic/low-temp'},
@@ -1386,20 +1387,16 @@ const TEMP_RANGES = {
   TC_R: {name:'Type R',   cmin:-50,  cmax:1760, note:'PtRh/Pt; noble metal',                               use:'High-temp furnaces'},
   TC_S: {name:'Type S',   cmin:-50,  cmax:1760, note:'PtRh/Pt; noble metal',                               use:'High-temp furnaces'},
   TC_B: {name:'Type B',   cmin:0,    cmax:1820, note:'PtRh/Pt; low output below ~600°C',                   use:'Very high-temp, glass/steel'},
-
-  // RTDs (IEC 60751 sensor limits; instrument may be tighter)
   RTD_Pt100_A:  {name:'Pt100 (Class A)',   cmin:-200, cmax:650, note:'±(0.15 + 0.002|t|)°C', use:'Process general purpose'},
   RTD_Pt100_B:  {name:'Pt100 (Class B)',   cmin:-200, cmax:850, note:'±(0.30 + 0.005|t|)°C', use:'Wider range / lower accuracy'},
   RTD_Pt1000_A: {name:'Pt1000 (Class A)',  cmin:-200, cmax:650, note:'Higher R → better lead-wire immunity', use:'HVAC/low-current loops'},
   RTD_Pt1000_B: {name:'Pt1000 (Class B)',  cmin:-200, cmax:850, note:'Higher R → better lead-wire immunity', use:'HVAC/long runs'}
 };
-
 function tr_renderOne(key){
   const d = TEMP_RANGES[key];
   if(!d) return;
   const tbody = document.querySelector('#tr_tbl tbody');
   if(!tbody) return;
-
   const fmin = c2f(d.cmin);
   const fmax = c2f(d.cmax);
   tbody.innerHTML = `
@@ -1411,17 +1408,14 @@ function tr_renderOne(key){
       <td>${d.use}</td>
     </tr>
   `;
-
   const notes = document.getElementById('tr_notes_out');
   if(notes) notes.value = `${d.name} — ${d.note}`;
 }
-
 function tr_exportCSV(){
   const sel = document.getElementById('tr_type');
   const key = sel?.value || 'TC_K';
   const d = TEMP_RANGES[key];
   if(!d) return;
-
   const rows = [
     ['Element','Min (°C)','Max (°C)','Min (°F)','Max (°F)','Notes','Typical Use'],
     [d.name, d.cmin, d.cmax, c2f(d.cmin).toFixed(1), c2f(d.cmax).toFixed(1), d.note, d.use]
@@ -1430,18 +1424,14 @@ function tr_exportCSV(){
     const s=(c??'').toString();
     return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s;
   }).join(',')).join('\n');
-
   const blob = new Blob([csv], {type:'text/csv'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = `temp_range_${d.name.replace(/\s+/g,'_')}.csv`; a.click();
   URL.revokeObjectURL(url);
 }
-
 document.getElementById('tr_type')?.addEventListener('change', e=> tr_renderOne(e.target.value));
 document.getElementById('tr_export')?.addEventListener('click', tr_exportCSV);
-
-// Initial paint (defaults to current select or Type K)
 tr_renderOne(document.getElementById('tr_type')?.value || 'TC_K');
 
 /* ========= OHM’S LAW ========= */
@@ -1757,7 +1747,7 @@ document.getElementById('resetApp')?.addEventListener('click', async () => {
 function loadSettingsUI(){const s=getS(); setVal('s_atm',s.atm); const p=document.getElementById('s_punit'); if(p) p.value=s.punit; const lu=document.getElementById('s_lunit'); if(lu) lu.value=s.lunit; const hh=document.getElementById('s_haptics'); if(hh) hh.checked=!!s.haptics; const atmEl=document.getElementById('atm'); if(atmEl) setVal('atm', s.atm);}
 loadSettingsUI();
 document.getElementById('s_save')?.addEventListener('click',()=>{const s=getS(); const a=parseFloat(val('s_atm')); if(!isNaN(a)) s.atm=a; const pu=document.getElementById('s_punit'); if(pu) s.punit=pu.value; const lu=document.getElementById('s_lunit'); if(lu) s.lunit=lu.value; const hh=document.getElementById('s_haptics'); if(hh) s.haptics=hh.checked; setS(s); const atmEl=document.getElementById('atm'); if(atmEl) setVal('atm', s.atm); alert('Saved');});
-document.getElementById('s_reset')?.addEventListener('click',()=>{setS(DEF); loadSettingsUI(); alert('Reset');});
+document.getElementById('s_reset')?.addEventListener('click',()=>{setS(DEF); loadSettingsUI(); setThemeBtnLabel(); applyTheme(); alert('Reset');});
 const slider=document.getElementById('pct_slider'); if(slider){ slider.value=50; }
 setVal('sh_pct', 50); const rp=document.getElementById('read_pct'); if(rp) rp.textContent='50%'; const rm=document.getElementById('read_ma'); if(rm) rm.textContent='12';
 
@@ -1796,6 +1786,7 @@ setVal('sh_pct', 50); const rp=document.getElementById('read_pct'); if(rp) rp.te
     show(target);
   });
 })();
+  
 </script>
 </body>
 </html>
