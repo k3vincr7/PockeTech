@@ -1750,40 +1750,56 @@ document.getElementById('s_reset')?.addEventListener('click',()=>{setS(DEF); loa
 const slider=document.getElementById('pct_slider'); if(slider){ slider.value=50; }
 setVal('sh_pct', 50); const rp=document.getElementById('read_pct'); if(rp) rp.textContent='50%'; const rm=document.getElementById('read_ma'); if(rm) rm.textContent='12';
 
-/* ========= MINI ROUTER (KEEP ONLY THIS ONE) ========= */
+/* ========= MINI ROUTER (HARDENED) ========= */
 (function () {
   const ALIAS = { jr: 'jrtech', ohms: 'ohm_drop', lingo: 'field_lingo' };
   const backBtn = document.getElementById('backBtn');
   const titleEl = document.getElementById('appTitle');
-  function resolve(id){ return ALIAS[id] || id; }
+
+  // Robust: grab every <section id="..."> anywhere on the page
+  function allSections(){ return [...document.querySelectorAll('section[id]')]; }
+  const exists = id => allSections().some(s => s.id === id);
+  const resolve = id => ALIAS[id] || id;
+
   function show(id){
     const tgt = resolve(id);
-    document.querySelectorAll('main section').forEach(s=>{
-      s.classList.toggle('active', s.id === tgt);
-      s.style.display = (s.id === tgt) ? 'block' : 'none';
+    const sections = allSections();
+    const targetEl = sections.find(s => s.id === tgt) || sections.find(s => s.id === 'home');
+    // If we still didn't find anything, bail
+    if(!targetEl) return;
+
+    sections.forEach(s => {
+      const on = (s === targetEl);
+      s.classList.toggle('active', on);
+      s.style.display = on ? 'block' : 'none';
     });
-    if (backBtn) backBtn.style.display = (tgt === 'home') ? 'none' : 'inline-block';
-    const h2 = document.querySelector(`#${CSS.escape(tgt)} > h2`);
+
+    if (backBtn) backBtn.style.display = (targetEl.id === 'home') ? 'none' : 'inline-block';
+    const h2 = targetEl.querySelector('h2');
     if (titleEl) titleEl.textContent = h2 ? `PockeTech — ${h2.textContent}` : 'PockeTech — Field Tools';
-    if ((location.hash || '').slice(1) !== tgt) history.replaceState({id:tgt}, '', '#'+tgt);
-    window.scrollTo(0,0);
+
+    const wantHash = '#' + targetEl.id;
+    if (location.hash !== wantHash) history.replaceState({id: targetEl.id}, '', wantHash);
+    window.scrollTo(0, 0);
   }
-  document.addEventListener('click', e=>{
-    const btn = e.target.closest('[data-go]'); if (!btn) return;
-    e.preventDefault(); show(btn.getAttribute('data-go'));
+
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('[data-go]');
+    if (!btn) return;
+    e.preventDefault();
+    show(btn.getAttribute('data-go'));
   });
-  backBtn?.addEventListener('click', e=>{ e.preventDefault(); show('home'); });
-  window.addEventListener('popstate', e=>{
+
+  backBtn?.addEventListener('click', e => { e.preventDefault(); show('home'); });
+
+  window.addEventListener('popstate', e => {
     const id = e.state?.id || (location.hash || '#home').slice(1);
-    show(id);
+    show(exists(resolve(id)) ? id : 'home');
   });
-  document.addEventListener('DOMContentLoaded', ()=>{
-    const wanted = (location.hash || '#home').slice(1);
-    const target = document.getElementById(resolve(wanted)) ? wanted : 'home';
-    document.querySelectorAll('main section').forEach(s=>{ s.classList.remove('active'); s.style.display='none'; });
-    document.getElementById(resolve(target))?.classList.add('active');
-    show(target);
-  });
+
+  // Initial load
+  const wanted = (location.hash || '#home').slice(1);
+  show(exists(resolve(wanted)) ? wanted : 'home');
 })();
   
 </script>
