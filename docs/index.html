@@ -224,11 +224,13 @@
       <!-- Square Root + Build/Export -->
       <div class="row" style="align-items:flex-end">
         <div class="col">
-          <label class="rowline">
+          <label class="rowline" style="flex-wrap:wrap">
             <input type="checkbox" id="pc_sqrt">
             <span>Square-root (flow DP)</span>
           </label>
-          <p class="muted percent-note">EU = LRV + (URV − LRV) · √(%/100)</p>
+          <p class="muted percent-note" style="white-space:normal">
+           EU = LRV + (URV − LRV) · √(%/100)
+         </p>
           <p class="muted" id="pc_span_note" style="margin:.25rem 0 0">Span: —</p>
         </div>
         <div class="col"><button class="btn" id="pc_build">Build Steps</button></div>
@@ -1504,16 +1506,18 @@ const FMT = v => {
                                 : n.toFixed(4).replace(/0+$/,'').replace(/\.$/,''))
     : v;
 };
-/* Mini calc (IDs prefixed ll_) */
-function ll_getRange(){
-  const l = parseFloat(document.getElementById('ll_lrv').value);
-  const u = parseFloat(document.getElementById('ll_urv').value);
-  if (!Number.isFinite(l) || !Number.isFinite(u) || l===u){ alert('Enter valid LRV & URV for the mini calc.'); return null; }
-  return {l,u};
+
+/* Mini calc (IDs prefixed ll_) — quiet until LRV/URV exist */
+function ll_getRange({warn=true}={}) {
+  const l = parseFloat(document.getElementById('ll_lrv')?.value);
+  const u = parseFloat(document.getElementById('ll_urv')?.value);
+  const ok = Number.isFinite(l) && Number.isFinite(u) && l !== u;
+  if (!ok) { if (warn) alert('Enter valid LRV & URV for the mini calc.'); return null; }
+  return { l, u };
 }
-function ll_euLabel(){ const s=(document.getElementById('ll_eulbl').value||'').trim(); return s?(' '+s):''; }
+function ll_euLabel(){ const s=(document.getElementById('ll_eulbl')?.value||'').trim(); return s?(' '+s):''; }
 function ll_updateFromPct(p){
-  const r=ll_getRange(); if(!r) return;
+  const r = ll_getRange({warn:false}); if(!r) return; // <-- no alert during typing/init
   const pct=Math.min(Math.max(Number(p)||0,0),100);
   const sqrt=document.getElementById('ll_sqrt_mode').checked;
   const ma = 4 + 16*(pct/100);
@@ -1521,14 +1525,30 @@ function ll_updateFromPct(p){
   document.getElementById('ll_pct').value = FMT(pct);
   document.getElementById('ll_ma').value  = FMT(ma);
   document.getElementById('ll_eu').value  = FMT(eu);
-  document.getElementById('ll_read_pct').textContent = FMT(pct) + '%';
+  document.getElementById('ll_read_pct').textContent = FMT(pct)+'%';
   document.getElementById('ll_read_ma').textContent  = FMT(ma);
-  document.getElementById('ll_read_eu').textContent  = FMT(eu) + ll_euLabel();
+  document.getElementById('ll_read_eu').textContent  = FMT(eu)+ll_euLabel();
   const slider=document.getElementById('ll_slider'); if(slider) slider.value=pct;
 }
-function ll_fromMA(){ const r=ll_getRange(); if(!r) return; const m=parseFloat(document.getElementById('ll_ma').value); if(!Number.isFinite(m)){ alert('Enter mA'); return; } ll_updateFromPct(Math.min(Math.max((m-4)/16*100,0),100)); }
-function ll_fromPct(){ const p=parseFloat(document.getElementById('ll_pct').value); if(!Number.isFinite(p)){ alert('Enter %'); return; } ll_updateFromPct(p); }
-function ll_fromEU(){ const r=ll_getRange(); if(!r) return; const e=parseFloat(document.getElementById('ll_eu').value); if(!Number.isFinite(e)){ alert('Enter EU'); return; } const sqrt=document.getElementById('ll_sqrt_mode').checked; const en=(e-r.l)/(r.u-r.l); const pct = Math.min(Math.max((sqrt? Math.pow(Math.max(en,0),2) : en)*100,0),100); ll_updateFromPct(pct); }
+function ll_fromMA(){ const r=ll_getRange(); if(!r) return;
+  const m=parseFloat(document.getElementById('ll_ma').value);
+  if(!Number.isFinite(m)){ alert('Enter mA'); return; }
+  ll_updateFromPct(Math.min(Math.max((m-4)/16*100,0),100));
+}
+function ll_fromPct(){ const r=ll_getRange(); if(!r) return;
+  const p=parseFloat(document.getElementById('ll_pct').value);
+  if(!Number.isFinite(p)){ alert('Enter %'); return; }
+  ll_updateFromPct(p);
+}
+function ll_fromEU(){ const r=ll_getRange(); if(!r) return;
+  const e=parseFloat(document.getElementById('ll_eu').value);
+  if(!Number.isFinite(e)){ alert('Enter EU'); return; }
+  const sqrt=document.getElementById('ll_sqrt_mode').checked;
+  const en=(e-r.l)/(r.u-r.l);
+  const pct=Math.min(Math.max((sqrt? Math.pow(Math.max(en,0),2):en)*100,0),100);
+  ll_updateFromPct(pct);
+}
+
 document.getElementById('ll_from_pct')?.addEventListener('click', ll_fromPct);
 document.getElementById('ll_from_ma')?.addEventListener('click', ll_fromMA);
 document.getElementById('ll_from_eu')?.addEventListener('click', ll_fromEU);
@@ -1539,8 +1559,15 @@ document.querySelectorAll('#ll_calc_card .copy').forEach(c=>c.addEventListener('
   const sel=c.getAttribute('data-copy'); const el=document.querySelector(sel); if(!el) return;
   try{ await navigator.clipboard.writeText(el.textContent.trim()); c.textContent='copied'; setTimeout(()=>c.textContent='copy',900);}catch{}
 }));
-(function(){ const s=document.getElementById('ll_slider'); if(s) s.value=50; ll_updateFromPct(50); })();
 
+// Init without nagging; also seeds safe defaults so slider works
+(function(){
+  const s=document.getElementById('ll_slider'); if(s) s.value=50;
+  if (!document.getElementById('ll_lrv').value) setVal('ll_lrv','0');
+  if (!document.getElementById('ll_urv').value) setVal('ll_urv','100');
+  ll_updateFromPct(50);
+})();
+  
 /* Loop add/render/CSV */
 function loop_add(){
   const safe = id => document.getElementById(id)?.value ?? "";
