@@ -1488,32 +1488,81 @@ document.getElementById('pc_export')?.addEventListener('click', pc_export);
 // Initial build if LRV/URV already present
 (function(){ const L=parseFloat(val('pc_lrv')), U=parseFloat(val('pc_urv')); if(Number.isFinite(L)&&Number.isFinite(U)&&L!==U) pc_build(); })();
 
-/* ========= SIGNAL (4–20 mA) w/ √ option ========= */
-function sh_getRange(){const l=parseFloat(val('sh_lrv')),u=parseFloat(val('sh_urv')); if(isNaN(l)||isNaN(u)||l===u){alert('Enter valid LRV/URV');return null;} return {l,u};}
-const EUlbl=()=>{const s=document.getElementById('sh_eulbl')?.value.trim();return s?(' '+s):'';}
-function sh_updateFromPct(p){
-  const r=sh_getRange(); if(!r) return;
-  const sqrt=document.getElementById('sqrt_mode')?.checked;
-  const pct=Math.min(Math.max(Number(p),0),100);
-  const ma=4+16*(pct/100);
-  const eu = sqrt ? (r.l+(r.u-r.l)*Math.sqrt(pct/100))
-                  : (r.l+(r.u-r.l)*(pct/100));
-  setVal('sh_pct',fmt(pct)); setVal('sh_ma',fmt(ma)); setVal('sh_eu',fmt(eu));
-  const rm=document.getElementById('read_ma'), rp=document.getElementById('read_pct'), re=document.getElementById('read_eu');
-  if(rm) rm.textContent=fmt(ma); if(rp) rp.textContent=fmt(pct)+'%'; if(re) re.textContent=fmt(eu)+EUlbl();
-  const s=document.getElementById('pct_slider'); if(s) s.value=pct;
+/* ========= 4-20 mA Converter with Square Root ========= */
+function getRangeMA(){
+  const lrv = parseFloat(document.getElementById('ma_lrv').value);
+  const urv = parseFloat(document.getElementById('ma_urv').value);
+  if (!Number.isFinite(lrv) || !Number.isFinite(urv) || lrv === urv) {
+    alert('Enter valid LRV and URV');
+    return null;
+  }
+  const label = (document.getElementById('ma_eulbl').value || '').trim();
+  const sqrt = document.getElementById('ma_sqrt_mode').checked;
+  return {lrv, urv, label, sqrt};
 }
-function sh_fromMA(){const r=sh_getRange(); if(!r)return; const m=parseFloat(val('sh_ma')); if(isNaN(m)){alert('Enter mA');return;} sh_updateFromPct(Math.min(Math.max((m-4)/16*100,0),100));}
-function sh_fromPct(){const p=parseFloat(val('sh_pct')); if(isNaN(p)){alert('Enter %');return;} sh_updateFromPct(p);}
-function sh_fromEU(){const r=sh_getRange(); if(!r)return; const e=parseFloat(val('sh_eu')); if(isNaN(e)){alert('Enter EU');return;} const sqrt=document.getElementById('sqrt_mode')?.checked; let pct; if(!sqrt){pct=(e-r.l)/(r.u-r.l)*100;} else {const en=(e-r.l)/(r.u-r.l); pct=Math.pow(Math.max(en,0),2)*100;} sh_updateFromPct(pct);}
-document.getElementById('sh_from_ma')?.addEventListener('click',sh_fromMA);
-document.getElementById('sh_from_pct')?.addEventListener('click',sh_fromPct);
-document.getElementById('sh_from_eu')?.addEventListener('click',sh_fromEU);
-document.getElementById('pct_slider')?.addEventListener('input',e=>sh_updateFromPct(e.target.value));
-document.getElementById('sqrt_mode')?.addEventListener('change',()=>{const p=parseFloat(document.getElementById('pct_slider')?.value||'0'); sh_updateFromPct(p);});
-document.querySelectorAll('.step').forEach(b=>b.addEventListener('click',()=>sh_updateFromPct(b.dataset.p)));
-document.querySelectorAll('.copy').forEach(c=>c.addEventListener('click',async()=>{const sel=c.getAttribute('data-copy');const el=document.querySelector(sel); if(!el)return; try{await navigator.clipboard.writeText(el.textContent.trim()); c.textContent='copied'; setTimeout(()=>c.textContent='copy',900);}catch{}}));
 
+function maToPct(ma){
+  return ((ma - 4) / 16) * 100;
+}
+
+function pctToMA(pct){
+  return 4 + (pct / 100) * 16;
+}
+
+function pctToEU(pct, range){
+  const frac = range.sqrt ? Math.sqrt(pct / 100) : (pct / 100);
+  return range.lrv + (range.urv - range.lrv) * frac;
+}
+
+function euToPct(eu, range){
+  const frac = (eu - range.lrv) / (range.urv - range.lrv);
+  return range.sqrt ? (frac ** 2) * 100 : frac * 100;
+}
+
+// mA → EU
+document.getElementById('ma_to_eu')?.addEventListener('click', ()=>{
+  const range = getRangeMA();
+  if (!range) return;
+  const ma = parseFloat(document.getElementById('ma_in').value);
+  if (!Number.isFinite(ma)){ alert('Enter a valid mA'); return; }
+  const pct = maToPct(ma);
+  const eu = pctToEU(pct, range);
+  document.getElementById('ma_out').value = eu.toFixed(2) + (range.label ? ' ' + range.label : '');
+});
+
+// EU → mA
+document.getElementById('eu_to_ma')?.addEventListener('click', ()=>{
+  const range = getRangeMA();
+  if (!range) return;
+  const eu = parseFloat(document.getElementById('eu_in').value);
+  if (!Number.isFinite(eu)){ alert('Enter a valid EU'); return; }
+  const pct = euToPct(eu, range);
+  const ma = pctToMA(pct);
+  document.getElementById('eu_out').value = ma.toFixed(2) + ' mA';
+});
+
+// mA → %
+document.getElementById('ma_to_pct')?.addEventListener('click', ()=>{
+  const ma = parseFloat(document.getElementById('pct_in').value);
+  if (!Number.isFinite(ma)){ alert('Enter a valid mA'); return; }
+  const pct = maToPct(ma);
+  document.getElementById('pct_out').value = pct.toFixed(2) + ' %';
+});
+
+// Copy buttons
+document.querySelectorAll('.copy').forEach(btn=>{
+  btn.addEventListener('click', async ()=>{
+    const sel = btn.getAttribute('data-copy');
+    const el = document.querySelector(sel);
+    if (!el) return;
+    try{
+      await navigator.clipboard.writeText(el.value.trim());
+      btn.textContent = 'copied';
+      setTimeout(()=> btn.textContent = 'copy', 900);
+    }catch(e){ console.error(e); }
+  });
+});
+  
 /* ========= PRESSURE ========= */
 const KPA_PER_PSI = 6.894757293168;
 const P2PA = {
