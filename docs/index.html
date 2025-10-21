@@ -452,31 +452,140 @@ html[data-theme="dark"]{
 
   <!-- TEMP -->
   <section id="temp">
-    <h2>Temperature</h2>
-    <h3>Convert — “This → That”</h3>
+  <div class="card">
+    <h2>Temp ↔ Ohms Converter</h2>
+
     <div class="row">
-      <div class="col"><label>Value <input id="tc_val" class="num" inputmode="decimal" placeholder="68"></label><button class="kbd-toggle" data-for="tc_val">kbd</button></div>
-      <div class="col"><label>From <select id="tc_from"><option value="F">°F</option><option value="C">°C</option><option value="K">K</option></select></label></div>
-      <div class="col"><label>To <select id="tc_to"><option value="C">°C</option><option value="F">°F</option><option value="K">K</option></select></label></div>
-    </div>
-    <div class="row">
-      <div class="col"><button class="btn" id="tc_conv_btn">Convert</button></div>
-      <div class="col"><label>Result <input id="tc_out" readonly placeholder="—"></label></div>
+      <div class="col">
+        <label for="to_sensor">Sensor Type</label>
+        <select id="to_sensor">
+          <option value="pt100">Pt100</option>
+          <option value="pt1000">Pt1000</option>
+          <option value="ntc10k">10 kΩ NTC (B=3950)</option>
+        </select>
+      </div>
+      <div class="col">
+        <label for="to_units">Units</label>
+        <select id="to_units">
+          <option value="F">°F</option>
+          <option value="C">°C</option>
+        </select>
+      </div>
     </div>
 
     <div class="hr"></div>
-    <h3>Delta T</h3>
-    <div class="row">
-      <div class="col"><label>ΔValue <input id="td_val" class="num" inputmode="decimal" placeholder="10"></label><button class="kbd-toggle" data-for="td_val">kbd</button></div>
-      <div class="col"><label>From <select id="td_from"><option value="F">Δ°F</option><option value="C">Δ°C</option><option value="K">ΔK</option></select></label></div>
-      <div class="col"><label>To <select id="td_to"><option value="C">Δ°C</option><option value="F">Δ°F</option><option value="K">ΔK</option></select></label></div>
-    </div>
-    <div class="row">
-      <div class="col"><button class="btn" id="td_conv_btn">Convert Δ</button></div>
-      <div class="col"><label>Result <input id="td_out" readonly placeholder="—"></label></div>
-    </div>
-  </section>
 
+    <h3>Temp → Ohms</h3>
+    <div class="row">
+      <div class="col">
+        <label>Temperature</label>
+        <input id="to_temp_in" type="number" placeholder="Enter temperature">
+      </div>
+      <div class="col">
+        <label>Resistance (Ω)</label>
+        <div class="rowline">
+          <input id="to_ohms_out" type="text" readonly>
+          <span class="copy" data-copy="#to_ohms_out">copy</span>
+        </div>
+      </div>
+    </div>
+    <button id="to_temp_convert" class="btn ok">Convert Temp → Ω</button>
+
+    <div class="hr"></div>
+
+    <h3>Ohms → Temp</h3>
+    <div class="row">
+      <div class="col">
+        <label>Resistance (Ω)</label>
+        <input id="to_ohms_in" type="number" placeholder="Enter resistance">
+      </div>
+      <div class="col">
+        <label>Temperature</label>
+        <div class="rowline">
+          <input id="to_temp_out" type="text" readonly>
+          <span class="copy" data-copy="#to_temp_out">copy</span>
+        </div>
+      </div>
+    </div>
+    <button id="to_ohms_convert" class="btn ok">Convert Ω → Temp</button>
+
+    <p class="muted" style="margin-top:8px;">
+      ℹ️ RTDs go <b>up</b> in resistance with heat. Thermistors go <b>down</b>.
+    </p>
+  </div>
+
+  <div class="card" style="margin-top:10px">
+    <h2>Temperature Converter</h2>
+    <div class="row">
+      <div class="col">
+        <label>Value</label>
+        <input id="tc_val" type="number" placeholder="e.g., 68">
+      </div>
+      <div class="col">
+        <label>From</label>
+        <select id="tc_from">
+          <option value="F">°F</option>
+          <option value="C">°C</option>
+          <option value="K">K</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>To</label>
+        <select id="tc_to">
+          <option value="C">°C</option>
+          <option value="F">°F</option>
+          <option value="K">K</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>Result</label>
+        <div class="rowline">
+          <input id="tc_out" type="text" readonly placeholder="—">
+          <span class="copy" data-copy="#tc_out">copy</span>
+        </div>
+      </div>
+    </div>
+    <button id="tc_conv_btn" class="btn ok">Convert</button>
+  </div>
+
+  <div class="card" style="margin-top:10px">
+    <h2>Delta (Δ) Converter</h2>
+    <div class="row">
+      <div class="col">
+        <label>ΔValue</label>
+        <input id="td_val" type="number" placeholder="e.g., 10">
+      </div>
+      <div class="col">
+        <label>From</label>
+        <select id="td_from">
+          <option value="C">Δ°C</option>
+          <option value="F">Δ°F</option>
+          <option value="K">ΔK</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>To</label>
+        <select id="td_to">
+          <option value="C">Δ°C</option>
+          <option value="F">Δ°F</option>
+          <option value="K">ΔK</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>Result</label>
+        <div class="rowline">
+          <input id="td_out" type="text" readonly placeholder="—">
+          <span class="copy" data-copy="#td_out">copy</span>
+        </div>
+      </div>
+    </div>
+    <button id="td_conv_btn" class="btn ok">Convert Δ</button>
+    <p class="muted" style="margin-top:6px">
+      Δ = change. Example: a 10 °C rise equals an 18 °F rise (×9/5). Δ°C and ΔK are the same size.
+    </p>
+  </div>
+</section>
+  
   <!-- I/P -->
   <section id="ip">
     <h2>I/P 3–15 psi Helper</h2>
@@ -1338,6 +1447,128 @@ function fromPSI(){ const p=parseFloat(val('u_psi')); if(isNaN(p)){alert('Enter 
 function fromKPA(){ const k=parseFloat(val('u_kpa')); if(isNaN(k)){alert('Enter kPa');return;} const psi=k/KPA_PER_PSI; setVal('u_psi', fmt(psi)); setVal('u_bar', fmt(psi*0.06894757)); }
 function fromBAR(){ const b=parseFloat(val('u_bar')); if(isNaN(b)){alert('Enter bar');return;} const psi=b/0.06894757; setVal('u_psi', fmt(psi)); setVal('u_kpa', fmt(psi*KPA_PER_PSI)); }
 
+/* ========= TEMP ↔ OHMS + Temp & Delta ========= */
+/* ---------- RTD / Thermistor constants ---------- */
+const A = 3.9083e-3;      // Callendar–Van Dusen
+const B = -5.775e-7;
+
+function CtoF(c){ return c * 9/5 + 32; }
+function FtoC(f){ return (f - 32) * 5/9; }
+function CtoK(c){ return c + 273.15; }
+function KtoC(k){ return k - 273.15; }
+function fmtNum(x){ return Number.isFinite(x) ? x.toFixed(2) : ''; }
+
+/* ---------- RTD (Pt100 / Pt1000) ---------- */
+function ptTempToOhms(tempC, type){
+  const R0 = (type === 'pt1000') ? 1000 : 100;
+  return R0 * (1 + A*tempC + B*tempC*tempC);
+}
+function ptOhmsToTemp(R, type){
+  const R0 = (type === 'pt1000') ? 1000 : 100;
+  const a = B*R0, b = A*R0, c = R0 - R;
+  const disc = b*b - 4*a*c;
+  if (disc < 0) return NaN;
+  return (-b + Math.sqrt(disc)) / (2*a);
+}
+
+/* ---------- NTC 10k (B=3950) ---------- */
+function ntcTempToOhms(tempC){
+  const BETA = 3950, R0 = 10000, T0 = 25 + 273.15;
+  const T = tempC + 273.15;
+  return R0 * Math.exp(BETA * (1/T - 1/T0));
+}
+function ntcOhmsToTemp(R){
+  const BETA = 3950, R0 = 10000, T0 = 25 + 273.15;
+  const T = 1 / ((1/T0) + (1/BETA)*Math.log(R/R0));
+  return T - 273.15;
+}
+
+/* ---------- Temp → Ohms ---------- */
+document.getElementById('to_temp_convert')?.addEventListener('click', ()=>{
+  const sensor = document.getElementById('to_sensor').value;
+  const units  = document.getElementById('to_units').value;
+  let t = parseFloat(document.getElementById('to_temp_in').value);
+  if (!Number.isFinite(t)) { alert('Enter a valid temperature'); return; }
+  if (units === 'F') t = FtoC(t);
+  let R = NaN;
+  if (sensor === 'pt100' || sensor === 'pt1000') R = ptTempToOhms(t, sensor);
+  if (sensor === 'ntc10k') R = ntcTempToOhms(t);
+  document.getElementById('to_ohms_out').value = fmtNum(R);
+});
+
+/* ---------- Ohms → Temp ---------- */
+document.getElementById('to_ohms_convert')?.addEventListener('click', ()=>{
+  const sensor = document.getElementById('to_sensor').value;
+  const units  = document.getElementById('to_units').value;
+  const R = parseFloat(document.getElementById('to_ohms_in').value);
+  if (!Number.isFinite(R)) { alert('Enter a valid resistance'); return; }
+  let tC = NaN;
+  if (sensor === 'pt100' || sensor === 'pt1000') tC = ptOhmsToTemp(R, sensor);
+  if (sensor === 'ntc10k') tC = ntcOhmsToTemp(R);
+  const tOut = (units === 'F') ? CtoF(tC) : tC;
+  document.getElementById('to_temp_out').value = fmtNum(tOut);
+});
+
+/* ---------- Absolute Temperature Converter ---------- */
+function convertTemp(val, from, to){
+  if (!Number.isFinite(val)) return NaN;
+  // go via °C
+  let c;
+  if (from === 'C') c = val;
+  else if (from === 'F') c = FtoC(val);
+  else if (from === 'K') c = KtoC(val);
+  else return NaN;
+
+  if (to === 'C') return c;
+  if (to === 'F') return CtoF(c);
+  if (to === 'K') return CtoK(c);
+  return NaN;
+}
+document.getElementById('tc_conv_btn')?.addEventListener('click', ()=>{
+  const v = parseFloat(document.getElementById('tc_val').value);
+  const f = document.getElementById('tc_from').value;
+  const t = document.getElementById('tc_to').value;
+  if (!Number.isFinite(v)) { alert('Enter a temperature'); return; }
+  const out = convertTemp(v, f, t);
+  document.getElementById('tc_out').value = fmtNum(out);
+});
+
+/* ---------- Delta (difference) Converter ---------- */
+function convertDelta(val, from, to){
+  if (!Number.isFinite(val)) return NaN;
+  // Normalize to Δ°C
+  let dC = val;
+  if (from === 'F') dC = val * (5/9);
+  if (from === 'K') dC = val; // same size as °C
+  // From Δ°C to target
+  if (to === 'C') return dC;
+  if (to === 'F') return dC * (9/5);
+  if (to === 'K') return dC;
+  return NaN;
+}
+document.getElementById('td_conv_btn')?.addEventListener('click', ()=>{
+  const v = parseFloat(document.getElementById('td_val').value);
+  const f = document.getElementById('td_from').value;
+  const t = document.getElementById('td_to').value;
+  if (!Number.isFinite(v)) { alert('Enter a delta value'); return; }
+  const out = convertDelta(v, f, t);
+  document.getElementById('td_out').value = fmtNum(out);
+});
+
+/* ---------- Copy helpers ---------- */
+document.querySelectorAll('.copy').forEach(btn=>{
+  btn.addEventListener('click', async ()=>{
+    const sel = btn.getAttribute('data-copy');
+    const el = document.querySelector(sel);
+    if (!el) return;
+    try{
+      await navigator.clipboard.writeText((el.value ?? el.textContent ?? '').toString().trim());
+      btn.textContent = 'copied';
+      setTimeout(()=> btn.textContent = 'copy', 900);
+    }catch(e){ console.error(e); }
+  });
+});
+  
 /* ======== LEVEL (Unified) ======== */
 /* Uses existing global: KPA_PER_PSI (do NOT redeclare here) */
 const IN_PER_FT = 12;
