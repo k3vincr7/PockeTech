@@ -99,7 +99,12 @@
   .steps button{ padding:.55em .7em; border-radius:999px; margin-right:6px }
   footer{ text-align:center; color:var(--muted); font-size:12px; padding:12px }
 
-  /* ====== HOME GRID ====== */
+    /* Level helper hints */
+#level .hint { font-size:.85rem; color: var(--muted,#6b7280); margin-top:4px }
+#level .hint.error { color: #b91c1c } /* red-700 */
+#level .result.big { font-size:1.15rem; font-weight:600 }
+
+    /* ====== HOME GRID ====== */
   #home{ background:var(--card); border:1px solid var(--border); border-radius:10px; padding:12px }
   .home-grid{
     display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
@@ -179,8 +184,7 @@
     <div class="home-grid">
       <button class="tile" data-go="percent">🧮<span>Percent</span></button>
       <button class="tile" data-go="signal">📈<span>4–20 mA</span></button>
-      <button class="tile" data-go="level_open">🫙<span>Level — Open</span></button>
-      <button class="tile" data-go="level_closed">🔒<span>Level — Closed</span></button>
+      <button class="tile" data-go="level">🫙<span>Level</span></button>
       <button class="tile" data-go="pressure">⛽<span>Pressure</span></button>
       <button class="tile" data-go="temp">🌡️<span>Temp</span></button>
       <button class="tile" data-go="ip">🎛️<span>I/P 3–15</span></button>
@@ -250,136 +254,135 @@
     </div>
   </section>
 
-  <!-- LEVEL — OPEN -->
-  <section id="level_open">
-    <h2>Level — Open Tank (tap-to-tap)</h2>
-    <div class="row">
-      <div class="col"><label>Tap-to-tap span <input id="lo_span" class="num" inputmode="decimal" placeholder="72"></label><button class="kbd-toggle" data-for="lo_span">kbd</button></div>
-      <div class="col"><label>Units <select id="lo_units"><option value="in">in</option><option value="ft">ft</option><option value="m">m</option></select></label></div>
-      <div class="col"><label>Specific Gravity <input id="lo_sg" class="num" inputmode="decimal" value="1.0"></label><button class="kbd-toggle" data-for="lo_sg">kbd</button></div>
-    </div>
-    <div class="row">
-      <div class="col"><label>dP Units <select id="lo_dpU"><option value="inh2o">inH₂O</option><option value="psi">psi</option><option value="kpa">kPa</option></select></label></div>
-      <div class="col"><label>LRV <input id="lo_lrv" class="num" inputmode="decimal" placeholder="0"></label><button class="kbd-toggle" data-for="lo_lrv">kbd</button></div>
-      <div class="col"><label>URV <input id="lo_urv" class="num" inputmode="decimal" placeholder="auto"></label><button class="kbd-toggle" data-for="lo_urv">kbd</button></div>
-    </div>
-    <div class="hr"></div>
-    <div class="row">
-      <div class="col"><label>Level <input id="lo_lvl" class="num" inputmode="decimal" placeholder="same units as span"></label><button class="kbd-toggle" data-for="lo_lvl">kbd</button></div>
-      <div class="col"><button class="btn" onclick="LO_levelToMa()">Level → mA</button></div>
-      <div class="col"><label>mA <input id="lo_ma" class="num" inputmode="decimal" placeholder="12"></label><button class="kbd-toggle" data-for="lo_ma">kbd</button></div>
-      <div class="col"><button class="btn" onclick="LO_maToLevel()">mA → Level</button></div>
-    </div>
-    <p id="lo_result" class="muted"></p>
-    <div class="row"><div class="col"><button class="btn" onclick="LO_buildSteps()">Build 0/25/50/75/100 Table</button></div></div>
-    <table id="lo_steps"><thead><tr><th>%</th><th>Level</th><th>dP</th><th>mA</th></tr></thead><tbody></tbody></table>
-  </section>
+<!-- LEVEL (Unified) -->
+<section id="level">
+  <h2>Level Helper (Open / Closed)</h2>
 
-  <!-- 4–20 mA HELPER -->
-  <section id="signal">
-    <h2>4–20 mA Helper (Pro)</h2>
-
+  <!-- Guided Mode -->
+  <div class="card" id="lvl_guided">
+    <h3 style="margin-top:0">Guided Mode</h3>
     <div class="row">
       <div class="col">
-        <label>LRV (EU) <input id="sh_lrv" class="num" inputmode="decimal" placeholder="0"></label>
-        <button class="kbd-toggle" data-for="sh_lrv">kbd</button>
+        <label>Tank Type
+          <select id="lv_type">
+            <option value="open">Open tank</option>
+            <option value="closed_dry">Closed — dry leg (gas)</option>
+            <option value="closed_wet">Closed — wet leg</option>
+          </select>
+        </label>
       </div>
       <div class="col">
-        <label>URV (EU) <input id="sh_urv" class="num" inputmode="decimal" placeholder="200"></label>
-        <button class="kbd-toggle" data-for="sh_urv">kbd</button>
+        <label>Tap-to-tap span
+          <input id="lv_span" class="num" inputmode="decimal" placeholder="72">
+        </label>
+        <button class="kbd-toggle" data-for="lv_span">kbd</button>
+        <div class="hint" id="hint_span">Vertical distance between the two taps.</div>
       </div>
       <div class="col">
-        <label>EU Label <input id="sh_eulbl" placeholder="e.g., gpm, °F, psi"></label>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <label>mA <input id="sh_ma" class="num" inputmode="decimal" placeholder="12"></label>
-        <button class="kbd-toggle" data-for="sh_ma">kbd</button>
-      </div>
-      <div class="col">
-        <label>% <input id="sh_pct" class="num" inputmode="decimal" placeholder="50"></label>
-        <button class="kbd-toggle" data-for="sh_pct">kbd</button>
-      </div>
-      <div class="col">
-        <label>EU <input id="sh_eu" class="num" inputmode="decimal" placeholder="100"></label>
-        <button class="kbd-toggle" data-for="sh_eu">kbd</button>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col"><button class="btn" id="sh_from_ma">From mA</button></div>
-      <div class="col"><button class="btn" id="sh_from_pct">From %</button></div>
-      <div class="col"><button class="btn" id="sh_from_eu">From EU</button></div>
-    </div>
-
-    <div class="hr"></div>
-
-    <div class="grid">
-      <div class="card">
-        <div class="rowline"><div class="big" id="read_ma">—</div><span class="copy" data-copy="#read_ma">copy</span></div>
-        <div class="muted">mA</div>
-      </div>
-
-      <div class="card">
-        <div class="rowline"><div class="big" id="read_pct">—</div><span class="copy" data-copy="#read_pct">copy</span></div>
-        <div class="muted">Percent</div>
-        <div class="steps" style="margin-top:8px">
-          <button class="btn step" data-p="0">0%</button>
-          <button class="btn step" data-p="25">25%</button>
-          <button class="btn step" data-p="50">50%</button>
-          <button class="btn step" data-p="75">75%</button>
-          <button class="btn step" data-p="100">100%</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="rowline"><div class="big" id="read_eu">—</div><span class="copy" data-copy="#read_eu">copy</span></div>
-        <div class="muted">Eng Units</div>
-        <label class="rowline" style="margin-top:8px; flex-wrap:wrap">
-          <input type="checkbox" id="sqrt_mode">
-          <span style="flex:1 1 140px; min-width:0">square-root (flow)</span>
+        <label>Units
+          <select id="lv_units">
+            <option value="in">in</option>
+            <option value="ft">ft</option>
+            <option value="m">m</option>
+          </select>
         </label>
       </div>
     </div>
 
-    <div class="row" style="margin-top:10px">
-      <div class="col"><input id="pct_slider" type="range" min="0" max="100" step="0.1" value="50"></div>
+    <div class="row">
+      <div class="col">
+        <label>Liquid SG
+          <input id="lv_sg_proc" class="num" inputmode="decimal" value="1.0">
+        </label>
+        <button class="kbd-toggle" data-for="lv_sg_proc">kbd</button>
+        <div class="hint">How heavy vs water. Water=1.00. Brine≈1.2; light solvent≈0.8.</div>
+      </div>
+      <div class="col only-wet" style="display:none">
+        <label>Wet leg height (in)
+          <input id="lv_wet_h" class="num" inputmode="decimal" placeholder="e.g., same as span">
+        </label>
+        <button class="kbd-toggle" data-for="lv_wet_h">kbd</button>
+        <div class="hint">Filled reference leg height on the top (LP) side.</div>
+      </div>
+      <div class="col only-wet" style="display:none">
+        <label>Wet leg SG
+          <input id="lv_wet_sg" class="num" inputmode="decimal" value="1.0">
+        </label>
+        <button class="kbd-toggle" data-for="lv_wet_sg">kbd</button>
+        <div class="hint">Often water = 1.00.</div>
+      </div>
     </div>
-    <p class="muted">Slider drives % ⇄ mA ⇄ EU live.</p>
-  </section>
 
-  <!-- LEVEL — CLOSED -->
-  <section id="level_closed">
-    <h2>Level — Closed Tank (tap-to-tap)</h2>
     <div class="row">
-      <div class="col"><label>Tap-to-tap span <input id="lc_span" class="num" inputmode="decimal" placeholder="72"></label><button class="kbd-toggle" data-for="lc_span">kbd</button></div>
-      <div class="col"><label>Units <select id="lc_units"><option value="in">in</option><option value="ft">ft</option><option value="m">m</option></select></label></div>
-      <div class="col"><label>Liquid SG <input id="lc_sgL" class="num" inputmode="decimal" value="1.0"></label><button class="kbd-toggle" data-for="lc_sgL">kbd</button></div>
+      <div class="col">
+        <label>dP Units
+          <select id="lv_dpU">
+            <option value="inh2o">inH₂O</option>
+            <option value="psi">psi</option>
+            <option value="kpa">kPa</option>
+          </select>
+        </label>
+      </div>
+      <div class="col">
+        <label>LRV (optional)
+          <input id="lv_lrv" class="num" inputmode="decimal" placeholder="auto">
+        </label>
+        <button class="kbd-toggle" data-for="lv_lrv">kbd</button>
+        <div class="hint">TX reading at 0%. Leave blank to auto.</div>
+      </div>
+      <div class="col">
+        <label>URV (optional)
+          <input id="lv_urv" class="num" inputmode="decimal" placeholder="auto">
+        </label>
+        <button class="kbd-toggle" data-for="lv_urv">kbd</button>
+        <div class="hint">TX reading at 100%. Leave blank to auto.</div>
+      </div>
     </div>
+
     <div class="row">
-      <div class="col"><label>Leg Type <select id="lc_leg"><option value="dry">Dry leg (gas)</option><option value="wet">Wet leg</option></select></label></div>
-      <div class="col"><label>Wet leg height (in) <input id="lc_wetH" class="num" inputmode="decimal" placeholder="if wet"></label><button class="kbd-toggle" data-for="lc_wetH">kbd</button></div>
-      <div class="col"><label>Wet leg SG <input id="lc_sgW" class="num" inputmode="decimal" value="1.0"></label><button class="kbd-toggle" data-for="lc_sgW">kbd</button></div>
+      <div class="col"><button class="btn ok" id="lv_fill">Fill the form</button></div>
     </div>
+  </div>
+
+  <!-- Advanced / Action -->
+  <div class="card">
+    <h3 style="margin-top:0">Calculator</h3>
     <div class="row">
-      <div class="col"><label>dP Units <select id="lc_dpU"><option value="inh2o">inH₂O</option><option value="psi">psi</option><option value="kpa">kPa</option></select></label></div>
-      <div class="col"><label>LRV <input id="lc_lrv" class="num" inputmode="decimal" placeholder="auto"></label><button class="kbd-toggle" data-for="lc_lrv">kbd</button></div>
-      <div class="col"><label>URV <input id="lc_urv" class="num" inputmode="decimal" placeholder="auto"></label><button class="kbd-toggle" data-for="lc_urv">kbd</button></div>
+      <div class="col">
+        <label>Level
+          <input id="lv_level" class="num" inputmode="decimal" placeholder="same units as span">
+        </label>
+        <button class="kbd-toggle" data-for="lv_level">kbd</button>
+        <div class="hint" id="hint_level"></div>
+      </div>
+      <div class="col"><button class="btn" id="lv_btn_lvl2ma" disabled>Level → mA</button></div>
+      <div class="col">
+        <label>mA
+          <input id="lv_ma" class="num" inputmode="decimal" placeholder="12">
+        </label>
+        <button class="kbd-toggle" data-for="lv_ma">kbd</button>
+        <div class="hint" id="hint_ma"></div>
+      </div>
+      <div class="col"><button class="btn" id="lv_btn_ma2lvl" disabled>mA → Level</button></div>
     </div>
+
     <div class="hr"></div>
     <div class="row">
-      <div class="col"><label>Level <input id="lc_lvl" class="num" inputmode="decimal" placeholder="same units as span"></label><button class="kbd-toggle" data-for="lc_lvl">kbd</button></div>
-      <div class="col"><button class="btn" onclick="LC_levelToMa()">Level → mA</button></div>
-      <div class="col"><label>mA <input id="lc_ma" class="num" inputmode="decimal" placeholder="12"></label><button class="kbd-toggle" data-for="lc_ma">kbd</button></div>
-      <div class="col"><button class="btn" onclick="LC_maToLevel()">mA → Level</button></div>
+      <div class="col">
+        <div class="result big" id="lv_result">—</div>
+        <div class="muted" id="lv_equations" style="margin-top:6px"></div>
+      </div>
+      <div class="col" style="max-width:160px">
+        <div id="lv_tankviz" style="border:1px solid var(--border);border-radius:8px;height:140px;position:relative;background:linear-gradient(to top,var(--accentSoft) var(--fill,50%),transparent 0)"></div>
+        <div class="muted" style="text-align:center;margin-top:4px" id="lv_pct_label">—</div>
+      </div>
     </div>
-    <p id="lc_result" class="muted"></p>
-    <div class="row"><div class="col"><button class="btn" onclick="LC_buildSteps()">Build 0/25/50/75/100 Table</button></div></div>
-    <table id="lc_steps"><thead><tr><th>%</th><th>Level</th><th>dP</th><th>mA</th></tr></thead><tbody></tbody></table>
-  </section>
 
+    <div class="row"><div class="col"><button class="btn" id="lv_buildSteps">Build 0/25/50/75/100 Table</button></div></div>
+    <table id="lv_steps"><thead><tr><th>%</th><th>Level</th><th>dP</th><th>mA</th></tr></thead><tbody></tbody></table>
+  </div>
+</section>
+  
   <!-- PRESSURE -->
   <section id="pressure">
     <h2>Pressure</h2>
@@ -1321,16 +1324,182 @@ function fromPSI(){const p=parseFloat(val('u_psi')); if(isNaN(p)){alert('Enter p
 function fromKPA(){const k=parseFloat(val('u_kpa')); if(isNaN(k)){alert('Enter kPa');return;} const psi=k/KPA_PER_PSI; setVal('u_psi',fmt(psi)); setVal('u_bar',fmt(psi*0.06894757));}
 function fromBAR(){const b=parseFloat(val('u_bar')); if(isNaN(b)){alert('Enter bar');return;} const psi=b/0.06894757; setVal('u_psi',fmt(psi)); setVal('u_kpa',fmt(psi*KPA_PER_PSI));}
 
-/* ========= LEVEL HELPERS ========= */
-const IN_PER_FT=12, IN_PER_M=39.37007874, INH2O_PER_PSI=27.679904842545, KPA_PER_PSI2=6.894757293168;
-function pctToDP(p,LRV,URV){return LRV+(URV-LRV)*(p/100)}
-function pctToMA(p){return 4+16*(p/100)}
-function maToPct(ma){return (ma-4)/16*100;}
-function LO_cfg(){const s=getS(); let span=parseFloat(val('lo_span')); const u=document.getElementById('lo_units').value||s.lunit; const sg=parseFloat(val('lo_sg')||'1'); const dpU=document.getElementById('lo_dpU').value; if(isNaN(span)||span<=0||isNaN(sg)||sg<=0){alert('Enter span & SG');return null;} let spanIn=span; if(u==='ft') spanIn*=IN_PER_FT; if(u==='m') spanIn*=IN_PER_M; const urv_inh2o=sg*spanIn; let LRV=parseFloat(val('lo_lrv')); if(isNaN(LRV)) LRV=0; let URV=parseFloat(val('lo_urv')); if(isNaN(URV)) URV=(dpU==='inh2o')?urv_inh2o:(dpU==='psi'? urv_inh2o/INH2O_PER_PSI : (urv_inh2o/INH2O_PER_PSI)*KPA_PER_PSI2 ); return {span,u,spanIn,sg,dpU,LRV,URV};}
-function LO_levelToMa(){const c=LO_cfg(); if(!c)return; let lvl=parseFloat(val('lo_lvl')); if(isNaN(lvl)){alert('Enter level');return;} let lvlIn=lvl; if(c.u==='ft') lvlIn*=IN_PER_FT; if(c.u==='m') lvlIn*=IN_PER_M; const pct=Math.min(Math.max((lvlIn/c.spanIn)*100,0),100); const dp=pctToDP(pct,c.LRV,c.URV); const ma=pctToMA(pct); document.getElementById('lo_result').innerText=`Level ${fmt(lvl)} ${c.u} → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → ${fmt(ma)} mA`; }
-function LO_maToLevel(){const c=LO_cfg(); if(!c)return; const ma=parseFloat(val('lo_ma')); if(isNaN(ma)){alert('Enter mA');return;} const pct=Math.min(Math.max(maToPct(ma),0),100); const dp=pctToDP(pct,c.LRV,c.URV); let lvlIn=(pct/100)*c.spanIn; let lvl=lvlIn; if(c.u==='ft') lvl=lvlIn/IN_PER_FT; if(c.u==='m') lvl=lvlIn/IN_PER_M; document.getElementById('lo_result').innerText=`${fmt(ma)} mA → ${fmt(pct)}% → ${fmt(dp)} ${c.dpU} → Level ${fmt(lvl)} ${c.u}`;}
-function LO_buildSteps(){const c=LO_cfg(); if(!c)return; const tb=document.querySelector('#lo_steps tbody'); tb.innerHTML=''; [0,25,50,75,100].forEach(p=>{ const dp=pctToDP(p,c.LRV,c.URV); const lvl=(p/100)*c.span; tb.insertAdjacentHTML('beforeend',`<tr><td>${p}%</td><td>${fmt(lvl)} ${c.u}</td><td>${fmt(dp)} ${c.dpU}</td><td>${fmt(pctToMA(p))} mA</td></tr>`);});}
+/* ======== LEVEL (Unified) ======== */
+const IN_PER_FT=12, IN_PER_M=39.37007874, INH2O_PER_PSI=27.679904842545, KPA_PER_PSI=6.894757293168;
+const $ = sel => document.querySelector(sel);
+const setHint = (id, msg, isErr=false)=>{ const el=$(id); if(el){ el.textContent=msg||''; el.classList.toggle('error', !!isErr);} };
+const toInches = (value, units) => {
+  let v = parseFloat(value);
+  if (!Number.isFinite(v)) return NaN;
+  if (units==='ft') v*=IN_PER_FT;
+  if (units==='m') v*=IN_PER_M;
+  return v;
+};
+const fromInH2O = (inh2o, outU) => {
+  if (outU==='inh2o') return inh2o;
+  if (outU==='psi') return inh2o/INH2O_PER_PSI;
+  if (outU==='kpa') return (inh2o/INH2O_PER_PSI)*KPA_PER_PSI;
+  return inh2o;
+};
+const toInH2O = (val, inU) => {
+  if (inU==='inh2o') return val;
+  if (inU==='psi') return val*INH2O_PER_PSI;
+  if (inU==='kpa') return (val/KPA_PER_PSI)*INH2O_PER_PSI;
+  return val;
+};
 
+// Show/hide wet-leg inputs
+function lv_updateTypeUI(){
+  const t = $('#lv_type')?.value || 'open';
+  document.querySelectorAll('.only-wet').forEach(el=>{
+    el.style.display = (t==='closed_wet') ? '' : 'none';
+  });
+}
+$('#lv_type')?.addEventListener('change', lv_updateTypeUI);
+lv_updateTypeUI();
+
+// Compute defaults for LRV/URV (in selected dp units)
+function lv_computeRange(){
+  const t = $('#lv_type').value;
+  const span = parseFloat($('#lv_span').value);
+  const units = $('#lv_units').value;
+  const sgP = parseFloat($('#lv_sg_proc').value);
+  const dpU = $('#lv_dpU').value;
+
+  setHint('#hint_span'); // clear
+
+  if (!Number.isFinite(span) || span<=0){ setHint('#hint_span','Enter a positive span',true); return null; }
+  if (!Number.isFinite(sgP) || sgP<=0){ return null; }
+
+  const spanIn = toInches(span, units); // span in inches
+  const procHead_inh2o = sgP * spanIn;  // process head across full span (inH2O)
+
+  if (t==='open' || t==='closed_dry'){
+    const LRV = 0;
+    const URV = fromInH2O(procHead_inh2o, dpU);
+    return {LRV, URV, spanIn, dpU, t, units, sgP};
+  }
+
+  // closed_wet
+  const wetH = parseFloat($('#lv_wet_h').value);
+  const wetSG = parseFloat($('#lv_wet_sg').value);
+  if (!Number.isFinite(wetH) || wetH<=0) return null;
+  if (!Number.isFinite(wetSG) || wetSG<=0) return null;
+
+  const wetHead_inh2o = wetH * wetSG;
+  // Assumes HP at bottom, LP at top wet leg (classic). DP = (procSG·levelIn) − (wetSG·wetH)
+  const LRV = fromInH2O(-wetHead_inh2o, dpU);
+  const URV = fromInH2O(procHead_inh2o - wetHead_inh2o, dpU);
+  return {LRV, URV, spanIn, dpU, t, units, sgP, wetH, wetSG};
+}
+
+// Fill the form (auto LRV/URV if blank)
+$('#lv_fill')?.addEventListener('click', ()=>{
+  const cfg = lv_computeRange();
+  if (!cfg){ return; }
+  // If user provided LRV/URV, keep them. Otherwise fill.
+  const L = parseFloat($('#lv_lrv').value);
+  const U = parseFloat($('#lv_urv').value);
+  if (!Number.isFinite(L)) $('#lv_lrv').value = fmt(cfg.LRV);
+  if (!Number.isFinite(U)) $('#lv_urv').value = fmt(cfg.URV);
+
+  // enable buttons now that range exists
+  $('#lv_btn_lvl2ma').disabled = false;
+  $('#lv_btn_ma2lvl').disabled = false;
+
+  // clear hints/results
+  setHint('#hint_level');
+  setHint('#hint_ma');
+  $('#lv_result').textContent = 'Ready. Enter a Level or mA.';
+  $('#lv_equations').textContent = '';
+  $('#lv_pct_label').textContent = '—';
+  $('#lv_tankviz')?.style.setProperty('--fill','0%');
+});
+
+// Helpers
+const lv_getRange = ()=>{
+  const L = parseFloat($('#lv_lrv').value);
+  const U = parseFloat($('#lv_urv').value);
+  const dpU = $('#lv_dpU').value;
+  if (!Number.isFinite(L) || !Number.isFinite(U) || L===U) return null;
+  return {L,U,dpU};
+};
+const lv_pctToMA = p => 4 + 16*(p/100);
+const lv_maToPct = ma => (ma-4)/16*100;
+
+// Update viz
+function lv_setViz(pct){
+  const clamped = Math.max(0, Math.min(100, pct||0));
+  $('#lv_tankviz')?.style.setProperty('--fill', `${clamped}%`);
+  $('#lv_pct_label').textContent = fmt(clamped) + '%';
+}
+
+// Level → mA
+$('#lv_btn_lvl2ma')?.addEventListener('click', ()=>{
+  setHint('#hint_level');
+  const g = lv_computeRange(); if (!g){ setHint('#hint_level','Fill Guided Mode and press Fill the form',true); return; }
+  const r = lv_getRange(); if (!r){ setHint('#hint_level','LRV/URV invalid or missing',true); return; }
+
+  const level = parseFloat($('#lv_level').value);
+  if (!Number.isFinite(level)){ setHint('#hint_level','Enter level',true); return; }
+
+  // % = level/span
+  let levelIn = toInches(level, g.units);
+  if (!Number.isFinite(levelIn)){ setHint('#hint_level','Level must use same units as span',true); return; }
+  const pct = Math.max(0, Math.min(100, (levelIn/g.spanIn)*100));
+  const dp = r.L + (r.U - r.L) * (pct/100); // already in dp units
+  const ma = lv_pctToMA(pct);
+
+  $('#lv_ma').value = fmt(ma);
+  $('#lv_result').textContent = `Level ${fmt(level)} ${g.units} → ${fmt(pct)}% → ${fmt(dp)} ${r.dpU} → ${fmt(ma)} mA`;
+  $('#lv_equations').textContent =
+    `Used: % = level/span·100; dP = LRV + (URV−LRV)·(%/100); mA = 4 + 16·(%/100)`;
+  lv_setViz(pct);
+});
+
+// mA → Level
+$('#lv_btn_ma2lvl')?.addEventListener('click', ()=>{
+  setHint('#hint_ma');
+  const g = lv_computeRange(); if (!g){ setHint('#hint_ma','Fill Guided Mode and press Fill the form',true); return; }
+  const r = lv_getRange(); if (!r){ setHint('#hint_ma','LRV/URV invalid or missing',true); return; }
+
+  const ma = parseFloat($('#lv_ma').value);
+  if (!Number.isFinite(ma)){ setHint('#hint_ma','Enter mA',true); return; }
+
+  const pct = Math.max(0, Math.min(100, lv_maToPct(ma)));
+  const dp = r.L + (r.U - r.L) * (pct/100);
+  let levelIn = (pct/100) * g.spanIn;
+  // convert back to UI units
+  let level = levelIn;
+  if (g.units==='ft') level = levelIn/IN_PER_FT;
+  if (g.units==='m') level = levelIn/IN_PER_M;
+
+  $('#lv_level').value = fmt(level);
+  $('#lv_result').textContent = `${fmt(ma)} mA → ${fmt(pct)}% → ${fmt(dp)} ${r.dpU} → Level ${fmt(level)} ${g.units}`;
+  $('#lv_equations').textContent =
+    `Used: % = (mA−4)/16·100; dP = LRV + (URV−LRV)·(%/100); level = %·span/100`;
+  lv_setViz(pct);
+});
+
+// Steps table
+$('#lv_buildSteps')?.addEventListener('click', ()=>{
+  const g = lv_computeRange(); if (!g) return;
+  const r = lv_getRange(); if (!r) return;
+  const tb = $('#lv_steps tbody'); if (!tb) return;
+  tb.innerHTML = '';
+  [0,25,50,75,100].forEach(p=>{
+    const dp = r.L + (r.U - r.L) * (p/100);
+    const lvl = (p/100) * (g.units==='ft' ? g.spanIn/IN_PER_FT : (g.units==='m' ? g.spanIn/IN_PER_M : g.spanIn));
+    const ma  = lv_pctToMA(p);
+    tb.insertAdjacentHTML('beforeend', `<tr>
+      <td>${p}%</td>
+      <td>${fmt(lvl)} ${g.units}</td>
+      <td>${fmt(dp)} ${r.dpU}</td>
+      <td>${fmt(ma)} mA</td>
+    </tr>`);
+  });
+});
+  
 /* ========= I/P ========= */
 function ip_fromPct(p){const psi=3+12*(p/100); setVal('ip_psi',fmt(psi)); document.getElementById('ip_read_pct').textContent=fmt(p)+'%'; document.getElementById('ip_read_psi').textContent=fmt(psi)+' psi';}
 function ip_fromPsi(psi){const p=(psi-3)/12*100; setVal('ip_pct',fmt(p)); document.getElementById('ip_read_pct').textContent=fmt(p)+'%'; document.getElementById('ip_read_psi').textContent=fmt(psi)+' psi';}
@@ -1782,7 +1951,8 @@ setVal('sh_pct', 50); const rp=document.getElementById('read_pct'); if(rp) rp.te
 
 /* ========= MINI ROUTER (HARDENED) ========= */
 (function () {
-  const ALIAS = { jr: 'jrtech', ohms: 'ohm_drop', lingo: 'field_lingo' };
+  // In your MINI ROUTER IIFE, extend ALIAS:
+  const ALIAS = { jr: 'jrtech', ohms: 'ohm_drop', lingo: 'field_lingo', level_open: 'level', level_closed: 'level' };
   const backBtn = document.getElementById('backBtn');
   const titleEl = document.getElementById('appTitle');
 
