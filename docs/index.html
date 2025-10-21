@@ -1318,123 +1318,145 @@ document.querySelectorAll('.step').forEach(b=>b.addEventListener('click',()=>sh_
 document.querySelectorAll('.copy').forEach(c=>c.addEventListener('click',async()=>{const sel=c.getAttribute('data-copy');const el=document.querySelector(sel); if(!el)return; try{await navigator.clipboard.writeText(el.textContent.trim()); c.textContent='copied'; setTimeout(()=>c.textContent='copy',900);}catch{}}));
 
 /* ========= PRESSURE ========= */
-const KPA_PER_PSI=6.894757293168;
-const P2PA={pa:1,kpa:1000,mpa:1e6,bar:100000,psi:6894.757293168,inh2o:249.08891,mmh2o:9.80665,inhg:3386.389,mmhg:133.322387415};
-function convertP(v,from,to){if(!Number.isFinite(v))return'';const pa=v*P2PA[from];return pa/P2PA[to];}
-document.getElementById('pc_convert')?.addEventListener('click',()=>{const v=parseFloat(val('pc_val_in')); if(isNaN(v)){alert('Enter a value');return;} const f=document.getElementById('pc_unit_in').value, t=document.getElementById('pc_unit_out').value; setVal('pc_val_out',fmt(convertP(v,f,t)));});
-document.getElementById('pc_swap')?.addEventListener('click',()=>{const a=document.getElementById('pc_unit_in'),b=document.getElementById('pc_unit_out'); const tmp=a.value;a.value=b.value;b.value=tmp;});
-function psigToPsia(){const a=parseFloat(val('atm')),g=parseFloat(val('psig')); if(isNaN(a)||isNaN(g)){alert('Enter atm and psig');return;} setVal('psia',fmt(a+g));}
-function psiaToPsig(){const a=parseFloat(val('atm')),p=parseFloat(val('psia')); if(isNaN(a)||isNaN(p)){alert('Enter atm and psia');return;} setVal('psig',fmt(p-a));}
-function fromPSI(){const p=parseFloat(val('u_psi')); if(isNaN(p)){alert('Enter psi');return;} setVal('u_kpa',fmt(p*KPA_PER_PSI)); setVal('u_bar',fmt(p*0.06894757));}
-function fromKPA(){const k=parseFloat(val('u_kpa')); if(isNaN(k)){alert('Enter kPa');return;} const psi=k/KPA_PER_PSI; setVal('u_psi',fmt(psi)); setVal('u_bar',fmt(psi*0.06894757));}
-function fromBAR(){const b=parseFloat(val('u_bar')); if(isNaN(b)){alert('Enter bar');return;} const psi=b/0.06894757; setVal('u_psi',fmt(psi)); setVal('u_kpa',fmt(psi*KPA_PER_PSI));}
+const KPA_PER_PSI = 6.894757293168;
+const P2PA = {
+  pa:1,kpa:1000,mpa:1e6,bar:100000,psi:6894.757293168,
+  inh2o:249.08891, mmh2o:9.80665, inhg:3386.389, mmhg:133.322387415
+};
+function convertP(v,from,to){ if(!Number.isFinite(v)) return ''; const pa=v*P2PA[from]; return pa/P2PA[to]; }
+document.getElementById('pc_convert')?.addEventListener('click',()=>{
+  const v=parseFloat(val('pc_val_in')); if(isNaN(v)){alert('Enter a value');return;}
+  const f=document.getElementById('pc_unit_in').value, t=document.getElementById('pc_unit_out').value;
+  setVal('pc_val_out', fmt(convertP(v,f,t)));
+});
+document.getElementById('pc_swap')?.addEventListener('click',()=>{
+  const a=document.getElementById('pc_unit_in'), b=document.getElementById('pc_unit_out'); const tmp=a.value; a.value=b.value; b.value=tmp;
+});
+function psigToPsia(){ const a=parseFloat(val('atm')), g=parseFloat(val('psig')); if(isNaN(a)||isNaN(g)){alert('Enter atm and psig');return;} setVal('psia', fmt(a+g)); }
+function psiaToPsig(){ const a=parseFloat(val('atm')), p=parseFloat(val('psia')); if(isNaN(a)||isNaN(p)){alert('Enter atm and psia');return;} setVal('psig', fmt(p-a)); }
+function fromPSI(){ const p=parseFloat(val('u_psi')); if(isNaN(p)){alert('Enter psi');return;} setVal('u_kpa', fmt(p*KPA_PER_PSI)); setVal('u_bar', fmt(p*0.06894757)); }
+function fromKPA(){ const k=parseFloat(val('u_kpa')); if(isNaN(k)){alert('Enter kPa');return;} const psi=k/KPA_PER_PSI; setVal('u_psi', fmt(psi)); setVal('u_bar', fmt(psi*0.06894757)); }
+function fromBAR(){ const b=parseFloat(val('u_bar')); if(isNaN(b)){alert('Enter bar');return;} const psi=b/0.06894757; setVal('u_psi', fmt(psi)); setVal('u_kpa', fmt(psi*KPA_PER_PSI)); }
 
 /* ======== LEVEL (Unified) ======== */
-const IN_PER_FT=12, IN_PER_M=39.37007874, INH2O_PER_PSI=27.679904842545, KPA_PER_PSI=6.894757293168;
-const $ = sel => document.querySelector(sel);
-const setHint = (id, msg, isErr=false)=>{ const el=$(id); if(el){ el.textContent=msg||''; el.classList.toggle('error', !!isErr);} };
+/* Uses existing global: KPA_PER_PSI (do NOT redeclare here) */
+const IN_PER_FT = 12;
+const IN_PER_M  = 39.37007874;
+const INH2O_PER_PSI = 27.679904842545;
+
+// Safe `$` helper (only define if not present)
+if (!window.$) window.$ = sel => document.querySelector(sel);
+
+// Small helpers
+const setHint = (id, msg, isErr=false)=>{
+  const el = $(id);
+  if (!el) return;
+  el.textContent = msg || '';
+  el.classList.toggle('error', !!isErr);
+};
 const toInches = (value, units) => {
   let v = parseFloat(value);
   if (!Number.isFinite(v)) return NaN;
-  if (units==='ft') v*=IN_PER_FT;
-  if (units==='m') v*=IN_PER_M;
+  if (units === 'ft') v *= IN_PER_FT;
+  if (units === 'm')  v *= IN_PER_M;
   return v;
 };
 const fromInH2O = (inh2o, outU) => {
-  if (outU==='inh2o') return inh2o;
-  if (outU==='psi') return inh2o/INH2O_PER_PSI;
-  if (outU==='kpa') return (inh2o/INH2O_PER_PSI)*KPA_PER_PSI;
+  if (outU === 'inh2o') return inh2o;
+  if (outU === 'psi')   return inh2o / INH2O_PER_PSI;
+  if (outU === 'kpa')   return (inh2o / INH2O_PER_PSI) * KPA_PER_PSI;
   return inh2o;
 };
-const toInH2O = (val, inU) => {
-  if (inU==='inh2o') return val;
-  if (inU==='psi') return val*INH2O_PER_PSI;
-  if (inU==='kpa') return (val/KPA_PER_PSI)*INH2O_PER_PSI;
-  return val;
-};
 
-// Show/hide wet-leg inputs
+// Show/hide wet-leg inputs based on tank type
 function lv_updateTypeUI(){
   const t = $('#lv_type')?.value || 'open';
   document.querySelectorAll('.only-wet').forEach(el=>{
-    el.style.display = (t==='closed_wet') ? '' : 'none';
+    el.style.display = (t === 'closed_wet') ? '' : 'none';
   });
 }
 $('#lv_type')?.addEventListener('change', lv_updateTypeUI);
-lv_updateTypeUI();
+lv_updateTypeUI(); // initialize once after load
 
-// Compute defaults for LRV/URV (in selected dp units)
+// Compute default LRV/URV from guided inputs (returns numbers in chosen dP units)
 function lv_computeRange(){
-  const t = $('#lv_type').value;
-  const span = parseFloat($('#lv_span').value);
+  const t     = $('#lv_type').value;
+  const span  = parseFloat($('#lv_span').value);
   const units = $('#lv_units').value;
-  const sgP = parseFloat($('#lv_sg_proc').value);
-  const dpU = $('#lv_dpU').value;
+  const sgP   = parseFloat($('#lv_sg_proc').value);
+  const dpU   = $('#lv_dpU').value;
 
   setHint('#hint_span'); // clear
 
-  if (!Number.isFinite(span) || span<=0){ setHint('#hint_span','Enter a positive span',true); return null; }
-  if (!Number.isFinite(sgP) || sgP<=0){ return null; }
-
-  const spanIn = toInches(span, units); // span in inches
-  const procHead_inh2o = sgP * spanIn;  // process head across full span (inH2O)
-
-  if (t==='open' || t==='closed_dry'){
-    const LRV = 0;
-    const URV = fromInH2O(procHead_inh2o, dpU);
-    return {LRV, URV, spanIn, dpU, t, units, sgP};
+  if (!Number.isFinite(span) || span <= 0){
+    setHint('#hint_span','Enter a positive span',true);
+    return null;
+  }
+  if (!Number.isFinite(sgP) || sgP <= 0){
+    return null;
   }
 
-  // closed_wet
-  const wetH = parseFloat($('#lv_wet_h').value);
+  const spanIn            = toInches(span, units);    // span in inches
+  const procHead_inh2o    = sgP * spanIn;             // inH2O across full span
+
+  if (t === 'open' || t === 'closed_dry'){
+    const LRV = 0;
+    const URV = fromInH2O(procHead_inh2o, dpU);
+    return { LRV, URV, spanIn, dpU, t, units, sgP };
+  }
+
+  // closed_wet leg
+  const wetH  = parseFloat($('#lv_wet_h').value);
   const wetSG = parseFloat($('#lv_wet_sg').value);
-  if (!Number.isFinite(wetH) || wetH<=0) return null;
-  if (!Number.isFinite(wetSG) || wetSG<=0) return null;
+  if (!Number.isFinite(wetH)  || wetH  <= 0) return null;
+  if (!Number.isFinite(wetSG) || wetSG <= 0) return null;
 
   const wetHead_inh2o = wetH * wetSG;
-  // Assumes HP at bottom, LP at top wet leg (classic). DP = (procSG·levelIn) − (wetSG·wetH)
+  // Assumes HP at bottom, LP at top wet leg:
+  // DP = (procSG·level) − (wetSG·wetH)
   const LRV = fromInH2O(-wetHead_inh2o, dpU);
   const URV = fromInH2O(procHead_inh2o - wetHead_inh2o, dpU);
-  return {LRV, URV, spanIn, dpU, t, units, sgP, wetH, wetSG};
+  return { LRV, URV, spanIn, dpU, t, units, sgP, wetH, wetSG };
 }
 
-// Fill the form (auto LRV/URV if blank)
+// Fill the form (auto LRV/URV if left blank)
 $('#lv_fill')?.addEventListener('click', ()=>{
   const cfg = lv_computeRange();
-  if (!cfg){ return; }
-  // If user provided LRV/URV, keep them. Otherwise fill.
+  if (!cfg) return;
+
   const L = parseFloat($('#lv_lrv').value);
   const U = parseFloat($('#lv_urv').value);
   if (!Number.isFinite(L)) $('#lv_lrv').value = fmt(cfg.LRV);
   if (!Number.isFinite(U)) $('#lv_urv').value = fmt(cfg.URV);
 
-  // enable buttons now that range exists
+  // enable action buttons now that range exists
   $('#lv_btn_lvl2ma').disabled = false;
   $('#lv_btn_ma2lvl').disabled = false;
 
   // clear hints/results
   setHint('#hint_level');
   setHint('#hint_ma');
-  $('#lv_result').textContent = 'Ready. Enter a Level or mA.';
+  $('#lv_result').textContent   = 'Ready. Enter a Level or mA.';
   $('#lv_equations').textContent = '';
   $('#lv_pct_label').textContent = '—';
   $('#lv_tankviz')?.style.setProperty('--fill','0%');
 });
 
-// Helpers
+// Range getter (reads LRV/URV the user may have overridden)
 const lv_getRange = ()=>{
-  const L = parseFloat($('#lv_lrv').value);
-  const U = parseFloat($('#lv_urv').value);
+  const L   = parseFloat($('#lv_lrv').value);
+  const U   = parseFloat($('#lv_urv').value);
   const dpU = $('#lv_dpU').value;
-  if (!Number.isFinite(L) || !Number.isFinite(U) || L===U) return null;
-  return {L,U,dpU};
+  if (!Number.isFinite(L) || !Number.isFinite(U) || L === U) return null;
+  return { L, U, dpU };
 };
-const lv_pctToMA = p => 4 + 16*(p/100);
-const lv_maToPct = ma => (ma-4)/16*100;
 
-// Update viz
+const lv_pctToMA = p  => 4 + 16*(p/100);
+const lv_maToPct = ma => (ma - 4)/16*100;
+
+// Update the mini tank visualization
 function lv_setViz(pct){
-  const clamped = Math.max(0, Math.min(100, pct||0));
+  const clamped = Math.max(0, Math.min(100, pct || 0));
   $('#lv_tankviz')?.style.setProperty('--fill', `${clamped}%`);
   $('#lv_pct_label').textContent = fmt(clamped) + '%';
 }
@@ -1442,21 +1464,22 @@ function lv_setViz(pct){
 // Level → mA
 $('#lv_btn_lvl2ma')?.addEventListener('click', ()=>{
   setHint('#hint_level');
-  const g = lv_computeRange(); if (!g){ setHint('#hint_level','Fill Guided Mode and press Fill the form',true); return; }
-  const r = lv_getRange(); if (!r){ setHint('#hint_level','LRV/URV invalid or missing',true); return; }
+  const g = lv_computeRange(); if (!g){ setHint('#hint_level','Fill Guided Mode and press “Fill the form”',true); return; }
+  const r = lv_getRange();     if (!r){ setHint('#hint_level','LRV/URV invalid or missing',true); return; }
 
   const level = parseFloat($('#lv_level').value);
   if (!Number.isFinite(level)){ setHint('#hint_level','Enter level',true); return; }
 
-  // % = level/span
   let levelIn = toInches(level, g.units);
   if (!Number.isFinite(levelIn)){ setHint('#hint_level','Level must use same units as span',true); return; }
-  const pct = Math.max(0, Math.min(100, (levelIn/g.spanIn)*100));
-  const dp = r.L + (r.U - r.L) * (pct/100); // already in dp units
-  const ma = lv_pctToMA(pct);
+
+  const pct = Math.max(0, Math.min(100, (levelIn / g.spanIn) * 100));
+  const dp  = r.L + (r.U - r.L) * (pct/100);   // already in chosen dP units
+  const ma  = lv_pctToMA(pct);
 
   $('#lv_ma').value = fmt(ma);
-  $('#lv_result').textContent = `Level ${fmt(level)} ${g.units} → ${fmt(pct)}% → ${fmt(dp)} ${r.dpU} → ${fmt(ma)} mA`;
+  $('#lv_result').textContent =
+    `Level ${fmt(level)} ${g.units} → ${fmt(pct)}% → ${fmt(dp)} ${r.dpU} → ${fmt(ma)} mA`;
   $('#lv_equations').textContent =
     `Used: % = level/span·100; dP = LRV + (URV−LRV)·(%/100); mA = 4 + 16·(%/100)`;
   lv_setViz(pct);
@@ -1465,36 +1488,43 @@ $('#lv_btn_lvl2ma')?.addEventListener('click', ()=>{
 // mA → Level
 $('#lv_btn_ma2lvl')?.addEventListener('click', ()=>{
   setHint('#hint_ma');
-  const g = lv_computeRange(); if (!g){ setHint('#hint_ma','Fill Guided Mode and press Fill the form',true); return; }
-  const r = lv_getRange(); if (!r){ setHint('#hint_ma','LRV/URV invalid or missing',true); return; }
+  const g = lv_computeRange(); if (!g){ setHint('#hint_ma','Fill Guided Mode and press “Fill the form”',true); return; }
+  const r = lv_getRange();     if (!r){ setHint('#hint_ma','LRV/URV invalid or missing',true); return; }
 
   const ma = parseFloat($('#lv_ma').value);
   if (!Number.isFinite(ma)){ setHint('#hint_ma','Enter mA',true); return; }
 
-  const pct = Math.max(0, Math.min(100, lv_maToPct(ma)));
-  const dp = r.L + (r.U - r.L) * (pct/100);
-  let levelIn = (pct/100) * g.spanIn;
+  const pct    = Math.max(0, Math.min(100, lv_maToPct(ma)));
+  const dp     = r.L + (r.U - r.L) * (pct/100);
+  let levelIn  = (pct/100) * g.spanIn;
+
   // convert back to UI units
   let level = levelIn;
-  if (g.units==='ft') level = levelIn/IN_PER_FT;
-  if (g.units==='m') level = levelIn/IN_PER_M;
+  if (g.units === 'ft') level = levelIn / IN_PER_FT;
+  if (g.units === 'm')  level = levelIn / IN_PER_M;
 
   $('#lv_level').value = fmt(level);
-  $('#lv_result').textContent = `${fmt(ma)} mA → ${fmt(pct)}% → ${fmt(dp)} ${r.dpU} → Level ${fmt(level)} ${g.units}`;
+  $('#lv_result').textContent =
+    `${fmt(ma)} mA → ${fmt(pct)}% → ${fmt(dp)} ${r.dpU} → Level ${fmt(level)} ${g.units}`;
   $('#lv_equations').textContent =
     `Used: % = (mA−4)/16·100; dP = LRV + (URV−LRV)·(%/100); level = %·span/100`;
   lv_setViz(pct);
 });
 
-// Steps table
+// Build 0/25/50/75/100 table
 $('#lv_buildSteps')?.addEventListener('click', ()=>{
-  const g = lv_computeRange(); if (!g) return;
-  const r = lv_getRange(); if (!r) return;
+  const g  = lv_computeRange(); if (!g) return;
+  const r  = lv_getRange();     if (!r) return;
   const tb = $('#lv_steps tbody'); if (!tb) return;
+
   tb.innerHTML = '';
   [0,25,50,75,100].forEach(p=>{
-    const dp = r.L + (r.U - r.L) * (p/100);
-    const lvl = (p/100) * (g.units==='ft' ? g.spanIn/IN_PER_FT : (g.units==='m' ? g.spanIn/IN_PER_M : g.spanIn));
+    const dp  = r.L + (r.U - r.L) * (p/100);
+    const lvl = (p/100) * (
+      g.units === 'ft' ? g.spanIn / IN_PER_FT :
+      g.units === 'm'  ? g.spanIn / IN_PER_M  :
+                         g.spanIn
+    );
     const ma  = lv_pctToMA(p);
     tb.insertAdjacentHTML('beforeend', `<tr>
       <td>${p}%</td>
