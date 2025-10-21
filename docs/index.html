@@ -258,7 +258,95 @@ html[data-theme="dark"]{
       <p class="muted" style="margin-top:6px">mA is always linear to % (4–20 mA). Square-root only affects EU.</p>
     </div>
   </section>
+  
+<!--4-20 mA-->
+<section id="ma">
+  <div class="card">
+    <h2>4-20 mA Converter</h2>
 
+    <div class="row">
+      <div class="col">
+        <label>Lower Range Value (LRV)</label>
+        <input id="ma_lrv" type="number" placeholder="e.g., 0">
+      </div>
+      <div class="col">
+        <label>Upper Range Value (URV)</label>
+        <input id="ma_urv" type="number" placeholder="e.g., 100">
+      </div>
+      <div class="col">
+        <label>EU Label</label>
+        <input id="ma_eulbl" type="text" placeholder="e.g., °C, PSI, %">
+      </div>
+    </div>
+
+    <div class="percent-opts">
+      <label>
+        <input type="checkbox" id="ma_sqrt_mode">
+        Use √ (Square Root) — e.g. Flow Transmitters
+      </label>
+    </div>
+
+    <div class="hr"></div>
+
+    <h3>mA → EU</h3>
+    <div class="row">
+      <div class="col">
+        <label>mA</label>
+        <input id="ma_in" type="number" placeholder="e.g., 12.5">
+      </div>
+      <div class="col">
+        <label>Engineering Units</label>
+        <div class="rowline">
+          <input id="ma_out" type="text" readonly>
+          <span class="copy" data-copy="#ma_out">copy</span>
+        </div>
+      </div>
+    </div>
+    <button id="ma_to_eu" class="btn ok">Convert mA → EU</button>
+
+    <div class="hr"></div>
+
+    <h3>EU → mA</h3>
+    <div class="row">
+      <div class="col">
+        <label>Engineering Units</label>
+        <input id="eu_in" type="number" placeholder="e.g., 50">
+      </div>
+      <div class="col">
+        <label>mA</label>
+        <div class="rowline">
+          <input id="eu_out" type="text" readonly>
+          <span class="copy" data-copy="#eu_out">copy</span>
+        </div>
+      </div>
+    </div>
+    <button id="eu_to_ma" class="btn ok">Convert EU → mA</button>
+
+    <div class="hr"></div>
+
+    <h3>% of Range</h3>
+    <div class="row">
+      <div class="col">
+        <label>mA</label>
+        <input id="pct_in" type="number" placeholder="e.g., 12">
+      </div>
+      <div class="col">
+        <label>%</label>
+        <div class="rowline">
+          <input id="pct_out" type="text" readonly>
+          <span class="copy" data-copy="#pct_out">copy</span>
+        </div>
+      </div>
+    </div>
+    <button id="ma_to_pct" class="btn ok">Convert mA → %</button>
+
+    <p class="muted" style="margin-top:6px">
+      ℹ️ 4 mA = 0 % of span, 20 mA = 100 %.<br>
+      Square root is often used for flow transmitters.
+    </p>
+  </div>
+</section>
+  
 <!-- LEVEL (Unified) -->
 <section id="level">
   <h2>Level Helper (Open / Closed)</h2>
