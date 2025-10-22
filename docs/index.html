@@ -259,91 +259,124 @@ html[data-theme="dark"]{
     </div>
   </section>
   
-<!--4-20 mA-->
+<!-- 4–20 mA HELPER -->
 <section id="signal">
+  <h2>4–20 mA Helper (Pro)</h2>
+
+  <!-- Range & label -->
   <div class="card">
-    <h2>4-20 mA Converter</h2>
-
     <div class="row">
       <div class="col">
-        <label>Lower Range Value (LRV)</label>
-        <input id="ma_lrv" type="number" placeholder="e.g., 0">
+        <label>LRV (EU)
+          <input id="sh_lrv" class="num" inputmode="decimal" placeholder="0">
+        </label>
+        <button class="kbd-toggle" data-for="sh_lrv">kbd</button>
       </div>
       <div class="col">
-        <label>Upper Range Value (URV)</label>
-        <input id="ma_urv" type="number" placeholder="e.g., 100">
+        <label>URV (EU)
+          <input id="sh_urv" class="num" inputmode="decimal" placeholder="100">
+        </label>
+        <button class="kbd-toggle" data-for="sh_urv">kbd</button>
       </div>
       <div class="col">
-        <label>EU Label</label>
-        <input id="ma_eulbl" type="text" placeholder="e.g., °C, PSI, %">
+        <label>EU Label
+          <input id="sh_eulbl" placeholder="psi, °F, gpm…">
+        </label>
       </div>
     </div>
 
-    <div class="percent-opts">
-      <label>
-        <input type="checkbox" id="ma_sqrt_mode">
-        Use √ (Square Root) — e.g. Flow Transmitters
-      </label>
+    <div class="row" style="align-items:flex-end">
+      <div class="col">
+        <label class="rowline" style="flex-wrap:wrap">
+          <input type="checkbox" id="sh_sqrt">
+          <span>square-root (flow)</span>
+        </label>
+        <p class="muted" id="sh_span_note" style="margin:.25rem 0 0">Span: —</p>
+      </div>
+      <div class="col"><button class="btn" id="sh_build">Build 0/25/50/75/100</button></div>
+      <div class="col"><button class="btn" id="sh_export">Export CSV</button></div>
+    </div>
+  </div>
+
+  <!-- Inputs (like mini calc) -->
+  <div class="card">
+    <div class="row">
+      <div class="col">
+        <label>mA
+          <input id="sh_ma" class="num" inputmode="decimal" placeholder="12">
+        </label>
+        <button class="kbd-toggle" data-for="sh_ma">kbd</button>
+      </div>
+      <div class="col">
+        <label>%
+          <input id="sh_pct" class="num" inputmode="decimal" placeholder="50">
+        </label>
+        <button class="kbd-toggle" data-for="sh_pct">kbd</button>
+      </div>
+      <div class="col">
+        <label>EU
+          <input id="sh_eu" class="num" inputmode="decimal" placeholder="—">
+        </label>
+        <button class="kbd-toggle" data-for="sh_eu">kbd</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col"><button class="btn" id="sh_from_ma">From mA</button></div>
+      <div class="col"><button class="btn" id="sh_from_pct">From %</button></div>
+      <div class="col"><button class="btn" id="sh_from_eu">From EU</button></div>
     </div>
 
     <div class="hr"></div>
 
-    <h3>mA → EU</h3>
-    <div class="row">
-      <div class="col">
-        <label>mA</label>
-        <input id="ma_in" type="number" placeholder="e.g., 12.5">
-      </div>
-      <div class="col">
-        <label>Engineering Units</label>
+    <!-- Readouts + steps + slider -->
+    <div class="grid">
+      <div class="card">
         <div class="rowline">
-          <input id="ma_out" type="text" readonly>
-          <span class="copy" data-copy="#ma_out">copy</span>
+          <div class="big" id="sh_read_ma">—</div>
+          <span class="copy" data-copy="#sh_read_ma">copy</span>
+        </div>
+        <div class="muted">mA</div>
+      </div>
+
+      <div class="card">
+        <div class="rowline">
+          <div class="big" id="sh_read_pct">—</div>
+          <span class="copy" data-copy="#sh_read_pct">copy</span>
+        </div>
+        <div class="muted">Percent</div>
+        <div class="steps" style="margin-top:8px">
+          <button class="btn sh_step" data-p="0">0%</button>
+          <button class="btn sh_step" data-p="25">25%</button>
+          <button class="btn sh_step" data-p="50">50%</button>
+          <button class="btn sh_step" data-p="75">75%</button>
+          <button class="btn sh_step" data-p="100">100%</button>
         </div>
       </div>
-    </div>
-    <button id="ma_to_eu" class="btn ok">Convert mA → EU</button>
 
-    <div class="hr"></div>
-
-    <h3>EU → mA</h3>
-    <div class="row">
-      <div class="col">
-        <label>Engineering Units</label>
-        <input id="eu_in" type="number" placeholder="e.g., 50">
-      </div>
-      <div class="col">
-        <label>mA</label>
+      <div class="card">
         <div class="rowline">
-          <input id="eu_out" type="text" readonly>
-          <span class="copy" data-copy="#eu_out">copy</span>
+          <div class="big" id="sh_read_eu">—</div>
+          <span class="copy" data-copy="#sh_read_eu">copy</span>
         </div>
+        <div class="muted">Eng Units</div>
       </div>
     </div>
-    <button id="eu_to_ma" class="btn ok">Convert EU → mA</button>
 
-    <div class="hr"></div>
-
-    <h3>% of Range</h3>
-    <div class="row">
-      <div class="col">
-        <label>mA</label>
-        <input id="pct_in" type="number" placeholder="e.g., 12">
-      </div>
-      <div class="col">
-        <label>%</label>
-        <div class="rowline">
-          <input id="pct_out" type="text" readonly>
-          <span class="copy" data-copy="#pct_out">copy</span>
-        </div>
-      </div>
+    <div class="row" style="margin-top:10px">
+      <div class="col"><input id="sh_slider" type="range" min="0" max="100" step="0.1" value="50"></div>
     </div>
-    <button id="ma_to_pct" class="btn ok">Convert mA → %</button>
+    <p class="muted">Slider drives % ⇄ mA ⇄ EU live.</p>
+  </div>
 
-    <p class="muted" style="margin-top:6px">
-      ℹ️ 4 mA = 0 % of span, 20 mA = 100 %.<br>
-      Square root is often used for flow transmitters.
-    </p>
+  <!-- Steps table -->
+  <div class="card">
+    <div class="scroll-x">
+      <table id="sh_tbl">
+        <thead><tr><th>%</th><th>mA</th><th>EU</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </div>
 </section>
   
@@ -1418,150 +1451,138 @@ addEventListener('scroll',()=>{ if(npTarget && numpad?.classList.contains('show'
 addEventListener('resize',()=>{ if(npTarget && numpad?.classList.contains('show')) placePad(npTarget); });
 document.querySelectorAll('input.num').forEach(inp=>{ inp.readOnly=true; inp.addEventListener('focus',()=>showPad(inp)); inp.addEventListener('click',()=>showPad(inp)); });
 
-/* ======= PERCENT (with Span, mA column, √ toggle) ======= */
-function pc_get(){
-  const L = parseFloat(document.getElementById('pc_lrv')?.value);
-  const U = parseFloat(document.getElementById('pc_urv')?.value);
-  if(!Number.isFinite(L) || !Number.isFinite(U) || L === U){
-    alert('Enter valid LRV and URV (cannot be equal).');
-    return null;
-  }
-  const eu = (document.getElementById('pc_eu_units')?.value || '').trim();
-  const sqrt = !!document.getElementById('pc_sqrt')?.checked;
-  return {L,U,span:U-L,eu,sqrt};
+/* ===== 4–20 mA (main tool) — combined pro + mini ===== */
+function SH_range(){
+  const L = parseFloat(document.getElementById('sh_lrv').value);
+  const U = parseFloat(document.getElementById('sh_urv').value);
+  if (!Number.isFinite(L) || !Number.isFinite(U) || L===U) return null;
+  return {L,U};
 }
-function pc_fmt(n){
-  if(n===null || n===undefined || n==='') return '';
-  const x = Number(n);
-  if(!Number.isFinite(x)) return String(n);
-  return (Math.abs(x)>=1000 || x===0)
-    ? x.toFixed(2).replace(/\.00$/,'')
-    : x.toFixed(4).replace(/0+$/,'').replace(/\.$/,'');
+function SH_euLabel(){
+  const s = (document.getElementById('sh_eulbl').value||'').trim();
+  return s ? (' '+s) : '';
 }
-function pc_build(){
-  const cfg = pc_get(); if(!cfg) return;
-  const steps = [0,25,50,75,100];
-  const tb = document.querySelector('#percentTable tbody');
-  const spanNote = document.getElementById('pc_span_note');
-  if(spanNote) spanNote.textContent = `Span: ${pc_fmt(cfg.span)} ${cfg.eu||'EU'}`;
-  tb.innerHTML = '';
-  steps.forEach(p=>{
-    const frac = cfg.sqrt ? Math.sqrt(p/100) : (p/100);
-    const euv  = cfg.L + cfg.span*frac;
-    const ma   = 4 + 16*(p/100);
-    tb.insertAdjacentHTML('beforeend', `
-      <tr>
-        <td>${p}%</td>
-        <td>${pc_fmt(euv)} ${cfg.eu}</td>
-        <td>${pc_fmt(ma)} mA</td>
-      </tr>
-    `);
+function SH_spanNote(){
+  const r = SH_range();
+  const el = document.getElementById('sh_span_note');
+  if (!el){return;}
+  if (!r){ el.textContent = 'Span: —'; return; }
+  el.textContent = `Span: ${fmt(r.U - r.L)} EU`;
+}
+
+// core conversions
+const SH_pctToMA = p => 4 + 16*(p/100);
+const SH_maToPct = ma => (ma-4)/16*100;
+
+// Update everything from % (handles sqrt EU)
+function SH_fromPct(pIn){
+  const r = SH_range(); if(!r){ alert('Enter LRV & URV'); return; }
+  const pct = Math.min(Math.max(Number(pIn)||0,0),100);
+  const sqrt = document.getElementById('sh_sqrt').checked;
+
+  const ma = SH_pctToMA(pct);
+  const eu = r.L + (r.U - r.L) * (sqrt ? Math.sqrt(pct/100) : (pct/100));
+
+  // form inputs
+  document.getElementById('sh_pct').value = FMT(pct);
+  document.getElementById('sh_ma').value  = FMT(ma);
+  document.getElementById('sh_eu').value  = FMT(eu);
+
+  // readouts
+  document.getElementById('sh_read_pct').textContent = FMT(pct)+'%';
+  document.getElementById('sh_read_ma').textContent  = FMT(ma);
+  document.getElementById('sh_read_eu').textContent  = FMT(eu) + SH_euLabel();
+
+  // slider
+  const s = document.getElementById('sh_slider');
+  if (s) s.value = pct;
+}
+
+function SH_fromMA(){
+  const m = parseFloat(document.getElementById('sh_ma').value);
+  if (!Number.isFinite(m)){ alert('Enter mA'); return; }
+  SH_fromPct(SH_maToPct(m));
+}
+
+function SH_fromEU(){
+  const r = SH_range(); if(!r){ alert('Enter LRV & URV'); return; }
+  const e = parseFloat(document.getElementById('sh_eu').value);
+  if (!Number.isFinite(e)){ alert('Enter EU'); return; }
+  const sqrt = document.getElementById('sh_sqrt').checked;
+
+  // normalize EU to 0..1 then invert sqrt if needed
+  const en = (e - r.L) / (r.U - r.L);
+  const pct = Math.min(Math.max((sqrt ? Math.pow(Math.max(en,0),2) : en)*100,0),100);
+  SH_fromPct(pct);
+}
+
+// buttons
+document.getElementById('sh_from_pct')?.addEventListener('click', ()=> {
+  const p = parseFloat(document.getElementById('sh_pct').value);
+  if (!Number.isFinite(p)){ alert('Enter %'); return; }
+  SH_fromPct(p);
+});
+document.getElementById('sh_from_ma')?.addEventListener('click', SH_fromMA);
+document.getElementById('sh_from_eu')?.addEventListener('click', SH_fromEU);
+
+// slider + sqrt toggle + steps
+document.getElementById('sh_slider')?.addEventListener('input', e => SH_fromPct(e.target.value));
+document.getElementById('sh_sqrt')?.addEventListener('change', ()=> {
+  const s = document.getElementById('sh_slider'); SH_fromPct(s ? s.value : 50);
+});
+document.querySelectorAll('.sh_step').forEach(b => b.addEventListener('click', ()=> SH_fromPct(b.dataset.p)));
+
+// copy buttons
+document.querySelectorAll('#signal .copy').forEach(c=>{
+  c.addEventListener('click', async ()=>{
+    const sel=c.getAttribute('data-copy'); const el=document.querySelector(sel); if(!el) return;
+    try{ await navigator.clipboard.writeText(el.textContent.trim());
+      c.textContent='copied'; setTimeout(()=>c.textContent='copy',900);
+    }catch{}
   });
-}
-function pc_export(){
-  const cfg = pc_get(); if(!cfg) return;
-  const rows = [['%','EU','Units','mA','LRV','URV','Span','SQRT']];
+});
+
+// build/export table
+function SH_buildRows(){
+  const r = SH_range(); if(!r){ alert('Enter LRV & URV'); return; }
+  const sqrt = document.getElementById('sh_sqrt').checked;
+  const tb = document.querySelector('#sh_tbl tbody'); tb.innerHTML='';
   [0,25,50,75,100].forEach(p=>{
-    const frac = cfg.sqrt ? Math.sqrt(p/100) : (p/100);
-    const euv  = cfg.L + cfg.span*frac;
-    const ma   = 4 + 16*(p/100);
-    rows.push([p, pc_fmt(euv), cfg.eu || '', pc_fmt(ma), pc_fmt(cfg.L), pc_fmt(cfg.U), pc_fmt(cfg.span), cfg.sqrt ? 'ON' : 'OFF']);
+    const ma = SH_pctToMA(p);
+    const eu = r.L + (r.U - r.L) * (sqrt ? Math.sqrt(p/100) : (p/100));
+    tb.insertAdjacentHTML('beforeend',
+      `<tr><td>${FMT(p)}%</td><td>${FMT(ma)} mA</td><td>${FMT(eu)}${SH_euLabel()}</td></tr>`);
   });
-  const csv = rows.map(r=>r.map(c=>{
-    const s=(c??'').toString();
-    return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s;
-  }).join(',')).join('\n');
-  const blob = new Blob([csv], {type:'text/csv'});
-  const url  = URL.createObjectURL(blob);
+}
+document.getElementById('sh_build')?.addEventListener('click', SH_buildRows);
+
+document.getElementById('sh_export')?.addEventListener('click', ()=>{
+  const rows = Array.from(document.querySelectorAll('#sh_tbl tbody tr'));
+  if (!rows.length){ SH_buildRows(); }
+  const csvRows = [['%','mA','EU']];
+  document.querySelectorAll('#sh_tbl tbody tr').forEach(tr=>{
+    const tds = tr.querySelectorAll('td');
+    csvRows.push([tds[0].textContent.replace('%',''), tds[1].textContent.replace(' mA',''), tds[2].textContent]);
+  });
+  const blob = new Blob([csvRows.map(r=>r.join(',')).join('\n')], {type:'text/csv'});
   const a = document.createElement('a');
-  a.href = url; a.download = 'percent_steps.csv'; a.click();
-  URL.revokeObjectURL(url);
-}
-document.getElementById('pc_build')?.addEventListener('click', pc_build);
-document.getElementById('pc_export')?.addEventListener('click', pc_export);
-['pc_lrv','pc_urv','pc_eu_units','pc_sqrt'].forEach(id=>{
-  const el = document.getElementById(id);
-  if(!el) return;
-  el.addEventListener('input', ()=>{ clearTimeout(el._t); el._t = setTimeout(pc_build, 120); });
-  el.addEventListener('change', pc_build);
-});
-// Initial build if LRV/URV already present
-(function(){ const L=parseFloat(val('pc_lrv')), U=parseFloat(val('pc_urv')); if(Number.isFinite(L)&&Number.isFinite(U)&&L!==U) pc_build(); })();
-
-/* ========= 4-20 mA Converter with Square Root ========= */
-function getRangeMA(){
-  const lrv = parseFloat(document.getElementById('ma_lrv').value);
-  const urv = parseFloat(document.getElementById('ma_urv').value);
-  if (!Number.isFinite(lrv) || !Number.isFinite(urv) || lrv === urv) {
-    alert('Enter valid LRV and URV');
-    return null;
-  }
-  const label = (document.getElementById('ma_eulbl').value || '').trim();
-  const sqrt = document.getElementById('ma_sqrt_mode').checked;
-  return {lrv, urv, label, sqrt};
-}
-
-function maToPct(ma){
-  return ((ma - 4) / 16) * 100;
-}
-
-function pctToMA(pct){
-  return 4 + (pct / 100) * 16;
-}
-
-function pctToEU(pct, range){
-  const frac = range.sqrt ? Math.sqrt(pct / 100) : (pct / 100);
-  return range.lrv + (range.urv - range.lrv) * frac;
-}
-
-function euToPct(eu, range){
-  const frac = (eu - range.lrv) / (range.urv - range.lrv);
-  return range.sqrt ? (frac ** 2) * 100 : frac * 100;
-}
-
-// mA → EU
-document.getElementById('ma_to_eu')?.addEventListener('click', ()=>{
-  const range = getRangeMA();
-  if (!range) return;
-  const ma = parseFloat(document.getElementById('ma_in').value);
-  if (!Number.isFinite(ma)){ alert('Enter a valid mA'); return; }
-  const pct = maToPct(ma);
-  const eu = pctToEU(pct, range);
-  document.getElementById('ma_out').value = eu.toFixed(2) + (range.label ? ' ' + range.label : '');
+  a.href = URL.createObjectURL(blob);
+  a.download = '4-20-steps.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
 });
 
-// EU → mA
-document.getElementById('eu_to_ma')?.addEventListener('click', ()=>{
-  const range = getRangeMA();
-  if (!range) return;
-  const eu = parseFloat(document.getElementById('eu_in').value);
-  if (!Number.isFinite(eu)){ alert('Enter a valid EU'); return; }
-  const pct = euToPct(eu, range);
-  const ma = pctToMA(pct);
-  document.getElementById('eu_out').value = ma.toFixed(2) + ' mA';
+// keep span note fresh
+['sh_lrv','sh_urv','sh_eulbl'].forEach(id=>{
+  document.getElementById(id)?.addEventListener('input', SH_spanNote);
 });
+SH_spanNote();
 
-// mA → %
-document.getElementById('ma_to_pct')?.addEventListener('click', ()=>{
-  const ma = parseFloat(document.getElementById('pct_in').value);
-  if (!Number.isFinite(ma)){ alert('Enter a valid mA'); return; }
-  const pct = maToPct(ma);
-  document.getElementById('pct_out').value = pct.toFixed(2) + ' %';
-});
-
-// Copy buttons
-document.querySelectorAll('.copy').forEach(btn=>{
-  btn.addEventListener('click', async ()=>{
-    const sel = btn.getAttribute('data-copy');
-    const el = document.querySelector(sel);
-    if (!el) return;
-    try{
-      await navigator.clipboard.writeText(el.value.trim());
-      btn.textContent = 'copied';
-      setTimeout(()=> btn.textContent = 'copy', 900);
-    }catch(e){ console.error(e); }
-  });
-});
+// initialize view
+(function initSH(){
+  const s = document.getElementById('sh_slider'); if (s) s.value = 50;
+  SH_fromPct(50);
+})();
   
 /* ========= PRESSURE ========= */
 const KPA_PER_PSI = 6.894757293168;
