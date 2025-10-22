@@ -1236,7 +1236,19 @@ html[data-theme="dark"]{
       </div>
       <div class="row">
         <div class="col"><label>Device Range <input id="lp_dev" placeholder="e.g., 0–250 psi"></label></div>
+        <div class="row">
+      <div class="col">
+        <label>Device Serial #
+        <input id="lp_dev_sn" placeholder="e.g., 12345ABC">
+        </label>
+        <button class="kbd-toggle" data-for="lp_dev_sn">kbd</button>
       </div>
+      <div class="col">
+       <label>Device Model #
+       <input id="lp_dev_model" placeholder="e.g., Rosemount 3051">
+      </label>
+      <button class="kbd-toggle" data-for="lp_dev_model">kbd</button>
+    </div>
     </div>
 
     <!-- Entry form (Expected/Measured removed) -->
@@ -2259,7 +2271,7 @@ function ll_getRange({warn=true}={}) {
 }
 function ll_euLabel(){ const s=(document.getElementById('ll_eulbl')?.value||'').trim(); return s?(' '+s):''; }
 function ll_updateFromPct(p){
-  const r = ll_getRange({warn:false}); if(!r) return; // <-- no alert during typing/init
+  const r = ll_getRange({warn:false}); if(!r) return;
   const pct=Math.min(Math.max(Number(p)||0,0),100);
   const sqrt=document.getElementById('ll_sqrt_mode').checked;
   const ma = 4 + 16*(pct/100);
@@ -2290,7 +2302,6 @@ function ll_fromEU(){ const r=ll_getRange(); if(!r) return;
   const pct=Math.min(Math.max((sqrt? Math.pow(Math.max(en,0),2):en)*100,0),100);
   ll_updateFromPct(pct);
 }
-
 document.getElementById('ll_from_pct')?.addEventListener('click', ll_fromPct);
 document.getElementById('ll_from_ma')?.addEventListener('click', ll_fromMA);
 document.getElementById('ll_from_eu')?.addEventListener('click', ll_fromEU);
@@ -2301,16 +2312,14 @@ document.querySelectorAll('#ll_calc_card .copy').forEach(c=>c.addEventListener('
   const sel=c.getAttribute('data-copy'); const el=document.querySelector(sel); if(!el) return;
   try{ await navigator.clipboard.writeText(el.textContent.trim()); c.textContent='copied'; setTimeout(()=>c.textContent='copy',900);}catch{}
 }));
-
-// Init without nagging; also seeds safe defaults so slider works
 (function(){
   const s=document.getElementById('ll_slider'); if(s) s.value=50;
   if (!document.getElementById('ll_lrv').value) setVal('ll_lrv','0');
   if (!document.getElementById('ll_urv').value) setVal('ll_urv','100');
   ll_updateFromPct(50);
 })();
-  
-/* Loop add/render/CSV */
+
+/* ===== Loop add/render/CSV (now includes Device Serial/Model) ===== */
 function loop_add(){
   const safe = id => document.getElementById(id)?.value ?? "";
   const rec = {
@@ -2330,16 +2339,20 @@ function loop_add(){
     hh:   parseFloat(safe('lp_hh')),
     hhh:  parseFloat(safe('lp_hhh')),
     devRange: safe('lp_dev'),
+    devSN:    safe('lp_dev_sn'),     // NEW
+    devModel: safe('lp_dev_model'),  // NEW
     sqrt: !!document.getElementById('ll_sqrt_mode')?.checked
   };
   const rows=load(K_LOOP); rows.push(rec); save(K_LOOP, rows); loop_render();
 }
+
 function loop_render(){
   const rows=load(K_LOOP);
   const tb=document.querySelector('#lp_tbl tbody');
   if(!tb) return;
   tb.innerHTML='';
   let pass=0, fail=0;
+
   rows.forEach((r,i)=>{
     const tr=document.createElement('tr');
     tr.innerHTML = `
@@ -2354,6 +2367,7 @@ function loop_render(){
         <button class="btn danger" onclick="loop_delete(${i})">✖</button>
       </td>`;
     tb.appendChild(tr);
+
     const detailRow=document.createElement('tr');
     detailRow.style.display='none';
     detailRow.innerHTML = `
@@ -2363,6 +2377,8 @@ function loop_render(){
           <div class="kv"><span>URV</span><strong>${FMT(r.urv)||'—'}</strong></div>
           <div class="kv"><span>EU</span><strong>${r.euUnits||'—'}</strong></div>
           <div class="kv"><span>Device Range</span><strong>${r.devRange||'—'}</strong></div>
+          <div class="kv"><span>Device Serial #</span><strong>${r.devSN||'—'}</strong></div>
+          <div class="kv"><span>Device Model #</span><strong>${r.devModel||'—'}</strong></div>
           <div class="kv"><span>LLL</span><strong>${FMT(r.lll)||'—'}</strong></div>
           <div class="kv"><span>LL</span><strong>${FMT(r.ll)||'—'}</strong></div>
           <div class="kv"><span>L</span><strong>${FMT(r.l)||'—'}</strong></div>
@@ -2373,37 +2389,44 @@ function loop_render(){
         </div>
       </td>`;
     tb.appendChild(detailRow);
+
     if(r.ok==='YES') pass++; else fail++;
   });
-  const p=document.getElementById('loop-pass'), f=document.getElementById('loop-fail');
-  if(p) p.textContent=`Pass: ${pass}`;
-  if(f) f.textContent=`Fail: ${fail}`;
+
+  document.getElementById('loop-pass')!.textContent = `Pass: ${pass}`;
+  document.getElementById('loop-fail')!.textContent = `Fail: ${fail}`;
 }
+
 function toggleDetails(index, btn){
   const row = btn.closest('tr').nextElementSibling;
   const open = row.style.display === 'table-row';
   row.style.display = open ? 'none' : 'table-row';
   btn.textContent = open ? '▶ Details' : '▼ Hide';
 }
+
 function loop_delete(i){
   const rows=load(K_LOOP);
   rows.splice(i,1);
   save(K_LOOP,rows);
   loop_render();
 }
+
 function loop_csv(){
   const rows=load(K_LOOP);
   const out=[[
     'Date','Tag','Point','Units','OK','Notes',
-    'LRV','URV','EU Units','LLL','LL','L','H','HH','HHH','Device Range','SQRT'
+    'LRV','URV','EU Units','LLL','LL','L','H','HH','HHH',
+    'Device Range','Device Serial #','Device Model #','SQRT'
   ]];
   rows.forEach(r=>out.push([
     r.date||'', r.tag||'', r.point||'', r.units||'', r.ok||'', r.notes||'',
-    FMT(r.lrv), FMT(r.urv), r.euUnits||'', FMT(r.lll), FMT(r.ll), FMT(r.l),
-    FMT(r.h), FMT(r.hh), FMT(r.hhh), r.devRange||'', r.sqrt?'ON':'OFF'
+    FMT(r.lrv), FMT(r.urv), r.euUnits||'',
+    FMT(r.lll), FMT(r.ll), FMT(r.l), FMT(r.h), FMT(r.hh), FMT(r.hhh),
+    r.devRange||'', r.devSN||'', r.devModel||'', r.sqrt?'ON':'OFF'
   ]));
   downloadCSV('loop_log.csv', out);
 }
+
 document.getElementById('lp_add')?.addEventListener('click', loop_add);
 document.getElementById('lp_export')?.addEventListener('click', loop_csv);
 document.getElementById('lp_clear')?.addEventListener('click', ()=>{ if(confirm('Clear all loop rows?')){ save(K_LOOP,[]); loop_render(); }});
