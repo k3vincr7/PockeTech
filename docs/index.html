@@ -1217,39 +1217,46 @@ html[data-theme="dark"]{
     </div>
 
     <!-- Range & Alarms (for the loop/device context snapshot) -->
-    <div class="card">
-      <h3 style="margin-top:0">Range & Alarms (Snapshot)</h3>
-      <div class="row">
-        <div class="col"><label>LRV <input id="lp_lrv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_lrv">kbd</button></div>
-        <div class="col"><label>URV <input id="lp_urv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_urv">kbd</button></div>
-        <div class="col"><label>EU Units <input id="lp_eu_units" placeholder="psi, °F, etc."></label></div>
-      </div>
-      <div class="row">
-        <div class="col"><label>LLL <input id="lp_lll" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_lll">kbd</button></div>
-        <div class="col"><label>LL <input id="lp_ll" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_ll">kbd</button></div>
-        <div class="col"><label>L <input id="lp_l" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_l">kbd</button></div>
-      </div>
-      <div class="row">
-        <div class="col"><label>H <input id="lp_h" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_h">kbd</button></div>
-        <div class="col"><label>HH <input id="lp_hh" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_hh">kbd</button></div>
-        <div class="col"><label>HHH <input id="lp_hhh" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_hhh">kbd</button></div>
-      </div>
-      <div class="row">
-        <div class="col"><label>Device Range <input id="lp_dev" placeholder="e.g., 0–250 psi"></label></div>
-        <div class="row">
-      <div class="col">
-        <label>Device Serial #
+<div class="card">
+  <h3 style="margin-top:0">Range & Alarms (Snapshot)</h3>
+
+  <div class="row">
+    <div class="col"><label>LRV <input id="lp_lrv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_lrv">kbd</button></div>
+    <div class="col"><label>URV <input id="lp_urv" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_urv">kbd</button></div>
+    <div class="col"><label>EU Units <input id="lp_eu_units" placeholder="psi, °F, etc."></label></div>
+  </div>
+
+  <div class="row">
+    <div class="col"><label>LLL <input id="lp_lll" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_lll">kbd</button></div>
+    <div class="col"><label>LL <input id="lp_ll" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_ll">kbd</button></div>
+    <div class="col"><label>L <input id="lp_l" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_l">kbd</button></div>
+  </div>
+
+  <div class="row">
+    <div class="col"><label>H <input id="lp_h" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_h">kbd</button></div>
+    <div class="col"><label>HH <input id="lp_hh" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_hh">kbd</button></div>
+    <div class="col"><label>HHH <input id="lp_hhh" class="num" inputmode="decimal"></label><button class="kbd-toggle" data-for="lp_hhh">kbd</button></div>
+  </div>
+
+  <div class="row">
+    <div class="col"><label>Device Range <input id="lp_dev" placeholder="e.g., 0–250 psi"></label></div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <label>Device Serial #
         <input id="lp_dev_sn" placeholder="e.g., 12345ABC">
-        </label>
-        <button class="kbd-toggle" data-for="lp_dev_sn">kbd</button>
-      </div>
-      <div class="col">
-       <label>Device Model #
-       <input id="lp_dev_model" placeholder="e.g., Rosemount 3051">
+      </label>
+      <button class="kbd-toggle" data-for="lp_dev_sn">kbd</button>
+    </div>
+    <div class="col">
+      <label>Device Model #
+        <input id="lp_dev_model" placeholder="e.g., Rosemount 3051">
       </label>
       <button class="kbd-toggle" data-for="lp_dev_model">kbd</button>
     </div>
-    </div>
+  </div>
+</div>
 
     <!-- Entry form (Expected/Measured removed) -->
     <div class="card">
