@@ -2475,71 +2475,169 @@ document.getElementById('fl_search')?.addEventListener('input',e=>{
   });
 });
 
-/* ========= INSTALL / PWA + UPDATE / RESET ========= */
-const installBtn=document.getElementById('installBtn'); if(installBtn) installBtn.disabled=true;
-let deferredPrompt=null;
-function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
-function isSafari(){ return /^((?!chrome|android).)*safari/i.test(navigator.userAgent); }
-window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferredPrompt=e; if (installBtn) installBtn.disabled=false; });
-if (isIOS() && isSafari() && installBtn){ installBtn.disabled=false; }
-installBtn?.addEventListener('click', async ()=>{
-  if (deferredPrompt){
-    deferredPrompt.prompt(); try{ await deferredPrompt.userChoice; }catch{} deferredPrompt=null; installBtn.disabled=true; return;
+/* ========= INSTALL / PWA + UPDATE / RESET (polished) ========= */
+(function(){
+  const installBtn = document.getElementById('installBtn');
+  const updateBtn  = document.getElementById('checkUpdate');
+  const resetBtn   = document.getElementById('resetApp');
+  const iosTip     = document.getElementById('iosInstallTip');
+  const iosTipClose= document.getElementById('iosTipClose');
+
+  let deferredPrompt = null;
+
+  const isIOS    = () => /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isSafari = () => /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+  function setBtnBusy(btn, text){
+    if (!btn) return () => {};
+    const prev = btn.textContent;
+    btn.disabled = true;
+    if (text) btn.textContent = text;
+    return () => { btn.disabled = false; btn.textContent = prev; };
   }
-  if (isIOS() && isSafari()){ document.getElementById('iosInstallTip')?.style && (document.getElementById('iosInstallTip').style.display='flex'); return; }
-  alert('Your browser may not support direct install. Try Chrome/Edge or Add to Home Screen.');
-});
-document.getElementById('iosTipClose')?.addEventListener('click',()=>{ const m=document.getElementById('iosInstallTip'); if(m) m.style.display='none'; });
-const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-if (isStandalone) { installBtn?.style && (installBtn.style.display='none'); }
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').then(reg => {
-    reg.addEventListener('updatefound', () => {
-      const nw = reg.installing;
-      nw?.addEventListener('statechange', () => {
-        if (nw.state === 'installed' && navigator.serviceWorker.controller) {
-          reg.waiting?.postMessage('SKIP_WAITING');
-        }
+
+  // Hide install button if already installed
+  if (isStandalone && installBtn) installBtn.style.display = 'none';
+
+  // Capture install prompt (Chromium)
+  window.addEventListener('beforeinstallprompt', (e)=>{
+    e.preventDefault();
+    deferredPrompt = e;
+    if (installBtn) installBtn.disabled = false;
+  });
+
+  // iOS Safari doesn’t fire beforeinstallprompt — show tip instead
+  if (isIOS() && isSafari() && installBtn) installBtn.disabled = false;
+
+  // After a successful install, hide the button
+  window.addEventListener('appinstalled', ()=>{
+    if (installBtn) installBtn.style.display = 'none';
+    deferredPrompt = null;
+  });
+
+  // Install button
+  installBtn?.addEventListener('click', async ()=>{
+    if (deferredPrompt){
+      try{
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+      }catch{}
+      deferredPrompt = null;
+      if (installBtn) installBtn.disabled = true;
+      return;
+    }
+    if (isIOS() && isSafari()){
+      if (iosTip) iosTip.style.display = 'flex'; // show your “Add to Home Screen” tip (if you have it)
+      return;
+    }
+    // Fallback
+    alert('Your browser may not support direct install. Try Chrome/Edge or use “Add to Home Screen”.');
+  });
+
+  iosTipClose?.addEventListener('click', ()=>{
+    if (iosTip) iosTip.style.display = 'none';
+  });
+
+  // Service worker registration
+  if ('serviceWorker' in navigator){
+    navigator.serviceWorker.register('./sw.js').then(reg=>{
+      // When a new SW is found, move it to waiting, then tell it to activate
+      reg.addEventListener('updatefound', ()=>{
+        const nw = reg.installing;
+        nw?.addEventListener('statechange', ()=>{
+          if (nw.state === 'installed' && navigator.serviceWorker.controller){
+            reg.waiting?.postMessage({type:'SKIP_WAITING'});
+          }
+        });
       });
-    });
-    navigator.serviceWorker.addEventListener('controllerchange', () => { window.location.reload(); });
-  }).catch(()=>{});
+      // When the controller changes, the new SW took over — reload once
+      navigator.serviceWorker.addEventListener('controllerchange', ()=>{
+        // Avoid infinite loops
+        if (!window._swReloaded){ window._swReloaded = true; window.location.reload(); }
+      });
+    }).catch(()=>{ /* ignore */ });
+  }
+
+  // “Check update” – no alert, just temporary button text
+  updateBtn?.addEventListener('click', async ()=>{
+    const done = setBtnBusy(updateBtn, 'Checking…');
+    try{
+      const reg = await navigator.serviceWorker.getRegistration();
+      await reg?.update();
+      // If an update installed into waiting, nudge it to activate
+      reg?.waiting?.postMessage({type:'SKIP_WAITING'});
+    }catch{}
+    setTimeout(done, 600); // brief visual feedback
+  });
+
+  // Reset (clear caches + unregister SW)
+  resetBtn?.addEventListener('click', async ()=>{
+    if (!confirm('This will clear the app cache and unregister the service worker. Continue?')) return;
+    const done = setBtnBusy(resetBtn, 'Resetting…');
+    try{
+      const names = await caches.keys();
+      await Promise.all(names.map(n => caches.delete(n)));
+      const reg = await navigator.serviceWorker.getRegistration();
+      await reg?.unregister();
+    }catch{}
+    done();
+    alert('Cache reset complete. Reloading…');
+    location.reload();
+  });
+})();
+
+/* ========= SETTINGS UI + DEFAULTS (safe init) ========= */
+function loadSettingsUI(){
+  const s = getS?.() || {};
+  if (document.getElementById('s_atm'))    setVal('s_atm', s.atm);
+  if (document.getElementById('s_punit'))  document.getElementById('s_punit').value = s.punit || 'psi';
+  if (document.getElementById('s_lunit'))  document.getElementById('s_lunit').value = s.lunit || 'in';
+  if (document.getElementById('s_haptics')) document.getElementById('s_haptics').checked = !!s.haptics;
+  if (document.getElementById('atm'))      setVal('atm', s.atm);
 }
-document.getElementById('checkUpdate')?.addEventListener('click', async () => {
-  try { const reg = await navigator.serviceWorker.getRegistration(); await reg?.update(); reg?.waiting?.postMessage('SKIP_WAITING'); alert('Checking for updates… if found, the app will refresh.'); } catch {}
-});
-document.getElementById('resetApp')?.addEventListener('click', async () => {
-  if (!confirm('This will clear app cache. Continue?')) return;
-  try { const names = await caches.keys(); await Promise.all(names.map(n => caches.delete(n))); const reg = await navigator.serviceWorker.getRegistration(); await reg?.unregister(); } catch {}
-  alert('Cache reset complete. Reloading…'); location.reload();
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  loadSettingsUI();
+
+  document.getElementById('s_save')?.addEventListener('click', ()=>{
+    const s = getS();
+    const a = parseFloat(val('s_atm'));
+    if (!isNaN(a)) s.atm = a;
+    const pu = document.getElementById('s_punit'); if (pu) s.punit = pu.value;
+    const lu = document.getElementById('s_lunit'); if (lu) s.lunit = lu.value;
+    const hh = document.getElementById('s_haptics'); if (hh) s.haptics = hh.checked;
+    setS(s);
+    if (document.getElementById('atm')) setVal('atm', s.atm);
+    alert('Saved');
+  });
+
+  document.getElementById('s_reset')?.addEventListener('click', ()=>{
+    setS(DEF); loadSettingsUI(); setThemeBtnLabel?.(); applyTheme?.(); alert('Reset');
+  });
+
+  // Optional defaults (guarded)
+  const slider = document.getElementById('pct_slider'); if (slider) slider.value = 50;
+  if (document.getElementById('sh_pct')) setVal('sh_pct', 50);
+  if (document.getElementById('read_pct')) document.getElementById('read_pct').textContent = '50%';
+  if (document.getElementById('read_ma'))  document.getElementById('read_ma').textContent  = '12';
 });
 
-/* ========= SETTINGS UI + DEFAULTS ========= */
-function loadSettingsUI(){const s=getS(); setVal('s_atm',s.atm); const p=document.getElementById('s_punit'); if(p) p.value=s.punit; const lu=document.getElementById('s_lunit'); if(lu) lu.value=s.lunit; const hh=document.getElementById('s_haptics'); if(hh) hh.checked=!!s.haptics; const atmEl=document.getElementById('atm'); if(atmEl) setVal('atm', s.atm);}
-loadSettingsUI();
-document.getElementById('s_save')?.addEventListener('click',()=>{const s=getS(); const a=parseFloat(val('s_atm')); if(!isNaN(a)) s.atm=a; const pu=document.getElementById('s_punit'); if(pu) s.punit=pu.value; const lu=document.getElementById('s_lunit'); if(lu) s.lunit=lu.value; const hh=document.getElementById('s_haptics'); if(hh) s.haptics=hh.checked; setS(s); const atmEl=document.getElementById('atm'); if(atmEl) setVal('atm', s.atm); alert('Saved');});
-document.getElementById('s_reset')?.addEventListener('click',()=>{setS(DEF); loadSettingsUI(); setThemeBtnLabel(); applyTheme(); alert('Reset');});
-const slider=document.getElementById('pct_slider'); if(slider){ slider.value=50; }
-setVal('sh_pct', 50); const rp=document.getElementById('read_pct'); if(rp) rp.textContent='50%'; const rm=document.getElementById('read_ma'); if(rm) rm.textContent='12';
-
-/* ========= MINI ROUTER (HARDENED) ========= */
+/* ========= MINI ROUTER (hardened) ========= */
 (function () {
-  // In your MINI ROUTER IIFE, extend ALIAS:
   const ALIAS = { jr: 'jrtech', ohms: 'ohm_drop', lingo: 'field_lingo', level_open: 'level', level_closed: 'level' };
   const backBtn = document.getElementById('backBtn');
   const titleEl = document.getElementById('appTitle');
 
-  // Robust: grab every <section id="..."> anywhere on the page
-  function allSections(){ return [...document.querySelectorAll('section[id]')]; }
-  const exists = id => allSections().some(s => s.id === id);
+  const allSections = () => Array.from(document.querySelectorAll('section[id]'));
+  const exists  = id => allSections().some(s => s.id === id);
   const resolve = id => ALIAS[id] || id;
 
   function show(id){
-    const tgt = resolve(id);
+    const tgtId = resolve(id);
     const sections = allSections();
-    const targetEl = sections.find(s => s.id === tgt) || sections.find(s => s.id === 'home');
-    // If we still didn't find anything, bail
-    if(!targetEl) return;
+    const targetEl = sections.find(s => s.id === tgtId) || sections.find(s => s.id === 'home');
+    if (!targetEl) return;
 
     sections.forEach(s => {
       const on = (s === targetEl);
@@ -2557,7 +2655,7 @@ setVal('sh_pct', 50); const rp=document.getElementById('read_pct'); if(rp) rp.te
   }
 
   document.addEventListener('click', e => {
-    const btn = e.target.closest('[data-go]');
+    const btn = e.target.closest?.('[data-go]');
     if (!btn) return;
     e.preventDefault();
     show(btn.getAttribute('data-go'));
@@ -2570,11 +2668,10 @@ setVal('sh_pct', 50); const rp=document.getElementById('read_pct'); if(rp) rp.te
     show(exists(resolve(id)) ? id : 'home');
   });
 
-  // Initial load
   const wanted = (location.hash || '#home').slice(1);
   show(exists(resolve(wanted)) ? wanted : 'home');
 })();
-  
+
 </script>
 </body>
 </html>
