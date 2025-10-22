@@ -74,3 +74,10 @@ self.addEventListener('fetch', (evt) => {
 self.addEventListener('message', (evt) => {
   if (evt.data === 'SKIP_WAITING') self.skipWaiting();
 });
+
+// sw.js (add this if you don’t have it yet)
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
