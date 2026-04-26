@@ -1,1 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PockeTech V2</title>
 
+<style>
+body {
+  margin:0;
+  font-family:system-ui;
+  background:#0f1115;
+  color:#e8e8e8;
+}
+
+header {
+  padding:12px;
+  border-bottom:1px solid #2a2f3a;
+  display:flex;
+  justify-content:space-between;
+}
+
+main {
+  padding:16px;
+  max-width:900px;
+  margin:auto;
+}
+
+.card {
+  background:#151922;
+  border:1px solid #2a2f3a;
+  border-radius:10px;
+  padding:14px;
+  margin-bottom:12px;
+}
+
+input, button {
+  width:100%;
+  padding:10px;
+  margin-top:6px;
+  border-radius:8px;
+  border:1px solid #2a2f3a;
+  background:#2b3240;
+  color:white;
+}
+
+.row {
+  display:flex;
+  gap:10px;
+}
+
+.col {
+  flex:1;
+}
+
+.big {
+  font-size:24px;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <strong>PockeTech V2</strong>
+</header>
+
+<main>
+
+<!-- TOOL SELECT -->
+<div class="card">
+  <button onclick="showTool('sqrt')">Square Root Flow</button>
+</div>
+
+<!-- SQRT TOOL -->
+<div id="sqrtTool" class="card" style="display:none;">
+  <h2>Square Root Flow</h2>
+
+  <div class="row">
+    <div class="col">
+      <label>LRV</label>
+      <input id="lrv" placeholder="0">
+    </div>
+
+    <div class="col">
+      <label>URV</label>
+      <input id="urv" placeholder="100">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <label>Flow %</label>
+      <input id="flowPct" placeholder="50">
+      <button onclick="fromFlow()">Calculate DP</button>
+    </div>
+
+    <div class="col">
+      <label>DP</label>
+      <input id="dp" placeholder="25">
+      <button onclick="fromDP()">Calculate %</button>
+    </div>
+  </div>
+
+  <div class="big" id="result">—</div>
+
+</div>
+
+</main>
+
+<script>
+
+/* =========================
+   SAFE INPUT
+========================= */
+function getNum(id){
+  const v = document.getElementById(id).value;
+  if(v === "") return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+
+/* =========================
+   ENGINE (ONE SOURCE)
+========================= */
+const Engine = {
+
+  flowToDP(flowPct, lrv, urv){
+    const span = urv - lrv;
+    const frac = flowPct / 100;
+    return lrv + (frac * frac) * span;
+  },
+
+  dpToFlow(dp, lrv, urv){
+    const span = urv - lrv;
+    if(span === 0) return null;
+
+    const frac = (dp - lrv) / span;
+    if(frac < 0) return 0;
+    if(frac > 1) return 100;
+
+    return Math.sqrt(frac) * 100;
+  }
+
+};
+
+/* =========================
+   UI ACTIONS
+========================= */
+
+function fromFlow(){
+  const lrv = getNum("lrv");
+  const urv = getNum("urv");
+  const flow = getNum("flowPct");
+
+  if(lrv == null || urv == null || flow == null) return;
+
+  const dp = Engine.flowToDP(flow, lrv, urv);
+
+  document.getElementById("dp").value = dp.toFixed(4);
+  document.getElementById("result").innerText =
+    `DP = ${dp.toFixed(4)}`;
+}
+
+function fromDP(){
+  const lrv = getNum("lrv");
+  const urv = getNum("urv");
+  const dp = getNum("dp");
+
+  if(lrv == null || urv == null || dp == null) return;
+
+  const flow = Engine.dpToFlow(dp, lrv, urv);
+
+  document.getElementById("flowPct").value = flow.toFixed(2);
+  document.getElementById("result").innerText =
+    `Flow = ${flow.toFixed(2)} %`;
+}
+
+/* =========================
+   NAV
+========================= */
+function showTool(name){
+  document.getElementById("sqrtTool").style.display =
+    name === "sqrt" ? "block" : "none";
+}
+
+</script>
+
+</body>
+</html>
