@@ -6,7 +6,7 @@
 <title>PockeTech V2 — Level Helper Pro</title>
 <meta name="theme-color" content="#0f1115">
 <style>
-:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--ok:#166534;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}html[data-theme="dark"] header{background:rgba(15,17,21,.75)}main{padding:14px;max-width:960px;margin:0 auto}.brand{display:flex;flex-direction:column}.title{font-weight:850;font-size:18px}.build{font-size:12px;color:var(--muted)}button,input,select{font:inherit;border-radius:14px}button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;font-weight:650}button:active{transform:translateY(1px) scale(.99)}input,select{width:100%;padding:13px;border:1px solid var(--border);background:var(--card);color:var(--fg);margin-top:7px;outline:none}input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}input[type=range]{accent-color:var(--accent);padding:0;border:none;background:transparent;margin-top:10px}label{font-weight:700;font-size:14px}.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}.hero{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 18%,var(--card)),var(--card))}.row{display:flex;gap:12px;flex-wrap:wrap}.col{flex:1 1 230px}.muted{color:var(--muted);font-size:13px;line-height:1.35}.big{font-size:27px;font-weight:850;margin:4px 0}.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-bottom:14px}.result-card{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:14px}.ok{background:var(--ok);border-color:var(--ok);color:white}.small-btn{padding:8px 10px;font-size:14px;border-radius:12px;width:auto}.hr{height:1px;background:var(--border);margin:14px 0}.chipbar{display:flex;gap:8px;flex-wrap:wrap}.chip{width:auto;border-radius:999px;padding:9px 13px}.slider-wrap{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:14px;margin-top:14px}.scroll-x{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}th,td{border:1px solid var(--border);padding:9px;text-align:left}th{background:var(--tile)}.wet-only{display:none}.tank{height:160px;border:2px solid var(--border);border-radius:18px;position:relative;overflow:hidden;background:var(--card)}.fill{position:absolute;bottom:0;left:0;right:0;height:0;background:color-mix(in srgb,var(--accent) 45%,transparent);transition:height .12s ease}.pctTag{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:850}@media(max-width:520px){main{padding:12px}.card{padding:14px}.big{font-size:24px}}
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--ok:#166534;--warn:#92400e;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}html[data-theme="dark"] header{background:rgba(15,17,21,.75)}main{padding:14px;max-width:960px;margin:0 auto}.brand{display:flex;flex-direction:column}.title{font-weight:850;font-size:18px}.build{font-size:12px;color:var(--muted)}button,input,select{font:inherit;border-radius:14px}button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;font-weight:650}button:active{transform:translateY(1px) scale(.99)}input,select{width:100%;padding:13px;border:1px solid var(--border);background:var(--card);color:var(--fg);margin-top:7px;outline:none}input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}input[type=range]{accent-color:var(--accent);padding:0;border:none;background:transparent;margin-top:10px}label{font-weight:700;font-size:14px}.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}.hero{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 18%,var(--card)),var(--card))}.row{display:flex;gap:12px;flex-wrap:wrap}.col{flex:1 1 230px}.muted{color:var(--muted);font-size:13px;line-height:1.35}.big{font-size:27px;font-weight:850;margin:4px 0}.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-bottom:14px}.result-card{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:14px}.ok{background:var(--ok);border-color:var(--ok);color:white}.warn{background:var(--warn);border-color:var(--warn);color:white}.small-btn{padding:8px 10px;font-size:14px;border-radius:12px;width:auto}.hr{height:1px;background:var(--border);margin:14px 0}.chipbar{display:flex;gap:8px;flex-wrap:wrap}.chip{width:auto;border-radius:999px;padding:9px 13px}.slider-wrap{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:14px;margin-top:14px}.scroll-x{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}th,td{border:1px solid var(--border);padding:9px;text-align:left}th{background:var(--tile)}.wet-only{display:none}.tank{height:160px;border:2px solid var(--border);border-radius:18px;position:relative;overflow:hidden;background:var(--card)}.fill{position:absolute;bottom:0;left:0;right:0;height:0;background:color-mix(in srgb,var(--accent) 45%,transparent);transition:height .12s ease}.pctTag{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:850}.pill{display:inline-block;padding:5px 9px;border:1px solid var(--border);border-radius:999px;background:var(--tile);font-size:12px;color:var(--muted);margin-top:6px}@media(max-width:520px){main{padding:12px}.card{padding:14px}.big{font-size:24px}}
 </style>
 </head>
 <body>
@@ -14,7 +14,7 @@
 <main>
 <div class="card hero">
   <h1 style="margin:0 0 6px">Level Helper Pro</h1>
-  <p class="muted" style="margin:0">Open tank, closed tank dry leg, and closed tank wet leg. Built for transmitter range, mA, dP, and level checks.</p>
+  <p class="muted" style="margin:0">Open tank, closed dry leg, closed wet leg, TX elevation offset, HP/LP breakdown, and saved setups.</p>
 </div>
 
 <div class="card">
@@ -27,6 +27,11 @@
     <div class="col"><label>Process Liquid SG</label><input id="procSG" inputmode="decimal" value="1.0"></div>
     <div class="col"><label>dP Units</label><select id="dpUnit"><option value="inh2o">inH₂O</option><option value="psi">psi</option><option value="kpa">kPa</option></select></div>
     <div class="col"><label>Level Units Label</label><input id="levelUnit" placeholder="in, ft, %, etc."></div>
+  </div>
+  <div class="row" style="margin-top:12px">
+    <div class="col"><label>TX Elevation Offset</label><input id="offset" inputmode="decimal" placeholder="0" value="0"><div class="pill">+ below lower tap / − above lower tap</div></div>
+    <div class="col"><label>Offset Units</label><select id="offsetUnit"><option value="in">in</option><option value="ft">ft</option><option value="m">m</option></select></div>
+    <div class="col"><label>Fill Fluid SG for Offset</label><input id="offsetSG" inputmode="decimal" value="1.0"></div>
   </div>
   <div class="row wet-only" style="margin-top:12px">
     <div class="col"><label>Wet Leg Height</label><input id="wetH" inputmode="decimal" placeholder="same as span usually"></div>
@@ -53,25 +58,41 @@
 </div>
 
 <div class="card">
+  <h3 style="margin-top:0">HP / LP Breakdown</h3>
+  <div class="result-grid">
+    <div class="result-card"><div class="muted">HP Side</div><div class="big" id="readHP">—</div></div>
+    <div class="result-card"><div class="muted">LP Side</div><div class="big" id="readLP">—</div></div>
+    <div class="result-card"><div class="muted">Offset Head</div><div class="big" id="readOffset">—</div></div>
+  </div>
+  <p class="muted">Breakdown is a troubleshooting reference. Final dP = HP side − LP side + TX offset head.</p>
+</div>
+
+<div class="card">
   <div class="row">
     <div class="col"><div class="tank"><div id="fill" class="fill"></div><div id="pctTag" class="pctTag">—</div></div></div>
     <div class="col">
       <div class="muted">Calculated transmitter range</div>
       <div class="big" id="rangeText">—</div>
-      <p class="muted" id="noteText">Open and dry leg: LRV = 0. Wet leg: LRV is usually negative because the wet leg pushes on the LP side.</p>
+      <p class="muted" id="noteText">Open/dry leg: LP reference is zero. Wet leg: LP reference subtracts from the HP side and usually creates a negative LRV.</p>
     </div>
   </div>
 </div>
 
 <div class="card">
+  <h3 style="margin-top:0">Saved Setups</h3>
+  <div class="row"><div class="col"><label>Setup Name</label><input id="setupName" placeholder="HRSG Drum, Tank 101, etc."></div><div class="col"><label>Load Setup</label><select id="savedList"></select></div></div>
+  <div class="row" style="margin-top:12px"><div class="col"><button class="ok" onclick="saveSetup()">Save Setup</button></div><div class="col"><button onclick="loadSetup()">Load Selected</button></div><div class="col"><button class="warn" onclick="deleteSetup()">Delete Selected</button></div></div>
+</div>
+
+<div class="card">
   <div class="row"><div class="col"><button class="ok" onclick="buildTable()">Build 0 / 25 / 50 / 75 / 100 Table</button></div><div class="col"><button onclick="clearLive()">Clear Live Inputs</button></div></div>
-  <div class="scroll-x"><table id="steps"><thead><tr><th>%</th><th>Level</th><th>dP</th><th>mA</th></tr></thead><tbody></tbody></table></div>
+  <div class="scroll-x"><table id="steps"><thead><tr><th>%</th><th>Level</th><th>HP</th><th>LP</th><th>dP</th><th>mA</th></tr></thead><tbody></tbody></table></div>
 </div>
 
 <div class="card"><button onclick="location.href='./'">← Back to PockeTech V2</button></div>
 </main>
 <script>
-const $=id=>document.getElementById(id);let source='pct';
+const $=id=>document.getElementById(id);let source='pct';const saveKey='pt-v2-level-setups';
 function n(id){const v=$(id).value.trim();if(v==='')return null;const x=Number(v);return Number.isFinite(x)?x:null}
 function fmt(v,d=3){return Number.isFinite(v)?Number(v).toFixed(d):'—'}
 function uLabel(){const u=$('levelUnit').value.trim();return u?` ${u}`:''}
@@ -81,24 +102,33 @@ function fromIn(v,u){if(!Number.isFinite(v))return NaN;if(u==='ft')return v/12;i
 function outDP(inh2o){if($('dpUnit').value==='psi')return inh2o/27.6807;if($('dpUnit').value==='kpa')return inh2o*0.24908891;return inh2o}
 function inDP(v){if($('dpUnit').value==='psi')return v*27.6807;if($('dpUnit').value==='kpa')return v/0.24908891;return v}
 function pctToMA(p){return 4+(p/100)*16}function maToPct(m){return ((m-4)/16)*100}function clamp(v){return Math.min(Math.max(v,0),100)}
-function calcRange(){const span=toIn(n('span'),$('spanUnit').value);const sg=n('procSG');if(!Number.isFinite(span)||!Number.isFinite(sg)||span===0)return null;let lrv=0,urv=span*sg;const type=$('type').value;if(type==='wet'){const wh=toIn(n('wetH'),$('wetUnit').value);const wsg=n('wetSG');if(!Number.isFinite(wh)||!Number.isFinite(wsg))return null;const wet=wh*wsg;lrv=-wet;urv=(span*sg)-wet}return{span,sg,lrv,urv}}
+function offsetHead(){const off=toIn(n('offset')??0,$('offsetUnit').value);const sg=n('offsetSG')??1;return Number.isFinite(off)&&Number.isFinite(sg)?off*sg:0}
+function calcRange(){const span=toIn(n('span'),$('spanUnit').value);const sg=n('procSG');if(!Number.isFinite(span)||!Number.isFinite(sg)||span===0)return null;const off=offsetHead();let lrv=0+off,urv=span*sg+off,lp=0;const type=$('type').value;if(type==='wet'){const wh=toIn(n('wetH'),$('wetUnit').value);const wsg=n('wetSG');if(!Number.isFinite(wh)||!Number.isFinite(wsg))return null;lp=wh*wsg;lrv=0-lp+off;urv=(span*sg)-lp+off}return{span,sg,lrv,urv,lp,off}}
+function hpAtPct(p){const r=calcRange();return r?(p/100)*r.span*r.sg:NaN}
+function lpRef(){const r=calcRange();return r?r.lp:NaN}
 function dpFromPct(p){const r=calcRange();if(!r)return NaN;return r.lrv+(p/100)*(r.urv-r.lrv)}
 function pctFromDP(dpIn){const r=calcRange();if(!r||r.urv===r.lrv)return null;return ((dpIn-r.lrv)/(r.urv-r.lrv))*100}
 function levelFromPct(p){const span=toIn(n('span'),$('spanUnit').value);if(!Number.isFinite(span))return NaN;return fromIn((p/100)*span,$('spanUnit').value)}
 function pctFromLevel(lv){const span=toIn(n('span'),$('spanUnit').value);const lvIn=toIn(lv,$('spanUnit').value);if(!Number.isFinite(span)||span===0)return null;return (lvIn/span)*100}
-function read(p){const r=calcRange();const dpIn=Number.isFinite(p)?dpFromPct(p):NaN;const lv=Number.isFinite(p)?levelFromPct(p):NaN;$('readPct').textContent=Number.isFinite(p)?fmt(p,2)+' %':'—';$('readLevel').textContent=Number.isFinite(lv)?fmt(lv,3)+uLabel():'—';$('readDP').textContent=Number.isFinite(dpIn)?fmt(outDP(dpIn),3)+dpLabel():'—';$('readMA').textContent=Number.isFinite(p)?fmt(pctToMA(p),3)+' mA':'—';$('fill').style.height=Number.isFinite(p)?clamp(p)+'%':'0%';$('pctTag').textContent=Number.isFinite(p)?fmt(p,1)+'%':'—';if(r){$('rangeText').textContent=`LRV ${fmt(outDP(r.lrv),3)}${dpLabel()} / URV ${fmt(outDP(r.urv),3)}${dpLabel()}`}}
+function read(p){const r=calcRange();const dpIn=Number.isFinite(p)?dpFromPct(p):NaN;const lv=Number.isFinite(p)?levelFromPct(p):NaN;const hp=Number.isFinite(p)?hpAtPct(p):NaN;const lp=lpRef();const off=offsetHead();$('readPct').textContent=Number.isFinite(p)?fmt(p,2)+' %':'—';$('readLevel').textContent=Number.isFinite(lv)?fmt(lv,3)+uLabel():'—';$('readDP').textContent=Number.isFinite(dpIn)?fmt(outDP(dpIn),3)+dpLabel():'—';$('readMA').textContent=Number.isFinite(p)?fmt(pctToMA(p),3)+' mA':'—';$('readHP').textContent=Number.isFinite(hp)?fmt(outDP(hp),3)+dpLabel():'—';$('readLP').textContent=Number.isFinite(lp)?fmt(outDP(lp),3)+dpLabel():'—';$('readOffset').textContent=Number.isFinite(off)?fmt(outDP(off),3)+dpLabel():'—';$('fill').style.height=Number.isFinite(p)?clamp(p)+'%':'0%';$('pctTag').textContent=Number.isFinite(p)?fmt(p,1)+'%':'—';if(r){$('rangeText').textContent=`LRV ${fmt(outDP(r.lrv),3)}${dpLabel()} / URV ${fmt(outDP(r.urv),3)}${dpLabel()}`}}
 function syncFromPct(write=false){let p=n('pct');if(p===null){read(NaN);return}p=clamp(p);const dpIn=dpFromPct(p),lv=levelFromPct(p);if(write){$('pct').value=fmt(p,2);$('level').value=fmt(lv,3);$('ma').value=fmt(pctToMA(p),3);$('dp').value=fmt(outDP(dpIn),3)}$('slider').value=p;read(p)}
 function syncFromLevel(write=false){const lv=n('level');if(lv===null){read(NaN);return}let p=clamp(pctFromLevel(lv));const dpIn=dpFromPct(p);if(write){$('pct').value=fmt(p,2);$('ma').value=fmt(pctToMA(p),3);$('dp').value=fmt(outDP(dpIn),3)}$('slider').value=p;read(p)}
 function syncFromMA(write=false){const m=n('ma');if(m===null){read(NaN);return}let p=clamp(maToPct(m));const dpIn=dpFromPct(p),lv=levelFromPct(p);if(write){$('pct').value=fmt(p,2);$('level').value=fmt(lv,3);$('dp').value=fmt(outDP(dpIn),3)}$('slider').value=p;read(p)}
 function syncFromDP(write=false){const d=n('dp');if(d===null){read(NaN);return}let p=clamp(pctFromDP(inDP(d)));const lv=levelFromPct(p);if(write){$('pct').value=fmt(p,2);$('level').value=fmt(lv,3);$('ma').value=fmt(pctToMA(p),3)}$('slider').value=p;read(p)}
 function setPct(p){source='pct';$('pct').value=p;syncFromPct(true)}
-function buildTable(){const r=calcRange();if(!r)return;const tb=$('steps').querySelector('tbody');tb.innerHTML='';[0,25,50,75,100].forEach(p=>{const dpIn=dpFromPct(p),lv=levelFromPct(p),tr=document.createElement('tr');tr.innerHTML=`<td>${p}%</td><td>${fmt(lv,3)}${uLabel()}</td><td>${fmt(outDP(dpIn),3)}${dpLabel()}</td><td>${fmt(pctToMA(p),3)}</td>`;tb.appendChild(tr)})}
+function buildTable(){const r=calcRange();if(!r)return;const tb=$('steps').querySelector('tbody');tb.innerHTML='';[0,25,50,75,100].forEach(p=>{const dpIn=dpFromPct(p),lv=levelFromPct(p),hp=hpAtPct(p),lp=lpRef(),tr=document.createElement('tr');tr.innerHTML=`<td>${p}%</td><td>${fmt(lv,3)}${uLabel()}</td><td>${fmt(outDP(hp),3)}${dpLabel()}</td><td>${fmt(outDP(lp),3)}${dpLabel()}</td><td>${fmt(outDP(dpIn),3)}${dpLabel()}</td><td>${fmt(pctToMA(p),3)}</td>`;tb.appendChild(tr)})}
 function clearLive(){['pct','level','ma','dp'].forEach(id=>$(id).value='');$('slider').value=50;$('steps').querySelector('tbody').innerHTML='';read(NaN)}
 function refreshWet(){document.querySelectorAll('.wet-only').forEach(e=>e.style.display=$('type').value==='wet'?'flex':'none')}
 function recalc(){source==='level'?syncFromLevel(false):source==='ma'?syncFromMA(false):source==='dp'?syncFromDP(false):syncFromPct(false)}
-function wire(){['type','span','spanUnit','procSG','dpUnit','levelUnit','wetH','wetUnit','wetSG'].forEach(id=>$(id).addEventListener('input',()=>{refreshWet();recalc()}));$('type').addEventListener('change',()=>{refreshWet();recalc()});$('pct').addEventListener('input',()=>{source='pct';syncFromPct(false)});$('pct').addEventListener('change',()=>syncFromPct(true));$('level').addEventListener('input',()=>{source='level';syncFromLevel(false)});$('level').addEventListener('change',()=>syncFromLevel(true));$('ma').addEventListener('input',()=>{source='ma';syncFromMA(false)});$('ma').addEventListener('change',()=>syncFromMA(true));$('dp').addEventListener('input',()=>{source='dp';syncFromDP(false)});$('dp').addEventListener('change',()=>syncFromDP(true));$('slider').addEventListener('input',()=>{source='pct';$('pct').value=$('slider').value;syncFromPct(true)})}
+function ids(){return ['type','span','spanUnit','procSG','dpUnit','levelUnit','offset','offsetUnit','offsetSG','wetH','wetUnit','wetSG']}
+function getSetups(){try{return JSON.parse(localStorage.getItem(saveKey)||'{}')}catch{return {}}}
+function renderSaved(){const list=$('savedList'),setups=getSetups();list.innerHTML='';Object.keys(setups).sort().forEach(name=>{const o=document.createElement('option');o.value=name;o.textContent=name;list.appendChild(o)});if(!list.children.length){const o=document.createElement('option');o.value='';o.textContent='No saved setups';list.appendChild(o)}}
+function saveSetup(){const name=$('setupName').value.trim();if(!name){alert('Enter a setup name first.');return}const setups=getSetups();const data={};ids().forEach(id=>data[id]=$(id).value);setups[name]=data;localStorage.setItem(saveKey,JSON.stringify(setups));renderSaved();$('savedList').value=name}
+function loadSetup(){const name=$('savedList').value;if(!name)return;const setup=getSetups()[name];if(!setup)return;Object.entries(setup).forEach(([id,val])=>{if($(id))$(id).value=val});$('setupName').value=name;refreshWet();recalc()}
+function deleteSetup(){const name=$('savedList').value;if(!name)return;const setups=getSetups();delete setups[name];localStorage.setItem(saveKey,JSON.stringify(setups));renderSaved()}
+function wire(){ids().forEach(id=>$(id).addEventListener('input',()=>{refreshWet();recalc()}));$('type').addEventListener('change',()=>{refreshWet();recalc()});$('pct').addEventListener('input',()=>{source='pct';syncFromPct(false)});$('pct').addEventListener('change',()=>syncFromPct(true));$('level').addEventListener('input',()=>{source='level';syncFromLevel(false)});$('level').addEventListener('change',()=>syncFromLevel(true));$('ma').addEventListener('input',()=>{source='ma';syncFromMA(false)});$('ma').addEventListener('change',()=>syncFromMA(true));$('dp').addEventListener('input',()=>{source='dp';syncFromDP(false)});$('dp').addEventListener('change',()=>syncFromDP(true));$('slider').addEventListener('input',()=>{source='pct';$('pct').value=$('slider').value;syncFromPct(true)})}
 function toggleTheme(){const h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',next);localStorage.setItem('pt-v2-theme',next)}
-(function init(){const t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);wire();refreshWet();read(NaN)})();
+(function init(){const t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);wire();refreshWet();renderSaved();read(NaN)})();
 </script>
 </body>
 </html>
