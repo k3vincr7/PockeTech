@@ -1,191 +1,364 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="auto">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PockeTech V2</title>
+<meta name="theme-color" content="#f6f8fc">
 
 <style>
-body {
+:root{
+  --bg:#f6f8fc;
+  --fg:#0c1116;
+  --muted:#5a6572;
+  --card:#ffffff;
+  --tile:#eef2f7;
+  --border:#d6dbe3;
+  --accent:#1f6bff;
+  --btn:#eef2f7;
+  --btn-fg:#0c1116;
+  --ok:#166534;
+}
+
+html[data-theme="dark"]{
+  --bg:#0f1115;
+  --fg:#e8e8e8;
+  --muted:#a0a0a0;
+  --card:#151922;
+  --tile:#2b3240;
+  --border:#2a2f3a;
+  --accent:#3a7afe;
+  --btn:#2b3240;
+  --btn-fg:#e8e8e8;
+}
+
+*{box-sizing:border-box}
+
+body{
   margin:0;
-  font-family:system-ui;
-  background:#0f1115;
-  color:#e8e8e8;
+  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  background:var(--bg);
+  color:var(--fg);
 }
 
-header {
+header{
+  background:var(--card);
+  border-bottom:1px solid var(--border);
   padding:12px;
-  border-bottom:1px solid #2a2f3a;
   display:flex;
+  align-items:center;
   justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:10;
 }
 
-main {
-  padding:16px;
-  max-width:900px;
-  margin:auto;
-}
+.header-left{display:flex;align-items:center;gap:8px}
+.header-title{font-weight:700;font-size:18px}
 
-.card {
-  background:#151922;
-  border:1px solid #2a2f3a;
-  border-radius:10px;
+main{
   padding:14px;
-  margin-bottom:12px;
+  max-width:920px;
+  margin:0 auto;
 }
 
-input, button {
+button,input,select{
+  font:inherit;
+  border-radius:12px;
+}
+
+button{
+  cursor:pointer;
+  border:1px solid var(--border);
+  background:var(--btn);
+  color:var(--btn-fg);
+  padding:12px;
+}
+
+input,select{
   width:100%;
-  padding:10px;
+  padding:12px;
+  border:1px solid var(--border);
+  background:var(--card);
+  color:var(--fg);
   margin-top:6px;
-  border-radius:8px;
-  border:1px solid #2a2f3a;
-  background:#2b3240;
-  color:white;
 }
 
-.row {
-  display:flex;
+label{font-weight:600;font-size:14px}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:14px;
+}
+
+.home-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
   gap:10px;
+  margin-top:14px;
 }
 
-.col {
-  flex:1;
+.tile{
+  min-height:92px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  background:var(--tile);
+  border:1px solid var(--border);
+  border-radius:16px;
+  font-size:22px;
 }
 
-.big {
-  font-size:24px;
-  margin-top:10px;
+.tile .emoji{font-size:23px;line-height:1}
+.tile .name{font-size:20px;line-height:1.1;text-align:center}
+.tile.disabled{opacity:.45}
+.tile:active{transform:translateY(1px)}
+
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.col{flex:1 1 230px}
+.muted{color:var(--muted);font-size:13px;line-height:1.35}
+.big{font-size:26px;font-weight:800;margin:4px 0}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.result-card{background:var(--tile);border:1px solid var(--border);border-radius:14px;padding:14px}
+.primary{background:var(--accent);border-color:var(--accent);color:white;font-weight:700}
+.ok{background:var(--ok);border-color:var(--ok);color:white;font-weight:700}
+.small-btn{padding:8px 10px;font-size:14px;border-radius:10px;width:auto}
+.back-btn{display:none}
+.hr{height:1px;background:var(--border);margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}
+th,td{border:1px solid var(--border);padding:8px;text-align:left}
+th{background:var(--tile)}
+.scroll-x{overflow-x:auto}
+
+section{display:none}
+section.active{display:block}
+
+footer{text-align:center;color:var(--muted);font-size:13px;padding:20px}
+
+@media(max-width:520px){
+  main{padding:12px}
+  .home-grid{gap:9px}
+  .tile{min-height:78px;border-radius:14px}
+  .tile .name{font-size:18px}
+  .tile .emoji{font-size:20px}
+  .card{padding:14px}
 }
 </style>
 </head>
 
 <body>
-
 <header>
-  <strong>PockeTech V2</strong>
+  <div class="header-left">
+    <button id="backBtn" class="small-btn back-btn" onclick="showScreen('home')">← Back</button>
+    <div class="header-title">PockeTech V2</div>
+  </div>
+  <button class="small-btn" onclick="toggleTheme()">🌓</button>
 </header>
 
 <main>
+  <section id="home" class="active">
+    <div class="card">
+      <h1 style="margin:0 0 8px">Field Tools</h1>
+      <p class="muted" style="margin:0">Clean rebuild. Same field layout, better engine underneath.</p>
 
-<!-- TOOL SELECT -->
-<div class="card">
-  <button onclick="showTool('sqrt')">Square Root Flow</button>
-</div>
+      <div class="home-grid">
+        <button class="tile disabled" type="button"><span class="emoji">🧮</span><span class="name">Percent</span></button>
+        <button class="tile disabled" type="button"><span class="emoji">📈</span><span class="name">4–20 mA</span></button>
+        <button class="tile disabled" type="button"><span class="emoji">🫙</span><span class="name">Level</span></button>
+        <button class="tile" type="button" onclick="showScreen('sqrt')"><span class="emoji">√</span><span class="name">SqRoot Flow</span></button>
+        <button class="tile disabled" type="button"><span class="emoji">⛽</span><span class="name">Pressure</span></button>
+        <button class="tile disabled" type="button"><span class="emoji">🌡️</span><span class="name">Temp</span></button>
+        <button class="tile disabled" type="button"><span class="emoji">🎛️</span><span class="name">I/P 3–15</span></button>
+        <button class="tile disabled" type="button"><span class="emoji">⚡</span><span class="name">Ohm’s Law</span></button>
+        <button class="tile disabled" type="button"><span class="emoji">📝</span><span class="name">Calibration</span></button>
+        <button class="tile disabled" type="button"><span class="emoji">🔄</span><span class="name">Loop Log</span></button>
+        <button class="tile disabled" type="button"><span class="emoji">🎫</span><span class="name">Tickets</span></button>
+        <button class="tile disabled" type="button"><span class="emoji">⚙️</span><span class="name">Settings</span></button>
+      </div>
+    </div>
+  </section>
 
-<!-- SQRT TOOL -->
-<div id="sqrtTool" class="card" style="display:none;">
-  <h2>Square Root Flow</h2>
+  <section id="sqrt">
+    <div class="card">
+      <h2 style="margin-top:0">Square Root Flow</h2>
+      <p class="muted">Use this when flow is square-rooted from DP. Flow % is not the same as DP %.</p>
 
-  <div class="row">
-    <div class="col">
-      <label>LRV</label>
-      <input id="lrv" placeholder="0">
+      <div class="row">
+        <div class="col">
+          <label>LRV / Zero DP</label>
+          <input id="lrv" inputmode="decimal" placeholder="0" value="0">
+        </div>
+        <div class="col">
+          <label>URV / Full Span DP</label>
+          <input id="urv" inputmode="decimal" placeholder="115.31">
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="row">
+        <div class="col">
+          <label>Flow %</label>
+          <input id="flowPct" inputmode="decimal" placeholder="50">
+          <button class="primary" onclick="fromFlow()">Flow % → DP</button>
+        </div>
+        <div class="col">
+          <label>DP</label>
+          <input id="dp" inputmode="decimal" placeholder="28.8275">
+          <button class="primary" onclick="fromDP()">DP → Flow %</button>
+        </div>
+      </div>
     </div>
 
-    <div class="col">
-      <label>URV</label>
-      <input id="urv" placeholder="100">
+    <div class="result-grid">
+      <div class="result-card">
+        <div class="muted">Flow</div>
+        <div class="big" id="readFlow">—</div>
+      </div>
+      <div class="result-card">
+        <div class="muted">DP</div>
+        <div class="big" id="readDP">—</div>
+      </div>
+      <div class="result-card">
+        <div class="muted">4–20 mA</div>
+        <div class="big" id="readMA">—</div>
+      </div>
     </div>
-  </div>
 
-  <div class="row">
-    <div class="col">
-      <label>Flow %</label>
-      <input id="flowPct" placeholder="50">
-      <button onclick="fromFlow()">Calculate DP</button>
+    <div class="card">
+      <div class="row">
+        <div class="col"><button class="ok" onclick="buildSteps()">Build 0 / 25 / 50 / 75 / 100 Table</button></div>
+        <div class="col"><button onclick="clearSqrt()">Clear</button></div>
+      </div>
+      <div class="scroll-x">
+        <table id="stepsTable">
+          <thead><tr><th>Flow %</th><th>DP %</th><th>DP</th><th>mA</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
-
-    <div class="col">
-      <label>DP</label>
-      <input id="dp" placeholder="25">
-      <button onclick="fromDP()">Calculate %</button>
-    </div>
-  </div>
-
-  <div class="big" id="result">—</div>
-
-</div>
-
+  </section>
 </main>
 
-<script>
+<footer>PockeTech V2 — clean build</footer>
 
-/* =========================
-   SAFE INPUT
-========================= */
+<script>
+const $ = (id) => document.getElementById(id);
+
 function getNum(id){
-  const v = document.getElementById(id).value;
-  if(v === "") return null;
-  const n = Number(v);
+  const raw = $(id).value.trim();
+  if(raw === '') return null;
+  const n = Number(raw);
   return Number.isFinite(n) ? n : null;
 }
 
-/* =========================
-   ENGINE (ONE SOURCE)
-========================= */
-const Engine = {
+function fmt(value, decimals = 4){
+  if(!Number.isFinite(value)) return '—';
+  return Number(value).toFixed(decimals);
+}
 
-  flowToDP(flowPct, lrv, urv){
-    const span = urv - lrv;
+const Engine = {
+  clamp(value, min, max){ return Math.min(Math.max(value, min), max); },
+
+  flowPercentToDp(flowPct, lrv, urv){
     const frac = flowPct / 100;
-    return lrv + (frac * frac) * span;
+    return lrv + (frac ** 2) * (urv - lrv);
   },
 
-  dpToFlow(dp, lrv, urv){
+  dpToFlowPercent(dp, lrv, urv){
     const span = urv - lrv;
     if(span === 0) return null;
-
     const frac = (dp - lrv) / span;
     if(frac < 0) return 0;
     if(frac > 1) return 100;
-
     return Math.sqrt(frac) * 100;
-  }
+  },
 
+  percentToMA(percent){
+    return 4 + (percent / 100) * 16;
+  }
 };
 
-/* =========================
-   UI ACTIONS
-========================= */
+function showScreen(id){
+  document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+  $(id).classList.add('active');
+  $('backBtn').style.display = id === 'home' ? 'none' : 'inline-block';
+}
+
+function updateReadouts(flowPct, dp){
+  $('readFlow').textContent = Number.isFinite(flowPct) ? `${fmt(flowPct, 2)} %` : '—';
+  $('readDP').textContent = Number.isFinite(dp) ? fmt(dp, 4) : '—';
+  $('readMA').textContent = Number.isFinite(flowPct) ? `${fmt(Engine.percentToMA(flowPct), 3)} mA` : '—';
+}
+
+function validRange(){
+  const lrv = getNum('lrv');
+  const urv = getNum('urv');
+  if(lrv === null || urv === null || lrv === urv){
+    updateReadouts(NaN, NaN);
+    return null;
+  }
+  return {lrv, urv};
+}
 
 function fromFlow(){
-  const lrv = getNum("lrv");
-  const urv = getNum("urv");
-  const flow = getNum("flowPct");
-
-  if(lrv == null || urv == null || flow == null) return;
-
-  const dp = Engine.flowToDP(flow, lrv, urv);
-
-  document.getElementById("dp").value = dp.toFixed(4);
-  document.getElementById("result").innerText =
-    `DP = ${dp.toFixed(4)}`;
+  const range = validRange();
+  const flow = getNum('flowPct');
+  if(!range || flow === null) return;
+  const flowSafe = Engine.clamp(flow, 0, 100);
+  const dp = Engine.flowPercentToDp(flowSafe, range.lrv, range.urv);
+  $('flowPct').value = fmt(flowSafe, 2);
+  $('dp').value = fmt(dp, 4);
+  updateReadouts(flowSafe, dp);
 }
 
 function fromDP(){
-  const lrv = getNum("lrv");
-  const urv = getNum("urv");
-  const dp = getNum("dp");
-
-  if(lrv == null || urv == null || dp == null) return;
-
-  const flow = Engine.dpToFlow(dp, lrv, urv);
-
-  document.getElementById("flowPct").value = flow.toFixed(2);
-  document.getElementById("result").innerText =
-    `Flow = ${flow.toFixed(2)} %`;
+  const range = validRange();
+  const dp = getNum('dp');
+  if(!range || dp === null) return;
+  const flow = Engine.dpToFlowPercent(dp, range.lrv, range.urv);
+  if(flow === null) return;
+  $('flowPct').value = fmt(flow, 2);
+  updateReadouts(flow, dp);
 }
 
-/* =========================
-   NAV
-========================= */
-function showTool(name){
-  document.getElementById("sqrtTool").style.display =
-    name === "sqrt" ? "block" : "none";
+function buildSteps(){
+  const range = validRange();
+  if(!range) return;
+  const tbody = $('stepsTable').querySelector('tbody');
+  tbody.innerHTML = '';
+  [0,25,50,75,100].forEach(flow => {
+    const dpPct = flow ** 2 / 100;
+    const dp = Engine.flowPercentToDp(flow, range.lrv, range.urv);
+    const ma = Engine.percentToMA(flow);
+    const row = document.createElement('tr');
+    row.innerHTML = `<td>${flow}%</td><td>${fmt(dpPct, 2)}%</td><td>${fmt(dp, 4)}</td><td>${fmt(ma, 3)}</td>`;
+    tbody.appendChild(row);
+  });
 }
 
+function clearSqrt(){
+  ['flowPct','dp'].forEach(id => $(id).value = '');
+  $('stepsTable').querySelector('tbody').innerHTML = '';
+  updateReadouts(NaN, NaN);
+}
+
+function toggleTheme(){
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'dark' ? 'auto' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('pt-v2-theme', next);
+}
+
+(function init(){
+  const savedTheme = localStorage.getItem('pt-v2-theme');
+  if(savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+})();
 </script>
-
 </body>
 </html>
