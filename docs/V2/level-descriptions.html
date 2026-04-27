@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>PockeTech V2 — Level Descriptions</title>
 <style>
-:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
-@media(prefers-color-scheme:dark){:root{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}}
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}main{padding:14px;max-width:900px;margin:0 auto}.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}h1{margin:0 0 6px}h2{margin:0 0 8px}h3{margin:12px 0 6px}.muted{color:var(--muted);line-height:1.4}button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;border-radius:14px;font-weight:650;width:100%}.tag{display:inline-block;padding:4px 8px;border:1px solid var(--border);border-radius:999px;background:var(--tile);font-size:12px;color:var(--muted);margin-bottom:8px}ul{padding-left:22px;line-height:1.45}.formula,.example{background:var(--tile);border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;overflow:auto}.example{font-family:inherit;line-height:1.45}.visual{display:grid;grid-template-columns:1fr;gap:10px}.diagram{background:var(--tile);border:1px solid var(--border);border-radius:14px;padding:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre;overflow:auto;line-height:1.25}.good{color:var(--accent);font-weight:800}
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--hp:#16a34a;--lp:#dc2626;--fluid:#38bdf8;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--fluid:#22d3ee;--shadow:0 14px 34px rgba(0,0,0,.35)}}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}main{padding:14px;max-width:900px;margin:0 auto}.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}h1{margin:0 0 6px}h2{margin:0 0 8px}h3{margin:12px 0 6px}.muted{color:var(--muted);line-height:1.4}button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;border-radius:14px;font-weight:650;width:100%}.tag{display:inline-block;padding:4px 8px;border:1px solid var(--border);border-radius:999px;background:var(--tile);font-size:12px;color:var(--muted);margin-bottom:8px}ul{padding-left:22px;line-height:1.45}.formula,.example{background:var(--tile);border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;overflow:auto}.example{font-family:inherit;line-height:1.45}.visual{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:12px}.diagram-card{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:12px}.diagram-title{font-weight:800;margin-bottom:8px}.diagram-note{font-size:13px;color:var(--muted);line-height:1.35;margin-top:8px}.svg-wrap{background:color-mix(in srgb,var(--card) 75%,transparent);border:1px solid var(--border);border-radius:14px;padding:8px}svg{width:100%;height:auto;display:block}.tank-stroke{stroke:var(--fg);stroke-width:3;fill:none}.pipe-hp{stroke:var(--hp);stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}.pipe-lp{stroke:var(--lp);stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}.pipe-neutral{stroke:var(--muted);stroke-width:3;fill:none;stroke-linecap:round}.fluid{fill:color-mix(in srgb,var(--fluid) 45%,transparent);stroke:var(--fluid);stroke-width:2}.tx{fill:var(--card);stroke:var(--fg);stroke-width:3}.tap{fill:var(--card);stroke:var(--fg);stroke-width:3}.label{fill:var(--fg);font-size:14px;font-weight:700}.small{fill:var(--muted);font-size:12px;font-weight:650}.hp-text{fill:var(--hp);font-size:13px;font-weight:800}.lp-text{fill:var(--lp);font-size:13px;font-weight:800}.arrow{stroke:var(--accent);stroke-width:3;fill:none;stroke-linecap:round;marker-end:url(#arrowhead)}.dash{stroke-dasharray:6 5}.good{color:var(--accent);font-weight:800}
 </style>
 </head>
 <body>
@@ -66,30 +66,72 @@
       <li><b>Positive offset</b>: transmitter is below the lower tap, adding head.</li>
       <li><b>Negative offset</b>: transmitter is above the lower tap, subtracting head.</li>
     </ul>
+
     <div class="visual">
-      <div class="diagram">POSITIVE OFFSET: TX below lower tap
+      <div class="diagram-card">
+        <div class="diagram-title">Positive Offset — TX Below Lower Tap</div>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 340 300" role="img" aria-label="Positive offset diagram">
+            <defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="var(--accent)"/></marker></defs>
+            <rect x="78" y="32" width="125" height="178" rx="18" class="tank-stroke"/>
+            <rect x="81" y="113" width="119" height="94" rx="0" class="fluid"/>
+            <circle cx="203" cy="66" r="7" class="tap"/><text x="215" y="70" class="small">Upper tap</text>
+            <circle cx="203" cy="190" r="7" class="tap"/><text x="215" y="194" class="small">Lower tap</text>
+            <path d="M203 190 H268 V248" class="pipe-hp"/>
+            <rect x="238" y="246" width="62" height="34" rx="8" class="tx"/>
+            <text x="253" y="268" class="label">DP TX</text>
+            <path d="M214 190 V246" class="arrow dash"/>
+            <text x="220" y="225" class="hp-text">+ offset head</text>
+            <text x="68" y="24" class="label">Tank</text>
+            <text x="238" y="294" class="hp-text">TX below = use + value</text>
+          </svg>
+        </div>
+        <div class="diagram-note">If the transmitter is mounted below the lower tap, extra liquid head is sitting above the transmitter. Enter this as a positive offset.</div>
+      </div>
 
-   Upper Tap  o
-              |
-              |  Tank span
-              |
-   Lower Tap  o──────── impulse line
-              |
-              |  +10 in offset
-              |
-        TX    [DP]
+      <div class="diagram-card">
+        <div class="diagram-title">Negative Offset — TX Above Lower Tap</div>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 340 300" role="img" aria-label="Negative offset diagram">
+            <defs><marker id="arrowhead2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="var(--accent)"/></marker></defs>
+            <rect x="78" y="32" width="125" height="178" rx="18" class="tank-stroke"/>
+            <rect x="81" y="113" width="119" height="94" rx="0" class="fluid"/>
+            <circle cx="203" cy="66" r="7" class="tap"/><text x="215" y="70" class="small">Upper tap</text>
+            <circle cx="203" cy="190" r="7" class="tap"/><text x="215" y="194" class="small">Lower tap</text>
+            <rect x="238" y="117" width="62" height="34" rx="8" class="tx"/>
+            <text x="253" y="139" class="label">DP TX</text>
+            <path d="M203 190 H230 V134 H238" class="pipe-hp"/>
+            <path d="M214 190 V137" class="arrow dash" marker-end="url(#arrowhead2)"/>
+            <text x="132" y="158" class="lp-text">− offset head</text>
+            <text x="68" y="24" class="label">Tank</text>
+            <text x="232" y="294" class="lp-text">TX above = use − value</text>
+          </svg>
+        </div>
+        <div class="diagram-note">If the transmitter is mounted above the lower tap, it removes head from the measurement. Enter this as a negative offset.</div>
+      </div>
 
-Use +10 because the transmitter is BELOW the lower tap.</div>
-      <div class="diagram">NEGATIVE OFFSET: TX above lower tap
-
-   Upper Tap  o
-              |
-        TX    [DP]
-              |
-   Lower Tap  o──────── impulse line
-
-Use -10 if the transmitter is ABOVE the lower tap by 10 in.</div>
+      <div class="diagram-card">
+        <div class="diagram-title">Wet Leg Visual — LP Side Has Constant Head</div>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 340 300" role="img" aria-label="Wet leg diagram">
+            <rect x="70" y="35" width="120" height="190" rx="18" class="tank-stroke"/>
+            <rect x="73" y="126" width="114" height="96" class="fluid"/>
+            <circle cx="190" cy="66" r="7" class="tap"/><text x="202" y="70" class="small">LP tap</text>
+            <circle cx="190" cy="205" r="7" class="tap"/><text x="202" y="209" class="small">HP tap</text>
+            <path d="M190 205 H248 V250" class="pipe-hp"/>
+            <path d="M190 66 H292 V250" class="pipe-lp"/>
+            <rect x="230" y="248" width="78" height="34" rx="8" class="tx"/>
+            <text x="249" y="270" class="label">DP TX</text>
+            <path d="M292 66 V247" class="pipe-lp dash"/>
+            <text x="254" y="155" class="lp-text">wet leg</text>
+            <text x="105" y="178" class="hp-text">process level</text>
+            <text x="72" y="24" class="label">Closed tank</text>
+          </svg>
+        </div>
+        <div class="diagram-note">Wet leg head is always pushing on the LP side. That is why wet-leg ranges often start negative.</div>
+      </div>
     </div>
+
     <div class="example"><b>Offset example:</b><br>Open tank span = 100 in, SG = 1.0<br>TX mounted 10 in below lower tap → offset = +10<br>LRV = +10 inH₂O<br>URV = +110 inH₂O<br><br>TX mounted 10 in above lower tap → offset = -10<br>LRV = -10 inH₂O<br>URV = +90 inH₂O</div>
   </div>
 
