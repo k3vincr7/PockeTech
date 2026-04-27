@@ -7,7 +7,7 @@
 <style>
 :root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--hp:#16a34a;--lp:#dc2626;--fluid:#38bdf8;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
 @media(prefers-color-scheme:dark){:root{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--fluid:#22d3ee;--shadow:0 14px 34px rgba(0,0,0,.35)}}
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}main{padding:14px;max-width:900px;margin:0 auto}.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}h1{margin:0 0 6px}h2{margin:0 0 8px}h3{margin:12px 0 6px}.muted{color:var(--muted);line-height:1.4}button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;border-radius:14px;font-weight:650;width:100%}.tag{display:inline-block;padding:4px 8px;border:1px solid var(--border);border-radius:999px;background:var(--tile);font-size:12px;color:var(--muted);margin-bottom:8px}ul{padding-left:22px;line-height:1.45}.formula,.example{background:var(--tile);border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;overflow:auto}.example{font-family:inherit;line-height:1.45}.visual{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:12px}.diagram-card{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:12px}.diagram-title{font-weight:800;margin-bottom:8px}.diagram-note{font-size:13px;color:var(--muted);line-height:1.35;margin-top:8px}.svg-wrap{background:color-mix(in srgb,var(--card) 75%,transparent);border:1px solid var(--border);border-radius:14px;padding:8px}svg{width:100%;height:auto;display:block}.tank-stroke{stroke:var(--fg);stroke-width:3;fill:none}.pipe-hp{stroke:var(--hp);stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}.pipe-lp{stroke:var(--lp);stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}.pipe-neutral{stroke:var(--muted);stroke-width:3;fill:none;stroke-linecap:round}.fluid{fill:color-mix(in srgb,var(--fluid) 45%,transparent);stroke:var(--fluid);stroke-width:2}.tx{fill:var(--card);stroke:var(--fg);stroke-width:3}.tap{fill:var(--card);stroke:var(--fg);stroke-width:3}.label{fill:var(--fg);font-size:14px;font-weight:700}.small{fill:var(--muted);font-size:12px;font-weight:650}.hp-text{fill:var(--hp);font-size:13px;font-weight:800}.lp-text{fill:var(--lp);font-size:13px;font-weight:800}.arrow{stroke:var(--accent);stroke-width:3;fill:none;stroke-linecap:round;marker-end:url(#arrowhead)}.dash{stroke-dasharray:6 5}.good{color:var(--accent);font-weight:800}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}main{padding:14px;max-width:900px;margin:0 auto}.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}h1{margin:0 0 6px}h2{margin:0 0 8px}h3{margin:12px 0 6px}.muted{color:var(--muted);line-height:1.4}button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;border-radius:14px;font-weight:650;width:100%}.tag{display:inline-block;padding:4px 8px;border:1px solid var(--border);border-radius:999px;background:var(--tile);font-size:12px;color:var(--muted);margin-bottom:8px}ul{padding-left:22px;line-height:1.45}.formula,.example{background:var(--tile);border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;overflow:auto}.example{font-family:inherit;line-height:1.45}.visual{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:12px}.diagram-card{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:12px}.diagram-title{font-weight:800;margin-bottom:8px}.diagram-note{font-size:13px;color:var(--muted);line-height:1.35;margin-top:8px}.svg-wrap{background:color-mix(in srgb,var(--card) 75%,transparent);border:1px solid var(--border);border-radius:14px;padding:8px}svg{width:100%;height:auto;display:block}.tank-stroke{stroke:var(--fg);stroke-width:3;fill:none}.pipe-hp{stroke:var(--hp);stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}.pipe-lp{stroke:var(--lp);stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}.fluid{fill:color-mix(in srgb,var(--fluid) 45%,transparent);stroke:var(--fluid);stroke-width:2}.tx{fill:var(--card);stroke:var(--fg);stroke-width:3}.tap{fill:var(--card);stroke:var(--fg);stroke-width:3}.label{fill:var(--fg);font-size:13px;font-weight:700}.small{fill:var(--muted);font-size:10.5px;font-weight:650}.hp-text{fill:var(--hp);font-size:12px;font-weight:800}.lp-text{fill:var(--lp);font-size:12px;font-weight:800}.arrow{stroke:var(--accent);stroke-width:3;fill:none;stroke-linecap:round;marker-end:url(#arrowhead)}.dash{stroke-dasharray:6 5}.label-bg{fill:var(--card);opacity:.88}.good{color:var(--accent);font-weight:800}
 </style>
 </head>
 <body>
@@ -21,12 +21,7 @@
     <span class="tag">Open Tank</span>
     <h2>Open Tank</h2>
     <p>An open tank is vented to atmosphere. The low side of the DP transmitter is normally open to atmosphere, so the transmitter mainly sees the liquid head pushing on the high side.</p>
-    <ul>
-      <li>Use when the tank is not pressurized or is vented.</li>
-      <li>LP side reference is usually atmospheric pressure.</li>
-      <li>LRV is commonly 0 inH₂O if the transmitter is mounted level with the lower tap and no offset is used.</li>
-      <li>URV is based on tap-to-tap span × liquid specific gravity.</li>
-    </ul>
+    <ul><li>Use when the tank is not pressurized or is vented.</li><li>LP side reference is usually atmospheric pressure.</li><li>LRV is commonly 0 inH₂O if the transmitter is mounted level with the lower tap and no offset is used.</li><li>URV is based on tap-to-tap span × liquid specific gravity.</li></ul>
     <div class="formula">Basic idea: dP = liquid height × process SG</div>
     <div class="example"><b>Example:</b><br>Tank span = 100 in<br>Process SG = 1.0<br>LRV = 0 inH₂O<br>URV = 100 inH₂O<br>At 50% level, dP = 50 inH₂O and signal = 12 mA.</div>
   </div>
@@ -35,12 +30,7 @@
     <span class="tag">Closed Tank — Dry Leg</span>
     <h2>Closed Tank — Dry Leg</h2>
     <p>A closed dry leg setup is used on a pressurized vessel when the vapor/gas pressure is applied to the low side, but the low-side impulse line is dry.</p>
-    <ul>
-      <li>Use when the vessel is pressurized and the vapor space connects to the LP side.</li>
-      <li>The pressure above the liquid is applied to both sides, so it cancels out.</li>
-      <li>The transmitter still mainly reads the liquid level head.</li>
-      <li>Best when vapors do not condense in the low-side impulse line.</li>
-    </ul>
+    <ul><li>Use when the vessel is pressurized and the vapor space connects to the LP side.</li><li>The pressure above the liquid is applied to both sides, so it cancels out.</li><li>The transmitter still mainly reads the liquid level head.</li><li>Best when vapors do not condense in the low-side impulse line.</li></ul>
     <div class="formula">Basic idea: HP = vessel pressure + liquid head; LP = vessel pressure; dP = liquid head</div>
     <div class="example"><b>Example:</b><br>Closed vessel pressure = 20 psi<br>Liquid head at 50% = 50 inH₂O<br>HP sees vessel pressure + 50 inH₂O<br>LP sees vessel pressure only<br>The vessel pressure cancels out, so the transmitter reads about 50 inH₂O.</div>
   </div>
@@ -49,12 +39,7 @@
     <span class="tag">Closed Tank — Wet Leg</span>
     <h2>Closed Tank — Wet Leg</h2>
     <p>A closed wet leg setup is used when the low-side impulse line is intentionally filled with a stable reference liquid. This is common when vapors can condense or when the LP leg must stay full.</p>
-    <ul>
-      <li>Use when the LP side has a filled reference leg.</li>
-      <li>The wet leg pushes down on the LP side all the time.</li>
-      <li>This often creates a negative LRV.</li>
-      <li>URV is the process liquid head minus the wet leg head, adjusted for any transmitter elevation offset.</li>
-    </ul>
+    <ul><li>Use when the LP side has a filled reference leg.</li><li>The wet leg pushes down on the LP side all the time.</li><li>This often creates a negative LRV.</li><li>URV is the process liquid head minus the wet leg head, adjusted for any transmitter elevation offset.</li></ul>
     <div class="formula">Basic idea: dP = process liquid head − wet leg head + TX offset head</div>
     <div class="example"><b>Example:</b><br>Tap span = 72 in<br>Process SG = 0.9<br>Wet leg height = 72 in<br>Wet leg SG = 1.0<br>LRV = 0 − 72 = -72 inH₂O<br>URV = (72 × 0.9) − 72 = -7.2 inH₂O<br>At 50% level, dP is halfway between -72 and -7.2 = -39.6 inH₂O.</div>
   </div>
@@ -62,28 +47,24 @@
   <div class="card">
     <h2>TX Elevation Offset</h2>
     <p class="muted">Use offset when the transmitter is not mounted exactly at the lower tap elevation.</p>
-    <ul>
-      <li><b>Positive offset</b>: transmitter is below the lower tap, adding head.</li>
-      <li><b>Negative offset</b>: transmitter is above the lower tap, subtracting head.</li>
-    </ul>
+    <ul><li><b>Positive offset</b>: transmitter is below the lower tap, adding head.</li><li><b>Negative offset</b>: transmitter is above the lower tap, subtracting head.</li></ul>
 
     <div class="visual">
       <div class="diagram-card">
         <div class="diagram-title">Positive Offset — TX Below Lower Tap</div>
         <div class="svg-wrap">
-          <svg viewBox="0 0 340 300" role="img" aria-label="Positive offset diagram">
-            <defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="var(--accent)"/></marker></defs>
-            <rect x="78" y="32" width="125" height="178" rx="18" class="tank-stroke"/>
-            <rect x="81" y="113" width="119" height="94" rx="0" class="fluid"/>
-            <circle cx="203" cy="66" r="7" class="tap"/><text x="215" y="70" class="small">Upper tap</text>
-            <circle cx="203" cy="190" r="7" class="tap"/><text x="215" y="194" class="small">Lower tap</text>
-            <path d="M203 190 H268 V248" class="pipe-hp"/>
-            <rect x="238" y="246" width="62" height="34" rx="8" class="tx"/>
-            <text x="253" y="268" class="label">DP TX</text>
-            <path d="M214 190 V246" class="arrow dash"/>
-            <text x="220" y="225" class="hp-text">+ offset head</text>
-            <text x="68" y="24" class="label">Tank</text>
-            <text x="238" y="294" class="hp-text">TX below = use + value</text>
+          <svg viewBox="0 0 380 320" role="img" aria-label="Positive offset diagram">
+            <defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="var(--accent)"/></marker></defs>
+            <rect x="70" y="36" width="128" height="178" rx="18" class="tank-stroke"/>
+            <rect x="73" y="118" width="122" height="93" class="fluid"/>
+            <circle cx="198" cy="70" r="7" class="tap"/><rect x="214" y="54" width="68" height="22" rx="8" class="label-bg"/><text x="220" y="69" class="small">Upper tap</text>
+            <circle cx="198" cy="194" r="7" class="tap"/><rect x="214" y="178" width="68" height="22" rx="8" class="label-bg"/><text x="220" y="193" class="small">Lower tap</text>
+            <path d="M198 194 H286 V258" class="pipe-hp"/>
+            <rect x="252" y="258" width="70" height="36" rx="9" class="tx"/><text x="270" y="281" class="label">DP TX</text>
+            <path d="M208 201 V254" class="arrow dash"/>
+            <rect x="220" y="220" width="94" height="22" rx="8" class="label-bg"/><text x="226" y="235" class="hp-text">+ offset head</text>
+            <text x="68" y="27" class="label">Tank</text>
+            <text x="216" y="314" class="hp-text">TX below = use + value</text>
           </svg>
         </div>
         <div class="diagram-note">If the transmitter is mounted below the lower tap, extra liquid head is sitting above the transmitter. Enter this as a positive offset.</div>
@@ -92,19 +73,18 @@
       <div class="diagram-card">
         <div class="diagram-title">Negative Offset — TX Above Lower Tap</div>
         <div class="svg-wrap">
-          <svg viewBox="0 0 340 300" role="img" aria-label="Negative offset diagram">
-            <defs><marker id="arrowhead2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="var(--accent)"/></marker></defs>
-            <rect x="78" y="32" width="125" height="178" rx="18" class="tank-stroke"/>
-            <rect x="81" y="113" width="119" height="94" rx="0" class="fluid"/>
-            <circle cx="203" cy="66" r="7" class="tap"/><text x="215" y="70" class="small">Upper tap</text>
-            <circle cx="203" cy="190" r="7" class="tap"/><text x="215" y="194" class="small">Lower tap</text>
-            <rect x="238" y="117" width="62" height="34" rx="8" class="tx"/>
-            <text x="253" y="139" class="label">DP TX</text>
-            <path d="M203 190 H230 V134 H238" class="pipe-hp"/>
-            <path d="M214 190 V137" class="arrow dash" marker-end="url(#arrowhead2)"/>
-            <text x="132" y="158" class="lp-text">− offset head</text>
-            <text x="68" y="24" class="label">Tank</text>
-            <text x="232" y="294" class="lp-text">TX above = use − value</text>
+          <svg viewBox="0 0 380 320" role="img" aria-label="Negative offset diagram">
+            <defs><marker id="arrowhead2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="var(--accent)"/></marker></defs>
+            <rect x="70" y="36" width="128" height="178" rx="18" class="tank-stroke"/>
+            <rect x="73" y="118" width="122" height="93" class="fluid"/>
+            <circle cx="198" cy="70" r="7" class="tap"/><rect x="214" y="54" width="68" height="22" rx="8" class="label-bg"/><text x="220" y="69" class="small">Upper tap</text>
+            <circle cx="198" cy="194" r="7" class="tap"/><rect x="86" y="218" width="68" height="22" rx="8" class="label-bg"/><text x="92" y="233" class="small">Lower tap</text>
+            <rect x="268" y="121" width="70" height="36" rx="9" class="tx"/><text x="286" y="144" class="label">DP TX</text>
+            <path d="M198 194 H244 V139 H268" class="pipe-hp"/>
+            <path d="M213 194 V142" class="arrow dash" marker-end="url(#arrowhead2)"/>
+            <rect x="103" y="147" width="100" height="22" rx="8" class="label-bg"/><text x="111" y="162" class="lp-text">− offset head</text>
+            <text x="68" y="27" class="label">Tank</text>
+            <text x="205" y="304" class="lp-text">TX above = use − value</text>
           </svg>
         </div>
         <div class="diagram-note">If the transmitter is mounted above the lower tap, it removes head from the measurement. Enter this as a negative offset.</div>
@@ -113,19 +93,18 @@
       <div class="diagram-card">
         <div class="diagram-title">Wet Leg Visual — LP Side Has Constant Head</div>
         <div class="svg-wrap">
-          <svg viewBox="0 0 340 300" role="img" aria-label="Wet leg diagram">
-            <rect x="70" y="35" width="120" height="190" rx="18" class="tank-stroke"/>
-            <rect x="73" y="126" width="114" height="96" class="fluid"/>
-            <circle cx="190" cy="66" r="7" class="tap"/><text x="202" y="70" class="small">LP tap</text>
-            <circle cx="190" cy="205" r="7" class="tap"/><text x="202" y="209" class="small">HP tap</text>
-            <path d="M190 205 H248 V250" class="pipe-hp"/>
-            <path d="M190 66 H292 V250" class="pipe-lp"/>
-            <rect x="230" y="248" width="78" height="34" rx="8" class="tx"/>
-            <text x="249" y="270" class="label">DP TX</text>
-            <path d="M292 66 V247" class="pipe-lp dash"/>
-            <text x="254" y="155" class="lp-text">wet leg</text>
-            <text x="105" y="178" class="hp-text">process level</text>
-            <text x="72" y="24" class="label">Closed tank</text>
+          <svg viewBox="0 0 380 320" role="img" aria-label="Wet leg diagram">
+            <rect x="62" y="36" width="128" height="190" rx="18" class="tank-stroke"/>
+            <rect x="65" y="128" width="122" height="95" class="fluid"/>
+            <circle cx="190" cy="72" r="7" class="tap"/><rect x="82" y="54" width="62" height="22" rx="8" class="label-bg"/><text x="90" y="69" class="small">LP tap</text>
+            <circle cx="190" cy="207" r="7" class="tap"/><rect x="82" y="216" width="62" height="22" rx="8" class="label-bg"/><text x="90" y="231" class="small">HP tap</text>
+            <path d="M190 207 H252 V260" class="pipe-hp"/>
+            <path d="M190 72 H315 V260" class="pipe-lp"/>
+            <rect x="238" y="260" width="82" height="36" rx="9" class="tx"/><text x="258" y="283" class="label">DP TX</text>
+            <path d="M315 72 V258" class="pipe-lp dash"/>
+            <rect x="252" y="153" width="62" height="22" rx="8" class="label-bg"/><text x="260" y="168" class="lp-text">wet leg</text>
+            <rect x="82" y="172" width="100" height="22" rx="8" class="label-bg"/><text x="90" y="187" class="hp-text">process level</text>
+            <text x="61" y="27" class="label">Closed tank</text>
           </svg>
         </div>
         <div class="diagram-note">Wet leg head is always pushing on the LP side. That is why wet-leg ranges often start negative.</div>
