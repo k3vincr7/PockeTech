@@ -7,7 +7,7 @@
 <style>
 :root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
 @media(prefers-color-scheme:dark){:root{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}}
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}main{padding:14px;max-width:860px;margin:0 auto}.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}h1{margin:0 0 6px}h2{margin:0 0 8px}.muted{color:var(--muted);line-height:1.4}button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;border-radius:14px;font-weight:650;width:100%}.tag{display:inline-block;padding:4px 8px;border:1px solid var(--border);border-radius:999px;background:var(--tile);font-size:12px;color:var(--muted);margin-bottom:8px}ul{padding-left:22px;line-height:1.45}.formula{background:var(--tile);border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;overflow:auto}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}main{padding:14px;max-width:900px;margin:0 auto}.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}h1{margin:0 0 6px}h2{margin:0 0 8px}h3{margin:12px 0 6px}.muted{color:var(--muted);line-height:1.4}button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;border-radius:14px;font-weight:650;width:100%}.tag{display:inline-block;padding:4px 8px;border:1px solid var(--border);border-radius:999px;background:var(--tile);font-size:12px;color:var(--muted);margin-bottom:8px}ul{padding-left:22px;line-height:1.45}.formula,.example{background:var(--tile);border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;overflow:auto}.example{font-family:inherit;line-height:1.45}.visual{display:grid;grid-template-columns:1fr;gap:10px}.diagram{background:var(--tile);border:1px solid var(--border);border-radius:14px;padding:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre;overflow:auto;line-height:1.25}.good{color:var(--accent);font-weight:800}
 </style>
 </head>
 <body>
@@ -28,6 +28,7 @@
       <li>URV is based on tap-to-tap span × liquid specific gravity.</li>
     </ul>
     <div class="formula">Basic idea: dP = liquid height × process SG</div>
+    <div class="example"><b>Example:</b><br>Tank span = 100 in<br>Process SG = 1.0<br>LRV = 0 inH₂O<br>URV = 100 inH₂O<br>At 50% level, dP = 50 inH₂O and signal = 12 mA.</div>
   </div>
 
   <div class="card">
@@ -41,6 +42,7 @@
       <li>Best when vapors do not condense in the low-side impulse line.</li>
     </ul>
     <div class="formula">Basic idea: HP = vessel pressure + liquid head; LP = vessel pressure; dP = liquid head</div>
+    <div class="example"><b>Example:</b><br>Closed vessel pressure = 20 psi<br>Liquid head at 50% = 50 inH₂O<br>HP sees vessel pressure + 50 inH₂O<br>LP sees vessel pressure only<br>The vessel pressure cancels out, so the transmitter reads about 50 inH₂O.</div>
   </div>
 
   <div class="card">
@@ -54,6 +56,7 @@
       <li>URV is the process liquid head minus the wet leg head, adjusted for any transmitter elevation offset.</li>
     </ul>
     <div class="formula">Basic idea: dP = process liquid head − wet leg head + TX offset head</div>
+    <div class="example"><b>Example:</b><br>Tap span = 72 in<br>Process SG = 0.9<br>Wet leg height = 72 in<br>Wet leg SG = 1.0<br>LRV = 0 − 72 = -72 inH₂O<br>URV = (72 × 0.9) − 72 = -7.2 inH₂O<br>At 50% level, dP is halfway between -72 and -7.2 = -39.6 inH₂O.</div>
   </div>
 
   <div class="card">
@@ -63,6 +66,31 @@
       <li><b>Positive offset</b>: transmitter is below the lower tap, adding head.</li>
       <li><b>Negative offset</b>: transmitter is above the lower tap, subtracting head.</li>
     </ul>
+    <div class="visual">
+      <div class="diagram">POSITIVE OFFSET: TX below lower tap
+
+   Upper Tap  o
+              |
+              |  Tank span
+              |
+   Lower Tap  o──────── impulse line
+              |
+              |  +10 in offset
+              |
+        TX    [DP]
+
+Use +10 because the transmitter is BELOW the lower tap.</div>
+      <div class="diagram">NEGATIVE OFFSET: TX above lower tap
+
+   Upper Tap  o
+              |
+        TX    [DP]
+              |
+   Lower Tap  o──────── impulse line
+
+Use -10 if the transmitter is ABOVE the lower tap by 10 in.</div>
+    </div>
+    <div class="example"><b>Offset example:</b><br>Open tank span = 100 in, SG = 1.0<br>TX mounted 10 in below lower tap → offset = +10<br>LRV = +10 inH₂O<br>URV = +110 inH₂O<br><br>TX mounted 10 in above lower tap → offset = -10<br>LRV = -10 inH₂O<br>URV = +90 inH₂O</div>
   </div>
 
   <div class="card"><button onclick="location.href='./level.html?v=5'">← Back to Level Helper Pro</button></div>
