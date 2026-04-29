@@ -1,1 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PockeTech — Loop Log</title>
 
+<style>
+:root{
+  --bg:#f6f8fc;
+  --fg:#0c1116;
+  --muted:#5a6572;
+  --tile:#ffffff;
+  --border:#d6dbe3;
+  --accent:#1f6bff;
+  --radius:18px;
+}
+
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+  background:radial-gradient(circle at top,#e9eef7,#f6f8fc);
+  color:var(--fg);
+}
+
+main{
+  padding:14px;
+  max-width:900px;
+  margin:auto;
+}
+
+.card{
+  background:var(--tile);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px;
+  margin-bottom:14px;
+}
+
+.title{
+  font-size:20px;
+  font-weight:800;
+}
+
+.note{
+  background:#eef2f7;
+  padding:12px;
+  border-radius:12px;
+  margin-top:10px;
+  font-size:14px;
+}
+
+input, select, textarea{
+  width:100%;
+  padding:12px;
+  margin-top:8px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  font-size:14px;
+}
+
+button{
+  margin-top:10px;
+  padding:14px;
+  width:100%;
+  border-radius:12px;
+  border:none;
+  background:var(--accent);
+  color:white;
+  font-weight:600;
+}
+
+.secondary{
+  background:#dbe3f3;
+  color:#000;
+}
+
+.log-entry{
+  background:#eef2f7;
+  padding:12px;
+  border-radius:10px;
+  margin-top:10px;
+  font-size:14px;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.small-btn{
+  padding:6px 10px;
+  border-radius:8px;
+  border:none;
+  background:#ef4444;
+  color:white;
+  font-size:12px;
+}
+
+.back{
+  padding:16px;
+  text-align:center;
+  border-radius:14px;
+  border:1px solid var(--border);
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<main>
+
+<div class="card">
+  <div class="title">🔁 Loop Log</div>
+
+  <div class="note">
+    Field → Wiring → I/O → DCS → Final Element
+  </div>
+</div>
+
+<div class="card">
+
+  <input id="tag" placeholder="Tag (PT-101)">
+  
+  <select id="type">
+    <option>AI</option>
+    <option>AO</option>
+    <option>DI</option>
+    <option>DO</option>
+  </select>
+
+  <input id="field" placeholder="Field Value">
+  <input id="dcs" placeholder="DCS Value">
+
+  <select id="status">
+    <option>Pass ✅</option>
+    <option>Fail ❌</option>
+    <option>Check ⚠️</option>
+  </select>
+
+  <textarea id="notes" placeholder="Notes..."></textarea>
+
+  <button onclick="addLog()">Add Entry</button>
+  <button class="secondary" onclick="clearLogs()">Clear All</button>
+
+</div>
+
+<div class="card">
+  <div class="header">
+    <div class="title">📋 Entries</div>
+  </div>
+  <div id="log"></div>
+</div>
+
+<div class="back" onclick="location.href='./index.html'">
+  ← Back
+</div>
+
+</main>
+
+<script>
+
+let logs = JSON.parse(localStorage.getItem("loopLogs")) || [];
+
+function saveLogs(){
+  localStorage.setItem("loopLogs", JSON.stringify(logs));
+}
+
+function renderLogs(){
+  const container = document.getElementById("log");
+  container.innerHTML = "";
+
+  logs.forEach((log, index)=>{
+    const div = document.createElement("div");
+    div.className = "log-entry";
+
+    div.innerHTML =       <strong>${log.tag}</strong> (${log.type})<br>       Field: ${log.field} → DCS: ${log.dcs}<br>       Status: ${log.status}<br>       Notes: ${log.notes || "-"}<br>       <button class="small-btn" onclick="deleteLog(${index})">Delete</button>    ;
+
+    container.prepend(div);
+  });
+}
+
+function addLog(){
+  const newLog = {
+    tag: document.getElementById("tag").value,
+    type: document.getElementById("type").value,
+    field: document.getElementById("field").value,
+    dcs: document.getElementById("dcs").value,
+    status: document.getElementById("status").value,
+    notes: document.getElementById("notes").value
+  };
+
+  if(!newLog.tag) return alert("Tag required");
+
+  logs.push(newLog);
+  saveLogs();
+  renderLogs();
+
+  document.getElementById("tag").value = "";
+  document.getElementById("field").value = "";
+  document.getElementById("dcs").value = "";
+  document.getElementById("notes").value = "";
+}
+
+function deleteLog(index){
+  logs.splice(index,1);
+  saveLogs();
+  renderLogs();
+}
+
+function clearLogs(){
+  if(confirm("Clear all logs?")){
+    logs = [];
+    saveLogs();
+    renderLogs();
+  }
+}
+
+renderLogs();
+
+</script>
+
+</body>
+</html>
