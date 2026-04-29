@@ -1,62 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="auto">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>PockeTech — Field Guide</title>
 
 <style>
-body{
-  margin:0;
-  font-family:system-ui;
-  background:#0f1115;
-  color:#fff;
-}
-.card{
-  background:#151922;
-  margin:12px;
-  padding:16px;
-  border-radius:14px;
-}
-.title{
-  font-size:20px;
-  font-weight:800;
-}
-.tile{
-  display:block;
-  padding:14px;
-  margin-top:10px;
-  border-radius:12px;
-  background:#202838;
-  text-decoration:none;
-  color:white;
-}
-.tile:hover{
-  background:#2a3347;
-}
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;background:var(--bg);color:var(--fg)}
+main{padding:14px;max-width:900px;margin:auto}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin-bottom:14px}
+.title{font-size:20px;font-weight:800}
+.subtitle{color:var(--muted);margin-top:4px}
+.list{display:flex;flex-direction:column;gap:10px}
+.item{display:flex;align-items:center;justify-content:space-between;padding:16px;border-radius:16px;background:var(--tile);border:1px solid var(--border);text-decoration:none;color:var(--fg);transition:all .12s ease}
+.item:active{transform:scale(.98)}
+.left{display:flex;align-items:center;gap:12px;font-weight:600;font-size:16px}
+.icon{font-size:20px}
+.arrow{font-size:18px;color:var(--muted)}
+button{width:100%;padding:14px;border-radius:16px;border:1px solid var(--border);background:var(--tile);color:var(--fg);font-weight:600}
 </style>
 </head>
 
 <body>
 
+<main>
+
 <div class="card">
   <div class="title">📚 Field Guide (Jr Tech)</div>
-  <p style="color:#aaa;">
-    Built for new techs and quick refresh in the field.
-  </p>
+  <div class="subtitle">Built for new techs and quick refresh in the field.</div>
+</div>
 
-  <a class="tile" href="./jr-420.html">📈 4–20 mA Basics</a>
-  <a class="tile" href="#">🫙 Level Basics</a>
-  <a class="tile" href="#">⚙️ Control Valves</a>
-  <a class="tile" href="#">🔥 Temperature</a>
-  <a class="tile" href="#">🧪 Pressure</a>
-  <a class="tile" href="#">🚨 Troubleshooting</a>
+<div class="card">
+  <div class="list">
 
+    <a class="item" href="./jr-420.html">
+      <div class="left"><span class="icon">📈</span>4–20 mA Basics</div>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="item" href="#">
+      <div class="left"><span class="icon">🫙</span>Level Basics</div>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="item" href="#">
+      <div class="left"><span class="icon">⚙️</span>Control Valves</div>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="item" href="#">
+      <div class="left"><span class="icon">🔥</span>Temperature</div>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="item" href="#">
+      <div class="left"><span class="icon">🧪</span>Pressure</div>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="item" href="#">
+      <div class="left"><span class="icon">🚨</span>Troubleshooting</div>
+      <span class="arrow">›</span>
+    </a>
+
+  </div>
 </div>
 
 <div class="card">
   <button onclick="location.href='./'">← Back</button>
 </div>
+
+</main>
 
 </body>
 </html>
