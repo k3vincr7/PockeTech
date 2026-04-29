@@ -3,63 +3,59 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PockeTech — Loop Log</title>
+<title>Loop Log</title>
 
 <style>
-:root{
-  --bg:#f6f8fc;
-  --fg:#0c1116;
-  --muted:#5a6572;
-  --tile:#ffffff;
-  --border:#d6dbe3;
-  --accent:#2d6cdf;
-  --radius:16px;
+/* FORCE RESET (fix your app conflicts) */
+{
+  box-sizing:border-box;
 }
 
+/ PAGE /
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
-  background:var(--bg);
-  color:var(--fg);
+  background:#f6f8fc;
+  color:#0c1116;
 }
 
 main{
   padding:14px;
-  max-width:900px;
+  max-width:600px;
   margin:auto;
 }
 
-/* CARDS /
-.card{
-  background:var(--tile);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:16px;
+/ SECTION /
+.section{
+  background:#fff;
+  border:1px solid #d6dbe3;
+  border-radius:16px;
+  padding:14px;
   margin-bottom:14px;
 }
 
+/ TITLE /
 .title{
-  font-size:20px;
-  font-weight:800;
+  font-size:18px;
+  font-weight:700;
 }
 
+/ NOTE /
 .note{
-  background:#eef2f7;
-  padding:12px;
-  border-radius:12px;
-  margin-top:10px;
-  font-size:14px;
+  font-size:13px;
+  color:#666;
+  margin-top:6px;
 }
 
-/ GRID FIX (THIS FIXES YOUR LAYOUT ISSUE) /
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
+/ GRID (FIXED) */
+.row{
+  display:flex;
   gap:10px;
+  margin-top:10px;
 }
 
-.full{
-  grid-column:1 / -1;
+.row > {
+  flex:1;
 }
 
 / INPUTS /
@@ -67,45 +63,63 @@ input, select, textarea{
   width:100%;
   padding:12px;
   border-radius:10px;
-  border:1px solid var(--border);
+  border:1px solid #d6dbe3;
   font-size:14px;
-  box-sizing:border-box;
 }
 
 / BUTTONS /
-button{
-  padding:14px;
-  width:100%;
-  border-radius:12px;
-  border:none;
-  background:var(--accent);
+.btn{
+  background:#2d6cdf;
   color:white;
+  border:none;
+  border-radius:12px;
+  padding:12px;
   font-weight:600;
+  width:100%;
 }
 
-.secondary{
-  background:#dbe3f3;
+.btn.secondary{
+  background:#e5e9f2;
   color:#000;
+}
+
+/ STEP BUTTONS /
+.steps{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+}
+
+.steps button{
+  flex:1;
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  background:#2d6cdf;
+  color:white;
 }
 
 / TABLE /
 table{
   width:100%;
   border-collapse:collapse;
+  margin-top:10px;
 }
 
 th, td{
-  border-bottom:1px solid var(--border);
-  padding:8px;
-  font-size:13px;
+  border-bottom:1px solid #eee;
+  padding:6px;
+  font-size:12px;
   text-align:left;
 }
 
+/ BACK /
 .back{
-  padding:16px;
   text-align:center;
-  border-radius:14px;
-  border:1px solid var(--border);
+  margin-top:10px;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #ccc;
 }
 </style>
 </head>
@@ -114,120 +128,112 @@ th, td{
 
 <main>
 
-<div class="card">
+<div class="section">
   <div class="title">🔁 Loop Log</div>
   <div class="note">Field → Wiring → I/O → DCS → Final Element</div>
 </div>
 
-<!-- QUICK CALC -->
-<details class="card">
-<summary><strong>⚡ 4–20 mA Quick Calc</strong></summary>
+<!-- CALC -->
+<div class="section">
+  <div class="title">⚡ 4–20 mA Quick Calc</div>
 
-<div class="grid">
-  <input id="lrv" placeholder="LRV">
-  <input id="urv" placeholder="URV">
+  <div class="row">
+    <input id="lrv" placeholder="LRV">
+    <input id="urv" placeholder="URV">
+  </div>
 
-  <input id="pct" placeholder="%">
-  <input id="ma" placeholder="mA">
-  <input id="eu" placeholder="EU" class="full">
+  <div class="row">
+    <input id="pct" placeholder="%">
+    <input id="ma" placeholder="mA">
+  </div>
+
+  <div class="steps">
+    <button onclick="step(0)">0%</button>
+    <button onclick="step(25)">25%</button>
+    <button onclick="step(50)">50%</button>
+    <button onclick="step(75)">75%</button>
+    <button onclick="step(100)">100%</button>
+  </div>
+
 </div>
-
-<div class="grid" style="margin-top:10px">
-  <button onclick="fromPct()">From %</button>
-  <button onclick="fromMa()">From mA</button>
-</div>
-
-<div class="grid" style="margin-top:10px">
-  <button onclick="step(0)">0%</button>
-  <button onclick="step(25)">25%</button>
-  <button onclick="step(50)">50%</button>
-  <button onclick="step(75)">75%</button>
-  <button onclick="step(100)">100%</button>
-</div>
-
-</details>
 
 <!-- ENTRY -->
-<div class="card">
+<div class="section">
 
-<div class="grid">
-  <input id="date" type="date" class="full">
-  <input id="tag" placeholder="Tag (PT-101)" class="full">
+<input id="date" type="date">
+<input id="tag" placeholder="Tag (PT-101)">
 
-  <input id="field" placeholder="Output (what you send)">
-  <input id="dcs" placeholder="Indicated (what system reads)">
-
-  <select id="status" class="full">
-    <option>PASS</option>
-    <option>FAIL</option>
-  </select>
-
-  <textarea id="notes" placeholder="Notes" class="full"></textarea>
+<div class="row">
+  <input id="output" placeholder="Output (what you send)">
+  <input id="indicated" placeholder="Indicated (what system reads)">
 </div>
 
-<div class="grid" style="margin-top:10px">
-  <button onclick="addEntry()">+ Add Entry</button>
-  <button class="secondary" onclick="clearAll()">Clear All</button>
+<select id="status">
+  <option>PASS</option>
+  <option>FAIL</option>
+</select>
+
+<textarea id="notes" placeholder="Notes"></textarea>
+
+<div class="row">
+  <button class="btn" onclick="addEntry()">+ Add Entry</button>
+  <button class="btn secondary" onclick="clearAll()">Clear</button>
 </div>
 
 </div>
 
 <!-- TABLE -->
-<div class="card">
-  <table>
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Tag</th>
-        <th>Output</th>
-        <th>Indicated</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody id="log"></tbody>
-  </table>
+<div class="section">
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Tag</th>
+<th>Out</th>
+<th>Ind</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="log"></tbody>
+</table>
 </div>
 
 <div class="back" onclick="location.href='./index.html'">
-  ← Back
+← Back
 </div>
 
 </main>
 
 <script>
 
-// AUTO DATE
 document.getElementById("date").valueAsDate = new Date();
 
-// STORAGE
 let logs = JSON.parse(localStorage.getItem("loopLogs") || "[]");
 
 function save(){
   localStorage.setItem("loopLogs", JSON.stringify(logs));
 }
 
-// RENDER TABLE
 function render(){
   const table = document.getElementById("log");
   table.innerHTML = "";
 
   logs.forEach(l=>{
-    table.innerHTML +=       <tr>         <td>${l.date}</td>         <td>${l.tag}</td>         <td>${l.output}</td>         <td>${l.indicated}</td>         <td>${l.status}</td>       </tr>    ;
+    table.innerHTML +=      <tr>       <td>${l.date}</td>       <td>${l.tag}</td>       <td>${l.output}</td>       <td>${l.indicated}</td>       <td>${l.status}</td>     </tr>;
   });
 }
 
-// ADD ENTRY
 function addEntry(){
   const entry = {
-    date: document.getElementById("date").value,
-    tag: document.getElementById("tag").value,
-    output: document.getElementById("field").value,
-    indicated: document.getElementById("dcs").value,
-    status: document.getElementById("status").value
+    date: date.value,
+    tag: tag.value,
+    output: output.value,
+    indicated: indicated.value,
+    status: status.value
   };
 
   if(!entry.tag){
-    alert("Enter a tag");
+    alert("Enter tag");
     return;
   }
 
@@ -235,60 +241,27 @@ function addEntry(){
   save();
   render();
 
-  document.getElementById("tag").value = "";
-  document.getElementById("field").value = "";
-  document.getElementById("dcs").value = "";
-  document.getElementById("notes").value = "";
-}
-
-// CLEAR
-function clearAll(){
-  if(confirm("Clear all logs?")){
-    logs = [];
-    save();
-    render();
-  }
+  tag.value="";
+  output.value="";
+  indicated.value="";
+  notes.value="";
 }
 
 / CALC */
 
-function fromPct(){
-  const p = parseFloat(document.getElementById("pct").value);
-  if(isNaN(p)) return;
-
+function step(p){
+  pct.value = p;
   const m = 4 + (p/100)*16;
-  document.getElementById("ma").value = m.toFixed(2);
+  ma.value = m.toFixed(2);
 
-  autoFill();
+  output.value = m.toFixed(2) + " mA";
+  indicated.value = p + " %";
 }
 
-function fromMa(){
-  const m = parseFloat(document.getElementById("ma").value);
-  if(isNaN(m)) return;
-
-  const p = ((m-4)/16)100;
-  document.getElementById("pct").value = p.toFixed(1);
-
-  autoFill();
-}
-
-function step(v){
-  document.getElementById("pct").value = v;
-  fromPct();
-}
-
-/ AUTO FILL */
-function autoFill(){
-  const ma = document.getElementById("ma").value;
-  const pct = document.getElementById("pct").value;
-
-  if(ma){
-    document.getElementById("field").value = ma + " mA";
-  }
-
-  if(pct){
-    document.getElementById("dcs").value = pct + " %";
-  }
+function clearAll(){
+  logs=[];
+  save();
+  render();
 }
 
 render();
