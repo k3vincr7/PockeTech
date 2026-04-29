@@ -56,12 +56,11 @@ input, select, textarea{
   margin-top:8px;
   border-radius:10px;
   border:1px solid var(--border);
-  font-size:14px;
 }
 
 button{
   margin-top:10px;
-  padding:14px;
+  padding:12px;
   width:100%;
   border-radius:12px;
   border:none;
@@ -75,27 +74,13 @@ button{
   color:#000;
 }
 
-.log-entry{
-  background:#eef2f7;
-  padding:12px;
-  border-radius:10px;
-  margin-top:10px;
-  font-size:14px;
-}
-
-.header{
+.row{
   display:flex;
-  justify-content:space-between;
-  align-items:center;
+  gap:10px;
 }
 
-.small-btn{
-  padding:6px 10px;
-  border-radius:8px;
-  border:none;
-  background:#ef4444;
-  color:white;
-  font-size:12px;
+.col{
+  flex:1;
 }
 
 .back{
@@ -103,7 +88,18 @@ button{
   text-align:center;
   border-radius:14px;
   border:1px solid var(--border);
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
   margin-top:10px;
+}
+
+th, td{
+  border-bottom:1px solid var(--border);
+  padding:8px;
+  font-size:13px;
 }
 </style>
 </head>
@@ -114,44 +110,73 @@ button{
 
 <div class="card">
   <div class="title">🔁 Loop Log</div>
-
-  <div class="note">
-    Field → Wiring → I/O → DCS → Final Element
-  </div>
+  <div class="note">Field → Wiring → I/O → DCS → Final Element</div>
 </div>
 
+<!-- QUICK CALC -->
+<details class="card">
+<summary><strong>⚡ 4–20 mA Quick Calc</strong></summary>
+
+<div class="row">
+  <div class="col"><input id="lrv" placeholder="LRV"></div>
+  <div class="col"><input id="urv" placeholder="URV"></div>
+</div>
+
+<div class="row">
+  <div class="col"><input id="pct" placeholder="%"></div>
+  <div class="col"><input id="ma" placeholder="mA"></div>
+  <div class="col"><input id="eu" placeholder="EU"></div>
+</div>
+
+<div class="row">
+  <div class="col"><button onclick="fromPct()">From %</button></div>
+  <div class="col"><button onclick="fromMa()">From mA</button></div>
+</div>
+
+<div class="row">
+  <div class="col"><button onclick="step(0)">0%</button></div>
+  <div class="col"><button onclick="step(25)">25%</button></div>
+  <div class="col"><button onclick="step(50)">50%</button></div>
+  <div class="col"><button onclick="step(75)">75%</button></div>
+  <div class="col"><button onclick="step(100)">100%</button></div>
+</div>
+
+</details>
+
+<!-- LOOP ENTRY -->
 <div class="card">
 
-  <input id="tag" placeholder="Tag (PT-101)">
-  
-  <select id="type">
-    <option>AI</option>
-    <option>AO</option>
-    <option>DI</option>
-    <option>DO</option>
-  </select>
+<input id="date" type="date">
+<input id="tag" placeholder="Tag">
+<input id="point" placeholder="AI / AO / DI / DO">
 
-  <input id="field" placeholder="Field Value">
-  <input id="dcs" placeholder="DCS Value">
+<div class="row">
+  <div class="col"><input id="field" placeholder="Field"></div>
+  <div class="col"><input id="dcs" placeholder="DCS"></div>
+</div>
 
-  <select id="status">
-    <option>Pass ✅</option>
-    <option>Fail ❌</option>
-    <option>Check ⚠️</option>
-  </select>
+<select id="status">
+  <option>PASS</option>
+  <option>FAIL</option>
+</select>
 
-  <textarea id="notes" placeholder="Notes..."></textarea>
+<textarea id="notes" placeholder="Notes"></textarea>
 
-  <button onclick="addLog()">Add Entry</button>
-  <button class="secondary" onclick="clearLogs()">Clear All</button>
+<button onclick="addEntry()">+ Add Entry</button>
+<button class="secondary" onclick="clearAll()">Clear All</button>
 
 </div>
 
+<!-- TABLE -->
 <div class="card">
-  <div class="header">
-    <div class="title">📋 Entries</div>
-  </div>
-  <div id="log"></div>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th><th>Tag</th><th>Point</th><th>Field</th><th>DCS</th><th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="log"></tbody>
+  </table>
 </div>
 
 <div class="back" onclick="location.href='./index.html'">
@@ -162,63 +187,66 @@ button{
 
 <script>
 
-let logs = JSON.parse(localStorage.getItem("loopLogs")) || [];
+document.getElementById("date").valueAsDate = new Date();
 
-function saveLogs(){
-  localStorage.setItem("loopLogs", JSON.stringify(logs));
-}
+let logs = JSON.parse(localStorage.getItem("loopLogs")||"[]");
 
-function renderLogs(){
-  const container = document.getElementById("log");
-  container.innerHTML = "";
+function save(){localStorage.setItem("loopLogs",JSON.stringify(logs));}
 
-  logs.forEach((log, index)=>{
-    const div = document.createElement("div");
-    div.className = "log-entry";
-
-    div.innerHTML =       <strong>${log.tag}</strong> (${log.type})<br>       Field: ${log.field} → DCS: ${log.dcs}<br>       Status: ${log.status}<br>       Notes: ${log.notes || "-"}<br>       <button class="small-btn" onclick="deleteLog(${index})">Delete</button>    ;
-
-    container.prepend(div);
+function render(){
+  const t=document.getElementById("log");
+  t.innerHTML="";
+  logs.forEach(l=>{
+    t.innerHTML+=<tr>     <td>${l.date}</td>     <td>${l.tag}</td>     <td>${l.point}</td>     <td>${l.field}</td>     <td>${l.dcs}</td>     <td>${l.status}</td>     </tr>;
   });
 }
 
-function addLog(){
-  const newLog = {
-    tag: document.getElementById("tag").value,
-    type: document.getElementById("type").value,
-    field: document.getElementById("field").value,
-    dcs: document.getElementById("dcs").value,
-    status: document.getElementById("status").value,
-    notes: document.getElementById("notes").value
+function addEntry(){
+  const entry={
+    date:date.value,
+    tag:tag.value,
+    point:point.value,
+    field:field.value,
+    dcs:dcs.value,
+    status:status.value
   };
-
-  if(!newLog.tag) return alert("Tag required");
-
-  logs.push(newLog);
-  saveLogs();
-  renderLogs();
-
-  document.getElementById("tag").value = "";
-  document.getElementById("field").value = "";
-  document.getElementById("dcs").value = "";
-  document.getElementById("notes").value = "";
+  logs.push(entry);
+  save();
+  render();
 }
 
-function deleteLog(index){
-  logs.splice(index,1);
-  saveLogs();
-  renderLogs();
+function clearAll(){
+  logs=[];
+  save();
+  render();
 }
 
-function clearLogs(){
-  if(confirm("Clear all logs?")){
-    logs = [];
-    saveLogs();
-    renderLogs();
-  }
+/* ===== CALC ===== */
+
+function fromPct(){
+  let p=parseFloat(pct.value);
+  ma.value=4+(p/100)*16;
+  autoFill();
 }
 
-renderLogs();
+function fromMa(){
+  let m=parseFloat(ma.value);
+  pct.value=((m-4)/16)100;
+  autoFill();
+}
+
+function step(v){
+  pct.value=v;
+  fromPct();
+}
+
+/ AUTO FILL INTO LOG */
+function autoFill(){
+  field.value = ma.value + " mA";
+  dcs.value = pct.value + " %";
+}
+
+render();
 
 </script>
 
