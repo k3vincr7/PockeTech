@@ -46,22 +46,12 @@ main{
   margin-top:4px;
 }
 
-svg{
-  width:100%;
-  margin-top:10px;
-}
-
-.label{
-  font-size:12px;
-  fill:#0c1116;
-}
-
 .note{
   margin-top:10px;
-  padding:12px;
-  border-radius:12px;
+  padding:14px;
+  border-radius:14px;
   background:#eef2f7;
-  font-size:14px;
+  font-size:15px;
   line-height:1.4;
 }
 
@@ -105,37 +95,26 @@ ul{
 </div>
 
 <div class="card">
-  <div class="title">Loop Diagram</div>
-
-  <svg viewBox="0 0 420 220">
-
-    <!-- POWER -->
-    <rect x="10" y="80" width="100" height="70" stroke="#0c1116" fill="none"/>
-    <text x="20" y="105" class="label">24V Supply</text>
-
-    <!-- TX -->
-    <rect x="160" y="30" width="120" height="70" stroke="#0c1116" fill="none"/>
-    <text x="175" y="60" class="label">Transmitter</text>
-
-    <!-- PLC -->
-    <rect x="300" y="80" width="110" height="70" stroke="#0c1116" fill="none"/>
-    <text x="315" y="110" class="label">PLC / DCS</text>
-
-    <!-- LINES -->
-    <line x1="110" y1="95" x2="160" y2="50" stroke="#0c1116"/>
-    <line x1="280" y1="50" x2="300" y2="95" stroke="#0c1116"/>
-    <line x1="300" y1="145" x2="110" y2="145" stroke="#0c1116"/>
-
-  </svg>
+  <div class="title">How the Loop Actually Works</div>
 
   <div class="note">
-    🔋 <span class="highlight">Power Supply</span> provides voltage to drive the loop<br><br>
+    🔋 <span class="highlight">Power Supply</span><br>
+    Provides voltage to drive the loop
+  </div>
 
-    🎛️ <span class="highlight">Transmitter</span> controls the current (4–20 mA) based on the process value<br><br>
+  <div class="note">
+    🎛️ <span class="highlight">Transmitter (TX)</span><br>
+    Controls the current (4–20 mA) based on the process value
+  </div>
 
-    🧠 <span class="highlight">PLC / DCS</span> reads that current and converts it into engineering units<br><br>
+  <div class="note">
+    🧠 <span class="highlight">PLC / DCS</span><br>
+    Reads the current and converts it into engineering units
+  </div>
 
-    🔁 Current must return to complete the loop
+  <div class="note">
+    🔁 <span class="highlight">Return Path</span><br>
+    Current must return to complete the loop
   </div>
 
 </div>
@@ -158,8 +137,7 @@ ul{
 <div class="card">
   <div class="title">Field Tip</div>
   <p>
-    12 mA is always 50%.  
-    Doesn’t matter if it's pressure, level, or flow.
+    12 mA is always 50%. Doesn’t matter if it's pressure, level, or flow.
   </p>
 </div>
 
