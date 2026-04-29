@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PockeTech — 4–20 mA Guide</title>
+<title>PockeTech — Field Guide</title>
 
 <style>
 :root{
@@ -12,7 +12,7 @@
   --card:#151922;
   --border:#2a2f3a;
   --muted:#a0a0a0;
-  --accent:#3a7afe;
+  --tile:#202838;
 }
 body{
   margin:0;
@@ -20,44 +20,63 @@ body{
   background:var(--bg);
   color:var(--fg);
 }
-main{padding:14px;max-width:900px;margin:auto}
-
+main{
+  padding:14px;
+  max-width:900px;
+  margin:auto;
+}
 .card{
   background:var(--card);
   border:1px solid var(--border);
   border-radius:16px;
   padding:16px;
-  margin-bottom:12px;
+  margin-bottom:14px;
+}
+.title{
+  font-size:20px;
+  font-weight:800;
+}
+.subtitle{
+  color:var(--muted);
+  margin-top:4px;
 }
 
-.title{font-size:20px;font-weight:800}
-.muted{color:var(--muted)}
-
-svg{width:100%;margin-top:10px}
-
-.label{
-  font-size:12px;
-  fill:white;
+.list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
 }
 
-.note{
-  margin-top:10px;
-  padding:12px;
-  border-radius:12px;
-  background:#202838;
-  font-size:14px;
+.item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px;
+  border-radius:14px;
+  background:var(--tile);
+  text-decoration:none;
+  color:var(--fg);
 }
 
-.good{color:#22c55e}
-.bad{color:#ef4444}
+.left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-weight:600;
+}
+
+.arrow{
+  color:var(--muted);
+  font-size:18px;
+}
 
 button{
   width:100%;
   padding:14px;
   border-radius:12px;
   border:1px solid var(--border);
-  background:#202838;
-  color:white;
+  background:var(--tile);
+  color:var(--fg);
 }
 </style>
 </head>
@@ -67,97 +86,48 @@ button{
 <main>
 
 <div class="card">
-  <div class="title">📈 4–20 mA Basics</div>
-  <p class="muted">Simple, real-world explanation for field use.</p>
+  <div class="title">📚 Field Guide</div>
+  <div class="subtitle">Quick learning for real field situations</div>
 </div>
 
 <div class="card">
-  <div class="title">What is 4–20 mA?</div>
-  <p>
-    A current signal used to represent a measurement.
-  </p>
-  <ul>
-    <li>4 mA = 0%</li>
-    <li>20 mA = 100%</li>
-  </ul>
+  <div class="list">
+
+    <a class="item" href="./jr-420.html">
+      <div class="left">📈 4–20 mA Basics</div>
+      <div class="arrow">›</div>
+    </a>
+
+    <a class="item" href="#">
+      <div class="left">🫙 Level (Coming Soon)</div>
+      <div class="arrow">›</div>
+    </a>
+
+    <a class="item" href="#">
+      <div class="left">⚙️ Control Valve (Coming Soon)</div>
+      <div class="arrow">›</div>
+    </a>
+
+    <a class="item" href="#">
+      <div class="left">🔥 Temperature (Coming Soon)</div>
+      <div class="arrow">›</div>
+    </a>
+
+    <a class="item" href="#">
+      <div class="left">🧪 Pressure (Coming Soon)</div>
+      <div class="arrow">›</div>
+    </a>
+
+    <a class="item" href="#">
+      <div class="left">🚨 Troubleshooting (Coming Soon)</div>
+      <div class="arrow">›</div>
+    </a>
+
+  </div>
 </div>
 
 <div class="card">
-  <div class="title">Loop Diagram (Real Setup)</div>
-
-<svg viewBox="0 0 420 220">
-
-  <!-- POWER SUPPLY -->
-  <rect x="10" y="80" width="100" height="70" stroke="white" fill="none"/>
-  <text x="20" y="105" class="label">24V DC</text>
-  <text x="20" y="125" class="label">Supply</text>
-  <text x="90" y="95" class="label">+</text>
-  <text x="90" y="145" class="label">–</text>
-
-  <!-- TRANSMITTER -->
-  <rect x="160" y="30" width="120" height="70" stroke="white" fill="none"/>
-  <text x="175" y="60" class="label">Transmitter</text>
-  <text x="175" y="80" class="label">(TX)</text>
-  <text x="150" y="50" class="label">+</text>
-  <text x="280" y="50" class="label">–</text>
-
-  <!-- PLC -->
-  <rect x="300" y="80" width="110" height="70" stroke="white" fill="none"/>
-  <text x="315" y="110" class="label">PLC / DCS</text>
-  <text x="315" y="130" class="label">(AI Card)</text>
-  <text x="290" y="95" class="label">+</text>
-  <text x="290" y="145" class="label">–</text>
-
-  <!-- WIRES -->
-  <!-- +24V to TX -->
-  <line x1="110" y1="95" x2="160" y2="50" stroke="white"/>
-
-  <!-- TX to PLC -->
-  <line x1="280" y1="50" x2="300" y2="95" stroke="white"/>
-
-  <!-- RETURN PATH -->
-  <line x1="300" y1="145" x2="110" y2="145" stroke="white"/>
-
-  <!-- LABELS -->
-  <text x="180" y="20" class="label">4–20 mA Signal</text>
-  <text x="165" y="165" class="label">Return Path (0V)</text>
-
-</svg>
-
-<div class="card">
-  <div class="title">Real Field Example</div>
-  <p>Range: 0–100 psi</p>
-  <ul>
-    <li>4 mA → 0 psi</li>
-    <li>12 mA → 50 psi</li>
-    <li>20 mA → 100 psi</li>
-  </ul>
-</div>
-
-<div class="card">
-  <div class="title">Quick Formula</div>
-  <p>% = (mA - 4) / 16 × 100</p>
-</div>
-
-<div class="card">
-  <div class="title">Common Mistakes</div>
-  <ul>
-    <li class="bad">Thinking 0 mA = 0% ❌</li>
-    <li class="bad">Forgetting scaling ❌</li>
-    <li class="good">Always verify LRV / URV ✅</li>
-  </ul>
-</div>
-
-<div class="card">
-  <div class="title">Field Tip</div>
-  <p>
-    12 mA = 50% every time.  
-    Doesn’t matter what the units are.
-  </p>
-</div>
-
-<div class="card">
-  <button onclick="location.href='./jrtech.html'">← Back</button>
+  <button onclick="location.href='./index.html'">← Back</button>
 </div>
 
 </main>
