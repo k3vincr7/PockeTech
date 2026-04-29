@@ -2,55 +2,182 @@
 <html lang="en" data-theme="auto">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>PockeTech — 4–20 mA Guide</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PockeTech — 4–20 mA Basics</title>
+
 <style>
-:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff}
-html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;background:var(--bg);color:var(--fg)}
-main{padding:14px;max-width:900px;margin:auto}
-.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px}
-.title{font-size:20px;font-weight:800}
-.muted{color:var(--muted)}
-.tap{cursor:pointer}
-.info{margin-top:10px;padding:10px;border-radius:12px;background:var(--tile);border:1px solid var(--border)}
-svg{width:100%;margin-top:10px}
+:root{
+  --bg:#0f1115;
+  --fg:#fff;
+  --card:#151922;
+  --border:#2a2f3a;
+  --muted:#a0a0a0;
+  --tile:#202838;
+}
+body{
+  margin:0;
+  font-family:system-ui;
+  background:var(--bg);
+  color:var(--fg);
+}
+main{
+  padding:14px;
+  max-width:900px;
+  margin:auto;
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:14px;
+}
+.title{
+  font-size:20px;
+  font-weight:800;
+}
+.muted{
+  color:var(--muted);
+}
+
+svg{
+  width:100%;
+  margin-top:10px;
+}
+
+.label{
+  font-size:12px;
+  fill:white;
+}
+
+.note{
+  margin-top:10px;
+  padding:12px;
+  border-radius:12px;
+  background:var(--tile);
+  font-size:14px;
+}
+
+.good{color:#22c55e;}
+.bad{color:#ef4444;}
+
+button{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--tile);
+  color:var(--fg);
+}
 </style>
 </head>
+
 <body>
+
 <main>
 
 <div class="card">
-  <div class="title">📈 Interactive Loop Diagram</div>
-  <p class="muted">Tap each component to learn what it does.</p>
-
-  <svg viewBox="0 0 400 180">
-    <rect class="tap" onclick="showInfo('power')" x="10" y="60" width="80" height="60" stroke="currentColor" fill="none"/>
-    <text x="20" y="95">24V</text>
-
-    <rect class="tap" onclick="showInfo('tx')" x="130" y="20" width="100" height="60" stroke="currentColor" fill="none"/>
-    <text x="150" y="55">TX</text>
-
-    <rect class="tap" onclick="showInfo('plc')" x="280" y="60" width="100" height="60" stroke="currentColor" fill="none"/>
-    <text x="300" y="95">PLC</text>
-
-    <line x1="90" y1="90" x2="130" y2="50" stroke="currentColor"/>
-    <line x1="230" y1="50" x2="280" y2="90" stroke="currentColor"/>
-    <line x1="280" y1="120" x2="90" y2="120" stroke="currentColor"/>
-  </svg>
-
-  <div id="infoBox" class="info">Tap something above 👆</div>
+  <div class="title">📈 4–20 mA Basics</div>
+  <p class="muted">Simple, real-world explanation for field use.</p>
 </div>
 
-<script>
-function showInfo(type){
-  const box=document.getElementById('infoBox');
-  if(type==='power') box.innerHTML='🔋 Supplies 24V to drive the loop current.';
-  if(type==='tx') box.innerHTML='🎛️ Transmitter controls the 4–20 mA signal based on measurement.';
-  if(type==='plc') box.innerHTML='🧠 PLC reads the current and converts it into a value.';
-}
-</script>
+<div class="card">
+  <div class="title">What is 4–20 mA?</div>
+  <p>A current signal used to represent a measurement.</p>
+  <ul>
+    <li>4 mA = 0%</li>
+    <li>20 mA = 100%</li>
+  </ul>
+</div>
+
+<div class="card">
+  <div class="title">Loop Diagram (Real Setup)</div>
+
+  <svg viewBox="0 0 420 220">
+
+    <!-- POWER SUPPLY -->
+    <rect x="10" y="80" width="100" height="70" stroke="white" fill="none"/>
+    <text x="20" y="105" class="label">24V DC</text>
+    <text x="20" y="125" class="label">Supply</text>
+    <text x="90" y="95" class="label">+</text>
+    <text x="90" y="145" class="label">–</text>
+
+    <!-- TRANSMITTER -->
+    <rect x="160" y="30" width="120" height="70" stroke="white" fill="none"/>
+    <text x="175" y="60" class="label">Transmitter</text>
+    <text x="175" y="80" class="label">(TX)</text>
+    <text x="150" y="50" class="label">+</text>
+    <text x="280" y="50" class="label">–</text>
+
+    <!-- PLC -->
+    <rect x="300" y="80" width="110" height="70" stroke="white" fill="none"/>
+    <text x="315" y="110" class="label">PLC / DCS</text>
+    <text x="315" y="130" class="label">(AI Card)</text>
+    <text x="290" y="95" class="label">+</text>
+    <text x="290" y="145" class="label">–</text>
+
+    <!-- WIRES -->
+    <line x1="110" y1="95" x2="160" y2="50" stroke="white"/>
+    <line x1="280" y1="50" x2="300" y2="95" stroke="white"/>
+    <line x1="300" y1="145" x2="110" y2="145" stroke="white"/>
+
+    <!-- LABELS -->
+    <text x="180" y="20" class="label">4–20 mA Signal</text>
+    <text x="165" y="165" class="label">Return Path (0V)</text>
+
+  </svg>
+
+  <div class="note">
+    🔋 Power supply provides 24V to drive the loop<br><br>
+
+    🎛️ Transmitter (TX) controls the current (4–20 mA)<br>
+    based on the process variable<br><br>
+
+    🧠 PLC / DCS reads the current and converts it<br>
+    into engineering units (psi, level, flow, etc.)<br><br>
+
+    🔁 Current must return to the power supply to complete the loop
+  </div>
+
+</div>
+
+<div class="card">
+  <div class="title">Real Field Example</div>
+  <p>Range: 0–100 psi</p>
+  <ul>
+    <li>4 mA → 0 psi</li>
+    <li>12 mA → 50 psi</li>
+    <li>20 mA → 100 psi</li>
+  </ul>
+</div>
+
+<div class="card">
+  <div class="title">Quick Formula</div>
+  <p>% = (mA - 4) / 16 × 100</p>
+</div>
+
+<div class="card">
+  <div class="title">Common Mistakes</div>
+  <ul>
+    <li class="bad">Thinking 0 mA = 0% ❌</li>
+    <li class="bad">Forgetting scaling ❌</li>
+    <li class="good">Always verify LRV / URV ✅</li>
+  </ul>
+</div>
+
+<div class="card">
+  <div class="title">Field Tip</div>
+  <p>
+    12 mA = 50% every time.  
+    Doesn’t matter what the units are.
+  </p>
+</div>
+
+<div class="card">
+  <button onclick="location.href='./jrtech.html'">← Back</button>
+</div>
 
 </main>
+
 </body>
 </html>
