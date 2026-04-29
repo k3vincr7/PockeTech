@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PockeTech — Control Valve Test</title>
+<title>PockeTech — Control Valve (AO)</title>
 
 <style>
 :root{
@@ -90,14 +90,14 @@ ul{
 
 <div class="card">
   <div class="title">⚙️ Control Valve (AO)</div>
-  <div class="subtitle">Test version — signal → air → movement</div>
+  <div class="subtitle">How a signal actually moves a valve</div>
 </div>
 
 <div class="card">
   <div class="title">What is happening?</div>
   <p>
     A control valve does NOT move from electricity directly.
-    It moves using air, controlled by a signal.
+    It moves using air, controlled by a 4–20 mA signal.
   </p>
 </div>
 
@@ -127,31 +127,89 @@ ul{
 </div>
 
 <div class="card">
+  <div class="title">Valve Action (ATO vs ATC)</div>
+
+  <div class="note">
+    🔼 <span class="highlight">Air-To-Open (ATO)</span><br>
+    Air pressure OPENS the valve<br>
+    No air → valve CLOSES (fail closed)
+  </div>
+
+  <div class="note">
+    🔽 <span class="highlight">Air-To-Close (ATC)</span><br>
+    Air pressure CLOSES the valve<br>
+    No air → valve OPENS (fail open)
+  </div>
+
+</div>
+
+<div class="card">
+  <div class="title">Fail States (What happens when things go wrong)</div>
+
+  <div class="note">
+    ❌ <span class="highlight">Loss of Air</span><br>
+    Valve goes to its fail position (open or closed)
+  </div>
+
+  <div class="note">
+    ❌ <span class="highlight">Loss of Signal (4–20 mA)</span><br>
+    Valve may fail or hold position depending on configuration
+  </div>
+
+  <div class="note">
+    ❌ <span class="highlight">Positioner Failure</span><br>
+    Valve may stop responding or drift
+  </div>
+
+  <div class="note">
+    ❌ <span class="highlight">Air Regulator / Tubing Issue</span><br>
+    Weak or no movement even with correct signal
+  </div>
+
+</div>
+
+<div class="card">
   <div class="title">Real Field Example</div>
   <ul>
-    <li>4 mA → Closed</li>
-    <li>12 mA → Half Open</li>
-    <li>20 mA → Fully Open</li>
+    <li>4 mA → Closed (or Open depending on valve action)</li>
+    <li>12 mA → 50% Position</li>
+    <li>20 mA → Fully Open (or Closed depending on setup)</li>
   </ul>
 </div>
 
 <div class="card">
-  <div class="title">Common Mistakes</div>
-  <ul>
-    <li class="bad">Thinking signal moves valve ❌</li>
-    <li class="bad">Ignoring air system ❌</li>
-    <li class="good">Air is the muscle ✅</li>
-  </ul>
+  <div class="title">Quick Troubleshooting</div>
+
+  <div class="note">
+    ⚠️ Signal is changing but valve NOT moving<br>
+    → Check air supply FIRST
+  </div>
+
+  <div class="note">
+    ⚠️ Valve stuck in one position<br>
+    → Check positioner or linkage
+  </div>
+
+  <div class="note">
+    ⚠️ Valve moving backwards<br>
+    → Signal reversed OR wrong valve action (ATO vs ATC)
+  </div>
+
+  <div class="note">
+    ⚠️ Slow or weak movement<br>
+    → Check regulator, tubing, or air pressure
+  </div>
+
 </div>
 
 <div class="card">
   <div class="title">Field Tip</div>
   <p>
-    No air = no movement. Always check supply, regulator, and tubing first.
+    No air = no movement. Always check air before touching the signal.
   </p>
 </div>
 
-<div class="back" onclick="history.back()">
+<div class="back" onclick="location.href='./jrtech.html'">
   ← Back
 </div>
 
