@@ -3,15 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Loop Log</title>
+<title>PockeTech — Loop Log</title>
 
 <style>
-/* FORCE RESET (fix your app conflicts) */
-{
-  box-sizing:border-box;
-}
-
-/ PAGE /
+/* MINIMAL SAFE STYLES (won’t fight your app) /
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
@@ -25,8 +20,7 @@ main{
   margin:auto;
 }
 
-/ SECTION /
-.section{
+.card{
   background:#fff;
   border:1px solid #d6dbe3;
   border-radius:16px;
@@ -34,28 +28,15 @@ main{
   margin-bottom:14px;
 }
 
-/ TITLE /
 .title{
   font-size:18px;
   font-weight:700;
 }
 
-/ NOTE /
-.note{
+.muted{
   font-size:13px;
   color:#666;
-  margin-top:6px;
-}
-
-/ GRID (FIXED) */
-.row{
-  display:flex;
-  gap:10px;
-  margin-top:10px;
-}
-
-.row > {
-  flex:1;
+  margin-top:4px;
 }
 
 / INPUTS /
@@ -65,20 +46,23 @@ input, select, textarea{
   border-radius:10px;
   border:1px solid #d6dbe3;
   font-size:14px;
+  margin-top:10px;
+  box-sizing:border-box;
 }
 
 / BUTTONS /
-.btn{
+button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:12px;
+  border:none;
   background:#2d6cdf;
   color:white;
-  border:none;
-  border-radius:12px;
-  padding:12px;
   font-weight:600;
-  width:100%;
 }
 
-.btn.secondary{
+.secondary{
   background:#e5e9f2;
   color:#000;
 }
@@ -94,9 +78,6 @@ input, select, textarea{
   flex:1;
   padding:10px;
   border-radius:10px;
-  border:none;
-  background:#2d6cdf;
-  color:white;
 }
 
 / TABLE /
@@ -107,16 +88,15 @@ table{
 }
 
 th, td{
-  border-bottom:1px solid #eee;
   padding:6px;
   font-size:12px;
+  border-bottom:1px solid #eee;
   text-align:left;
 }
 
 / BACK /
 .back{
   text-align:center;
-  margin-top:10px;
   padding:12px;
   border-radius:12px;
   border:1px solid #ccc;
@@ -128,24 +108,18 @@ th, td{
 
 <main>
 
-<div class="section">
+<!-- HEADER -->
+<div class="card">
   <div class="title">🔁 Loop Log</div>
-  <div class="note">Field → Wiring → I/O → DCS → Final Element</div>
+  <div class="muted">Field → Wiring → I/O → DCS → Final Element</div>
 </div>
 
-<!-- CALC -->
-<div class="section">
+<!-- QUICK CALC -->
+<div class="card">
   <div class="title">⚡ 4–20 mA Quick Calc</div>
 
-  <div class="row">
-    <input id="lrv" placeholder="LRV">
-    <input id="urv" placeholder="URV">
-  </div>
-
-  <div class="row">
-    <input id="pct" placeholder="%">
-    <input id="ma" placeholder="mA">
-  </div>
+  <input id="pct" placeholder="%">
+  <input id="ma" placeholder="mA">
 
   <div class="steps">
     <button onclick="step(0)">0%</button>
@@ -154,82 +128,82 @@ th, td{
     <button onclick="step(75)">75%</button>
     <button onclick="step(100)">100%</button>
   </div>
-
 </div>
 
 <!-- ENTRY -->
-<div class="section">
+<div class="card">
 
-<input id="date" type="date">
-<input id="tag" placeholder="Tag (PT-101)">
+  <input id="date" type="date">
+  <input id="tag" placeholder="Tag (PT-101)">
 
-<div class="row">
   <input id="output" placeholder="Output (what you send)">
   <input id="indicated" placeholder="Indicated (what system reads)">
-</div>
 
-<select id="status">
-  <option>PASS</option>
-  <option>FAIL</option>
-</select>
+  <select id="status">
+    <option>PASS</option>
+    <option>FAIL</option>
+  </select>
 
-<textarea id="notes" placeholder="Notes"></textarea>
+  <textarea id="notes" placeholder="Notes"></textarea>
 
-<div class="row">
-  <button class="btn" onclick="addEntry()">+ Add Entry</button>
-  <button class="btn secondary" onclick="clearAll()">Clear</button>
-</div>
+  <button onclick="addEntry()">+ Add Entry</button>
+  <button class="secondary" onclick="clearAll()">Clear All</button>
 
 </div>
 
 <!-- TABLE -->
-<div class="section">
-<table>
-<thead>
-<tr>
-<th>Date</th>
-<th>Tag</th>
-<th>Out</th>
-<th>Ind</th>
-<th>Status</th>
-</tr>
-</thead>
-<tbody id="log"></tbody>
-</table>
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Tag</th>
+        <th>Out</th>
+        <th>Ind</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="log"></tbody>
+  </table>
 </div>
 
-<div class="back" onclick="location.href='./index.html'">
-← Back
+<!-- BACK -->
+<div class="card back" onclick="location.href='./index.html'">
+  ← Back
 </div>
 
 </main>
 
 <script>
 
+/ AUTO DATE /
 document.getElementById("date").valueAsDate = new Date();
 
+/ STORAGE /
 let logs = JSON.parse(localStorage.getItem("loopLogs") || "[]");
 
 function save(){
   localStorage.setItem("loopLogs", JSON.stringify(logs));
 }
 
+/ RENDER /
 function render(){
   const table = document.getElementById("log");
   table.innerHTML = "";
 
   logs.forEach(l=>{
-    table.innerHTML +=      <tr>       <td>${l.date}</td>       <td>${l.tag}</td>       <td>${l.output}</td>       <td>${l.indicated}</td>       <td>${l.status}</td>     </tr>;
+    table.innerHTML +=       <tr>         <td>${l.date}</td>         <td>${l.tag}</td>         <td>${l.output}</td>         <td>${l.indicated}</td>         <td>${l.status}</td>       </tr>    ;
   });
 }
 
+/ ADD ENTRY /
 function addEntry(){
   const entry = {
-    date: date.value,
-    tag: tag.value,
-    output: output.value,
-    indicated: indicated.value,
-    status: status.value
+    date: document.getElementById("date").value,
+    tag: document.getElementById("tag").value,
+    output: document.getElementById("output").value,
+    indicated: document.getElementById("indicated").value,
+    status: document.getElementById("status").value
   };
 
   if(!entry.tag){
@@ -241,27 +215,30 @@ function addEntry(){
   save();
   render();
 
-  tag.value="";
-  output.value="";
-  indicated.value="";
-  notes.value="";
+  document.getElementById("tag").value="";
+  document.getElementById("output").value="";
+  document.getElementById("indicated").value="";
+  document.getElementById("notes").value="";
 }
 
-/ CALC */
-
-function step(p){
-  pct.value = p;
-  const m = 4 + (p/100)*16;
-  ma.value = m.toFixed(2);
-
-  output.value = m.toFixed(2) + " mA";
-  indicated.value = p + " %";
-}
-
+/ CLEAR /
 function clearAll(){
-  logs=[];
-  save();
-  render();
+  if(confirm("Clear all logs?")){
+    logs=[];
+    save();
+    render();
+  }
+}
+
+/ CALC + AUTO FILL */
+function step(p){
+  document.getElementById("pct").value = p;
+
+  const m = 4 + (p/100)*16;
+  document.getElementById("ma").value = m.toFixed(2);
+
+  document.getElementById("output").value = m.toFixed(2) + " mA";
+  document.getElementById("indicated").value = p + " %";
 }
 
 render();
