@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PockeTech — Level (DP)</title>
+
+<style>
+:root{
+  --bg:#f6f8fc;
+  --fg:#0c1116;
+  --muted:#5a6572;
+  --tile:#ffffff;
+  --border:#d6dbe3;
+  --radius:18px;
+}
+
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:radial-gradient(circle at top,#e9eef7,#f6f8fc 50%);
+  color:var(--fg);
+}
+
+main{
+  padding:14px;
+  max-width:960px;
+  margin:auto;
+}
+
+.card{
+  background:var(--tile);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px;
+  margin-bottom:14px;
+}
+
+.title{
+  font-size:22px;
+  font-weight:800;
+}
+
+.subtitle{
+  color:var(--muted);
+  margin-top:4px;
+}
+
+.note{
+  margin-top:10px;
+  padding:14px;
+  border-radius:14px;
+  background:#eef2f7;
+  font-size:15px;
+  line-height:1.4;
+}
+
+ul{
+  padding-left:18px;
+}
+
+.highlight{
+  font-weight:700;
+}
+
+.bad{
+  color:#dc2626;
+  font-weight:600;
+}
+
+.good{
+  color:#16a34a;
+  font-weight:600;
+}
+
+.back{
+  padding:16px;
+  border-radius:18px;
+  background:var(--tile);
+  border:1px solid var(--border);
+  text-align:center;
+  font-weight:600;
+}
+</style>
+</head>
+
+<body>
+
+<main>
+
+<div class="card">
+  <div class="title">🫙 Level (DP)</div>
+  <div class="subtitle">How differential pressure measures level</div>
+</div>
+
+<div class="card">
+  <div class="title">The Core Idea</div>
+  <p>
+    Level is measured using pressure.  
+    The more liquid above a point, the more pressure it creates.
+  </p>
+</div>
+
+<div class="card">
+  <div class="title">How it Actually Works</div>
+
+  <div class="note">
+    ⬇️ <span class="highlight">High Side (Bottom Tap)</span><br>
+    Sees pressure from liquid height
+  </div>
+
+  <div class="note">
+    ⬆️ <span class="highlight">Low Side (Top Tap)</span><br>
+    Used as reference (atmosphere or vapor space)
+  </div>
+
+  <div class="note">
+    ⚖️ <span class="highlight">DP Transmitter</span><br>
+    Measures difference between high and low pressure
+  </div>
+
+</div>
+
+<div class="card">
+  <div class="title">Open Tank</div>
+
+  <div class="note">
+    🌬️ Top is open to atmosphere<br>
+    Low side = atmosphere<br>
+    Only liquid height affects measurement
+  </div>
+
+  <ul>
+    <li>More level → more pressure → higher reading</li>
+    <li>Simple setup</li>
+  </ul>
+
+</div>
+
+<div class="card">
+  <div class="title">Closed Tank</div>
+
+  <div class="note">
+    🔒 Tank is pressurized<br>
+    Low side connected to vapor space<br>
+    Cancels out tank pressure
+  </div>
+
+  <ul>
+    <li>Measures only liquid level, not tank pressure</li>
+  </ul>
+
+</div>
+
+<div class="card">
+  <div class="title">Wet Leg vs Dry Leg</div>
+
+  <div class="note">
+    💧 <span class="highlight">Wet Leg</span><br>
+    Low side is filled with liquid (constant head pressure)<br>
+    Used when vapor may condense
+  </div>
+
+  <div class="note">
+    🌫️ <span class="highlight">Dry Leg</span><br>
+    Low side stays dry (gas only)<br>
+    Simpler but sensitive to condensation
+  </div>
+
+</div>
+
+<div class="card">
+  <div class="title">Real Field Behavior</div>
+
+  <ul>
+    <li>Higher level → higher DP</li>
+    <li>Wet leg adds constant offset</li>
+    <li>Wrong setup = wrong reading</li>
+  </ul>
+
+</div>
+
+<div class="card">
+  <div class="title">Common Problems</div>
+
+  <div class="note">
+    ❌ Plugged impulse line<br>
+    → Reading stuck or slow
+  </div>
+
+  <div class="note">
+    ❌ Wet leg lost fluid<br>
+    → Reading shifts or becomes inaccurate
+  </div>
+
+  <div class="note">
+    ❌ Condensation in dry leg<br>
+    → False level reading
+  </div>
+
+  <div class="note">
+    ❌ Transmitter mounted too low<br>
+    → Offset error
+  </div>
+
+</div>
+
+<div class="card">
+  <div class="title">Quick Troubleshooting</div>
+
+  <div class="note">
+    ⚠️ Level not changing<br>
+    → Check for plugged lines
+  </div>
+
+  <div class="note">
+    ⚠️ Reading drifting<br>
+    → Check wet leg / condensation
+  </div>
+
+  <div class="note">
+    ⚠️ Reading too high or low<br>
+    → Check reference side setup
+  </div>
+
+</div>
+
+<div class="card">
+  <div class="title">Field Tip</div>
+  <p>
+    Always ask: What is on the high side? What is on the low side?
+    That tells you everything.
+  </p>
+</div>
+
+<div class="back" onclick="location.href='./jrtech.html'">
+  ← Back
+</div>
+
+</main>
+
+</body>
