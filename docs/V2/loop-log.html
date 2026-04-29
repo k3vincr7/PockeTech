@@ -12,14 +12,14 @@
   --muted:#5a6572;
   --tile:#ffffff;
   --border:#d6dbe3;
-  --accent:#1f6bff;
-  --radius:18px;
+  --accent:#2d6cdf;
+  --radius:16px;
 }
 
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
-  background:radial-gradient(circle at top,#e9eef7,#f6f8fc);
+  background:var(--bg);
   color:var(--fg);
 }
 
@@ -29,6 +29,7 @@ main{
   margin:auto;
 }
 
+/* CARDS /
 .card{
   background:var(--tile);
   border:1px solid var(--border);
@@ -50,17 +51,30 @@ main{
   font-size:14px;
 }
 
+/ GRID FIX (THIS FIXES YOUR LAYOUT ISSUE) /
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.full{
+  grid-column:1 / -1;
+}
+
+/ INPUTS /
 input, select, textarea{
   width:100%;
   padding:12px;
-  margin-top:8px;
   border-radius:10px;
   border:1px solid var(--border);
+  font-size:14px;
+  box-sizing:border-box;
 }
 
+/ BUTTONS /
 button{
-  margin-top:10px;
-  padding:12px;
+  padding:14px;
   width:100%;
   border-radius:12px;
   border:none;
@@ -74,13 +88,17 @@ button{
   color:#000;
 }
 
-.row{
-  display:flex;
-  gap:10px;
+/ TABLE /
+table{
+  width:100%;
+  border-collapse:collapse;
 }
 
-.col{
-  flex:1;
+th, td{
+  border-bottom:1px solid var(--border);
+  padding:8px;
+  font-size:13px;
+  text-align:left;
 }
 
 .back{
@@ -88,18 +106,6 @@ button{
   text-align:center;
   border-radius:14px;
   border:1px solid var(--border);
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:10px;
-}
-
-th, td{
-  border-bottom:1px solid var(--border);
-  padding:8px;
-  font-size:13px;
 }
 </style>
 </head>
@@ -117,53 +123,52 @@ th, td{
 <details class="card">
 <summary><strong>⚡ 4–20 mA Quick Calc</strong></summary>
 
-<div class="row">
-  <div class="col"><input id="lrv" placeholder="LRV"></div>
-  <div class="col"><input id="urv" placeholder="URV"></div>
+<div class="grid">
+  <input id="lrv" placeholder="LRV">
+  <input id="urv" placeholder="URV">
+
+  <input id="pct" placeholder="%">
+  <input id="ma" placeholder="mA">
+  <input id="eu" placeholder="EU" class="full">
 </div>
 
-<div class="row">
-  <div class="col"><input id="pct" placeholder="%"></div>
-  <div class="col"><input id="ma" placeholder="mA"></div>
-  <div class="col"><input id="eu" placeholder="EU"></div>
+<div class="grid" style="margin-top:10px">
+  <button onclick="fromPct()">From %</button>
+  <button onclick="fromMa()">From mA</button>
 </div>
 
-<div class="row">
-  <div class="col"><button onclick="fromPct()">From %</button></div>
-  <div class="col"><button onclick="fromMa()">From mA</button></div>
-</div>
-
-<div class="row">
-  <div class="col"><button onclick="step(0)">0%</button></div>
-  <div class="col"><button onclick="step(25)">25%</button></div>
-  <div class="col"><button onclick="step(50)">50%</button></div>
-  <div class="col"><button onclick="step(75)">75%</button></div>
-  <div class="col"><button onclick="step(100)">100%</button></div>
+<div class="grid" style="margin-top:10px">
+  <button onclick="step(0)">0%</button>
+  <button onclick="step(25)">25%</button>
+  <button onclick="step(50)">50%</button>
+  <button onclick="step(75)">75%</button>
+  <button onclick="step(100)">100%</button>
 </div>
 
 </details>
 
-<!-- LOOP ENTRY -->
+<!-- ENTRY -->
 <div class="card">
 
-<input id="date" type="date">
-<input id="tag" placeholder="Tag">
-<input id="point" placeholder="AI / AO / DI / DO">
+<div class="grid">
+  <input id="date" type="date" class="full">
+  <input id="tag" placeholder="Tag (PT-101)" class="full">
 
-<div class="row">
-  <div class="col"><input id="field" placeholder="Field"></div>
-  <div class="col"><input id="dcs" placeholder="DCS"></div>
+  <input id="field" placeholder="Output (what you send)">
+  <input id="dcs" placeholder="Indicated (what system reads)">
+
+  <select id="status" class="full">
+    <option>PASS</option>
+    <option>FAIL</option>
+  </select>
+
+  <textarea id="notes" placeholder="Notes" class="full"></textarea>
 </div>
 
-<select id="status">
-  <option>PASS</option>
-  <option>FAIL</option>
-</select>
-
-<textarea id="notes" placeholder="Notes"></textarea>
-
-<button onclick="addEntry()">+ Add Entry</button>
-<button class="secondary" onclick="clearAll()">Clear All</button>
+<div class="grid" style="margin-top:10px">
+  <button onclick="addEntry()">+ Add Entry</button>
+  <button class="secondary" onclick="clearAll()">Clear All</button>
+</div>
 
 </div>
 
@@ -172,7 +177,11 @@ th, td{
   <table>
     <thead>
       <tr>
-        <th>Date</th><th>Tag</th><th>Point</th><th>Field</th><th>DCS</th><th>Status</th>
+        <th>Date</th>
+        <th>Tag</th>
+        <th>Output</th>
+        <th>Indicated</th>
+        <th>Status</th>
       </tr>
     </thead>
     <tbody id="log"></tbody>
@@ -187,63 +196,99 @@ th, td{
 
 <script>
 
+// AUTO DATE
 document.getElementById("date").valueAsDate = new Date();
 
-let logs = JSON.parse(localStorage.getItem("loopLogs")||"[]");
+// STORAGE
+let logs = JSON.parse(localStorage.getItem("loopLogs") || "[]");
 
-function save(){localStorage.setItem("loopLogs",JSON.stringify(logs));}
+function save(){
+  localStorage.setItem("loopLogs", JSON.stringify(logs));
+}
 
+// RENDER TABLE
 function render(){
-  const t=document.getElementById("log");
-  t.innerHTML="";
+  const table = document.getElementById("log");
+  table.innerHTML = "";
+
   logs.forEach(l=>{
-    t.innerHTML+=<tr>     <td>${l.date}</td>     <td>${l.tag}</td>     <td>${l.point}</td>     <td>${l.field}</td>     <td>${l.dcs}</td>     <td>${l.status}</td>     </tr>;
+    table.innerHTML +=       <tr>         <td>${l.date}</td>         <td>${l.tag}</td>         <td>${l.output}</td>         <td>${l.indicated}</td>         <td>${l.status}</td>       </tr>    ;
   });
 }
 
+// ADD ENTRY
 function addEntry(){
-  const entry={
-    date:date.value,
-    tag:tag.value,
-    point:point.value,
-    field:field.value,
-    dcs:dcs.value,
-    status:status.value
+  const entry = {
+    date: document.getElementById("date").value,
+    tag: document.getElementById("tag").value,
+    output: document.getElementById("field").value,
+    indicated: document.getElementById("dcs").value,
+    status: document.getElementById("status").value
   };
+
+  if(!entry.tag){
+    alert("Enter a tag");
+    return;
+  }
+
   logs.push(entry);
   save();
   render();
+
+  document.getElementById("tag").value = "";
+  document.getElementById("field").value = "";
+  document.getElementById("dcs").value = "";
+  document.getElementById("notes").value = "";
 }
 
+// CLEAR
 function clearAll(){
-  logs=[];
-  save();
-  render();
+  if(confirm("Clear all logs?")){
+    logs = [];
+    save();
+    render();
+  }
 }
 
-/* ===== CALC ===== */
+/ CALC */
 
 function fromPct(){
-  let p=parseFloat(pct.value);
-  ma.value=4+(p/100)*16;
+  const p = parseFloat(document.getElementById("pct").value);
+  if(isNaN(p)) return;
+
+  const m = 4 + (p/100)*16;
+  document.getElementById("ma").value = m.toFixed(2);
+
   autoFill();
 }
 
 function fromMa(){
-  let m=parseFloat(ma.value);
-  pct.value=((m-4)/16)100;
+  const m = parseFloat(document.getElementById("ma").value);
+  if(isNaN(m)) return;
+
+  const p = ((m-4)/16)100;
+  document.getElementById("pct").value = p.toFixed(1);
+
   autoFill();
 }
 
 function step(v){
-  pct.value=v;
+  document.getElementById("pct").value = v;
   fromPct();
 }
 
-/ AUTO FILL INTO LOG */
+/ AUTO FILL */
 function autoFill(){
-  field.value = ma.value + " mA";
-  dcs.value = pct.value + " %";
+  const ma = document.getElementById("ma").value;
+  const pct = document.getElementById("pct").value;
+
+  if(ma){
+    document.getElementById("field").value = ma + " mA";
+  }
+
+  if(pct){
+    document.getElementById("dcs").value = pct + " %";
+  }
 }
 
 render();
