@@ -14,23 +14,43 @@ main{padding:14px;max-width:900px;margin:auto}
 .muted{color:var(--muted)}
 .good{color:#22c55e}
 .bad{color:#ef4444}
+.bar{height:12px;background:var(--tile);border-radius:8px;overflow:hidden;margin-top:8px}
+.fill{height:100%;background:var(--accent)}
 button{padding:12px;border-radius:12px;border:1px solid var(--border);background:var(--tile);color:var(--fg);font-weight:600}
+svg{width:100%;height:auto;margin-top:10px}
 </style>
 </head>
 <body>
 <main>
+
 <div class="card">
   <div class="title">📈 4–20 mA Basics</div>
   <p class="muted">This is the foundation of instrumentation. If you understand this, you're ahead of most techs.</p>
 </div>
+
 <div class="card">
-  <div class="title">What is 4–20 mA?</div>
-  <p>It’s a signal used to represent a measurement.</p>
-  <ul>
-    <li>4 mA = 0%</li>
-    <li>20 mA = 100%</li>
-  </ul>
+  <div class="title">Visual (Signal vs %)</div>
+  <p class="muted">This shows how mA relates to % of process.</p>
+  <div class="bar"><div class="fill" style="width:0%"></div></div>
+  <p>4 mA → 0%</p>
+  <div class="bar"><div class="fill" style="width:50%"></div></div>
+  <p>12 mA → 50%</p>
+  <div class="bar"><div class="fill" style="width:100%"></div></div>
+  <p>20 mA → 100%</p>
 </div>
+
+<div class="card">
+  <div class="title">Loop Diagram</div>
+  <svg viewBox="0 0 300 150">
+    <rect x="10" y="40" width="80" height="60" rx="10" stroke="currentColor" fill="none"/>
+    <text x="20" y="75" font-size="12">TX</text>
+    <line x1="90" y1="70" x2="200" y2="70" stroke="currentColor"/>
+    <rect x="200" y="40" width="80" height="60" rx="10" stroke="currentColor" fill="none"/>
+    <text x="210" y="75" font-size="12">PLC</text>
+    <text x="110" y="60" font-size="10">4–20 mA</text>
+  </svg>
+</div>
+
 <div class="card">
   <div class="title">Real Field Example</div>
   <p>Range: 0–100 psi</p>
@@ -40,10 +60,12 @@ button{padding:12px;border-radius:12px;border:1px solid var(--border);background
     <li>20 mA → 100 psi</li>
   </ul>
 </div>
+
 <div class="card">
   <div class="title">Quick Formula</div>
   <p>% = (mA - 4) / 16 × 100</p>
 </div>
+
 <div class="card">
   <div class="title">Common Mistakes</div>
   <ul>
@@ -52,13 +74,16 @@ button{padding:12px;border-radius:12px;border:1px solid var(--border);background
     <li class="good">Always verify LRV / URV ✅</li>
   </ul>
 </div>
+
 <div class="card">
   <div class="title">Field Tip</div>
   <p>12 mA = 50% every time. Doesn’t matter the units.</p>
 </div>
+
 <div class="card">
   <button onclick="location.href='./jrtech.html'">← Back</button>
 </div>
+
 </main>
 </body>
 </html>
