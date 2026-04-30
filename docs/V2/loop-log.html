@@ -1,3 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PockeTech — Loop Log</title>
+
+<style>
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+  background:#f6f8fc;
+}
+
+main{
+  max-width:700px;
+  margin:auto;
+  padding:16px;
+}
+
+.card{
+  background:white;
+  border-radius:16px;
+  padding:14px;
+  margin-bottom:14px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.05);
+}
+
+h2{margin:0 0 6px 0;}
+h3{margin:0 0 10px 0;}
+
+.row{
+  display:flex;
+  gap:10px;
+  margin-top:8px;
+}
+
+.row input, .row select{
+  flex:1;
+}
+
+input, select{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  font-size:14px;
+}
+
+button{
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:#2d6cdf;
+  color:white;
+  font-weight:600;
+}
+
+.btn{
+  flex:1;
+}
+
+.small-btn{
+  padding:8px;
+  font-size:12px;
+}
+
+.steps{
+  display:flex;
+  gap:6px;
+  margin-top:8px;
+}
+
+.steps button{
+  flex:1;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+
+th,td{
+  padding:6px;
+  border-bottom:1px solid #eee;
+}
+
+.pass{color:green;}
+.fail{color:red;}
+
+.back{
+  text-align:center;
+  padding:12px;
+  border-radius:12px;
+  background:#eee;
+}
+</style>
+</head>
+
+<body>
+
+<main>
+
+<div class="card">
+  <h2>🔁 Loop Log</h2>
+  <div>Field → Wiring → I/O → DCS → Final Element</div>
+</div>
+
+<!-- QUICK CALC -->
+<div class="card">
+  <h3>⚡ 4–20 mA Quick Calc</h3>
+
+  <div class="row">
+    <input id="pct" placeholder="%">
+    <input id="ma" placeholder="mA">
+  </div>
+
+  <div class="steps">
+    <button onclick="step(0)">0%</button>
+    <button onclick="step(25)">25%</button>
+    <button onclick="step(50)">50%</button>
+    <button onclick="step(75)">75%</button>
+    <button onclick="step(100)">100%</button>
+  </div>
+</div>
+
+<!-- SNAPSHOT -->
+<div class="card">
+  <h3>📊 Device Snapshot</h3>
+
+  <div class="row">
+    <input id="lrv" placeholder="LRV">
+    <input id="urv" placeholder="URV">
+  </div>
+
+  <div class="row">
+    <input id="devRange" placeholder="Device Range">
+    <input id="devModel" placeholder="Model">
+  </div>
+</div>
+
+<!-- ENTRY -->
+<div class="card">
+  <h3>Add Entry</h3>
+
+  <div class="row">
+    <input id="date" type="date">
+    <input id="tag" placeholder="Tag">
+    <input id="point" placeholder="Point">
+  </div>
+
+  <div class="row">
+    <select id="status">
+      <option value="PASS">PASS</option>
+      <option value="FAIL">FAIL</option>
+    </select>
+
+    <input id="notes" placeholder="Notes">
+  </div>
+
+  <div class="row">
+    <button class="btn" onclick="add()">+ Add</button>
+    <button class="btn" onclick="exportCSV()">Export</button>
+    <button class="btn" onclick="clearAll()">Clear</button>
+  </div>
+
+  <div style="margin-top:10px;">
+    <span id="pass">Pass: 0</span>
+    <span id="fail" style="margin-left:10px;">Fail: 0</span>
+  </div>
+</div>
+
+<!-- TABLE -->
+<div class="card">
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Tag</th>
+<th>Point</th>
+<th>Status</th>
+<th></th>
+</tr>
+</thead>
+<tbody id="log"></tbody>
+</table>
+</div>
+
+<div class="card back" onclick="location.href='./index.html'">
+← Back
+</div>
+
+</main>
+
+  <script>
+
+document.getElementById("date").valueAsDate = new Date();
+
+let logs = JSON.parse(localStorage.getItem("loopLogs")||"[]");
+
+function save(){
+  localStorage.setItem("loopLogs", JSON.stringify(logs));
+}
+
+/* ===== ADD ENTRY ===== */
+function add(){
+
+  if(!tag.value){
+    alert("Enter tag");
+    return;
+  }
+
+  logs.push({
+    date:date.value,
+    tag:tag.value,
+    status:status.value,
+    notes:notes.value,
+
+    // 🔥 FULL SNAPSHOT
+    lrv:lrv.value,
+    urv:urv.value,
+    eu:document.getElementById("lp_eu_units")?.value || "",
+
+    lll:document.getElementById("lp_lll")?.value,
+    ll:document.getElementById("lp_ll")?.value,
+    l:document.getElementById("lp_l")?.value,
+    h:document.getElementById("lp_h")?.value,
+    hh:document.getElementById("lp_hh")?.value,
+    hhh:document.getElementById("lp_hhh")?.value,
+
+    range:document.getElementById("lp_dev")?.value,
+    serial:document.getElementById("lp_dev_sn")?.value,
+    model:document.getElementById("lp_dev_model")?.value
+  });
+
+  save();
+  render();
+
+  notes.value="";
+}
+
+/* ===== RENDER ===== */
+function render(){
+
+  const tb = document.getElementById("log");
+  tb.innerHTML="";
+
+  let p=0,f=0;
+
+  logs.forEach((r,i)=>{
+
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${r.date}</td>
+      <td>${r.tag}</td>
+      <td>${r.status}</td>
+      <td>${r.notes}</td>
+      <td><button onclick="toggle(${i},this)">▶</button></td>
+      <td><button onclick="del(${i})">✖</button></td>
+    `;
+
+    tb.appendChild(tr);
+
+    const detail = document.createElement("tr");
+    detail.style.display = "none";
+
+    detail.innerHTML = `
+      <td colspan="6">
+        <div style="padding:10px;font-size:13px;line-height:1.6;">
+          <b>Range:</b> ${r.lrv} → ${r.urv} ${r.eu}<br>
+
+          <b>Alarms:</b><br>
+          LLL: ${r.lll} | LL: ${r.ll} | L: ${r.l}<br>
+          H: ${r.h} | HH: ${r.hh} | HHH: ${r.hhh}<br>
+
+          <b>Device:</b><br>
+          Range: ${r.range}<br>
+          Serial: ${r.serial}<br>
+          Model: ${r.model}
+        </div>
+      </td>
+    `;
+
+    tb.appendChild(detail);
+
+    if(r.status==="PASS") p++; else f++;
+  });
+
+  pass.textContent="Pass: "+p;
+  fail.textContent="Fail: "+f;
+}
+
+/* ===== TOGGLE DETAILS ===== */
+function toggle(i,btn){
+  const row = btn.parentElement.parentElement.nextElementSibling;
+  const open = row.style.display === "table-row";
+
+  row.style.display = open ? "none" : "table-row";
+  btn.textContent = open ? "▶" : "▼";
+}
+
+/* ===== DELETE ===== */
+function del(i){
+  logs.splice(i,1);
+  save();
+  render();
+}
+
+/* ===== CLEAR ===== */
+function clearAll(){
+  if(confirm("Clear all?")){
+    logs=[];
+    save();
+    render();
+  }
+}
+
+/* ===== CSV EXPORT (FULL DATA) ===== */
+function exportCSV(){
+
+  let csv="Date,Tag,Status,Notes,LRV,URV,EU,LLL,LL,L,H,HH,HHH,Range,Serial,Model\n";
+
+  logs.forEach(r=>{
+    csv+=`${r.date},${r.tag},${r.status},${r.notes},
+${r.lrv},${r.urv},${r.eu},
+${r.lll},${r.ll},${r.l},${r.h},${r.hh},${r.hhh},
+${r.range},${r.serial},${r.model}\n`;
+  });
+
+  const blob=new Blob([csv]);
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="loop_log_full.csv";
+  a.click();
+}
+
+render();
+
+</script>
+
+</html>
+
 <script>
 
 const K_LOOP = "loopLogs";
