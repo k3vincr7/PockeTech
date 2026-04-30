@@ -1,249 +1,229 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PockeTech — Loop Log</title>
+<!-- Loop Log -->
+<section id="loop" style="padding:14px;max-width:900px;margin:auto;">
 
-<style>
-/* MINIMAL SAFE STYLES (won’t fight your app) /
-body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
-  background:#f6f8fc;
-  color:#0c1116;
-}
+<h2>🔁 Loop Check Log</h2>
 
-main{
-  padding:14px;
-  max-width:600px;
-  margin:auto;
-}
-
-.card{
-  background:#fff;
-  border:1px solid #d6dbe3;
-  border-radius:16px;
-  padding:14px;
-  margin-bottom:14px;
-}
-
-.title{
-  font-size:18px;
-  font-weight:700;
-}
-
-.muted{
-  font-size:13px;
-  color:#666;
-  margin-top:4px;
-}
-
-/ INPUTS /
-input, select, textarea{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid #d6dbe3;
-  font-size:14px;
-  margin-top:10px;
-  box-sizing:border-box;
-}
-
-/ BUTTONS /
-button{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border-radius:12px;
-  border:none;
-  background:#2d6cdf;
-  color:white;
-  font-weight:600;
-}
-
-.secondary{
-  background:#e5e9f2;
-  color:#000;
-}
-
-/ STEP BUTTONS /
-.steps{
-  display:flex;
-  gap:8px;
-  margin-top:10px;
-}
-
-.steps button{
-  flex:1;
-  padding:10px;
-  border-radius:10px;
-}
-
-/ TABLE /
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:10px;
-}
-
-th, td{
-  padding:6px;
-  font-size:12px;
-  border-bottom:1px solid #eee;
-  text-align:left;
-}
-
-/ BACK /
-.back{
-  text-align:center;
-  padding:12px;
-  border-radius:12px;
-  border:1px solid #ccc;
-}
-</style>
-</head>
-
-<body>
-
-<main>
-
-<!-- HEADER -->
+<!-- ===== QUICK CALC ===== -->
 <div class="card">
-  <div class="title">🔁 Loop Log</div>
-  <div class="muted">Field → Wiring → I/O → DCS → Final Element</div>
+<h3>⚡ 4–20 mA Quick Calc</h3>
+
+<div class="row" style="gap:10px;">
+  <input id="ll_lrv" placeholder="LRV">
+  <input id="ll_urv" placeholder="URV">
 </div>
 
-<!-- QUICK CALC -->
-<div class="card">
-  <div class="title">⚡ 4–20 mA Quick Calc</div>
-
-  <input id="pct" placeholder="%">
-  <input id="ma" placeholder="mA">
-
-  <div class="steps">
-    <button onclick="step(0)">0%</button>
-    <button onclick="step(25)">25%</button>
-    <button onclick="step(50)">50%</button>
-    <button onclick="step(75)">75%</button>
-    <button onclick="step(100)">100%</button>
-  </div>
+<div class="row" style="gap:10px;margin-top:8px;">
+  <input id="ll_pct" placeholder="%">
+  <input id="ll_ma" placeholder="mA">
+  <input id="ll_eu" placeholder="EU">
 </div>
 
-<!-- ENTRY -->
+<div class="row" style="gap:10px;margin-top:8px;">
+  <button class="btn" onclick="ll_from_pct()">From %</button>
+  <button class="btn" onclick="ll_from_ma()">From mA</button>
+</div>
+
+<div class="row" style="gap:6px;margin-top:8px;">
+  <button class="btn ll_step" onclick="ll_step(0)">0%</button>
+  <button class="btn ll_step" onclick="ll_step(25)">25%</button>
+  <button class="btn ll_step" onclick="ll_step(50)">50%</button>
+  <button class="btn ll_step" onclick="ll_step(75)">75%</button>
+  <button class="btn ll_step" onclick="ll_step(100)">100%</button>
+</div>
+
+</div>
+
+<!-- ===== RANGE SNAPSHOT ===== -->
 <div class="card">
+<h3>📊 Range & Device Snapshot</h3>
 
-  <input id="date" type="date">
-  <input id="tag" placeholder="Tag (PT-101)">
+<div class="row">
+  <input id="lp_lrv" placeholder="LRV">
+  <input id="lp_urv" placeholder="URV">
+  <input id="lp_eu_units" placeholder="EU Units">
+</div>
 
-  <input id="output" placeholder="Output (what you send)">
-  <input id="indicated" placeholder="Indicated (what system reads)">
+<div class="row">
+  <input id="lp_lll" placeholder="LLL">
+  <input id="lp_ll" placeholder="LL">
+  <input id="lp_l" placeholder="L">
+</div>
 
-  <select id="status">
-    <option>PASS</option>
-    <option>FAIL</option>
+<div class="row">
+  <input id="lp_h" placeholder="H">
+  <input id="lp_hh" placeholder="HH">
+  <input id="lp_hhh" placeholder="HHH">
+</div>
+
+<div class="row">
+  <input id="lp_dev" placeholder="Device Range">
+  <input id="lp_dev_sn" placeholder="Serial #">
+  <input id="lp_dev_model" placeholder="Model">
+</div>
+
+</div>
+
+<!-- ===== ENTRY ===== -->
+<div class="card">
+<h3>Add Loop Entry</h3>
+
+<div class="row">
+  <input id="lp_date" type="date">
+  <input id="lp_tag" placeholder="Tag">
+  <input id="lp_point" placeholder="Point">
+</div>
+
+<div class="row">
+  <select id="lp_units">
+    <option>%</option><option>mA</option><option>psi</option><option>°F</option>
   </select>
 
-  <textarea id="notes" placeholder="Notes"></textarea>
+  <select id="lp_ok">
+    <option value="YES">PASS</option>
+    <option value="NO">FAIL</option>
+  </select>
 
-  <button onclick="addEntry()">+ Add Entry</button>
-  <button class="secondary" onclick="clearAll()">Clear All</button>
+  <input id="lp_notes" placeholder="Notes">
+</div>
+
+<div class="row">
+  <button class="btn ok" onclick="loop_add()">+ Add</button>
+  <button class="btn" onclick="loop_csv()">Export</button>
+  <button class="btn danger" onclick="loop_clear()">Clear</button>
+</div>
+
+<div>
+  <span id="loop-pass">Pass: 0</span>
+  <span id="loop-fail" style="margin-left:10px;">Fail: 0</span>
+</div>
 
 </div>
 
-<!-- TABLE -->
+<!-- ===== TABLE ===== -->
 <div class="card">
-  <table>
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Tag</th>
-        <th>Out</th>
-        <th>Ind</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody id="log"></tbody>
-  </table>
+<table id="lp_tbl" style="width:100%;font-size:13px;">
+<thead>
+<tr>
+<th>Date</th><th>Tag</th><th>Point</th><th>Units</th><th>Status</th><th></th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
 </div>
 
-<!-- BACK -->
-<div class="card back" onclick="location.href='./index.html'">
-  ← Back
-</div>
-
-</main>
+</section>
 
 <script>
 
-/ AUTO DATE /
-document.getElementById("date").valueAsDate = new Date();
+/* ===== STORAGE ===== /
+const K_LOOP = "loopLogs";
 
-/ STORAGE /
-let logs = JSON.parse(localStorage.getItem("loopLogs") || "[]");
+function load(k){ return JSON.parse(localStorage.getItem(k)||"[]"); }
+function save(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
 
-function save(){
-  localStorage.setItem("loopLogs", JSON.stringify(logs));
+/ ===== CALC ===== */
+function ll_from_pct(){
+  let p = parseFloat(ll_pct.value);
+  if(isNaN(p)) return;
+  ll_ma.value = (4 + (p/100)*16).toFixed(2);
 }
 
-/ RENDER /
-function render(){
-  const table = document.getElementById("log");
-  table.innerHTML = "";
-
-  logs.forEach(l=>{
-    table.innerHTML +=       <tr>         <td>${l.date}</td>         <td>${l.tag}</td>         <td>${l.output}</td>         <td>${l.indicated}</td>         <td>${l.status}</td>       </tr>    ;
-  });
+function ll_from_ma(){
+  let m = parseFloat(ll_ma.value);
+  if(isNaN(m)) return;
+  ll_pct.value = (((m-4)/16)100).toFixed(1);
 }
 
-/ ADD ENTRY /
-function addEntry(){
-  const entry = {
-    date: document.getElementById("date").value,
-    tag: document.getElementById("tag").value,
-    output: document.getElementById("output").value,
-    indicated: document.getElementById("indicated").value,
-    status: document.getElementById("status").value
+function ll_step(p){
+  ll_pct.value = p;
+  ll_from_pct();
+}
+
+/ ===== LOOP LOG ===== /
+function loop_add(){
+
+  const rec = {
+    date: lp_date.value || new Date().toISOString().slice(0,10),
+    tag: lp_tag.value,
+    point: lp_point.value,
+    units: lp_units.value,
+    ok: lp_ok.value,
+    notes: lp_notes.value,
+
+    lrv: lp_lrv.value,
+    urv: lp_urv.value,
+    devRange: lp_dev.value,
+    devSerial: lp_dev_sn.value,
+    devModel: lp_dev_model.value
   };
 
-  if(!entry.tag){
-    alert("Enter tag");
+  if(!rec.tag){
+    alert("Enter Tag");
     return;
   }
 
-  logs.push(entry);
-  save();
-  render();
+  const rows = load(K_LOOP);
+  rows.push(rec);
+  save(K_LOOP, rows);
 
-  document.getElementById("tag").value="";
-  document.getElementById("output").value="";
-  document.getElementById("indicated").value="";
-  document.getElementById("notes").value="";
+  loop_render();
 }
 
-/ CLEAR /
-function clearAll(){
-  if(confirm("Clear all logs?")){
-    logs=[];
-    save();
-    render();
+/ ===== RENDER ===== /
+function loop_render(){
+  const rows = load(K_LOOP);
+  const tb = document.querySelector('#lp_tbl tbody');
+  tb.innerHTML='';
+
+  let pass=0, fail=0;
+
+  rows.forEach((r,i)=>{
+    const tr=document.createElement('tr');
+
+    tr.innerHTML=       <td>${r.date}</td>       <td>${r.tag}</td>       <td>${r.point}</td>       <td>${r.units}</td>       <td>${r.ok}</td>       <td>         <button onclick="loop_delete(${i})">✖</button>       </td>;
+
+    tb.appendChild(tr);
+
+    if(r.ok==="YES") pass++; else fail++;
+  });
+
+  loop-pass.textContent="Pass: "+pass;
+  loop-fail.textContent="Fail: "+fail;
+}
+
+/ ===== DELETE ===== /
+function loop_delete(i){
+  const rows=load(K_LOOP);
+  rows.splice(i,1);
+  save(K_LOOP,rows);
+  loop_render();
+}
+
+/ ===== CLEAR ===== /
+function loop_clear(){
+  if(confirm("Clear all?")){
+    save(K_LOOP,[]);
+    loop_render();
   }
 }
 
-/ CALC + AUTO FILL */
-function step(p){
-  document.getElementById("pct").value = p;
+/ ===== CSV ===== */
+function loop_csv(){
+  const rows=load(K_LOOP);
 
-  const m = 4 + (p/100)*16;
-  document.getElementById("ma").value = m.toFixed(2);
+  let csv="Date,Tag,Point,Units,Status,Notes\n";
 
-  document.getElementById("output").value = m.toFixed(2) + " mA";
-  document.getElementById("indicated").value = p + " %";
+  rows.forEach(r=>{
+    csv+=${r.date},${r.tag},${r.point},${r.units},${r.ok},${r.notes}\n;
+  });
+
+  const blob=new Blob([csv]);
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="loop_log.csv";
+  a.click();
 }
 
-render();
+loop_render();
 
 </script>
-
-</body>
-</html>
