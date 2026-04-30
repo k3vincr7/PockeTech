@@ -52,7 +52,6 @@ input{
   border:1px solid #ddd;
 }
 
-/* BUTTONS /
 .btn{
   padding:12px;
   border:none;
@@ -72,12 +71,10 @@ input{
   margin-top:10px;
 }
 
-/ ACTIVE STATUS /
 .active{
   outline:3px solid #00000030;
 }
 
-/ TABLE /
 table{
   width:100%;
   border-collapse:collapse;
@@ -87,13 +84,11 @@ th{
   background:#0f3c78;
   color:white;
   padding:10px;
-  font-size:13px;
 }
 
 td{
   padding:10px;
   border-bottom:1px solid #eee;
-  font-size:13px;
 }
 
 .badge{
@@ -115,45 +110,19 @@ td{
 
 <body>
 
-<div class="header">
-  🔁 LOOP LOG  
-  <div style="font-size:12px;font-weight:400;">
-    Field → Wiring → I/O → DCS → Final Element
-  </div>
-</div>
+<div class="header">🔁 LOOP LOG</div>
 
 <div class="container">
 
-<!-- SNAPSHOT -->
 <div class="card">
-<h3>📊 Device Snapshot</h3>
-
+<h3>📊 Snapshot</h3>
 <div class="grid">
 <input id="lrv" placeholder="LRV">
 <input id="urv" placeholder="URV">
-<input id="eu" placeholder="EU Units">
-</div>
-
-<div class="grid">
-<input id="lll" placeholder="LLL">
-<input id="ll" placeholder="LL">
-<input id="l" placeholder="L">
-</div>
-
-<div class="grid">
-<input id="h" placeholder="H">
-<input id="hh" placeholder="HH">
-<input id="hhh" placeholder="HHH">
-</div>
-
-<div class="grid">
-<input id="range" placeholder="Device Range">
-<input id="serial" placeholder="Serial #">
-<input id="model" placeholder="Model #">
+<input id="eu" placeholder="EU">
 </div>
 </div>
 
-<!-- ENTRY -->
 <div class="card">
 <h3 id="formTitle">➕ Add Entry</h3>
 
@@ -163,30 +132,26 @@ td{
 </div>
 
 <div class="grid-2">
-<input id="point" placeholder="Point (optional)">
+<input id="point" placeholder="Point">
 <input id="notes" placeholder="Notes">
 </div>
 
 <div class="row">
-<button id="passBtn" class="btn green active" onclick="setStatus('PASS')">PASS</button>
-<button id="failBtn" class="btn red" onclick="setStatus('FAIL')">FAIL</button>
+<button id="passBtn" class="btn green active">PASS</button>
+<button id="failBtn" class="btn red">FAIL</button>
 </div>
 
 <div class="row">
-<button id="submitBtn" class="btn blue" onclick="add()">+ ADD TO LOG</button>
+<button id="submitBtn" class="btn blue">+ ADD TO LOG</button>
 </div>
 </div>
 
-<!-- TABLE -->
 <div class="card">
-<h3>📋 Loop Log</h3>
-
 <table>
 <thead>
 <tr>
 <th>Date</th>
 <th>Tag</th>
-<th>Point</th>
 <th>Status</th>
 <th>Actions</th>
 </tr>
@@ -195,178 +160,90 @@ td{
 </table>
 </div>
 
-<div class="row">
-<button class="btn gray" onclick="clearAll()">Clear All</button>
-<button class="btn blue" onclick="exportCSV()">Export CSV</button>
-<button class="btn gray" onclick="history.back()">Back</button>
-</div>
-
 </div>
 
 <script>
 
-document.getElementById("date").valueAsDate = new Date();
+const el = id => document.getElementById(id);
+
+el("date").valueAsDate = new Date();
 
 let logs = JSON.parse(localStorage.getItem("loopLogs")||"[]");
 let currentStatus = "PASS";
 let editIndex = null;
 
-const passBtn = document.getElementById("passBtn");
-const failBtn = document.getElementById("failBtn");
+const passBtn = el("passBtn");
+const failBtn = el("failBtn");
 
-/ STATUS /
+passBtn.onclick = () => setStatus("PASS");
+failBtn.onclick = () => setStatus("FAIL");
+el("submitBtn").onclick = add;
+
 function setStatus(s){
   currentStatus = s;
-
-  passBtn.classList.remove("active");
-  failBtn.classList.remove("active");
-
-  if(s==="PASS") passBtn.classList.add("active");
-  else failBtn.classList.add("active");
+  passBtn.classList.toggle("active", s==="PASS");
+  failBtn.classList.toggle("active", s==="FAIL");
 }
 
-/ SAVE /
 function save(){
   localStorage.setItem("loopLogs", JSON.stringify(logs));
 }
 
-/ ADD OR UPDATE /
 function add(){
 
-  if(!tag.value){
+  const tag = el("tag").value;
+
+  if(!tag){
     alert("Enter tag");
     return;
   }
 
   const entry = {
-    date:date.value,
-    tag:tag.value,
-    point:point.value,
-    status:currentStatus,
-    notes:notes.value,
-
-    lrv:lrv.value,
-    urv:urv.value,
-    eu:eu.value,
-    lll:lll.value,
-    ll:ll.value,
-    l:l.value,
-    h:h.value,
-    hh:hh.value,
-    hhh:hhh.value,
-    range:range.value,
-    serial:serial.value,
-    model:model.value
+    date: el("date").value,
+    tag,
+    point: el("point").value,
+    status: currentStatus,
+    notes: el("notes").value
   };
 
   if(editIndex !== null){
     logs[editIndex] = entry;
     editIndex = null;
-    formTitle.innerText = "➕ Add Entry";
-    submitBtn.innerText = "+ ADD TO LOG";
   } else {
     logs.push(entry);
   }
 
   save();
   render();
-
-  notes.value="";
 }
 
-/ RENDER /
 function render(){
 
-  const tb = document.getElementById("log");
-  tb.innerHTML="";
+  const tb = el("log");
+  tb.innerHTML = "";
 
   logs.forEach((r,i)=>{
 
     const tr = document.createElement("tr");
 
-    tr.innerHTML =       <td>${r.date}</td>       <td>${r.tag}</td>       <td>${r.point||''}</td>       <td><span class="badge ${r.status==='PASS'?'pass':'fail'}">${r.status}</span></td>       <td>         <button onclick="toggle(this)">▼</button>         <button onclick="edit(${i})">✏️</button>         <button onclick="del(${i})">🗑️</button>       </td>    ;
+    tr.innerHTML =       <td>${r.date}</td>       <td>${r.tag}</td>       <td><span class="badge ${r.status==='PASS'?'pass':'fail'}">${r.status}</span></td>       <td>         <button onclick="edit(${i})">✏️</button>         <button onclick="del(${i})">🗑️</button>       </td>    ;
 
     tb.appendChild(tr);
-
-    const detail = document.createElement("tr");
-    detail.style.display="none";
-
-    detail.innerHTML =       <td colspan="5">         <div class="details">           <b>Range:</b> ${r.lrv} → ${r.urv} ${r.eu}<br><br>            <b>Alarms:</b><br>           LLL:${r.lll} LL:${r.ll} L:${r.l}<br>           H:${r.h} HH:${r.hh} HHH:${r.hhh}<br><br>            <b>Device:</b><br>           Range:${r.range}<br>           Serial:${r.serial}<br>           Model:${r.model}<br><br>            <b>Notes:</b> ${r.notes}         </div>       </td>    ;
-
-    tb.appendChild(detail);
   });
 }
 
-/ TOGGLE /
-function toggle(btn){
-  const row = btn.closest("tr").nextElementSibling;
-  row.style.display = row.style.display==="table-row"?"none":"table-row";
-}
-
-/ EDIT /
 function edit(i){
-
   const r = logs[i];
-
-  date.value = r.date;
-  tag.value = r.tag;
-  point.value = r.point;
-  notes.value = r.notes;
-
+  el("tag").value = r.tag;
+  el("notes").value = r.notes;
   setStatus(r.status);
-
-  lrv.value = r.lrv;
-  urv.value = r.urv;
-  eu.value = r.eu;
-  lll.value = r.lll;
-  ll.value = r.ll;
-  l.value = r.l;
-  h.value = r.h;
-  hh.value = r.hh;
-  hhh.value = r.hhh;
-
-  range.value = r.range;
-  serial.value = r.serial;
-  model.value = r.model;
-
   editIndex = i;
-
-  formTitle.innerText = "✏️ Editing Entry";
-  submitBtn.innerText = "UPDATE ENTRY";
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-/ DELETE /
 function del(i){
-  if(confirm("Delete this entry?")){
-    logs.splice(i,1);
-    save();
-    render();
-  }
-}
-
-/ CLEAR /
-function clearAll(){
-  if(confirm("Clear all logs?")){
-    logs=[];
-    save();
-    render();
-  }
-}
-
-/ EXPORT */
-function exportCSV(){
-  let csv="Date,Tag,Point,Status,Notes\n";
-  logs.forEach(r=>{
-    csv+=${r.date},${r.tag},${r.point},${r.status},${r.notes}\n;
-  });
-
-  const blob=new Blob([csv]);
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="loop_log.csv";
-  a.click();
+  logs.splice(i,1);
+  save();
+  render();
 }
 
 render();
@@ -374,4 +251,4 @@ render();
 </script>
 
 </body>
-</htm
+</html
