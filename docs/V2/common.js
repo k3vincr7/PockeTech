@@ -37,6 +37,9 @@ function toggleTheme() {
   document.addEventListener('touchend', e => {
     const dx = e.changedTouches[0].clientX - startX;
     const dy = Math.abs(e.changedTouches[0].clientY - startY);
-    if (startX < 44 && dx > 60 && dy < 80) history.back();
+    if (startX < 60 && dx > 50 && dy < 100) {
+      if (typeof showScreen === 'function') showScreen('home');
+      else history.back();
+    }
   }, { passive: true });
 })();
