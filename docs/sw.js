@@ -1,5 +1,5 @@
 // sw.js — robust update + sane caching
-const CACHE_VERSION = 'pocketech-v0.83.3';
+const CACHE_VERSION = 'pocketech-v2.1.0';
 const HTML_CACHE = CACHE_VERSION + '-html';
 const ASSET_CACHE = CACHE_VERSION + '-assets';
 
