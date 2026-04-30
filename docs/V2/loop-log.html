@@ -1,220 +1,266 @@
-<!-- Loop Log -->
-<section id="loop" style="padding:14px;max-width:900px;margin:auto;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PockeTech — Loop Log</title>
 
-<h2>🔁 Loop Check Log</h2>
+<style>
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+  background:#f6f8fc;
+}
 
-<!-- ===== QUICK CALC ===== -->
+main{
+  max-width:700px;
+  margin:auto;
+  padding:16px;
+}
+
+.card{
+  background:white;
+  border-radius:16px;
+  padding:14px;
+  margin-bottom:14px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.05);
+}
+
+h2{margin:0 0 6px 0;}
+h3{margin:0 0 10px 0;}
+
+.row{
+  display:flex;
+  gap:10px;
+  margin-top:8px;
+}
+
+.row input, .row select{
+  flex:1;
+}
+
+input, select{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  font-size:14px;
+}
+
+button{
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:#2d6cdf;
+  color:white;
+  font-weight:600;
+}
+
+.btn{
+  flex:1;
+}
+
+.small-btn{
+  padding:8px;
+  font-size:12px;
+}
+
+.steps{
+  display:flex;
+  gap:6px;
+  margin-top:8px;
+}
+
+.steps button{
+  flex:1;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+
+th,td{
+  padding:6px;
+  border-bottom:1px solid #eee;
+}
+
+.pass{color:green;}
+.fail{color:red;}
+
+.back{
+  text-align:center;
+  padding:12px;
+  border-radius:12px;
+  background:#eee;
+}
+</style>
+</head>
+
+<body>
+
+<main>
+
 <div class="card">
-<h3>⚡ 4–20 mA Quick Calc</h3>
-
-<div class="row" style="gap:10px;">
-  <input id="ll_lrv" placeholder="LRV">
-  <input id="ll_urv" placeholder="URV">
+  <h2>🔁 Loop Log</h2>
+  <div>Field → Wiring → I/O → DCS → Final Element</div>
 </div>
 
-<div class="row" style="gap:10px;margin-top:8px;">
-  <input id="ll_pct" placeholder="%">
-  <input id="ll_ma" placeholder="mA">
-  <input id="ll_eu" placeholder="EU">
-</div>
-
-<div class="row" style="gap:10px;margin-top:8px;">
-  <button class="btn" onclick="ll_from_pct()">From %</button>
-  <button class="btn" onclick="ll_from_ma()">From mA</button>
-</div>
-
-<div class="row" style="gap:6px;margin-top:8px;">
-  <button class="btn ll_step" onclick="ll_step(0)">0%</button>
-  <button class="btn ll_step" onclick="ll_step(25)">25%</button>
-  <button class="btn ll_step" onclick="ll_step(50)">50%</button>
-  <button class="btn ll_step" onclick="ll_step(75)">75%</button>
-  <button class="btn ll_step" onclick="ll_step(100)">100%</button>
-</div>
-
-</div>
-
-<!-- ===== RANGE SNAPSHOT ===== -->
+<!-- QUICK CALC -->
 <div class="card">
-<h3>📊 Range & Device Snapshot</h3>
+  <h3>⚡ 4–20 mA Quick Calc</h3>
 
-<div class="row">
-  <input id="lp_lrv" placeholder="LRV">
-  <input id="lp_urv" placeholder="URV">
-  <input id="lp_eu_units" placeholder="EU Units">
+  <div class="row">
+    <input id="pct" placeholder="%">
+    <input id="ma" placeholder="mA">
+  </div>
+
+  <div class="steps">
+    <button onclick="step(0)">0%</button>
+    <button onclick="step(25)">25%</button>
+    <button onclick="step(50)">50%</button>
+    <button onclick="step(75)">75%</button>
+    <button onclick="step(100)">100%</button>
+  </div>
 </div>
 
-<div class="row">
-  <input id="lp_lll" placeholder="LLL">
-  <input id="lp_ll" placeholder="LL">
-  <input id="lp_l" placeholder="L">
-</div>
-
-<div class="row">
-  <input id="lp_h" placeholder="H">
-  <input id="lp_hh" placeholder="HH">
-  <input id="lp_hhh" placeholder="HHH">
-</div>
-
-<div class="row">
-  <input id="lp_dev" placeholder="Device Range">
-  <input id="lp_dev_sn" placeholder="Serial #">
-  <input id="lp_dev_model" placeholder="Model">
-</div>
-
-</div>
-
-<!-- ===== ENTRY ===== -->
+<!-- SNAPSHOT -->
 <div class="card">
-<h3>Add Loop Entry</h3>
+  <h3>📊 Device Snapshot</h3>
 
-<div class="row">
-  <input id="lp_date" type="date">
-  <input id="lp_tag" placeholder="Tag">
-  <input id="lp_point" placeholder="Point">
+  <div class="row">
+    <input id="lrv" placeholder="LRV">
+    <input id="urv" placeholder="URV">
+  </div>
+
+  <div class="row">
+    <input id="devRange" placeholder="Device Range">
+    <input id="devModel" placeholder="Model">
+  </div>
 </div>
 
-<div class="row">
-  <select id="lp_units">
-    <option>%</option><option>mA</option><option>psi</option><option>°F</option>
-  </select>
-
-  <select id="lp_ok">
-    <option value="YES">PASS</option>
-    <option value="NO">FAIL</option>
-  </select>
-
-  <input id="lp_notes" placeholder="Notes">
-</div>
-
-<div class="row">
-  <button class="btn ok" onclick="loop_add()">+ Add</button>
-  <button class="btn" onclick="loop_csv()">Export</button>
-  <button class="btn danger" onclick="loop_clear()">Clear</button>
-</div>
-
-<div>
-  <span id="loop-pass">Pass: 0</span>
-  <span id="loop-fail" style="margin-left:10px;">Fail: 0</span>
-</div>
-
-</div>
-
-<!-- ===== TABLE ===== -->
+<!-- ENTRY -->
 <div class="card">
-<table id="lp_tbl" style="width:100%;font-size:13px;">
+  <h3>Add Entry</h3>
+
+  <div class="row">
+    <input id="date" type="date">
+    <input id="tag" placeholder="Tag">
+    <input id="point" placeholder="Point">
+  </div>
+
+  <div class="row">
+    <select id="status">
+      <option value="PASS">PASS</option>
+      <option value="FAIL">FAIL</option>
+    </select>
+
+    <input id="notes" placeholder="Notes">
+  </div>
+
+  <div class="row">
+    <button class="btn" onclick="add()">+ Add</button>
+    <button class="btn" onclick="exportCSV()">Export</button>
+    <button class="btn" onclick="clearAll()">Clear</button>
+  </div>
+
+  <div style="margin-top:10px;">
+    <span id="pass">Pass: 0</span>
+    <span id="fail" style="margin-left:10px;">Fail: 0</span>
+  </div>
+</div>
+
+<!-- TABLE -->
+<div class="card">
+<table>
 <thead>
 <tr>
-<th>Date</th><th>Tag</th><th>Point</th><th>Units</th><th>Status</th><th></th>
+<th>Date</th>
+<th>Tag</th>
+<th>Point</th>
+<th>Status</th>
+<th></th>
 </tr>
 </thead>
-<tbody></tbody>
+<tbody id="log"></tbody>
 </table>
 </div>
 
-</section>
+<div class="card back" onclick="location.href='./index.html'">
+← Back
+</div>
+
+</main>
 
 <script>
 
-/* ===== STORAGE ===== /
-const K_LOOP = "loopLogs";
+document.getElementById("date").valueAsDate = new Date();
 
-function load(k){ return JSON.parse(localStorage.getItem(k)||"[]"); }
-function save(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+let logs = JSON.parse(localStorage.getItem("loopLogs")||"[]");
 
-/ ===== CALC ===== */
-function ll_from_pct(){
-  let p = parseFloat(ll_pct.value);
-  if(isNaN(p)) return;
-  ll_ma.value = (4 + (p/100)*16).toFixed(2);
+function save(){
+  localStorage.setItem("loopLogs", JSON.stringify(logs));
 }
 
-function ll_from_ma(){
-  let m = parseFloat(ll_ma.value);
-  if(isNaN(m)) return;
-  ll_pct.value = (((m-4)/16)100).toFixed(1);
-}
+function render(){
+  const tb = document.getElementById("log");
+  tb.innerHTML="";
 
-function ll_step(p){
-  ll_pct.value = p;
-  ll_from_pct();
-}
+  let p=0,f=0;
 
-/ ===== LOOP LOG ===== /
-function loop_add(){
+  logs.forEach((r,i)=>{
+    tb.innerHTML +=      <tr>       <td>${r.date}</td>       <td>${r.tag}</td>       <td>${r.point}</td>       <td class="${r.status==='PASS'?'pass':'fail'}">${r.status}</td>       <td><button onclick="del(${i})">✖</button></td>     </tr>;
 
-  const rec = {
-    date: lp_date.value || new Date().toISOString().slice(0,10),
-    tag: lp_tag.value,
-    point: lp_point.value,
-    units: lp_units.value,
-    ok: lp_ok.value,
-    notes: lp_notes.value,
-
-    lrv: lp_lrv.value,
-    urv: lp_urv.value,
-    devRange: lp_dev.value,
-    devSerial: lp_dev_sn.value,
-    devModel: lp_dev_model.value
-  };
-
-  if(!rec.tag){
-    alert("Enter Tag");
-    return;
-  }
-
-  const rows = load(K_LOOP);
-  rows.push(rec);
-  save(K_LOOP, rows);
-
-  loop_render();
-}
-
-/ ===== RENDER ===== /
-function loop_render(){
-  const rows = load(K_LOOP);
-  const tb = document.querySelector('#lp_tbl tbody');
-  tb.innerHTML='';
-
-  let pass=0, fail=0;
-
-  rows.forEach((r,i)=>{
-    const tr=document.createElement('tr');
-
-    tr.innerHTML=       <td>${r.date}</td>       <td>${r.tag}</td>       <td>${r.point}</td>       <td>${r.units}</td>       <td>${r.ok}</td>       <td>         <button onclick="loop_delete(${i})">✖</button>       </td>;
-
-    tb.appendChild(tr);
-
-    if(r.ok==="YES") pass++; else fail++;
+    if(r.status==="PASS") p++; else f++;
   });
 
-  loop-pass.textContent="Pass: "+pass;
-  loop-fail.textContent="Fail: "+fail;
+  pass.textContent="Pass: "+p;
+  fail.textContent="Fail: "+f;
 }
 
-/ ===== DELETE ===== /
-function loop_delete(i){
-  const rows=load(K_LOOP);
-  rows.splice(i,1);
-  save(K_LOOP,rows);
-  loop_render();
+function add(){
+  if(!tag.value){alert("Enter tag");return;}
+
+  logs.push({
+    date:date.value,
+    tag:tag.value,
+    point:point.value,
+    status:status.value,
+    notes:notes.value
+  });
+
+  save();
+  render();
+
+  tag.value="";
+  point.value="";
+  notes.value="";
 }
 
-/ ===== CLEAR ===== /
-function loop_clear(){
+function del(i){
+  logs.splice(i,1);
+  save();
+  render();
+}
+
+function clearAll(){
   if(confirm("Clear all?")){
-    save(K_LOOP,[]);
-    loop_render();
+    logs=[];
+    save();
+    render();
   }
 }
 
-/ ===== CSV ===== */
-function loop_csv(){
-  const rows=load(K_LOOP);
+function step(p){
+  pct.value=p;
+  ma.value=(4+(p/100)*16).toFixed(2);
+}
 
-  let csv="Date,Tag,Point,Units,Status,Notes\n";
-
-  rows.forEach(r=>{
-    csv+=${r.date},${r.tag},${r.point},${r.units},${r.ok},${r.notes}\n;
+function exportCSV(){
+  let csv="Date,Tag,Point,Status\n";
+  logs.forEach(r=>{
+    csv+=${r.date},${r.tag},${r.point},${r.status}\n;
   });
 
   const blob=new Blob([csv]);
@@ -224,6 +270,9 @@ function loop_csv(){
   a.click();
 }
 
-loop_render();
+render();
 
 </script>
+
+</body>
+</html>
