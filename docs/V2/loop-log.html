@@ -12,7 +12,7 @@ body{
   background:#eef2f7;
 }
 
-/* HEADER /
+/* HEADER */
 .header{
   background:#0f3c78;
   color:white;
@@ -20,13 +20,14 @@ body{
   font-weight:700;
 }
 
+/* CONTAINER */
 .container{
   max-width:900px;
   margin:auto;
   padding:14px;
 }
 
-/ CARD /
+/* CARD */
 .card{
   background:white;
   border-radius:14px;
@@ -35,7 +36,7 @@ body{
   box-shadow:0 4px 10px rgba(0,0,0,0.06);
 }
 
-/ GRID /
+/* GRID */
 .grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
@@ -55,7 +56,7 @@ input{
   border:1px solid #ddd;
 }
 
-/ BUTTONS /
+/* BUTTONS */
 .btn{
   padding:12px;
   border:none;
@@ -75,7 +76,7 @@ input{
   margin-top:10px;
 }
 
-/ TABLE */
+/* TABLE */
 table{
   width:100%;
   border-collapse:collapse;
@@ -151,7 +152,7 @@ td{
 </div>
 </div>
 
-<!-- ADD ENTRY -->
+<!-- ENTRY -->
 <div class="card">
 <h3>➕ Add Entry</h3>
 
@@ -161,7 +162,7 @@ td{
 </div>
 
 <div class="grid-2">
-<input id="point" placeholder="Point">
+<input id="point" placeholder="Point (optional)">
 <input id="notes" placeholder="Notes">
 </div>
 
@@ -193,7 +194,7 @@ td{
 </table>
 </div>
 
-<!-- FOOTER BUTTONS -->
+<!-- FOOTER -->
 <div class="row">
 <button class="btn gray" onclick="clearAll()">Clear All</button>
 <button class="btn blue" onclick="exportCSV()">Export CSV</button>
@@ -258,14 +259,37 @@ function render(){
 
     const tr = document.createElement("tr");
 
-    tr.innerHTML =       <td>${r.date}</td>       <td>${r.tag}</td>       <td>${r.point}</td>       <td><span class="badge ${r.status==='PASS'?'pass':'fail'}">${r.status}</span></td>       <td>         <button onclick="toggle(this)">▼</button>       </td>    ;
+    tr.innerHTML = `
+      <td>${r.date}</td>
+      <td>${r.tag}</td>
+      <td>${r.point||''}</td>
+      <td><span class="badge ${r.status==='PASS'?'pass':'fail'}">${r.status}</span></td>
+      <td><button onclick="toggle(this)">▼</button></td>
+    `;
 
     tb.appendChild(tr);
 
     const detail = document.createElement("tr");
     detail.style.display="none";
 
-    detail.innerHTML =       <td colspan="5">         <div class="details">           <b>Range:</b> ${r.lrv} → ${r.urv} ${r.eu}<br><br>            <b>Alarms:</b><br>           LLL:${r.lll} LL:${r.ll} L:${r.l}<br>           H:${r.h} HH:${r.hh} HHH:${r.hhh}<br><br>            <b>Device:</b><br>           Range:${r.range}<br>           Serial:${r.serial}<br>           Model:${r.model}<br><br>            <b>Notes:</b> ${r.notes}         </div>       </td>    ;
+    detail.innerHTML = `
+      <td colspan="5">
+        <div class="details">
+          <b>Range:</b> ${r.lrv} → ${r.urv} ${r.eu}<br><br>
+
+          <b>Alarms:</b><br>
+          LLL:${r.lll} LL:${r.ll} L:${r.l}<br>
+          H:${r.h} HH:${r.hh} HHH:${r.hhh}<br><br>
+
+          <b>Device:</b><br>
+          Range:${r.range}<br>
+          Serial:${r.serial}<br>
+          Model:${r.model}<br><br>
+
+          <b>Notes:</b> ${r.notes}
+        </div>
+      </td>
+    `;
 
     tb.appendChild(detail);
   });
@@ -287,7 +311,7 @@ function clearAll(){
 function exportCSV(){
   let csv="Date,Tag,Point,Status,Notes\n";
   logs.forEach(r=>{
-    csv+=${r.date},${r.tag},${r.point},${r.status},${r.notes}\n;
+    csv+=`${r.date},${r.tag},${r.point},${r.status},${r.notes}\n`;
   });
 
   const blob=new Blob([csv]);
