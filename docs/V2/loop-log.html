@@ -193,7 +193,7 @@ th,td{
 
 </main>
 
-<script>
+  <script>
 
 document.getElementById("date").valueAsDate = new Date();
 
@@ -203,19 +203,9 @@ function save(){
   localStorage.setItem("loopLogs", JSON.stringify(logs));
 }
 
-/* ===== AUTO STEP + FILL ===== */
-function step(p){
-  const m = 4 + (p/100)*16;
-
-  pct.value = p;
-  ma.value = m.toFixed(2);
-
-  // 🔥 AUTO FILL ENTRY
-  document.getElementById("point").value = p + " %";
-}
-
 /* ===== ADD ENTRY ===== */
 function add(){
+
   if(!tag.value){
     alert("Enter tag");
     return;
@@ -224,18 +214,91 @@ function add(){
   logs.push({
     date:date.value,
     tag:tag.value,
-    point:point.value,
     status:status.value,
-    notes:notes.value
+    notes:notes.value,
+
+    // 🔥 FULL SNAPSHOT
+    lrv:lrv.value,
+    urv:urv.value,
+    eu:document.getElementById("lp_eu_units")?.value || "",
+
+    lll:document.getElementById("lp_lll")?.value,
+    ll:document.getElementById("lp_ll")?.value,
+    l:document.getElementById("lp_l")?.value,
+    h:document.getElementById("lp_h")?.value,
+    hh:document.getElementById("lp_hh")?.value,
+    hhh:document.getElementById("lp_hhh")?.value,
+
+    range:document.getElementById("lp_dev")?.value,
+    serial:document.getElementById("lp_dev_sn")?.value,
+    model:document.getElementById("lp_dev_model")?.value
   });
 
   save();
   render();
 
-  // clear fields
-  tag.value="";
-  point.value="";
   notes.value="";
+}
+
+/* ===== RENDER ===== */
+function render(){
+
+  const tb = document.getElementById("log");
+  tb.innerHTML="";
+
+  let p=0,f=0;
+
+  logs.forEach((r,i)=>{
+
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${r.date}</td>
+      <td>${r.tag}</td>
+      <td>${r.status}</td>
+      <td>${r.notes}</td>
+      <td><button onclick="toggle(${i},this)">▶</button></td>
+      <td><button onclick="del(${i})">✖</button></td>
+    `;
+
+    tb.appendChild(tr);
+
+    const detail = document.createElement("tr");
+    detail.style.display = "none";
+
+    detail.innerHTML = `
+      <td colspan="6">
+        <div style="padding:10px;font-size:13px;line-height:1.6;">
+          <b>Range:</b> ${r.lrv} → ${r.urv} ${r.eu}<br>
+
+          <b>Alarms:</b><br>
+          LLL: ${r.lll} | LL: ${r.ll} | L: ${r.l}<br>
+          H: ${r.h} | HH: ${r.hh} | HHH: ${r.hhh}<br>
+
+          <b>Device:</b><br>
+          Range: ${r.range}<br>
+          Serial: ${r.serial}<br>
+          Model: ${r.model}
+        </div>
+      </td>
+    `;
+
+    tb.appendChild(detail);
+
+    if(r.status==="PASS") p++; else f++;
+  });
+
+  pass.textContent="Pass: "+p;
+  fail.textContent="Fail: "+f;
+}
+
+/* ===== TOGGLE DETAILS ===== */
+function toggle(i,btn){
+  const row = btn.parentElement.parentElement.nextElementSibling;
+  const open = row.style.display === "table-row";
+
+  row.style.display = open ? "none" : "table-row";
+  btn.textContent = open ? "▶" : "▼";
 }
 
 /* ===== DELETE ===== */
@@ -254,48 +317,27 @@ function clearAll(){
   }
 }
 
-/* ===== CSV ===== */
+/* ===== CSV EXPORT (FULL DATA) ===== */
 function exportCSV(){
-  let csv="Date,Tag,Point,Status,Notes\n";
+
+  let csv="Date,Tag,Status,Notes,LRV,URV,EU,LLL,LL,L,H,HH,HHH,Range,Serial,Model\n";
 
   logs.forEach(r=>{
-    csv+=`${r.date},${r.tag},${r.point},${r.status},${r.notes}\n`;
+    csv+=`${r.date},${r.tag},${r.status},${r.notes},
+${r.lrv},${r.urv},${r.eu},
+${r.lll},${r.ll},${r.l},${r.h},${r.hh},${r.hhh},
+${r.range},${r.serial},${r.model}\n`;
   });
 
   const blob=new Blob([csv]);
   const a=document.createElement("a");
   a.href=URL.createObjectURL(blob);
-  a.download="loop_log.csv";
+  a.download="loop_log_full.csv";
   a.click();
-}
-
-/* ===== RENDER ===== */
-function render(){
-  const tb = document.getElementById("log");
-  tb.innerHTML="";
-
-  let p=0,f=0;
-
-  logs.forEach((r,i)=>{
-    tb.innerHTML += `
-    <tr style="${r.status==='FAIL'?'background:#ffe5e5':''}">
-      <td>${r.date}</td>
-      <td>${r.tag}</td>
-      <td>${r.point}</td>
-      <td>${r.status}</td>
-      <td><button onclick="del(${i})">✖</button></td>
-    </tr>`;
-
-    if(r.status==="PASS") p++; else f++;
-  });
-
-  pass.textContent="Pass: "+p;
-  fail.textContent="Fail: "+f;
 }
 
 render();
 
 </script>
 
-</body>
 </html>
