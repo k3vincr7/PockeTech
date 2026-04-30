@@ -54,15 +54,11 @@ button{
   background:#2d6cdf;
   color:white;
   font-weight:600;
+  cursor:pointer;
 }
 
 .btn{
   flex:1;
-}
-
-.small-btn{
-  padding:8px;
-  font-size:12px;
 }
 
 .steps{
@@ -86,9 +82,6 @@ th,td{
   border-bottom:1px solid #eee;
 }
 
-.pass{color:green;}
-.fail{color:red;}
-
 .back{
   text-align:center;
   padding:12px;
@@ -105,24 +98,6 @@ th,td{
 <div class="card">
   <h2>🔁 Loop Log</h2>
   <div>Field → Wiring → I/O → DCS → Final Element</div>
-</div>
-
-<!-- QUICK CALC -->
-<div class="card">
-  <h3>⚡ 4–20 mA Quick Calc</h3>
-
-  <div class="row">
-    <input id="pct" placeholder="%">
-    <input id="ma" placeholder="mA">
-  </div>
-
-  <div class="steps">
-    <button onclick="step(0)">0%</button>
-    <button onclick="step(25)">25%</button>
-    <button onclick="step(50)">50%</button>
-    <button onclick="step(75)">75%</button>
-    <button onclick="step(100)">100%</button>
-  </div>
 </div>
 
 <!-- SNAPSHOT -->
@@ -147,7 +122,6 @@ th,td{
   <div class="row">
     <input id="date" type="date">
     <input id="tag" placeholder="Tag">
-    <input id="point" placeholder="Point">
   </div>
 
   <div class="row">
@@ -178,8 +152,8 @@ th,td{
 <tr>
 <th>Date</th>
 <th>Tag</th>
-<th>Point</th>
 <th>Status</th>
+<th>Notes</th>
 <th></th>
 </tr>
 </thead>
@@ -193,7 +167,7 @@ th,td{
 
 </main>
 
-  <script>
+<script>
 
 document.getElementById("date").valueAsDate = new Date();
 
@@ -203,44 +177,36 @@ function save(){
   localStorage.setItem("loopLogs", JSON.stringify(logs));
 }
 
-/* ===== ADD ENTRY ===== */
+/* ===== ADD ENTRY ===== /
 function add(){
 
-  if(!tag.value){
+  const tagEl = document.getElementById("tag");
+
+  if(!tagEl.value){
     alert("Enter tag");
     return;
   }
 
   logs.push({
-    date:date.value,
-    tag:tag.value,
-    status:status.value,
-    notes:notes.value,
+    date: document.getElementById("date").value,
+    tag: tagEl.value,
+    status: document.getElementById("status").value,
+    notes: document.getElementById("notes").value,
 
-    // 🔥 FULL SNAPSHOT
-    lrv:lrv.value,
-    urv:urv.value,
-    eu:document.getElementById("lp_eu_units")?.value || "",
-
-    lll:document.getElementById("lp_lll")?.value,
-    ll:document.getElementById("lp_ll")?.value,
-    l:document.getElementById("lp_l")?.value,
-    h:document.getElementById("lp_h")?.value,
-    hh:document.getElementById("lp_hh")?.value,
-    hhh:document.getElementById("lp_hhh")?.value,
-
-    range:document.getElementById("lp_dev")?.value,
-    serial:document.getElementById("lp_dev_sn")?.value,
-    model:document.getElementById("lp_dev_model")?.value
+    // snapshot
+    lrv: document.getElementById("lrv").value,
+    urv: document.getElementById("urv").value,
+    range: document.getElementById("devRange").value,
+    model: document.getElementById("devModel").value
   });
 
   save();
   render();
 
-  notes.value="";
+  document.getElementById("notes").value="";
 }
 
-/* ===== RENDER ===== */
+/ ===== RENDER ===== /
 function render(){
 
   const tb = document.getElementById("log");
@@ -252,63 +218,41 @@ function render(){
 
     const tr = document.createElement("tr");
 
-    tr.innerHTML = `
-      <td>${r.date}</td>
-      <td>${r.tag}</td>
-      <td>${r.status}</td>
-      <td>${r.notes}</td>
-      <td><button onclick="toggle(${i},this)">▶</button></td>
-      <td><button onclick="del(${i})">✖</button></td>
-    `;
+    tr.innerHTML =       <td>${r.date}</td>       <td>${r.tag}</td>       <td>${r.status}</td>       <td>${r.notes}</td>       <td><button onclick="toggle(${i},this)">▶</button></td>       <td><button onclick="del(${i})">✖</button></td>    ;
 
     tb.appendChild(tr);
 
     const detail = document.createElement("tr");
     detail.style.display = "none";
 
-    detail.innerHTML = `
-      <td colspan="6">
-        <div style="padding:10px;font-size:13px;line-height:1.6;">
-          <b>Range:</b> ${r.lrv} → ${r.urv} ${r.eu}<br>
-
-          <b>Alarms:</b><br>
-          LLL: ${r.lll} | LL: ${r.ll} | L: ${r.l}<br>
-          H: ${r.h} | HH: ${r.hh} | HHH: ${r.hhh}<br>
-
-          <b>Device:</b><br>
-          Range: ${r.range}<br>
-          Serial: ${r.serial}<br>
-          Model: ${r.model}
-        </div>
-      </td>
-    `;
+    detail.innerHTML =       <td colspan="6">         <div style="padding:10px;font-size:13px;">           <b>Range:</b> ${r.lrv} → ${r.urv}<br>           <b>Device:</b> ${r.range}<br>           <b>Model:</b> ${r.model}         </div>       </td>    ;
 
     tb.appendChild(detail);
 
     if(r.status==="PASS") p++; else f++;
   });
 
-  pass.textContent="Pass: "+p;
-  fail.textContent="Fail: "+f;
+  document.getElementById("pass").textContent="Pass: "+p;
+  document.getElementById("fail").textContent="Fail: "+f;
 }
 
-/* ===== TOGGLE DETAILS ===== */
+/ ===== TOGGLE DETAILS ===== /
 function toggle(i,btn){
-  const row = btn.parentElement.parentElement.nextElementSibling;
-  const open = row.style.display === "table-row";
+  const row = btn.closest("tr").nextElementSibling;
+  const open = row.style.display==="table-row";
 
   row.style.display = open ? "none" : "table-row";
   btn.textContent = open ? "▶" : "▼";
 }
 
-/* ===== DELETE ===== */
+/ ===== DELETE ===== /
 function del(i){
   logs.splice(i,1);
   save();
   render();
 }
 
-/* ===== CLEAR ===== */
+/ ===== CLEAR ===== /
 function clearAll(){
   if(confirm("Clear all?")){
     logs=[];
@@ -317,173 +261,13 @@ function clearAll(){
   }
 }
 
-/* ===== CSV EXPORT (FULL DATA) ===== */
+/ ===== CSV EXPORT ===== */
 function exportCSV(){
 
-  let csv="Date,Tag,Status,Notes,LRV,URV,EU,LLL,LL,L,H,HH,HHH,Range,Serial,Model\n";
+  let csv="Date,Tag,Status,Notes,LRV,URV,Range,Model\n";
 
   logs.forEach(r=>{
-    csv+=`${r.date},${r.tag},${r.status},${r.notes},
-${r.lrv},${r.urv},${r.eu},
-${r.lll},${r.ll},${r.l},${r.h},${r.hh},${r.hhh},
-${r.range},${r.serial},${r.model}\n`;
-  });
-
-  const blob=new Blob([csv]);
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="loop_log_full.csv";
-  a.click();
-}
-
-render();
-
-</script>
-
-</html>
-
-<script>
-
-const K_LOOP = "loopLogs";
-
-function load(){ return JSON.parse(localStorage.getItem(K_LOOP)||"[]"); }
-function save(v){ localStorage.setItem(K_LOOP, JSON.stringify(v)); }
-
-/* ===== ADD ===== */
-function loop_add(){
-
-  const rec = {
-    date: document.getElementById("lp_date").value || new Date().toISOString().slice(0,10),
-    tag: document.getElementById("lp_tag").value,
-    point: document.getElementById("lp_point").value,
-    units: document.getElementById("lp_units").value,
-    ok: document.getElementById("lp_ok").value,
-    notes: document.getElementById("lp_notes").value,
-
-    // SNAPSHOT
-    lrv: document.getElementById("lp_lrv").value,
-    urv: document.getElementById("lp_urv").value,
-    eu: document.getElementById("lp_eu_units").value,
-
-    lll: document.getElementById("lp_lll").value,
-    ll: document.getElementById("lp_ll").value,
-    l: document.getElementById("lp_l").value,
-    h: document.getElementById("lp_h").value,
-    hh: document.getElementById("lp_hh").value,
-    hhh: document.getElementById("lp_hhh").value,
-
-    range: document.getElementById("lp_dev").value,
-    serial: document.getElementById("lp_dev_sn").value,
-    model: document.getElementById("lp_dev_model").value
-  };
-
-  if(!rec.tag){
-    alert("Enter tag");
-    return;
-  }
-
-  const rows = load();
-  rows.push(rec);
-  save(rows);
-
-  loop_render();
-
-  document.getElementById("lp_notes").value="";
-}
-
-/* ===== RENDER ===== */
-function loop_render(){
-
-  const rows = load();
-  const tb = document.querySelector("#lp_tbl tbody");
-  tb.innerHTML="";
-
-  let pass=0, fail=0;
-
-  rows.forEach((r,i)=>{
-
-    const tr = document.createElement("tr");
-
-    tr.innerHTML = `
-      <td>${r.date}</td>
-      <td>${r.tag}</td>
-      <td>${r.point}</td>
-      <td>${r.units}</td>
-      <td>${r.ok}</td>
-      <td>${r.notes}</td>
-      <td>
-        <button onclick="toggleDetails(${i},this)">▶</button>
-        <button onclick="loop_delete(${i})">✖</button>
-      </td>
-    `;
-
-    tb.appendChild(tr);
-
-    const detail = document.createElement("tr");
-    detail.style.display="none";
-
-    detail.innerHTML = `
-      <td colspan="7">
-        <div style="padding:10px;font-size:13px;">
-          <b>Range:</b> ${r.lrv} → ${r.urv} ${r.eu}<br><br>
-
-          <b>Alarms:</b><br>
-          LLL:${r.lll} LL:${r.ll} L:${r.l}<br>
-          H:${r.h} HH:${r.hh} HHH:${r.hhh}<br><br>
-
-          <b>Device:</b><br>
-          Range: ${r.range}<br>
-          Serial: ${r.serial}<br>
-          Model: ${r.model}
-        </div>
-      </td>
-    `;
-
-    tb.appendChild(detail);
-
-    if(r.ok==="YES") pass++; else fail++;
-  });
-
-  document.getElementById("loop-pass").textContent="Pass: "+pass;
-  document.getElementById("loop-fail").textContent="Fail: "+fail;
-}
-
-/* ===== TOGGLE ===== */
-function toggleDetails(i,btn){
-  const row = btn.closest("tr").nextElementSibling;
-  const open = row.style.display==="table-row";
-
-  row.style.display = open ? "none" : "table-row";
-  btn.textContent = open ? "▶" : "▼";
-}
-
-/* ===== DELETE ===== */
-function loop_delete(i){
-  const rows = load();
-  rows.splice(i,1);
-  save(rows);
-  loop_render();
-}
-
-/* ===== CLEAR ===== */
-function loop_clear(){
-  if(confirm("Clear all?")){
-    save([]);
-    loop_render();
-  }
-}
-
-/* ===== CSV ===== */
-function loop_csv(){
-
-  const rows = load();
-  let csv="Date,Tag,Point,Units,Status,Notes,LRV,URV,EU,LLL,LL,L,H,HH,HHH,Range,Serial,Model\n";
-
-  rows.forEach(r=>{
-    csv+=`${r.date},${r.tag},${r.point},${r.units},${r.ok},${r.notes},
-${r.lrv},${r.urv},${r.eu},
-${r.lll},${r.ll},${r.l},${r.h},${r.hh},${r.hhh},
-${r.range},${r.serial},${r.model}\n`;
+    csv+=${r.date},${r.tag},${r.status},${r.notes},${r.lrv},${r.urv},${r.range},${r.model}\n;
   });
 
   const blob=new Blob([csv]);
@@ -493,12 +277,9 @@ ${r.range},${r.serial},${r.model}\n`;
   a.click();
 }
 
-/* ===== CONNECT BUTTONS ===== */
-document.getElementById("lp_add").onclick = loop_add;
-document.getElementById("lp_export").onclick = loop_csv;
-document.getElementById("lp_clear").onclick = loop_clear;
-
-/* INIT */
-loop_render();
+render();
 
 </script>
+
+</body>
+</html>
