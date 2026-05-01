@@ -2,11 +2,14 @@
 
 <html lang="en" data-theme="auto">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><title>PockeTech – Calibration</title><meta name="theme-color" content="#0f1115">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PockeTech – Calibration</title>
+<meta name="theme-color" content="#0f1115">
 <style>
-:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--ok:#166534;--ok-bg:#dcfce7;--warn:#b45309;--warn-bg:#fef3c7;--fail:#991b1b;--fail-bg:#fee2e2;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
-html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--ok:#166534;--ok-bg:#14532d;--warn:#b45309;--warn-bg:#451a03;--fail:#991b1b;--fail-bg:#450a0a;--shadow:0 14px 34px rgba(0,0,0,.35)}
-@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--ok:#166534;--ok-bg:#14532d;--warn:#b45309;--warn-bg:#451a03;--fail:#991b1b;--fail-bg:#450a0a;--shadow:0 14px 34px rgba(0,0,0,.35)}}
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--ok:#166534;--ok-bg:#dcfce7;--fail:#991b1b;--fail-bg:#fee2e2;--warn:#b45309;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--ok-bg:#14532d;--fail-bg:#450a0a;--shadow:0 14px 34px rgba(0,0,0,.35)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--ok-bg:#14532d;--fail-bg:#450a0a;--shadow:0 14px 34px rgba(0,0,0,.35)}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
 header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
@@ -17,7 +20,7 @@ html[data-theme="dark"] header{background:rgba(15,17,21,.75)}
 .build{font-size:12px;color:var(--muted)}
 main{padding:14px;max-width:960px;margin:0 auto}
 button,input,select,textarea{font:inherit;border-radius:14px}
-button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;font-weight:650;transition:transform .08s ease,box-shadow .15s ease,border-color .15s ease}
+button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;font-weight:650;transition:transform .08s,box-shadow .15s,border-color .15s}
 button:active{transform:translateY(1px) scale(.99)}
 input,select,textarea{width:100%;padding:11px 13px;border:1px solid var(--border);background:var(--card);color:var(--fg);margin-top:6px;outline:none}
 textarea{resize:vertical;min-height:72px;border-radius:12px}
@@ -25,7 +28,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 
 label{font-weight:700;font-size:14px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
 .hero{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 28%,var(--card)),var(--card) 70%);overflow:hidden;position:relative}
-.hero:after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,transparent)}
+.hero::after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,transparent)}
 .hero-badge{display:inline-block;background:var(--accent);color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 10px;border-radius:999px;margin-bottom:10px}
 .section-title{margin:0 0 4px;font-size:26px;font-weight:800;letter-spacing:-.5px}
 .muted{color:var(--muted);font-size:13px;line-height:1.35}
@@ -36,115 +39,85 @@ label{font-weight:700;font-size:14px}
 .ok-btn{background:color-mix(in srgb,var(--accent) 15%,var(--tile));border-color:var(--accent);color:var(--accent)}
 .save-btn{background:var(--accent);color:#fff;border-color:var(--accent);width:100%;padding:14px;font-size:15px;border-radius:14px;margin-top:4px}
 .danger-btn{background:var(--fail-bg);color:var(--fail);border-color:var(--fail)}
-
-/* Mode Toggle */
-.mode-toggle{display:flex;background:var(–tile);border:1px solid var(–border);border-radius:14px;padding:4px;gap:4px;margin-bottom:16px}
-.mode-btn{flex:1;padding:10px;border-radius:10px;border:none;background:transparent;color:var(–muted);font-weight:700;font-size:14px;transition:all .15s ease}
-.mode-btn.active{background:var(–card);color:var(–fg);box-shadow:0 2px 8px rgba(0,0,0,.12);border:1px solid var(–border)}
-
+.group-label{font-size:11px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px}
+/* Mode toggle */
+.mode-toggle{display:flex;background:var(--tile);border:1px solid var(--border);border-radius:14px;padding:4px;gap:4px;margin-bottom:16px}
+.mode-btn{flex:1;padding:10px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--muted);font-weight:700;font-size:14px;transition:all .15s}
+.mode-btn.active{background:var(--card);color:var(--fg);box-shadow:0 2px 8px rgba(0,0,0,.12);border-color:var(--border)}
 /* Collapsible */
-.collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:2px 0}
-.collapsible-header h3{margin:0;font-size:15px;font-weight:750}
-.chevron{transition:transform .2s ease;font-size:12px;color:var(–muted)}
-.chevron.open{transform:rotate(180deg)}
-.collapsible-body{overflow:hidden;transition:max-height .25s ease;max-height:0}
-.collapsible-body.open{max-height:2000px}
-
-/* Checkboxes */
-.check-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.check-row{display:flex;flex-direction:column;gap:6px}
-.check-row label.row-label{font-size:13px;font-weight:700;color:var(–fg);margin-bottom:2px}
-.check-options{display:flex;gap:8px;flex-wrap:wrap}
-.check-opt{display:flex;align-items:center;gap:5px;cursor:pointer}
-.check-opt input[type=checkbox]{width:16px;height:16px;margin:0;accent-color:var(–accent);border-radius:4px;cursor:pointer}
-.check-opt span{font-size:13px;font-weight:600}
-
-/* Cal Table */
-.cal-table-wrap{overflow-x:auto;margin-top:10px}
+.coll-hdr{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:2px 0}
+.coll-hdr h3{margin:0;font-size:15px;font-weight:750;pointer-events:none}
+.coll-arrow{font-size:11px;color:var(--muted);transition:transform .2s;pointer-events:none;display:inline-block}
+.coll-body{max-height:0;overflow:hidden;transition:max-height .28s ease}
+.coll-body.open{max-height:3000px}
+.coll-arrow.open{transform:rotate(180deg)}
+/* Tables */
+.scroll-x{overflow-x:auto;margin-top:10px}
 table{width:100%;border-collapse:collapse;font-size:14px}
-th{background:var(–tile);padding:10px 8px;text-align:center;font-size:12px;font-weight:750;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(–border);white-space:nowrap}
-td{border:1px solid var(–border);padding:4px}
-td.label-cell{padding:8px;font-weight:700;font-size:13px;background:var(–tile);white-space:nowrap;text-align:center}
-td input{margin:0;padding:8px 6px;border:none;border-radius:8px;font-size:14px;text-align:center;background:transparent}
-td input:focus{background:color-mix(in srgb,var(–accent) 8%,var(–card));box-shadow:none;border:1px solid var(–accent)}
-.pass-cell{background:color-mix(in srgb,#22c55e 12%,transparent)}
-.fail-cell{background:color-mix(in srgb,#ef4444 12%,transparent)}
-
-/* Test Equipment */
-.teq-table td input{font-size:13px;padding:6px 5px}
-.teq-table td{padding:3px}
-
-/* Sign-off */
-.sign-table td{padding:8px 6px;border:1px solid var(–border)}
-.sign-table td input{font-size:13px;padding:5px}
-
-/* Records */
-.record-card{background:var(–tile);border:1px solid var(–border);border-radius:14px;padding:12px 14px;margin-bottom:10px;cursor:pointer;transition:box-shadow .15s}
-.record-card:hover{box-shadow:var(–shadow)}
-.record-tag{font-weight:800;font-size:15px}
-.record-meta{font-size:12px;color:var(–muted);margin-top:2px}
-.record-badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px}
-.badge-pass{background:var(–ok-bg);color:var(–ok)}
-.badge-fail{background:var(–fail-bg);color:var(–fail)}
-.badge-in{background:color-mix(in srgb,var(–accent) 15%,transparent);color:var(–accent)}
-.badge-out{background:color-mix(in srgb,#f59e0b 15%,transparent);color:#b45309}
-.empty-state{text-align:center;color:var(–muted);padding:32px 0;font-size:14px}
-
+th{background:var(--tile);padding:9px 7px;text-align:center;font-size:12px;font-weight:750;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--border);white-space:nowrap}
+td{border:1px solid var(--border);padding:3px}
+.lc{padding:8px 6px;font-weight:700;font-size:13px;background:var(--tile);white-space:nowrap;text-align:center}
+td input{margin:0;padding:8px 5px;border:none;border-radius:8px;font-size:14px;text-align:center;background:transparent;color:var(--fg)}
+td input:focus{background:color-mix(in srgb,var(--accent) 8%,var(--card));outline:1px solid var(--accent)}
+/* Asset rows */
+.asset-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:6px}
+.asset-row:last-child{border-bottom:none}
+.asset-label{font-size:13px;font-weight:700;flex:0 0 150px}
+.radio-group{display:flex;gap:8px;flex-wrap:wrap}
+.radio-opt{display:flex;align-items:center;gap:5px;cursor:pointer;background:var(--tile);border:1px solid var(--border);border-radius:10px;padding:7px 10px}
+.radio-opt input{width:15px;height:15px;margin:0;accent-color:var(--accent);cursor:pointer}
+.radio-opt span{font-size:13px;font-weight:600}
 /* Tabs */
-.tab-bar{display:flex;gap:8px;margin-bottom:14px;border-bottom:2px solid var(–border);padding-bottom:0}
-.tab-btn{padding:9px 16px;border:none;background:transparent;color:var(–muted);font-weight:700;font-size:14px;border-radius:10px 10px 0 0;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
-.tab-btn.active{color:var(–accent);border-bottom-color:var(–accent);background:color-mix(in srgb,var(–accent) 8%,transparent)}
-
-.group-label{font-size:11px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;color:var(–muted);margin:18px 0 8px;padding:0 2px}
-.result-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:12px}
-.result-card{background:var(–tile);border:1px solid var(–border);border-radius:14px;padding:12px}
-.result-card .big{font-size:22px;font-weight:850;margin:3px 0;letter-spacing:-.4px}
-.xmtr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
-.xmtr-opt{display:flex;align-items:center;gap:6px;cursor:pointer;background:var(–tile);border:1px solid var(–border);border-radius:10px;padding:8px 10px}
-.xmtr-opt input{width:16px;height:16px;margin:0;accent-color:var(–accent)}
-.xmtr-opt span{font-size:13px;font-weight:600}
-@media(max-width:520px){main{padding:10px}.section-title{font-size:22px}.check-grid{grid-template-columns:1fr}.xmtr-grid{grid-template-columns:repeat(2,1fr)}.row{gap:8px}}
-footer{text-align:center;color:var(–muted);font-size:13px;padding:22px}
+.tab-bar{display:flex;gap:8px;margin-bottom:14px;border-bottom:2px solid var(--border)}
+.tab-btn{padding:9px 16px;border:none;background:transparent;color:var(--muted);font-weight:700;font-size:14px;border-radius:10px 10px 0 0;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+/* Records */
+.rec-card{background:var(--tile);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:10px;cursor:pointer;transition:box-shadow .15s}
+.rec-card:hover{box-shadow:var(--shadow)}
+.rec-tag{font-weight:800;font-size:15px}
+.rec-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px}
+.badge-in{background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent)}
+.badge-out{background:color-mix(in srgb,#f59e0b 15%,transparent);color:#b45309}
+.empty{text-align:center;color:var(--muted);padding:36px 0;font-size:14px}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
+@media(max-width:520px){main{padding:10px}.section-title{font-size:22px}.row{gap:8px}.asset-label{flex:0 0 110px}}
 </style>
-
 </head>
 <body>
+
 <header>
   <div class="header-left">
-    <button class="small-btn" onclick="location.href='./index.html'">← Back</button>
+    <button class="small-btn" onclick="location.href='./index.html'">&#8592; Back</button>
     <div class="brand">
       <div class="header-title">PockeTech V2</div>
       <div class="build">Calibration</div>
     </div>
   </div>
-  <button class="small-btn" onclick="toggleTheme()">🌓</button>
+  <button class="small-btn" onclick="toggleTheme()">&#127771;</button>
 </header>
 
 <main>
-  <!-- TAB BAR -->
   <div class="tab-bar">
-    <button class="tab-btn active" id="tab-new" onclick="switchTab('new')">📝 New Sheet</button>
-    <button class="tab-btn" id="tab-records" onclick="switchTab('records')">📂 Records</button>
+    <button class="tab-btn active" id="tab-new" onclick="switchTab('new')">&#128221; New Sheet</button>
+    <button class="tab-btn" id="tab-records" onclick="switchTab('records')">&#128194; Records</button>
   </div>
 
-  <!-- NEW SHEET TAB -->
+  <!-- NEW SHEET -->
 
   <div id="pane-new">
 
 ```
-<!-- Hero -->
 <div class="card hero">
-  <div class="hero-badge">📝 CAL SHEET</div>
+  <div class="hero-badge">&#128221; CAL SHEET</div>
   <h1 class="section-title">Calibration</h1>
-  <p class="muted" style="margin:4px 0 12px">Input transmitters &amp; output valves. Fill, save, export.</p>
-  <!-- Mode Toggle -->
+  <p class="muted" style="margin:4px 0 14px">Input transmitters &amp; output valves. Fill, save, export.</p>
   <div class="mode-toggle">
-    <button class="mode-btn active" id="modeInput" onclick="setMode('input')">📥 Input (Transmitter)</button>
-    <button class="mode-btn" id="modeOutput" onclick="setMode('output')">📤 Output (Valve)</button>
+    <button class="mode-btn active" id="modeInput" onclick="setMode('input')">&#128229; Input (Transmitter)</button>
+    <button class="mode-btn" id="modeOutput" onclick="setMode('output')">&#128228; Output (Valve)</button>
   </div>
 </div>
 
-<!-- Header Info -->
 <div class="card">
   <div class="row">
     <div class="col"><label>Work Order</label><input id="h_wo" placeholder="WO-00000"></div>
@@ -156,230 +129,215 @@ footer{text-align:center;color:var(–muted);font-size:13px;padding:22px}
   </div>
 </div>
 
-<!-- INPUT ONLY: Maintenance Request + Ranges -->
-<div id="input-only-top">
-  <div class="card">
-    <div class="collapsible-header" onclick="toggleCollapse('maint')">
-      <h3>Maintenance Request</h3><span class="chevron" id="chev-maint">▼</span>
-    </div>
-    <div class="collapsible-body" id="body-maint">
-      <div style="height:10px"></div>
-      <div class="check-options" style="flex-wrap:wrap;gap:10px">
-        <label class="xmtr-opt"><input type="checkbox" name="mreq" value="SCCI PM"><span>SCCI PM</span></label>
-        <label class="xmtr-opt"><input type="checkbox" name="mreq" value="Criticality PM"><span>Criticality PM</span></label>
-        <label class="xmtr-opt"><input type="checkbox" name="mreq" value="Maintenance PM"><span>Maintenance PM</span></label>
-        <label class="xmtr-opt"><input type="checkbox" name="mreq" value="Repair Request"><span>Repair Request</span></label>
-      </div>
-    </div>
+<!-- INPUT ONLY sections -->
+<div id="sec-mreq" class="card">
+  <div class="coll-hdr" onclick="toggleColl(this)">
+    <h3>Maintenance Request</h3><span class="coll-arrow">&#9660;</span>
   </div>
-
-  <div class="card">
-    <h3 style="margin:0 0 10px;font-size:15px;font-weight:750">Transmitter &amp; DCS Range</h3>
-    <div class="row">
-      <div class="col"><label>XMTR High</label><input id="r_xmtr_hi" inputmode="decimal" placeholder="100"></div>
-      <div class="col"><label>XMTR Low</label><input id="r_xmtr_lo" inputmode="decimal" placeholder="0"></div>
-      <div class="col"><label>Units</label><input id="r_units" placeholder="psi, °F…"></div>
-    </div>
-    <div class="row" style="margin-top:10px">
-      <div class="col"><label>DCS High</label><input id="r_dcs_hi" inputmode="decimal" placeholder="100"></div>
-      <div class="col"><label>DCS Low</label><input id="r_dcs_lo" inputmode="decimal" placeholder="0"></div>
-      <div class="col"><label>Engr Units</label><input id="r_engr_units" placeholder="EU"></div>
-    </div>
-  </div>
-</div>
-
-<!-- Asset Condition -->
-<div class="card">
-  <div class="collapsible-header" onclick="toggleCollapse('asset')">
-    <h3>Asset Condition</h3><span class="chevron" id="chev-asset">▼</span>
-  </div>
-  <div class="collapsible-body" id="body-asset">
+  <div class="coll-body">
     <div style="height:10px"></div>
-    <div id="asset-input-rows"></div>
-    <div id="asset-output-rows"></div>
+    <div class="radio-group">
+      <label class="radio-opt"><input type="checkbox" name="mreq" value="SCCI PM"><span>SCCI PM</span></label>
+      <label class="radio-opt"><input type="checkbox" name="mreq" value="Criticality PM"><span>Criticality PM</span></label>
+      <label class="radio-opt"><input type="checkbox" name="mreq" value="Maintenance PM"><span>Maintenance PM</span></label>
+      <label class="radio-opt"><input type="checkbox" name="mreq" value="Repair Request"><span>Repair Request</span></label>
+    </div>
   </div>
 </div>
 
-<!-- CALIBRATION TABLE -->
+<div id="sec-ranges" class="card">
+  <h3 style="margin:0 0 12px;font-size:15px;font-weight:750">Transmitter &amp; DCS Range</h3>
+  <div class="row">
+    <div class="col"><label>XMTR High</label><input id="r_xhi" inputmode="decimal" placeholder="100"></div>
+    <div class="col"><label>XMTR Low</label><input id="r_xlo" inputmode="decimal" placeholder="0"></div>
+    <div class="col"><label>Units</label><input id="r_units" placeholder="psi, degF..."></div>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <div class="col"><label>DCS High</label><input id="r_dhi" inputmode="decimal" placeholder="100"></div>
+    <div class="col"><label>DCS Low</label><input id="r_dlo" inputmode="decimal" placeholder="0"></div>
+    <div class="col"><label>Engr Units</label><input id="r_engr" placeholder="EU"></div>
+  </div>
+</div>
+
+<!-- Asset Condition (shared) -->
 <div class="card">
-  <h3 style="margin:0 0 4px;font-size:15px;font-weight:750">Calibration Data</h3>
-  <p class="muted" id="cal-hint" style="margin:0 0 10px">0 / 25 / 50 / 75 / 100 % test points</p>
-  <div class="cal-table-wrap">
-    <table id="cal-table">
-      <thead id="cal-thead"></thead>
-      <tbody id="cal-tbody"></tbody>
-    </table>
+  <div class="coll-hdr" onclick="toggleColl(this)">
+    <h3>Asset Condition</h3><span class="coll-arrow">&#9660;</span>
+  </div>
+  <div class="coll-body">
+    <div style="height:8px"></div>
+    <div id="asset-rows"></div>
   </div>
 </div>
 
-<!-- INPUT ONLY: XMTR Settings + Switch Cal + Alarms -->
-<div id="input-only-bottom">
-
-  <div class="card">
-    <div class="collapsible-header" onclick="toggleCollapse('xmtr')">
-      <h3>Transmitter Settings</h3><span class="chevron" id="chev-xmtr">▼</span>
-    </div>
-    <div class="collapsible-body" id="body-xmtr">
-      <div style="height:10px"></div>
-      <div class="group-label">XMTR Action</div>
-      <div class="xmtr-grid">
-        <label class="xmtr-opt"><input type="radio" name="xact" value="LINEAR"><span>Linear</span></label>
-        <label class="xmtr-opt"><input type="radio" name="xact" value="SQ ROOT"><span>Sq Root</span></label>
-        <label class="xmtr-opt"><input type="radio" name="xact" value="N/A"><span>N/A</span></label>
-      </div>
-      <div class="group-label" style="margin-top:14px">Fail Safe Mode</div>
-      <div class="xmtr-grid">
-        <label class="xmtr-opt"><input type="radio" name="xfail" value="HIGH"><span>High</span></label>
-        <label class="xmtr-opt"><input type="radio" name="xfail" value="LOW"><span>Low</span></label>
-        <label class="xmtr-opt"><input type="radio" name="xfail" value="N/A"><span>N/A</span></label>
-      </div>
-      <div class="group-label" style="margin-top:14px">XMTR Age</div>
-      <div class="xmtr-grid">
-        <label class="xmtr-opt"><input type="radio" name="xage" value="<15YRS"><span>&lt;15 Yrs</span></label>
-        <label class="xmtr-opt"><input type="radio" name="xage" value=">15YRS"><span>&gt;15 Yrs</span></label>
-        <label class="xmtr-opt"><input type="radio" name="xage" value="N/A"><span>N/A</span></label>
-      </div>
-    </div>
+<!-- Calibration Table -->
+<div class="card">
+  <h3 style="margin:0 0 3px;font-size:15px;font-weight:750">Calibration Data</h3>
+  <p class="muted" id="cal-hint" style="margin:0 0 4px"></p>
+  <div class="scroll-x">
+    <table><thead id="cal-thead"></thead><tbody id="cal-tbody"></tbody></table>
   </div>
+</div>
 
-  <div class="card">
-    <div class="collapsible-header" onclick="toggleCollapse('switch')">
-      <h3>Switch Calibration</h3><span class="chevron" id="chev-switch">▼</span>
-    </div>
-    <div class="collapsible-body" id="body-switch">
-      <div style="height:10px"></div>
-      <div class="cal-table-wrap">
-        <table>
-          <thead><tr><th></th><th>Setpoint</th><th>As Found</th><th>As Left</th><th>DCS Reading</th><th>Deadband</th></tr></thead>
-          <tbody>
-            <tr><td class="label-cell">OPEN</td><td><input id="sw_open_sp" inputmode="decimal"></td><td><input id="sw_open_af" inputmode="decimal"></td><td><input id="sw_open_al" inputmode="decimal"></td><td><input id="sw_open_dcs" inputmode="decimal"></td><td><input id="sw_open_db" inputmode="decimal"></td></tr>
-            <tr><td class="label-cell">CLOSED</td><td><input id="sw_cls_sp" inputmode="decimal"></td><td><input id="sw_cls_af" inputmode="decimal"></td><td><input id="sw_cls_al" inputmode="decimal"></td><td><input id="sw_cls_dcs" inputmode="decimal"></td><td><input id="sw_cls_db" inputmode="decimal"></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+<!-- INPUT ONLY: XMTR Settings -->
+<div id="sec-xmtr" class="card">
+  <div class="coll-hdr" onclick="toggleColl(this)">
+    <h3>Transmitter Settings</h3><span class="coll-arrow">&#9660;</span>
   </div>
-
-  <div class="card">
-    <div class="collapsible-header" onclick="toggleCollapse('alarms')">
-      <h3>Alarms &amp; Shutdown Points</h3><span class="chevron" id="chev-alarms">▼</span>
+  <div class="coll-body">
+    <div style="height:10px"></div>
+    <div class="group-label">XMTR Action</div>
+    <div class="radio-group">
+      <label class="radio-opt"><input type="radio" name="xact" value="LINEAR"><span>Linear</span></label>
+      <label class="radio-opt"><input type="radio" name="xact" value="SQ ROOT"><span>Sq Root</span></label>
+      <label class="radio-opt"><input type="radio" name="xact" value="N/A"><span>N/A</span></label>
     </div>
-    <div class="collapsible-body" id="body-alarms">
-      <div style="height:10px"></div>
-      <div class="cal-table-wrap">
-        <table>
-          <thead><tr><th></th><th>Setpoint</th><th>As Found</th><th>As Left</th><th>DCS Reading</th></tr></thead>
-          <tbody>
-            <tr><td class="label-cell">ALARM</td><td><input id="al_sp" inputmode="decimal"></td><td><input id="al_af" inputmode="decimal"></td><td><input id="al_al" inputmode="decimal"></td><td><input id="al_dcs" inputmode="decimal"></td></tr>
-            <tr><td class="label-cell">SHUTDOWN</td><td><input id="sd_sp" inputmode="decimal"></td><td><input id="sd_af" inputmode="decimal"></td><td><input id="sd_al" inputmode="decimal"></td><td><input id="sd_dcs" inputmode="decimal"></td></tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="group-label">Fail Safe Mode</div>
+    <div class="radio-group">
+      <label class="radio-opt"><input type="radio" name="xfail" value="HIGH"><span>High</span></label>
+      <label class="radio-opt"><input type="radio" name="xfail" value="LOW"><span>Low</span></label>
+      <label class="radio-opt"><input type="radio" name="xfail" value="N/A"><span>N/A</span></label>
+    </div>
+    <div class="group-label">XMTR Age</div>
+    <div class="radio-group">
+      <label class="radio-opt"><input type="radio" name="xage" value="LT15"><span>&lt;15 Yrs</span></label>
+      <label class="radio-opt"><input type="radio" name="xage" value="GT15"><span>&gt;15 Yrs</span></label>
+      <label class="radio-opt"><input type="radio" name="xage" value="N/A"><span>N/A</span></label>
     </div>
   </div>
 </div>
 
-<!-- OUTPUT ONLY: DCS Switch + On/Off Valve + Shutdown Function -->
-<div id="output-only-sections" style="display:none">
-
-  <div class="card">
-    <div class="collapsible-header" onclick="toggleCollapse('dcs')">
-      <h3>DCS Switch</h3><span class="chevron" id="chev-dcs">▼</span>
-    </div>
-    <div class="collapsible-body" id="body-dcs">
-      <div style="height:10px"></div>
-      <div class="check-options" style="gap:10px">
-        <label class="xmtr-opt"><input type="radio" name="dcs_sw" value="SATISFACTORY"><span>Satisfactory</span></label>
-        <label class="xmtr-opt"><input type="radio" name="dcs_sw" value="DAMAGED"><span>Damaged</span></label>
-        <label class="xmtr-opt"><input type="radio" name="dcs_sw" value="N/A"><span>N/A</span></label>
-      </div>
+<!-- INPUT ONLY: Switch Cal -->
+<div id="sec-switch" class="card">
+  <div class="coll-hdr" onclick="toggleColl(this)">
+    <h3>Switch Calibration</h3><span class="coll-arrow">&#9660;</span>
+  </div>
+  <div class="coll-body">
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th></th><th>Setpoint</th><th>As Found</th><th>As Left</th><th>DCS Reading</th><th>Deadband</th></tr></thead>
+        <tbody>
+          <tr><td class="lc">OPEN</td><td><input id="sw_o_sp" inputmode="decimal"></td><td><input id="sw_o_af" inputmode="decimal"></td><td><input id="sw_o_al" inputmode="decimal"></td><td><input id="sw_o_dcs" inputmode="decimal"></td><td><input id="sw_o_db" inputmode="decimal"></td></tr>
+          <tr><td class="lc">CLOSED</td><td><input id="sw_c_sp" inputmode="decimal"></td><td><input id="sw_c_af" inputmode="decimal"></td><td><input id="sw_c_al" inputmode="decimal"></td><td><input id="sw_c_dcs" inputmode="decimal"></td><td><input id="sw_c_db" inputmode="decimal"></td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
+</div>
 
-  <div class="card">
-    <div class="collapsible-header" onclick="toggleCollapse('onoff')">
-      <h3>On / Off Valve</h3><span class="chevron" id="chev-onoff">▼</span>
-    </div>
-    <div class="collapsible-body" id="body-onoff">
-      <div style="height:10px"></div>
-      <div class="cal-table-wrap">
-        <table>
-          <thead><tr><th>Solenoid</th><th>Voltage</th><th>Pos As Found</th><th>Pos As Left</th><th>Pos Target</th></tr></thead>
-          <tbody>
-            <tr><td class="label-cell">ENERGIZED</td><td><input id="onoff_e_v" inputmode="decimal"></td><td><input id="onoff_e_af"></td><td><input id="onoff_e_al"></td><td><input id="onoff_e_tgt"></td></tr>
-            <tr><td class="label-cell">DE-ENERGIZED</td><td><input id="onoff_de_v" inputmode="decimal"></td><td><input id="onoff_de_af"></td><td><input id="onoff_de_al"></td><td><input id="onoff_de_tgt"></td></tr>
-          </tbody>
-        </table>
-      </div>
+<!-- INPUT ONLY: Alarms -->
+<div id="sec-alarms" class="card">
+  <div class="coll-hdr" onclick="toggleColl(this)">
+    <h3>Alarms &amp; Shutdown Points</h3><span class="coll-arrow">&#9660;</span>
+  </div>
+  <div class="coll-body">
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th></th><th>Setpoint</th><th>As Found</th><th>As Left</th><th>DCS Reading</th></tr></thead>
+        <tbody>
+          <tr><td class="lc">ALARM</td><td><input id="al_sp" inputmode="decimal"></td><td><input id="al_af" inputmode="decimal"></td><td><input id="al_al" inputmode="decimal"></td><td><input id="al_dcs" inputmode="decimal"></td></tr>
+          <tr><td class="lc">SHUTDOWN</td><td><input id="sd_sp" inputmode="decimal"></td><td><input id="sd_af" inputmode="decimal"></td><td><input id="sd_al" inputmode="decimal"></td><td><input id="sd_dcs" inputmode="decimal"></td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
+</div>
 
-  <div class="card">
-    <div class="collapsible-header" onclick="toggleCollapse('shutdown')">
-      <h3>Valve Shutdown Function</h3><span class="chevron" id="chev-shutdown">▼</span>
+<!-- OUTPUT ONLY sections (hidden by default) -->
+<div id="sec-dcs" class="card" style="display:none">
+  <div class="coll-hdr" onclick="toggleColl(this)">
+    <h3>DCS Switch</h3><span class="coll-arrow">&#9660;</span>
+  </div>
+  <div class="coll-body">
+    <div style="height:10px"></div>
+    <div class="radio-group">
+      <label class="radio-opt"><input type="radio" name="dcs_sw" value="SATISFACTORY"><span>Satisfactory</span></label>
+      <label class="radio-opt"><input type="radio" name="dcs_sw" value="DAMAGED"><span>Damaged</span></label>
+      <label class="radio-opt"><input type="radio" name="dcs_sw" value="N/A"><span>N/A</span></label>
     </div>
-    <div class="collapsible-body" id="body-shutdown">
-      <div style="height:10px"></div>
-      <div class="cal-table-wrap">
-        <table>
-          <thead><tr><th>Shutdown</th><th>Pos As Found</th><th>Pos As Left</th><th>Pos Target</th></tr></thead>
-          <tbody>
-            <tr><td class="label-cell">ACTIVE</td><td><input id="sd_act_af"></td><td><input id="sd_act_al"></td><td><input id="sd_act_tgt"></td></tr>
-            <tr><td class="label-cell">IN-ACTIVE</td><td><input id="sd_ina_af"></td><td><input id="sd_ina_al"></td><td><input id="sd_ina_tgt"></td></tr>
-          </tbody>
-        </table>
-      </div>
+  </div>
+</div>
+
+<div id="sec-onoff" class="card" style="display:none">
+  <div class="coll-hdr" onclick="toggleColl(this)">
+    <h3>On / Off Valve</h3><span class="coll-arrow">&#9660;</span>
+  </div>
+  <div class="coll-body">
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Solenoid</th><th>Voltage</th><th>Pos As Found</th><th>Pos As Left</th><th>Pos Target</th></tr></thead>
+        <tbody>
+          <tr><td class="lc">ENERGIZED</td><td><input id="oo_e_v" inputmode="decimal"></td><td><input id="oo_e_af"></td><td><input id="oo_e_al"></td><td><input id="oo_e_tgt"></td></tr>
+          <tr><td class="lc">DE-ENERGIZED</td><td><input id="oo_d_v" inputmode="decimal"></td><td><input id="oo_d_af"></td><td><input id="oo_d_al"></td><td><input id="oo_d_tgt"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="sec-vsd" class="card" style="display:none">
+  <div class="coll-hdr" onclick="toggleColl(this)">
+    <h3>Valve Shutdown Function</h3><span class="coll-arrow">&#9660;</span>
+  </div>
+  <div class="coll-body">
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Shutdown</th><th>Pos As Found</th><th>Pos As Left</th><th>Pos Target</th></tr></thead>
+        <tbody>
+          <tr><td class="lc">ACTIVE</td><td><input id="vs_a_af"></td><td><input id="vs_a_al"></td><td><input id="vs_a_tgt"></td></tr>
+          <tr><td class="lc">IN-ACTIVE</td><td><input id="vs_i_af"></td><td><input id="vs_i_al"></td><td><input id="vs_i_tgt"></td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
 
 <!-- Test Equipment -->
 <div class="card">
-  <div class="collapsible-header" onclick="toggleCollapse('teq')">
-    <h3>Test Equipment</h3><span class="chevron" id="chev-teq">▼</span>
+  <div class="coll-hdr" onclick="toggleColl(this)">
+    <h3>Test Equipment</h3><span class="coll-arrow">&#9660;</span>
   </div>
-  <div class="collapsible-body" id="body-teq">
-    <div style="height:10px"></div>
-    <div class="cal-table-wrap">
-      <table class="teq-table">
+  <div class="coll-body">
+    <div class="scroll-x">
+      <table>
         <thead><tr><th>Item</th><th>Serial No.</th><th>Cal Date</th><th>Exp Date</th></tr></thead>
         <tbody id="teq-tbody"></tbody>
       </table>
     </div>
-    <button class="small-btn ok-btn" style="margin-top:10px;width:100%" onclick="addTeqRow()">+ Add Row</button>
+    <button class="ok-btn" style="margin-top:10px;width:100%;border-radius:12px;padding:10px" onclick="addTeqRow()">+ Add Row</button>
   </div>
 </div>
 
 <!-- Comments -->
 <div class="card">
   <label>Comments</label>
-  <textarea id="comments" placeholder="Notes, issues, observations…"></textarea>
+  <textarea id="comments" placeholder="Notes, issues, observations..."></textarea>
 </div>
 
-<!-- Sign-off -->
+<!-- Sign-Off -->
 <div class="card">
-  <div class="collapsible-header" onclick="toggleCollapse('signoff')">
-    <h3>Sign-Off</h3><span class="chevron" id="chev-signoff">▼</span>
+  <div class="coll-hdr" onclick="toggleColl(this)">
+    <h3>Sign-Off</h3><span class="coll-arrow">&#9660;</span>
   </div>
-  <div class="collapsible-body" id="body-signoff">
-    <div style="height:12px"></div>
+  <div class="coll-body">
+    <div style="height:10px"></div>
     <div class="group-label">Maintenance Technician</div>
-    <div class="cal-table-wrap">
-      <table class="sign-table">
+    <div class="scroll-x">
+      <table>
         <thead><tr><th>Name</th><th>Signature</th><th>Date</th></tr></thead>
         <tbody>
-          <tr><td><input id="mt1_name" placeholder="Name"></td><td><input id="mt1_sig" placeholder="Initials / Sign"></td><td><input id="mt1_date" type="date"></td></tr>
-          <tr><td><input id="mt2_name" placeholder="Name"></td><td><input id="mt2_sig" placeholder="Initials / Sign"></td><td><input id="mt2_date" type="date"></td></tr>
+          <tr><td><input id="mt1n" placeholder="Name"></td><td><input id="mt1s" placeholder="Initials"></td><td><input id="mt1d" type="date"></td></tr>
+          <tr><td><input id="mt2n" placeholder="Name"></td><td><input id="mt2s" placeholder="Initials"></td><td><input id="mt2d" type="date"></td></tr>
         </tbody>
       </table>
     </div>
-    <div class="group-label" style="margin-top:14px">Operations Technician</div>
-    <div class="cal-table-wrap">
-      <table class="sign-table">
+    <div class="group-label">Operations Technician</div>
+    <div class="scroll-x">
+      <table>
         <thead><tr><th>Name</th><th>Signature</th><th>Date</th></tr></thead>
         <tbody>
-          <tr><td><input id="op1_name" placeholder="Name"></td><td><input id="op1_sig" placeholder="Initials / Sign"></td><td><input id="op1_date" type="date"></td></tr>
-          <tr><td><input id="op2_name" placeholder="Name"></td><td><input id="op2_sig" placeholder="Initials / Sign"></td><td><input id="op2_date" type="date"></td></tr>
+          <tr><td><input id="op1n" placeholder="Name"></td><td><input id="op1s" placeholder="Initials"></td><td><input id="op1d" type="date"></td></tr>
+          <tr><td><input id="op2n" placeholder="Name"></td><td><input id="op2s" placeholder="Initials"></td><td><input id="op2d" type="date"></td></tr>
         </tbody>
       </table>
     </div>
@@ -389,24 +347,22 @@ footer{text-align:center;color:var(–muted);font-size:13px;padding:22px}
 <!-- Save / Clear -->
 <div class="card">
   <div class="row">
-    <div class="col"><button class="save-btn" onclick="saveRecord()">💾 Save Record</button></div>
-    <div class="col" style="flex:0 0 auto"><button class="small-btn danger-btn" style="height:100%;padding:12px 16px" onclick="clearForm()">🗑 Clear</button></div>
+    <div class="col"><button class="save-btn" onclick="saveRecord()">&#128190; Save Record</button></div>
+    <div style="flex:0 0 auto"><button class="small-btn danger-btn" style="height:52px;margin-top:4px" onclick="clearForm()">&#128465; Clear</button></div>
   </div>
   <div id="save-msg" style="text-align:center;margin-top:10px;font-size:13px;color:var(--muted)"></div>
 </div>
 ```
 
-  </div><!-- end pane-new -->
+  </div><!-- /pane-new -->
 
-  <!-- RECORDS TAB -->
+  <!-- RECORDS -->
 
   <div id="pane-records" style="display:none">
     <div class="card" style="padding:12px 14px">
       <div class="row" style="align-items:center;gap:8px">
-        <div class="col"><input id="rec-search" placeholder="🔍  Search tag, WO…" oninput="renderRecords()"></div>
-        <div style="flex:0 0 auto">
-          <button class="small-btn ok-btn" onclick="exportCSV()">⬇ CSV</button>
-        </div>
+        <div class="col"><input id="rec-search" placeholder="Search tag, WO..." oninput="renderRecords()" style="margin:0"></div>
+        <div style="flex:0 0 auto"><button class="small-btn ok-btn" onclick="exportCSV()">CSV</button></div>
       </div>
     </div>
     <div id="records-list"></div>
@@ -416,402 +372,274 @@ footer{text-align:center;color:var(–muted);font-size:13px;padding:22px}
 <footer>PockeTech V2 — Calibration</footer>
 
 <script>
-// ─── common.js inlined ───────────────────────────────────────────────────────
+// common.js inlined
 const $ = id => document.getElementById(id);
-function fmt(v, d = 3){ return Number.isFinite(v) ? Number(v).toFixed(d) : '—'; }
-function n(id){ const raw=$(id).value.trim().replace('−','-'); if(raw==='')return null; const x=Number(raw); return Number.isFinite(x)?x:null; }
-function clamp(v){ return Math.min(Math.max(v,0),100); }
-function pctToMA(p){ return 4+(p/100)*16; }
-function maToPct(m){ return ((m-4)/16)*100; }
-function toggleTheme(){ const h=document.documentElement; const next=h.getAttribute('data-theme')==='dark'?'auto':'dark'; h.setAttribute('data-theme',next); localStorage.setItem('pt-v2-theme',next); }
-(function initTheme(){ const t=localStorage.getItem('pt-v2-theme'); if(t)document.documentElement.setAttribute('data-theme',t); })();
-(function initSwipeBack(){ let startX,startY; document.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;startY=e.touches[0].clientY;},{passive:true}); document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-startX;const dy=Math.abs(e.changedTouches[0].clientY-startY);if(startX<60&&dx>50&&dy<100){if(typeof showScreen==='function')showScreen('home');else history.back();}},{passive:true}); })();
-</script>
+function fmt(v,d){d=d||3;return(typeof v==='number'&&isFinite(v))?Number(v).toFixed(d):'--';}
+(function(){var t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+(function(){var sx,sy;document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=Math.abs(e.changedTouches[0].clientY-sy);if(sx<60&&dx>50&&dy<100)history.back();},{passive:true});})();
+function toggleTheme(){var h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',next);localStorage.setItem('pt-v2-theme',next);}
 
-<script>
-// ─── State ───────────────────────────────────────────────────────────────────
-let mode = 'input'; // 'input' | 'output'
-let records = [];
-let editingId = null;
+// State
+var mode='input', records=[], editingId=null, teqCount=0;
 
-// ─── Boot ────────────────────────────────────────────────────────────────────
-(function init(){
+// Boot on DOM ready
+document.addEventListener('DOMContentLoaded', function(){
   loadRecords();
   buildAssetRows();
   buildCalTable();
-  addTeqRow(); addTeqRow(); addTeqRow();
-  setToday();
+  addTeqRow();addTeqRow();addTeqRow();
+  $('h_date').value=new Date().toISOString().slice(0,10);
   renderRecords();
-})();
+});
 
-function setToday(){
-  const d = new Date().toISOString().slice(0,10);
-  document.getElementById('h_date').value = d;
+// Collapsible - pass the header element
+function toggleColl(hdr){
+  var body=hdr.nextElementSibling;
+  var arrow=hdr.querySelector('.coll-arrow');
+  if(body.classList.contains('open')){
+    body.classList.remove('open');
+    if(arrow)arrow.classList.remove('open');
+  } else {
+    body.classList.add('open');
+    if(arrow)arrow.classList.add('open');
+  }
 }
 
-// ─── Theme ───────────────────────────────────────────────────────────────────
-function toggleTheme(){
-  const h = document.documentElement;
-  const cur = h.getAttribute('data-theme');
-  h.setAttribute('data-theme', cur === 'dark' ? 'light' : cur === 'light' ? 'auto' : 'dark');
-}
-
-// ─── Tabs ────────────────────────────────────────────────────────────────────
+// Tabs
 function switchTab(t){
-  document.getElementById('pane-new').style.display = t==='new' ? '' : 'none';
-  document.getElementById('pane-records').style.display = t==='records' ? '' : 'none';
-  document.getElementById('tab-new').classList.toggle('active', t==='new');
-  document.getElementById('tab-records').classList.toggle('active', t==='records');
-  if(t==='records') renderRecords();
+  $('pane-new').style.display=t==='new'?'':'none';
+  $('pane-records').style.display=t==='records'?'':'none';
+  $('tab-new').className='tab-btn'+(t==='new'?' active':'');
+  $('tab-records').className='tab-btn'+(t==='records'?' active':'');
+  if(t==='records')renderRecords();
 }
 
-// ─── Mode ────────────────────────────────────────────────────────────────────
+// Mode
+var INPUT_SECS=['sec-mreq','sec-ranges','sec-xmtr','sec-switch','sec-alarms'];
+var OUTPUT_SECS=['sec-dcs','sec-onoff','sec-vsd'];
+
 function setMode(m){
-  mode = m;
-  document.getElementById('modeInput').classList.toggle('active', m==='input');
-  document.getElementById('modeOutput').classList.toggle('active', m==='output');
-  document.getElementById('input-only-top').style.display = m==='input' ? '' : 'none';
-  document.getElementById('input-only-bottom').style.display = m==='input' ? '' : 'none';
-  document.getElementById('output-only-sections').style.display = m==='output' ? '' : 'none';
+  mode=m;
+  $('modeInput').className='mode-btn'+(m==='input'?' active':'');
+  $('modeOutput').className='mode-btn'+(m==='output'?' active':'');
+  INPUT_SECS.forEach(function(id){$(id).style.display=m==='input'?'':'none';});
+  OUTPUT_SECS.forEach(function(id){$(id).style.display=m==='output'?'':'none';});
   buildAssetRows();
   buildCalTable();
 }
 
-// ─── Collapsible ─────────────────────────────────────────────────────────────
-function toggleCollapse(id){
-  const body = document.getElementById('body-'+id);
-  const chev = document.getElementById('chev-'+id);
-  body.classList.toggle('open');
-  chev.classList.toggle('open');
-}
-
-// ─── Asset Condition ─────────────────────────────────────────────────────────
-const INPUT_ASSET_ROWS = ['INSTRUMENT','TUBING','INSULATION','HEAT TRACE','CONDUIT FLEX','DATSHEET','LOOP DRAWING'];
-const OUTPUT_ASSET_ROWS = ['VALVE BODY/PACKING','ACTUATOR','POSITIONER','POSITION INDICATOR','TUBING','INSULATION','HEAT TRACE','CONDUIT FLEX','DATSHEET','LOOP DRAWING'];
-const DOC_ROWS = ['DATSHEET','LOOP DRAWING'];
+// Asset rows
+var IN_ASSET=['INSTRUMENT','TUBING','INSULATION','HEAT TRACE','CONDUIT FLEX','DATSHEET','LOOP DRAWING'];
+var OUT_ASSET=['VALVE BODY/PACKING','ACTUATOR','POSITIONER','POSITION INDICATOR','TUBING','INSULATION','HEAT TRACE','CONDUIT FLEX','DATSHEET','LOOP DRAWING'];
+var DOC_ROWS=['DATSHEET','LOOP DRAWING'];
 
 function buildAssetRows(){
-  const rows = mode === 'input' ? INPUT_ASSET_ROWS : OUTPUT_ASSET_ROWS;
-  const container = document.getElementById('body-asset');
-  // clear old dynamic rows
-  const existing = container.querySelectorAll('.asset-dyn-row');
-  existing.forEach(e=>e.remove());
-
-  const frag = document.createDocumentFragment();
-  rows.forEach(r => {
-    const isDoc = DOC_ROWS.includes(r);
-    const opts = isDoc
-      ? [['UPDATED','Updated'],['MISSING INFORMATION','Missing Info'],['N/A','N/A']]
-      : [['SATISFACTORY','Satisfactory'],['DAMAGED','Damaged'],['N/A','N/A']];
-    const key = r.replace(/[^A-Z0-9]/g,'_');
-    const div = document.createElement('div');
-    div.className = 'asset-dyn-row';
-    div.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:6px';
-    div.innerHTML = `<span style="font-size:13px;font-weight:700;flex:0 0 140px">${r}</span>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        ${opts.map(([v,l])=>`<label class="xmtr-opt"><input type="radio" name="asset_${key}" value="${v}"><span>${l}</span></label>`).join('')}
-      </div>`;
-    frag.appendChild(div);
+  var wrap=$('asset-rows');
+  wrap.innerHTML='';
+  var rows=mode==='input'?IN_ASSET:OUT_ASSET;
+  rows.forEach(function(r){
+    var isDoc=DOC_ROWS.indexOf(r)>=0;
+    var opts=isDoc?[['UPDATED','Updated'],['MISSING INFO','Missing Info'],['N/A','N/A']]:[['SATISFACTORY','Satisfactory'],['DAMAGED','Damaged'],['N/A','N/A']];
+    var key=r.replace(/[^A-Z0-9]/g,'_');
+    var div=document.createElement('div');
+    div.className='asset-row';
+    div.innerHTML='<span class="asset-label">'+r+'</span><div class="radio-group">'+
+      opts.map(function(o){return '<label class="radio-opt"><input type="radio" name="asset_'+key+'" value="'+o[0]+'"><span>'+o[1]+'</span></label>';}).join('')+
+    '</div>';
+    wrap.appendChild(div);
   });
-  // insert after the static spacer div (first child)
-  container.insertBefore(frag, container.children[1] || null);
 }
 
-// ─── Calibration Table ───────────────────────────────────────────────────────
-function buildCalTable(){
-  const thead = document.getElementById('cal-thead');
-  const tbody = document.getElementById('cal-tbody');
-  const hint  = document.getElementById('cal-hint');
+// Cal table
+function mA(p){return(4+p/100*16).toFixed(2);}
 
-  if(mode === 'input'){
-    hint.textContent = '0 / 25 / 50 / 75 / 100 % — fill As Found & As Left';
-    thead.innerHTML = '<tr><th>%</th><th>Input</th><th>As Found</th><th>mA AF</th><th>As Left</th><th>mA AL</th><th>DCS Reading</th><th>Target</th></tr>';
-    tbody.innerHTML = '';
-    [0,25,50,75,100].forEach(p => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td class="label-cell">${p}%</td>
-        <td><input class="cal-input" data-pct="${p}" data-field="inp" inputmode="decimal" placeholder="—"></td>
-        <td><input class="cal-input" data-pct="${p}" data-field="af"  inputmode="decimal" placeholder="—"></td>
-        <td><input class="cal-input" data-pct="${p}" data-field="maf" inputmode="decimal" placeholder="${fmt4_20(p)}"></td>
-        <td><input class="cal-input" data-pct="${p}" data-field="al"  inputmode="decimal" placeholder="—"></td>
-        <td><input class="cal-input" data-pct="${p}" data-field="mal" inputmode="decimal" placeholder="${fmt4_20(p)}"></td>
-        <td><input class="cal-input" data-pct="${p}" data-field="dcs" inputmode="decimal" placeholder="—"></td>
-        <td class="label-cell" style="background:transparent;font-weight:600;color:var(--muted)">${fmt4_20(p)} mA</td>`;
-      tbody.appendChild(row);
+function buildCalTable(){
+  var thead=$('cal-thead'),tbody=$('cal-tbody'),hint=$('cal-hint');
+  thead.innerHTML='';tbody.innerHTML='';
+  if(mode==='input'){
+    hint.textContent='0 / 25 / 50 / 75 / 100% test points';
+    thead.innerHTML='<tr><th>%</th><th>Input</th><th>As Found</th><th>mA (AF)</th><th>As Left</th><th>mA (AL)</th><th>DCS Reading</th><th>Target</th></tr>';
+    [0,25,50,75,100].forEach(function(p){
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td class="lc">'+p+'%</td>'+
+        '<td><input class="ci" data-p="'+p+'" data-f="inp" inputmode="decimal" placeholder="--"></td>'+
+        '<td><input class="ci" data-p="'+p+'" data-f="af" inputmode="decimal" placeholder="--"></td>'+
+        '<td><input class="ci" data-p="'+p+'" data-f="maf" inputmode="decimal" placeholder="'+mA(p)+'"></td>'+
+        '<td><input class="ci" data-p="'+p+'" data-f="al" inputmode="decimal" placeholder="--"></td>'+
+        '<td><input class="ci" data-p="'+p+'" data-f="mal" inputmode="decimal" placeholder="'+mA(p)+'"></td>'+
+        '<td><input class="ci" data-p="'+p+'" data-f="dcs" inputmode="decimal" placeholder="--"></td>'+
+        '<td class="lc" style="color:var(--muted);font-weight:600">'+mA(p)+' mA</td>';
+      tbody.appendChild(tr);
     });
   } else {
-    hint.textContent = '4 / 8 / 12 / 16 / 20 mA — fill % As Found & As Left';
-    thead.innerHTML = '<tr><th>mA</th><th>% As Found</th><th>% As Left</th><th>% Target</th></tr>';
-    tbody.innerHTML = '';
-    [4,8,12,16,20].forEach(ma => {
-      const tgt = Math.round((ma-4)/16*100);
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td class="label-cell">${ma} mA</td>
-        <td><input class="cal-input" data-ma="${ma}" data-field="af" inputmode="decimal" placeholder="—"></td>
-        <td><input class="cal-input" data-ma="${ma}" data-field="al" inputmode="decimal" placeholder="—"></td>
-        <td class="label-cell" style="background:transparent;font-weight:600;color:var(--muted)">${tgt}%</td>`;
-      tbody.appendChild(row);
+    hint.textContent='4 / 8 / 12 / 16 / 20 mA test points';
+    thead.innerHTML='<tr><th>mA</th><th>% As Found</th><th>% As Left</th><th>% Target</th></tr>';
+    [4,8,12,16,20].forEach(function(m2){
+      var tgt=Math.round((m2-4)/16*100);
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td class="lc">'+m2+' mA</td>'+
+        '<td><input class="ci" data-m="'+m2+'" data-f="af" inputmode="decimal" placeholder="--"></td>'+
+        '<td><input class="ci" data-m="'+m2+'" data-f="al" inputmode="decimal" placeholder="--"></td>'+
+        '<td class="lc" style="color:var(--muted);font-weight:600">'+tgt+'%</td>';
+      tbody.appendChild(tr);
     });
   }
 }
 
-function fmt4_20(p){ return (4 + p/100*16).toFixed(2); }
-
-// ─── Test Equipment ──────────────────────────────────────────────────────────
-let teqCount = 0;
+// Test equipment
 function addTeqRow(){
-  const tbody = document.getElementById('teq-tbody');
-  const i = teqCount++;
-  const tr = document.createElement('tr');
-  tr.id = `teq_${i}`;
-  tr.innerHTML = `<td><input placeholder="e.g. Fluke 789" id="teq_item_${i}"></td><td><input placeholder="S/N" id="teq_sn_${i}"></td><td><input type="date" id="teq_cal_${i}"></td><td><input type="date" id="teq_exp_${i}"></td>`;
-  tbody.appendChild(tr);
+  var i=teqCount++;
+  var tr=document.createElement('tr');
+  tr.id='teq_'+i;
+  tr.innerHTML='<td><input id="ti_'+i+'" placeholder="e.g. Fluke 789"></td><td><input id="ts_'+i+'" placeholder="S/N"></td><td><input id="tc_'+i+'" type="date"></td><td><input id="te_'+i+'" type="date"></td>';
+  $('teq-tbody').appendChild(tr);
 }
 
-// ─── Collect Form Data ────────────────────────────────────────────────────────
+// Helpers
+function gv(id){var el=$(id);return el?el.value.trim():'';}
+function gr(name){var el=document.querySelector('input[name="'+name+'"]:checked');return el?el.value:'';}
+function gc(name){return Array.from(document.querySelectorAll('input[name="'+name+'"]:checked')).map(function(e){return e.value;});}
+
+// Collect form
 function collectForm(){
-  const g = id => (document.getElementById(id)||{}).value || '';
-  const radio = name => { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : ''; };
-  const checks = name => [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(e=>e.value);
-
-  // header
-  const header = { wo: g('h_wo'), date: g('h_date'), tag: g('h_tag'), loc: g('h_loc') };
-
-  // cal table
-  const calRows = [];
-  document.querySelectorAll('#cal-tbody tr').forEach(tr => {
-    const row = {};
-    tr.querySelectorAll('.cal-input').forEach(inp => {
-      row[inp.dataset.field] = inp.value;
-      if(inp.dataset.pct !== undefined) row.pct = inp.dataset.pct;
-      if(inp.dataset.ma  !== undefined) row.ma  = inp.dataset.ma;
+  var header={wo:gv('h_wo'),date:gv('h_date'),tag:gv('h_tag'),loc:gv('h_loc')};
+  var calRows=[];
+  document.querySelectorAll('#cal-tbody tr').forEach(function(tr){
+    var row={};
+    tr.querySelectorAll('.ci').forEach(function(inp){
+      row[inp.dataset.f]=inp.value;
+      if(inp.dataset.p!==undefined)row.pct=inp.dataset.p;
+      if(inp.dataset.m!==undefined)row.ma=inp.dataset.m;
     });
-    calRows.push(row);
+    if(Object.keys(row).length)calRows.push(row);
   });
-
-  // asset
-  const assetRows = mode === 'input' ? INPUT_ASSET_ROWS : OUTPUT_ASSET_ROWS;
-  const asset = {};
-  assetRows.forEach(r => {
-    const key = r.replace(/[^A-Z0-9]/g,'_');
-    asset[r] = radio('asset_'+key);
-  });
-
-  // test equipment
-  const teq = [];
-  for(let i=0; i<teqCount; i++){
-    const item = g(`teq_item_${i}`), sn = g(`teq_sn_${i}`), cal = g(`teq_cal_${i}`), exp = g(`teq_exp_${i}`);
-    if(item||sn) teq.push({item,sn,cal,exp});
-  }
-
-  // signoff
-  const signoff = {
-    mt: [{name:g('mt1_name'),sig:g('mt1_sig'),date:g('mt1_date')},{name:g('mt2_name'),sig:g('mt2_sig'),date:g('mt2_date')}],
-    op: [{name:g('op1_name'),sig:g('op1_sig'),date:g('op1_date')},{name:g('op2_name'),sig:g('op2_sig'),date:g('op2_date')}]
+  var assetList=mode==='input'?IN_ASSET:OUT_ASSET;
+  var asset={};
+  assetList.forEach(function(r){asset[r]=gr('asset_'+r.replace(/[^A-Z0-9]/g,'_'));});
+  var teq=[];
+  for(var i=0;i<teqCount;i++){var item=gv('ti_'+i),sn=gv('ts_'+i),cal=gv('tc_'+i),exp=gv('te_'+i);if(item||sn)teq.push({item:item,sn:sn,cal:cal,exp:exp});}
+  var signoff={
+    mt:[{name:gv('mt1n'),sig:gv('mt1s'),date:gv('mt1d')},{name:gv('mt2n'),sig:gv('mt2s'),date:gv('mt2d')}],
+    op:[{name:gv('op1n'),sig:gv('op1s'),date:gv('op1d')},{name:gv('op2n'),sig:gv('op2s'),date:gv('op2d')}]
   };
-
-  // input extras
-  let inputData = {};
-  if(mode === 'input'){
-    inputData = {
-      mreq: checks('mreq'),
-      ranges: { xmtrHi:g('r_xmtr_hi'), xmtrLo:g('r_xmtr_lo'), units:g('r_units'), dcsHi:g('r_dcs_hi'), dcsLo:g('r_dcs_lo'), engrUnits:g('r_engr_units') },
-      xmtrAction: radio('xact'), failSafe: radio('xfail'), xmtrAge: radio('xage'),
-      switchCal: {
-        open: {sp:g('sw_open_sp'),af:g('sw_open_af'),al:g('sw_open_al'),dcs:g('sw_open_dcs'),db:g('sw_open_db')},
-        closed: {sp:g('sw_cls_sp'),af:g('sw_cls_af'),al:g('sw_cls_al'),dcs:g('sw_cls_dcs'),db:g('sw_cls_db')}
-      },
-      alarms: {
-        alarm: {sp:g('al_sp'),af:g('al_af'),al:g('al_al'),dcs:g('al_dcs')},
-        shutdown: {sp:g('sd_sp'),af:g('sd_af'),al:g('sd_al'),dcs:g('sd_dcs')}
-      }
-    };
+  var extra={};
+  if(mode==='input'){
+    extra={mreq:gc('mreq'),ranges:{xHi:gv('r_xhi'),xLo:gv('r_xlo'),units:gv('r_units'),dHi:gv('r_dhi'),dLo:gv('r_dlo'),engr:gv('r_engr')},
+      xact:gr('xact'),xfail:gr('xfail'),xage:gr('xage'),
+      sw:{oSp:gv('sw_o_sp'),oAf:gv('sw_o_af'),oAl:gv('sw_o_al'),oDcs:gv('sw_o_dcs'),oDb:gv('sw_o_db'),cSp:gv('sw_c_sp'),cAf:gv('sw_c_af'),cAl:gv('sw_c_al'),cDcs:gv('sw_c_dcs'),cDb:gv('sw_c_db')},
+      al:{aSp:gv('al_sp'),aAf:gv('al_af'),aAl:gv('al_al'),aDcs:gv('al_dcs'),sSp:gv('sd_sp'),sAf:gv('sd_af'),sAl:gv('sd_al'),sDcs:gv('sd_dcs')}};
+  } else {
+    extra={dcsSw:gr('dcs_sw'),
+      oo:{eV:gv('oo_e_v'),eAf:gv('oo_e_af'),eAl:gv('oo_e_al'),eTgt:gv('oo_e_tgt'),dV:gv('oo_d_v'),dAf:gv('oo_d_af'),dAl:gv('oo_d_al'),dTgt:gv('oo_d_tgt')},
+      vs:{aAf:gv('vs_a_af'),aAl:gv('vs_a_al'),aTgt:gv('vs_a_tgt'),iAf:gv('vs_i_af'),iAl:gv('vs_i_al'),iTgt:gv('vs_i_tgt')}};
   }
-
-  // output extras
-  let outputData = {};
-  if(mode === 'output'){
-    outputData = {
-      dcsSwitch: radio('dcs_sw'),
-      onOffValve: {
-        energized: {v:g('onoff_e_v'),af:g('onoff_e_af'),al:g('onoff_e_al'),tgt:g('onoff_e_tgt')},
-        deEnergized: {v:g('onoff_de_v'),af:g('onoff_de_af'),al:g('onoff_de_al'),tgt:g('onoff_de_tgt')}
-      },
-      shutdown: {
-        active: {af:g('sd_act_af'),al:g('sd_act_al'),tgt:g('sd_act_tgt')},
-        inactive: {af:g('sd_ina_af'),al:g('sd_ina_al'),tgt:g('sd_ina_tgt')}
-      }
-    };
-  }
-
-  return { id: editingId || Date.now(), mode, header, asset, calRows, teq, signoff, comments: g('comments'), inputData, outputData, savedAt: new Date().toISOString() };
+  return{id:editingId||Date.now(),mode:mode,header:header,asset:asset,calRows:calRows,teq:teq,signoff:signoff,comments:gv('comments'),extra:extra,savedAt:new Date().toISOString()};
 }
 
-// ─── Save / Load ─────────────────────────────────────────────────────────────
-function saveRecords(){ localStorage.setItem('pt_cal_records', JSON.stringify(records)); }
-function loadRecords(){ try{ records = JSON.parse(localStorage.getItem('pt_cal_records')) || []; }catch{ records=[]; }}
+// Save/load records
+function loadRecords(){try{records=JSON.parse(localStorage.getItem('pt_cal_v2'))||[];}catch(e){records=[];}}
+function saveRecords(){try{localStorage.setItem('pt_cal_v2',JSON.stringify(records));}catch(e){showMsg('Storage full — clear old records','var(--warn)');}}
 
 function saveRecord(){
-  const tag = document.getElementById('h_tag').value.trim();
-  if(!tag){ showMsg('⚠️ Enter a Tag No first', 'var(--warn)'); return; }
-  const data = collectForm();
-  if(editingId){
-    const idx = records.findIndex(r=>r.id===editingId);
-    if(idx>=0) records[idx] = data; else records.unshift(data);
-    editingId = null;
-  } else {
-    records.unshift(data);
-  }
+  var tag=$('h_tag').value.trim();
+  if(!tag){showMsg('Enter a Tag No first','var(--warn)');return;}
+  var data=collectForm();
+  if(editingId){var idx=records.findIndex(function(r){return r.id===editingId;});if(idx>=0)records[idx]=data;else records.unshift(data);editingId=null;}
+  else{records.unshift(data);}
   saveRecords();
-  showMsg('✅ Saved — ' + tag, '#166534');
+  showMsg('Saved -- '+tag,'#166534');
   renderRecords();
-}
-
-function showMsg(txt, color){
-  const el = document.getElementById('save-msg');
-  el.textContent = txt;
-  el.style.color = color || 'var(--muted)';
-  setTimeout(()=>el.textContent='', 3000);
 }
 
 function deleteRecord(id){
-  if(!confirm('Delete this record?')) return;
-  records = records.filter(r=>r.id!==id);
-  saveRecords();
-  renderRecords();
+  if(!confirm('Delete this record?'))return;
+  records=records.filter(function(r){return r.id!==id;});
+  saveRecords();renderRecords();
 }
 
-// ─── Records List ─────────────────────────────────────────────────────────────
+function showMsg(txt,color){
+  var el=$('save-msg');el.textContent=txt;el.style.color=color||'var(--muted)';
+  setTimeout(function(){el.textContent='';},3000);
+}
+
+// Render records list
 function renderRecords(){
-  const list = document.getElementById('records-list');
-  const q = (document.getElementById('rec-search').value||'').toLowerCase();
-  const filtered = records.filter(r => {
-    const s = `${r.header.tag} ${r.header.wo} ${r.header.loc} ${r.mode}`.toLowerCase();
-    return s.includes(q);
-  });
-  if(!filtered.length){ list.innerHTML = `<div class="empty-state">No records yet.<br>Fill in a sheet and tap Save.</div>`; return; }
-  list.innerHTML = filtered.map(r => {
-    const hasFail = r.calRows && r.calRows.some(row => {
-      if(r.mode==='output') return false; // pass/fail not auto-computed for output
-      return false;
-    });
-    const badge = r.mode==='input'
-      ? `<span class="record-badge badge-in">INPUT</span>`
-      : `<span class="record-badge badge-out">OUTPUT</span>`;
-    const dt = r.header.date || r.savedAt.slice(0,10);
-    return `<div class="record-card" onclick="loadRecord(${r.id})">
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <span class="record-tag">${r.header.tag || '(no tag)'}</span>${badge}
-          <div class="record-meta">WO: ${r.header.wo||'—'} · ${r.header.loc||'—'} · ${dt}</div>
-        </div>
-        <button class="small-btn danger-btn" onclick="event.stopPropagation();deleteRecord(${r.id})" style="padding:6px 10px;font-size:13px">🗑</button>
-      </div>
-    </div>`;
+  var list=$('records-list');
+  var q=(($('rec-search')||{}).value||'').toLowerCase();
+  var filtered=records.filter(function(r){return(r.header.tag+' '+r.header.wo+' '+r.header.loc+' '+r.mode).toLowerCase().indexOf(q)>=0;});
+  if(!filtered.length){list.innerHTML='<div class="empty">No records yet.<br>Fill in a sheet and tap Save.</div>';return;}
+  list.innerHTML=filtered.map(function(r){
+    var badge=r.mode==='input'?'<span class="badge badge-in">INPUT</span>':'<span class="badge badge-out">OUTPUT</span>';
+    var dt=r.header.date||r.savedAt.slice(0,10);
+    return '<div class="rec-card" onclick="loadRecord('+r.id+')">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between">'+
+        '<div><span class="rec-tag">'+(r.header.tag||'(no tag)')+'</span>'+badge+
+          '<div class="rec-meta">WO: '+(r.header.wo||'--')+' &middot; '+(r.header.loc||'--')+' &middot; '+dt+'</div>'+
+        '</div>'+
+        '<button class="small-btn danger-btn" onclick="event.stopPropagation();deleteRecord('+r.id+')" style="padding:6px 10px;font-size:12px">Del</button>'+
+      '</div></div>';
   }).join('');
 }
 
-// ─── Load Record into Form ────────────────────────────────────────────────────
+// Load record into form
 function loadRecord(id){
-  const r = records.find(rec=>rec.id===id);
-  if(!r) return;
-  editingId = r.id;
-  setMode(r.mode);
-  switchTab('new');
-
-  const s = (elId, val) => { const el=document.getElementById(elId); if(el) el.value=val||''; };
-  s('h_wo',r.header.wo); s('h_date',r.header.date); s('h_tag',r.header.tag); s('h_loc',r.header.loc);
-  s('comments',r.comments);
-
-  // cal rows
-  r.calRows.forEach(row => {
-    Object.keys(row).forEach(field => {
-      if(field==='pct'||field==='ma') return;
-      const sel = r.mode==='input'
-        ? `input.cal-input[data-pct="${row.pct}"][data-field="${field}"]`
-        : `input.cal-input[data-ma="${row.ma}"][data-field="${field}"]`;
-      const el = document.querySelector(sel);
-      if(el) el.value = row[field]||'';
+  var r=records.find(function(rec){return rec.id===id;});
+  if(!r)return;
+  editingId=r.id;setMode(r.mode);switchTab('new');
+  var sv=function(elId,val){var el=$(elId);if(el)el.value=val||'';};
+  sv('h_wo',r.header.wo);sv('h_date',r.header.date);sv('h_tag',r.header.tag);sv('h_loc',r.header.loc);
+  sv('comments',r.comments);
+  r.calRows.forEach(function(row){
+    Object.keys(row).forEach(function(f){
+      if(f==='pct'||f==='ma')return;
+      var sel=r.mode==='input'?'.ci[data-p="'+row.pct+'"][data-f="'+f+'"]':'.ci[data-m="'+row.ma+'"][data-f="'+f+'"]';
+      var el=document.querySelector(sel);if(el)el.value=row[f]||'';
     });
   });
-
-  // asset radios
-  if(r.asset){
-    const assetRows = r.mode==='input' ? INPUT_ASSET_ROWS : OUTPUT_ASSET_ROWS;
-    assetRows.forEach(row => {
-      const key = row.replace(/[^A-Z0-9]/g,'_');
-      const val = r.asset[row];
-      if(val){
-        const el = document.querySelector(`input[name="asset_${key}"][value="${val}"]`);
-        if(el) el.checked = true;
-      }
-    });
+  var al=r.mode==='input'?IN_ASSET:OUT_ASSET;
+  al.forEach(function(row){var k=row.replace(/[^A-Z0-9]/g,'_'),v=(r.asset||{})[row];if(v){var el=document.querySelector('input[name="asset_'+k+'"][value="'+v+'"]');if(el)el.checked=true;}});
+  if(r.mode==='input'&&r.extra){
+    var e=r.extra,rn=e.ranges||{},sw=e.sw||{},al2=e.al||{};
+    (e.mreq||[]).forEach(function(v){var el=document.querySelector('input[name="mreq"][value="'+v+'"]');if(el)el.checked=true;});
+    sv('r_xhi',rn.xHi);sv('r_xlo',rn.xLo);sv('r_units',rn.units);sv('r_dhi',rn.dHi);sv('r_dlo',rn.dLo);sv('r_engr',rn.engr);
+    ['xact','xfail','xage'].forEach(function(n,i){var v=[e.xact,e.xfail,e.xage][i];if(v){var el=document.querySelector('input[name="'+n+'"][value="'+v+'"]');if(el)el.checked=true;}});
+    sv('sw_o_sp',sw.oSp);sv('sw_o_af',sw.oAf);sv('sw_o_al',sw.oAl);sv('sw_o_dcs',sw.oDcs);sv('sw_o_db',sw.oDb);
+    sv('sw_c_sp',sw.cSp);sv('sw_c_af',sw.cAf);sv('sw_c_al',sw.cAl);sv('sw_c_dcs',sw.cDcs);sv('sw_c_db',sw.cDb);
+    sv('al_sp',al2.aSp);sv('al_af',al2.aAf);sv('al_al',al2.aAl);sv('al_dcs',al2.aDcs);
+    sv('sd_sp',al2.sSp);sv('sd_af',al2.sAf);sv('sd_al',al2.sAl);sv('sd_dcs',al2.sDcs);
   }
-
-  // input extras
-  if(r.mode==='input' && r.inputData){
-    const id2 = r.inputData;
-    (id2.mreq||[]).forEach(v=>{ const el=document.querySelector(`input[name="mreq"][value="${v}"]`); if(el) el.checked=true; });
-    const rng = id2.ranges||{};
-    s('r_xmtr_hi',rng.xmtrHi); s('r_xmtr_lo',rng.xmtrLo); s('r_units',rng.units);
-    s('r_dcs_hi',rng.dcsHi); s('r_dcs_lo',rng.dcsLo); s('r_engr_units',rng.engrUnits);
-    ['xact','xfail','xage'].forEach((n,i)=>{
-      const val = [id2.xmtrAction,id2.failSafe,id2.xmtrAge][i];
-      if(val){ const el=document.querySelector(`input[name="${n}"][value="${val}"]`); if(el) el.checked=true; }
-    });
-    const sc = id2.switchCal||{};
-    s('sw_open_sp',(sc.open||{}).sp); s('sw_open_af',(sc.open||{}).af); s('sw_open_al',(sc.open||{}).al); s('sw_open_dcs',(sc.open||{}).dcs); s('sw_open_db',(sc.open||{}).db);
-    s('sw_cls_sp',(sc.closed||{}).sp); s('sw_cls_af',(sc.closed||{}).af); s('sw_cls_al',(sc.closed||{}).al); s('sw_cls_dcs',(sc.closed||{}).dcs); s('sw_cls_db',(sc.closed||{}).db);
-    const al = id2.alarms||{};
-    s('al_sp',(al.alarm||{}).sp); s('al_af',(al.alarm||{}).af); s('al_al',(al.alarm||{}).al); s('al_dcs',(al.alarm||{}).dcs);
-    s('sd_sp',(al.shutdown||{}).sp); s('sd_af',(al.shutdown||{}).af); s('sd_al',(al.shutdown||{}).al); s('sd_dcs',(al.shutdown||{}).dcs);
+  if(r.mode==='output'&&r.extra){
+    var e2=r.extra,oo=e2.oo||{},vs=e2.vs||{};
+    if(e2.dcsSw){var el2=document.querySelector('input[name="dcs_sw"][value="'+e2.dcsSw+'"]');if(el2)el2.checked=true;}
+    sv('oo_e_v',oo.eV);sv('oo_e_af',oo.eAf);sv('oo_e_al',oo.eAl);sv('oo_e_tgt',oo.eTgt);
+    sv('oo_d_v',oo.dV);sv('oo_d_af',oo.dAf);sv('oo_d_al',oo.dAl);sv('oo_d_tgt',oo.dTgt);
+    sv('vs_a_af',vs.aAf);sv('vs_a_al',vs.aAl);sv('vs_a_tgt',vs.aTgt);
+    sv('vs_i_af',vs.iAf);sv('vs_i_al',vs.iAl);sv('vs_i_tgt',vs.iTgt);
   }
-
-  // output extras
-  if(r.mode==='output' && r.outputData){
-    const od = r.outputData;
-    if(od.dcsSwitch){ const el=document.querySelector(`input[name="dcs_sw"][value="${od.dcsSwitch}"]`); if(el) el.checked=true; }
-    const oo = od.onOffValve||{};
-    s('onoff_e_v',(oo.energized||{}).v); s('onoff_e_af',(oo.energized||{}).af); s('onoff_e_al',(oo.energized||{}).al); s('onoff_e_tgt',(oo.energized||{}).tgt);
-    s('onoff_de_v',(oo.deEnergized||{}).v); s('onoff_de_af',(oo.deEnergized||{}).af); s('onoff_de_al',(oo.deEnergized||{}).al); s('onoff_de_tgt',(oo.deEnergized||{}).tgt);
-    const sd = od.shutdown||{};
-    s('sd_act_af',(sd.active||{}).af); s('sd_act_al',(sd.active||{}).al); s('sd_act_tgt',(sd.active||{}).tgt);
-    s('sd_ina_af',(sd.inactive||{}).af); s('sd_ina_al',(sd.inactive||{}).al); s('sd_ina_tgt',(sd.inactive||{}).tgt);
-  }
-
   window.scrollTo({top:0,behavior:'smooth'});
-  showMsg('📂 Loaded — editing ' + r.header.tag, 'var(--accent)');
+  showMsg('Loaded -- '+r.header.tag,'var(--accent)');
 }
 
-// ─── Clear Form ───────────────────────────────────────────────────────────────
+// Clear form
 function clearForm(){
-  if(!confirm('Clear all fields?')) return;
-  editingId = null;
-  document.querySelectorAll('input:not([type=radio]):not([type=checkbox]), textarea').forEach(el=>{
-    if(el.type==='date') el.value=''; else el.value='';
-  });
-  document.querySelectorAll('input[type=radio], input[type=checkbox]').forEach(el=>el.checked=false);
-  setToday();
-  showMsg('🗑 Cleared', 'var(--muted)');
+  if(!confirm('Clear all fields?'))return;
+  editingId=null;
+  document.querySelectorAll('input:not([type=radio]):not([type=checkbox])').forEach(function(el){el.value='';});
+  document.querySelectorAll('textarea').forEach(function(el){el.value='';});
+  document.querySelectorAll('input[type=radio],input[type=checkbox]').forEach(function(el){el.checked=false;});
+  $('h_date').value=new Date().toISOString().slice(0,10);
+  showMsg('Cleared','var(--muted)');
 }
 
-// ─── Export CSV ───────────────────────────────────────────────────────────────
+// Export CSV
 function exportCSV(){
-  if(!records.length){ alert('No records to export.'); return; }
-  const rows = [['ID','Mode','Tag','WO','Date','Location','Comments','Cal Points (pct/ma:AF:AL:DCS)']];
-  records.forEach(r => {
-    const calStr = (r.calRows||[]).map(row => {
-      const pt = r.mode==='input' ? `${row.pct}%` : `${row.ma}mA`;
-      return `${pt}:AF=${row.af||''}:AL=${row.al||''}:DCS=${row.dcs||''}`;
-    }).join(' | ');
-    rows.push([r.id, r.mode, r.header.tag, r.header.wo, r.header.date, r.header.loc, r.comments, calStr]);
-  });
-  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a = document.createElement('a');
-  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-  a.download = `PockeTech_Cal_${new Date().toISOString().slice(0,10)}.csv`;
+  if(!records.length){alert('No records to export.');return;}
+  var rows=[['ID','Mode','Tag','WO','Date','Location','Comments']];
+  records.forEach(function(r){rows.push([r.id,r.mode,r.header.tag,r.header.wo,r.header.date,r.header.loc,r.comments]);});
+  var csv=rows.map(function(r){return r.map(function(c){return'"'+String(c||'').replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  var a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='PockeTech_Cal_'+new Date().toISOString().slice(0,10)+'.csv';
   a.click();
 }
 </script>
