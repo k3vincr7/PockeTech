@@ -1,1 +1,401 @@
-<!DOCTYPE html><html lang="en" data-theme="auto"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>PockeTech V2 — Temperature</title><meta name="theme-color" content="#0f1115"><style>:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--ok:#166534;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}html[data-theme=dark]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}@media(prefers-color-scheme:dark){html[data-theme=auto]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}html[data-theme=dark] header{background:rgba(15,17,21,.75)}main{padding:14px;max-width:960px;margin:0 auto}.title{font-weight:850;font-size:18px}.build,.muted{font-size:13px;color:var(--muted);line-height:1.35}button,input,select{font:inherit;border-radius:14px}button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;font-weight:650}button:active{transform:translateY(1px) scale(.99)}input,select{width:100%;padding:13px;border:1px solid var(--border);background:var(--card);color:var(--fg);margin-top:7px;outline:none}input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}label{font-weight:700;font-size:14px}.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}.hero{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 28%,var(--card)),var(--card) 70%);overflow:hidden;position:relative}.hero:after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,transparent)}.row{display:flex;gap:12px;flex-wrap:wrap}.col{flex:1 1 230px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-bottom:14px}.result{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:14px}.big{font-size:28px;font-weight:850;color:var(--accent);margin:4px 0;letter-spacing:-.4px}.chipbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.chip{width:auto;border-radius:999px;padding:9px 13px}.small{padding:8px 10px;font-size:14px;border-radius:12px;width:auto}.note{background:color-mix(in srgb,var(--accent) 10%,var(--tile));border:1px solid color-mix(in srgb,var(--accent) 35%,var(--border));border-radius:14px;padding:12px;color:var(--muted);font-size:13px;line-height:1.35}@media(max-width:520px){main{padding:12px}.card{padding:14px}.big{font-size:24px}}</style></head><body><header><div><div class="title">PockeTech V2</div><div class="build">Temperature</div></div><button class="small" onclick="toggleTheme()">🌓</button></header><main><div class="card hero"><h1 style="margin:0 0 6px">Temperature Converter</h1><p class="muted" style="margin:0">Type one temperature and instantly see Fahrenheit, Celsius, Kelvin, and Rankine.</p></div><div class="card"><div class="row"><div class="col"><label>Temperature</label><input id="val" type="text" inputmode="text" placeholder="100"></div><div class="col"><label>From Unit</label><select id="unit"><option value="f">°F</option><option value="c">°C</option><option value="k">K</option><option value="r">°R</option></select></div></div><div class="chipbar"><button class="chip" onclick="quick(32,'f')">Freezing water</button><button class="chip" onclick="quick(212,'f')">Boiling water</button><button class="chip" onclick="quick(68,'f')">Room temp</button><button class="chip" onclick="clearAll()">Clear</button></div></div><div class="grid"><div class="result"><div class="muted">Fahrenheit</div><div class="big" id="outF">—</div></div><div class="result"><div class="muted">Celsius</div><div class="big" id="outC">—</div></div><div class="result"><div class="muted">Kelvin</div><div class="big" id="outK">—</div></div><div class="result"><div class="muted">Rankine</div><div class="big" id="outR">—</div></div></div><div class="card"><div class="note">Useful for instrument ranges, RTD/thermocouple checks, vendor data, and operations conversations when one side is using °F and the other is using °C.</div></div><div class="card"><button onclick="location.href='./'">← Back to PockeTech V2</button></div></main><script src="common.js"></script><script>function n(){const raw=$('val').value.trim().replace('−','-');if(raw==='')return null;const x=Number(raw);return Number.isFinite(x)?x:null}function fmt(v){return Number.isFinite(v)?v.toFixed(2):'—'}function toC(v,u){if(u==='c')return v;if(u==='f')return (v-32)*5/9;if(u==='k')return v-273.15;if(u==='r')return (v-491.67)*5/9;return NaN}function calc(){const v=n();if(v===null){blank();return}const c=toC(v,$('unit').value),f=c*9/5+32,k=c+273.15,r=f+459.67;$('outF').textContent=fmt(f)+' °F';$('outC').textContent=fmt(c)+' °C';$('outK').textContent=fmt(k)+' K';$('outR').textContent=fmt(r)+' °R'}function blank(){['outF','outC','outK','outR'].forEach(id=>$(id).textContent='—')}function quick(v,u){$('val').value=v;$('unit').value=u;calc()}function clearAll(){$('val').value='';blank()}(function init(){$('val').addEventListener('input',calc);$('unit').addEventListener('change',calc);blank()})();</script></body></html>
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PockeTech — Temperature</title>
+<meta name="theme-color" content="#0f1115">
+<style>
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--red:#ef4444;--orange:#f97316;--ok:#166534;--ok-bg:#dcfce7;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--ok-bg:#14532d;--shadow:0 14px 34px rgba(0,0,0,.35)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--ok-bg:#14532d;--shadow:0 14px 34px rgba(0,0,0,.35)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
+header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+html[data-theme="dark"] header{background:rgba(15,17,21,.75)}
+.header-left{display:flex;align-items:center;gap:8px}
+.brand{display:flex;flex-direction:column}
+.header-title{font-weight:800;font-size:18px}
+.build{font-size:12px;color:var(--muted)}
+main{padding:14px;max-width:960px;margin:0 auto;padding-bottom:40px}
+button,input,select{font:inherit;border-radius:14px}
+button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;font-weight:650;transition:transform .08s,box-shadow .15s}
+button:active{transform:translateY(1px) scale(.99)}
+input,select{width:100%;padding:11px 13px;border:1px solid var(--border);background:var(--card);color:var(--fg);margin-top:6px;outline:none}
+input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
+label{font-weight:700;font-size:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.hero{background:linear-gradient(135deg,color-mix(in srgb,var(--red) 18%,color-mix(in srgb,var(--orange) 18%,var(--card))),var(--card) 70%);overflow:hidden;position:relative}
+.hero::after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,var(--orange) 15%,transparent)}
+.hero-badge{display:inline-block;background:linear-gradient(135deg,var(--orange),var(--red));color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.section-title{margin:0 0 4px;font-size:26px;font-weight:800;letter-spacing:-.5px}
+.muted{color:var(--muted);font-size:13px;line-height:1.35}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.col{flex:1 1 140px}
+.hr{height:1px;background:var(--border);margin:14px 0}
+.small-btn{padding:8px 12px;font-size:14px;border-radius:12px;width:auto}
+
+/* Result grid */
+.result-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.result-card{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:14px;text-align:center;cursor:pointer;transition:box-shadow .15s,border-color .15s}
+.result-card:hover{box-shadow:var(--shadow)}
+.result-card.highlight{border-color:var(--orange);background:color-mix(in srgb,var(--orange) 8%,var(--tile))}
+.result-card .unit-lbl{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.result-card .big{font-size:26px;font-weight:850;margin:4px 0;letter-spacing:-.4px;color:var(--orange)}
+.result-card .tap-hint{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* Chips */
+.chip-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.chip{width:auto;border-radius:999px;padding:8px 13px;font-size:13px;font-weight:700}
+
+/* Collapsible */
+.coll-hdr{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:2px 0}
+.coll-hdr h3{margin:0;font-size:15px;font-weight:750;pointer-events:none}
+.coll-arrow{font-size:11px;color:var(--muted);transition:transform .2s;pointer-events:none;display:inline-block}
+.coll-body{max-height:0;overflow:hidden;transition:max-height .28s ease}
+.coll-body.open{max-height:3000px}
+.coll-arrow.open{transform:rotate(180deg)}
+
+/* TC/RTD table */
+.scroll-x{overflow-x:auto;margin-top:10px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--tile);padding:9px 8px;text-align:left;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--border);white-space:nowrap;color:var(--muted)}
+td{border:1px solid var(--border);padding:9px 8px;vertical-align:top;line-height:1.4}
+tr:nth-child(even) td{background:color-mix(in srgb,var(--tile) 40%,var(--card))}
+
+/* RTD resistance */
+.rtd-result{background:var(--tile);border:1px solid var(--border);border-radius:14px;padding:14px;margin-top:12px;text-align:center}
+.rtd-ohm{font-size:32px;font-weight:850;color:var(--orange);letter-spacing:-.5px;margin:4px 0}
+.rtd-label{font-size:12px;color:var(--muted);font-weight:700}
+
+/* Setpoint rows */
+.sp-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px}
+.sp-row:last-child{border-bottom:none}
+.sp-unit{font-weight:700;color:var(--muted);font-size:13px}
+.sp-val{font-weight:800;font-size:16px}
+
+/* Note box */
+.note-box{background:color-mix(in srgb,var(--orange) 8%,var(--tile));border:1px solid color-mix(in srgb,var(--orange) 25%,var(--border));border-radius:12px;padding:12px 14px;font-size:13px;color:var(--muted);line-height:1.4;margin-top:10px}
+
+/* Ref rows */
+.ref-row{display:flex;align-items:flex-start;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);gap:12px}
+.ref-row:last-child{border-bottom:none}
+.ref-name{font-weight:700;font-size:14px;flex:1}
+.ref-range{font-size:13px;color:var(--orange);font-weight:700;text-align:right;white-space:nowrap}
+.ref-note{font-size:12px;color:var(--muted);margin-top:2px}
+
+footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
+@media(max-width:520px){main{padding:10px}.section-title{font-size:22px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <button class="small-btn" onclick="location.href='./index.html'">&#8592; Back</button>
+    <div class="brand">
+      <div class="header-title">PockeTech V2</div>
+      <div class="build">Temperature</div>
+    </div>
+  </div>
+  <button class="small-btn" onclick="toggleTheme()">&#127771;</button>
+</header>
+
+<main>
+
+  <!-- Hero -->
+  <div class="card hero">
+    <div class="hero-badge">&#127777;&#65039; TEMPERATURE</div>
+    <h1 class="section-title">Temperature</h1>
+    <p class="muted" style="margin:4px 0 0">Converter, RTD resistance checker, TC/RTD ranges &amp; setpoint helper.</p>
+  </div>
+
+  <!-- Converter -->
+  <div class="card">
+    <h3 style="margin:0 0 12px;font-size:15px;font-weight:750">Converter</h3>
+    <div class="row">
+      <div class="col">
+        <label>Temperature</label>
+        <input id="val" inputmode="decimal" placeholder="100">
+      </div>
+      <div class="col">
+        <label>From Unit</label>
+        <select id="unit">
+          <option value="f">&#176;F</option>
+          <option value="c">&#176;C</option>
+          <option value="k">K</option>
+          <option value="r">&#176;R</option>
+        </select>
+      </div>
+    </div>
+    <div class="chip-bar">
+      <button class="chip" onclick="quick(32,'f')">32&#176;F Freezing</button>
+      <button class="chip" onclick="quick(212,'f')">212&#176;F Boiling</button>
+      <button class="chip" onclick="quick(68,'f')">68&#176;F Ambient</button>
+      <button class="chip" onclick="quick(100,'c')">100&#176;C</button>
+      <button class="chip" onclick="quick(0,'c')">0&#176;C</button>
+      <button class="chip" onclick="quick(-40,'f')">-40 (F=C)</button>
+      <button class="chip" onclick="clearAll()">Clear</button>
+    </div>
+  </div>
+
+  <!-- Results — tap to convert from -->
+  <div class="result-grid">
+    <div class="result-card" id="card_f" onclick="setFrom('f')">
+      <div class="unit-lbl">Fahrenheit</div>
+      <div class="big" id="outF">&#8212;</div>
+      <div class="tap-hint">tap to convert from</div>
+    </div>
+    <div class="result-card" id="card_c" onclick="setFrom('c')">
+      <div class="unit-lbl">Celsius</div>
+      <div class="big" id="outC">&#8212;</div>
+      <div class="tap-hint">tap to convert from</div>
+    </div>
+    <div class="result-card" id="card_k" onclick="setFrom('k')">
+      <div class="unit-lbl">Kelvin</div>
+      <div class="big" id="outK">&#8212;</div>
+      <div class="tap-hint">tap to convert from</div>
+    </div>
+    <div class="result-card" id="card_r" onclick="setFrom('r')">
+      <div class="unit-lbl">Rankine</div>
+      <div class="big" id="outR">&#8212;</div>
+      <div class="tap-hint">tap to convert from</div>
+    </div>
+  </div>
+
+  <!-- RTD Resistance Checker -->
+  <div class="card">
+    <div class="coll-hdr" onclick="toggleColl(this)">
+      <h3>&#9889; RTD Resistance Checker (Pt100 / Pt1000)</h3><span class="coll-arrow">&#9660;</span>
+    </div>
+    <div class="coll-body">
+      <div style="height:12px"></div>
+      <p class="muted" style="margin:0 0 12px">Enter a temperature and see what resistance your RTD should read on a multimeter. Use this to verify an RTD in the field without a calibrator.</p>
+      <div class="row">
+        <div class="col">
+          <label>Temperature</label>
+          <input id="rtd_temp" inputmode="decimal" placeholder="e.g. 100">
+        </div>
+        <div class="col">
+          <label>Unit</label>
+          <select id="rtd_unit">
+            <option value="c">&#176;C</option>
+            <option value="f">&#176;F</option>
+          </select>
+        </div>
+        <div class="col">
+          <label>RTD Type</label>
+          <select id="rtd_type">
+            <option value="pt100">Pt100</option>
+            <option value="pt1000">Pt1000</option>
+          </select>
+        </div>
+      </div>
+      <div class="rtd-result" id="rtd-result" style="display:none">
+        <div class="rtd-label">Expected Resistance</div>
+        <div class="rtd-ohm" id="rtd-ohm">&#8212;</div>
+        <div class="rtd-label" id="rtd-sub"></div>
+      </div>
+      <div class="note-box" style="margin-top:12px">
+        &#9888;&#65039; <strong>Field check:</strong> Measure resistance across the RTD leads with your Fluke. Compare to the expected value. More than ~2&#937; off on Pt100 = suspect element or wiring issue.
+      </div>
+    </div>
+  </div>
+
+  <!-- Setpoint Helper -->
+  <div class="card">
+    <div class="coll-hdr" onclick="toggleColl(this)">
+      <h3>&#127919; Alarm / Setpoint Helper</h3><span class="coll-arrow">&#9660;</span>
+    </div>
+    <div class="coll-body">
+      <div style="height:12px"></div>
+      <p class="muted" style="margin:0 0 12px">Enter your setpoint in any unit — see it in all four instantly. Useful when your DCS is in &#176;F but your transmitter range is in &#176;C.</p>
+      <div class="row">
+        <div class="col">
+          <label>Setpoint Value</label>
+          <input id="sp_val" inputmode="decimal" placeholder="e.g. 250">
+        </div>
+        <div class="col">
+          <label>Unit</label>
+          <select id="sp_unit">
+            <option value="f">&#176;F</option>
+            <option value="c">&#176;C</option>
+            <option value="k">K</option>
+            <option value="r">&#176;R</option>
+          </select>
+        </div>
+      </div>
+      <div id="sp-result" style="display:none;margin-top:12px;background:var(--tile);border:1px solid var(--border);border-radius:14px;padding:14px">
+        <div class="sp-row"><span class="sp-unit">&#176;F</span><span class="sp-val" id="sp_f">--</span></div>
+        <div class="sp-row"><span class="sp-unit">&#176;C</span><span class="sp-val" id="sp_c">--</span></div>
+        <div class="sp-row"><span class="sp-unit">K</span><span class="sp-val" id="sp_k">--</span></div>
+        <div class="sp-row"><span class="sp-unit">&#176;R</span><span class="sp-val" id="sp_r">--</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TC / RTD Range Reference -->
+  <div class="card">
+    <div class="coll-hdr" onclick="toggleColl(this)">
+      <h3>&#128221; TC &amp; RTD Range Reference</h3><span class="coll-arrow">&#9660;</span>
+    </div>
+    <div class="coll-body">
+      <div style="height:10px"></div>
+      <div class="ref-row">
+        <div><div class="ref-name">Type K</div><div class="ref-note">Chromel/Alumel — most common general purpose</div></div>
+        <div class="ref-range">-200 to 1260&#176;C<br>-328 to 2300&#176;F</div>
+      </div>
+      <div class="ref-row">
+        <div><div class="ref-name">Type J</div><div class="ref-note">Iron/Constantan — general purpose, avoid oxidizing above ~540&#176;C</div></div>
+        <div class="ref-range">-210 to 760&#176;C<br>-346 to 1400&#176;F</div>
+      </div>
+      <div class="ref-row">
+        <div><div class="ref-name">Type T</div><div class="ref-note">Copper/Constantan — stable at low temps</div></div>
+        <div class="ref-range">-200 to 400&#176;C<br>-328 to 752&#176;F</div>
+      </div>
+      <div class="ref-row">
+        <div><div class="ref-name">Type E</div><div class="ref-note">Chromel/Constantan — highest mV output, good sensitivity</div></div>
+        <div class="ref-range">-200 to 900&#176;C<br>-328 to 1652&#176;F</div>
+      </div>
+      <div class="ref-row">
+        <div><div class="ref-name">Type N</div><div class="ref-note">Nicrosil/Nisil — better high-temp stability than Type K</div></div>
+        <div class="ref-range">-200 to 1300&#176;C<br>-328 to 2372&#176;F</div>
+      </div>
+      <div class="ref-row">
+        <div><div class="ref-name">Type R / S</div><div class="ref-note">Platinum/Rhodium — noble metal, high temp furnaces</div></div>
+        <div class="ref-range">-50 to 1760&#176;C<br>-58 to 3200&#176;F</div>
+      </div>
+      <div class="ref-row">
+        <div><div class="ref-name">Type B</div><div class="ref-note">PtRh/Pt — very high temp, glass/steel industry</div></div>
+        <div class="ref-range">0 to 1820&#176;C<br>32 to 3308&#176;F</div>
+      </div>
+      <div class="ref-row">
+        <div><div class="ref-name">Pt100 RTD (Class A)</div><div class="ref-note">100&#937; at 0&#176;C — most common process RTD</div></div>
+        <div class="ref-range">-200 to 650&#176;C<br>-328 to 1202&#176;F</div>
+      </div>
+      <div class="ref-row">
+        <div><div class="ref-name">Pt1000 RTD (Class A)</div><div class="ref-note">1000&#937; at 0&#176;C — better immunity on long runs</div></div>
+        <div class="ref-range">-200 to 650&#176;C<br>-328 to 1202&#176;F</div>
+      </div>
+      <div class="note-box">
+        <strong>Remember:</strong> In ANSI thermocouples, <strong>RED is negative</strong>. In IEC, white is negative. Always verify against site drawings before wiring.
+      </div>
+    </div>
+  </div>
+
+</main>
+<footer>PockeTech V2 — Temperature</footer>
+
+<script>
+// common.js inlined
+var $ = function(id){return document.getElementById(id);};
+(function(){var t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+(function(){var sx,sy;document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=Math.abs(e.changedTouches[0].clientY-sy);if(sx<60&&dx>50&&dy<100)history.back();},{passive:true});})();
+function toggleTheme(){var h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',next);localStorage.setItem('pt-v2-theme',next);}
+
+function toggleColl(hdr){
+  var body=hdr.nextElementSibling;
+  var arrow=hdr.querySelector('.coll-arrow');
+  body.classList.toggle('open');
+  if(arrow)arrow.classList.toggle('open');
+}
+
+function gn(id){
+  var raw=$(id).value.trim().replace('\u2212','-');
+  if(raw==='')return null;
+  var x=Number(raw);
+  return isFinite(x)?x:null;
+}
+
+function fmt(v){return isFinite(v)?v.toFixed(2):'--';}
+
+function toC(v,u){
+  if(u==='c')return v;
+  if(u==='f')return(v-32)*5/9;
+  if(u==='k')return v-273.15;
+  if(u==='r')return(v-491.67)*5/9;
+  return NaN;
+}
+
+function fromC(c,u){
+  if(u==='c')return c;
+  if(u==='f')return c*9/5+32;
+  if(u==='k')return c+273.15;
+  if(u==='r')return(c*9/5+32)+459.67;
+  return NaN;
+}
+
+function calc(){
+  var v=gn('val'),u=$('unit').value;
+  if(v===null){
+    ['f','c','k','r'].forEach(function(x){$('out'+x.toUpperCase()).textContent='--';});
+    ['card_f','card_c','card_k','card_r'].forEach(function(id){$(id).classList.remove('highlight');});
+    return;
+  }
+  var c=toC(v,u);
+  var f=fromC(c,'f'),ce=fromC(c,'c'),k=fromC(c,'k'),r=fromC(c,'r');
+  $('outF').textContent=fmt(f)+' \u00b0F';
+  $('outC').textContent=fmt(ce)+' \u00b0C';
+  $('outK').textContent=fmt(k)+' K';
+  $('outR').textContent=fmt(r)+' \u00b0R';
+  ['card_f','card_c','card_k','card_r'].forEach(function(id){$(id).classList.remove('highlight');});
+  $('card_'+u).classList.add('highlight');
+}
+
+function quick(v,u){$('val').value=v;$('unit').value=u;calc();}
+function clearAll(){$('val').value='';calc();}
+function setFrom(u){
+  var map={f:'outF',c:'outC',k:'outK',r:'outR'};
+  var el=$(map[u]);
+  if(!el)return;
+  var txt=el.textContent.replace(/[^\d.\-]/g,'').trim();
+  if(!txt||txt==='--')return;
+  $('val').value=txt;
+  $('unit').value=u;
+  calc();
+}
+
+// RTD Resistance (Callendar-Van Dusen simplified)
+function pt100AtC(c){
+  var R0=100,A=3.9083e-3,B=-5.775e-7;
+  if(c>=0) return R0*(1+A*c+B*c*c);
+  var C=-4.183e-12;
+  return R0*(1+A*c+B*c*c+C*(c-100)*c*c*c);
+}
+
+function calcRTD(){
+  var v=gn('rtd_temp'),u=$('rtd_unit').value,type=$('rtd_type').value;
+  if(v===null){$('rtd-result').style.display='none';return;}
+  var c=u==='f'?(v-32)*5/9:v;
+  var r100=pt100AtC(c);
+  var r=type==='pt1000'?r100*10:r100;
+  $('rtd-ohm').textContent=r.toFixed(2)+' \u03a9';
+  $('rtd-sub').textContent=(type==='pt100'?'Pt100':'Pt1000')+' at '+fmt(c)+'\u00b0C / '+fmt(c*9/5+32)+'\u00b0F';
+  $('rtd-result').style.display='block';
+}
+
+// Setpoint helper
+function calcSetpoint(){
+  var v=gn('sp_val'),u=$('sp_unit').value;
+  if(v===null){$('sp-result').style.display='none';return;}
+  var c=toC(v,u);
+  $('sp_f').textContent=fmt(fromC(c,'f'))+' \u00b0F';
+  $('sp_c').textContent=fmt(fromC(c,'c'))+' \u00b0C';
+  $('sp_k').textContent=fmt(fromC(c,'k'))+' K';
+  $('sp_r').textContent=fmt(fromC(c,'r'))+' \u00b0R';
+  $('sp-result').style.display='block';
+}
+
+// Init
+(function init(){
+  $('val').addEventListener('input',calc);
+  $('unit').addEventListener('change',calc);
+  $('rtd_temp').addEventListener('input',calcRTD);
+  $('rtd_unit').addEventListener('change',calcRTD);
+  $('rtd_type').addEventListener('change',calcRTD);
+  $('sp_val').addEventListener('input',calcSetpoint);
+  $('sp_unit').addEventListener('change',calcSetpoint);
+})();
+</script>
+</body>
+</html>
