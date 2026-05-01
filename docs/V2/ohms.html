@@ -1,1 +1,419 @@
-<!DOCTYPE html><html lang="en" data-theme="auto"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>PockeTech V2 — Electrical Helper</title><meta name="theme-color" content="#0f1115"><style>:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--ok:#166534;--warn:#92400e;--bad:#991b1b;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}html[data-theme=dark]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}@media(prefers-color-scheme:dark){html[data-theme=auto]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}html[data-theme=dark] header{background:rgba(15,17,21,.75)}main{padding:14px;max-width:1050px;margin:0 auto}.brand{display:flex;flex-direction:column}.title{font-weight:850;font-size:18px}.build,.muted{font-size:13px;color:var(--muted);line-height:1.35}button,input,select{font:inherit;border-radius:14px}button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;font-weight:650}button:active{transform:translateY(1px) scale(.99)}input,select{width:100%;padding:13px;border:1px solid var(--border);background:var(--card);color:var(--fg);margin-top:7px;outline:none}input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}label{font-weight:700;font-size:14px}.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}.hero{text-align:left;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 28%,var(--card)),var(--card) 70%);overflow:hidden;position:relative}.hero:after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,transparent)}.tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tab.active{background:var(--accent);border-color:var(--accent);color:white}.screen{display:none}.screen.active{display:block}.top-layout{display:grid;grid-template-columns:1fr 1.15fr;gap:18px;align-items:center}.wheel-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}.wheel{width:min(330px,80vw);aspect-ratio:1;border:3px solid color-mix(in srgb,var(--muted) 55%,var(--border));border-radius:999px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;position:relative;overflow:hidden;background:color-mix(in srgb,var(--card) 92%,var(--tile))}.wheel:before{content:'';position:absolute;left:50%;top:0;bottom:0;border-left:2px solid var(--border)}.wheel:after{content:'';position:absolute;top:50%;left:0;right:0;border-top:2px solid var(--border)}.quad{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:1}.letter{font-size:48px;font-weight:950;line-height:1}.q-label{font-size:13px;color:var(--muted);line-height:1.25}.results{display:grid;gap:10px}.result-row{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:12px}.r-title{font-size:15px}.r-val{font-size:28px;font-weight:900;color:var(--accent);text-align:right}.r-unit{color:var(--muted);font-weight:700}.row{display:flex;gap:12px;flex-wrap:wrap}.col{flex:1 1 210px}.input-row{display:grid;grid-template-columns:150px 1fr 110px;gap:12px;align-items:end;margin-bottom:10px}.chipbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.chip{width:auto;border-radius:999px;padding:9px 13px}.ok{background:var(--ok);border-color:var(--ok);color:white}.warn{background:var(--warn);border-color:var(--warn);color:white}.small-btn{padding:8px 10px;font-size:14px;border-radius:12px;width:auto}.note{background:color-mix(in srgb,var(--accent) 10%,var(--tile));border:1px solid color-mix(in srgb,var(--accent) 35%,var(--border));border-radius:14px;padding:12px;color:var(--muted);font-size:13px;line-height:1.35}.formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--tile);border:1px solid var(--border);border-radius:14px;padding:12px;line-height:1.55}.vd-layout{display:grid;grid-template-columns:1fr 1fr;gap:14px}.big{font-size:28px;font-weight:850;color:var(--accent);margin:4px 0;letter-spacing:-.4px}.status{font-weight:900;border-radius:16px;padding:14px;text-align:center;border:1px solid var(--border);background:var(--tile)}.pass{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 55%,var(--border));background:color-mix(in srgb,var(--ok) 14%,var(--tile))}.fail{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 55%,var(--border));background:color-mix(in srgb,var(--bad) 14%,var(--tile))}@media(max-width:760px){.top-layout,.vd-layout{grid-template-columns:1fr}.input-row{grid-template-columns:1fr}.wheel{width:min(290px,82vw)}.letter{font-size:42px}.r-val{font-size:24px}main{padding:12px}.card{padding:14px}}</style></head><body><header><div class="brand"><div class="title">PockeTech V2</div><div class="build">Electrical Helper</div></div><button class="small-btn" onclick="toggleTheme()">🌓</button></header><main><div class="card hero"><h1 style="margin:0 0 6px">Electrical Helper</h1><p class="muted" style="margin:0">Ohm’s Law + Voltage Drop for instrument techs and electricians.</p></div><div class="card"><div class="tabs"><button id="tabOhms" class="tab active" onclick="showTab('ohms')">⚡ Ohm’s Law</button><button id="tabVD" class="tab" onclick="showTab('vd')">📉 Voltage Drop</button></div></div><section id="ohms" class="screen active"><div class="card"><div class="top-layout"><div class="wheel-wrap"><div class="wheel"><div class="quad"><div class="letter">V</div><div class="q-label">Voltage<br>Volts</div></div><div class="quad"><div class="letter">W</div><div class="q-label">Power<br>Watts</div></div><div class="quad"><div class="letter">I</div><div class="q-label">Current<br>Amps</div></div><div class="quad"><div class="letter">R</div><div class="q-label">Resistance<br>Ohms</div></div></div><p class="muted" style="text-align:center;margin:0">Enter any <b style="color:var(--accent)">TWO</b> known values.</p></div><div><h2 style="margin:0 0 10px">Results</h2><div class="results"><div class="result-row"><div class="r-title">Voltage (V)</div><div class="r-val" id="readV">—</div><div class="r-unit">V</div></div><div class="result-row"><div class="r-title">Current (I)</div><div class="r-val" id="readI">—</div><div class="r-unit" id="readIUnit">A</div></div><div class="result-row"><div class="r-title">Resistance (R)</div><div class="r-val" id="readR">—</div><div class="r-unit">Ω</div></div><div class="result-row"><div class="r-title">Power (W)</div><div class="r-val" id="readP">—</div><div class="r-unit">W</div></div></div></div></div></div><div class="card"><h2 style="margin-top:0">Enter Values</h2><div class="input-row"><label>Voltage (V)</label><input id="v" type="text" inputmode="text" placeholder="24"><select id="vUnit"><option value="1">V</option><option value="0.001">mV</option><option value="1000">kV</option></select></div><div class="input-row"><label>Current (I)</label><input id="i" type="text" inputmode="text" placeholder="20"><select id="iUnit"><option value="1">A</option><option value="0.001" selected>mA</option><option value="0.000001">µA</option></select></div><div class="input-row"><label>Resistance (R)</label><input id="r" type="text" inputmode="text" placeholder="250"><select id="rUnit"><option value="1">Ω</option><option value="1000">kΩ</option><option value="1000000">MΩ</option></select></div><div class="input-row"><label>Power (W)</label><input id="p" type="text" inputmode="text" placeholder="0.1"><select id="pUnit"><option value="1">W</option><option value="0.001">mW</option><option value="1000">kW</option></select></div><div class="chipbar"><button class="chip" onclick="presetLoop()">24V Loop (20 mA)</button><button class="chip" onclick="preset250()">250Ω @ 20 mA</button><button class="chip" onclick="clearAll()">Clear</button></div></div><div class="card"><h2 style="margin-top:0">Formula Reference</h2><div class="formula">V = I × R &nbsp; | &nbsp; I = V ÷ R &nbsp; | &nbsp; R = V ÷ I<br>P = V × I &nbsp; | &nbsp; P = I² × R &nbsp; | &nbsp; P = V² ÷ R</div></div></section><section id="vd" class="screen"><div class="card"><h2 style="margin-top:0">Voltage Drop</h2><p class="muted">For electricians: calculate voltage drop by wire size, length, current, and phase.</p><div class="vd-layout"><div><div class="row"><div class="col"><label>Source Voltage</label><input id="vdVolts" type="text" inputmode="text" value="120"></div><div class="col"><label>Load Current (A)</label><input id="vdAmps" type="text" inputmode="text" placeholder="10"></div></div><div class="row" style="margin-top:12px"><div class="col"><label>One-Way Length</label><input id="vdLen" type="text" inputmode="text" placeholder="100"></div><div class="col"><label>Length Unit</label><select id="vdLenUnit"><option value="ft">ft</option><option value="m">m</option></select></div></div><div class="row" style="margin-top:12px"><div class="col"><label>Conductor</label><select id="vdMat"><option value="cu">Copper</option><option value="al">Aluminum</option></select></div><div class="col"><label>Wire Size</label><select id="vdAwg"><option value="14">14 AWG</option><option value="12" selected>12 AWG</option><option value="10">10 AWG</option><option value="8">8 AWG</option><option value="6">6 AWG</option><option value="4">4 AWG</option><option value="2">2 AWG</option><option value="1">1 AWG</option><option value="1/0">1/0 AWG</option><option value="2/0">2/0 AWG</option><option value="4/0">4/0 AWG</option></select></div></div><div class="row" style="margin-top:12px"><div class="col"><label>System</label><select id="vdPhase"><option value="1">1Φ / DC / 2-wire</option><option value="3">3Φ</option></select></div><div class="col"><label>Max Drop %</label><input id="vdLimit" type="text" inputmode="text" value="3"></div></div><div class="chipbar"><button class="chip" onclick="vdPreset24()">24V Control</button><button class="chip" onclick="vdPreset120()">120V Circuit</button><button class="chip" onclick="vdClear()">Clear</button></div></div><div><div class="result-row"><div class="r-title">Voltage Drop</div><div class="r-val" id="vdDrop">—</div><div class="r-unit">V</div></div><br><div class="result-row"><div class="r-title">Drop Percent</div><div class="r-val" id="vdPct">—</div><div class="r-unit">%</div></div><br><div class="result-row"><div class="r-title">Load Voltage</div><div class="r-val" id="vdLoad">—</div><div class="r-unit">V</div></div><br><div id="vdStatus" class="status">—</div><p class="muted">Formula uses approximate conductor resistance. Always verify final design against site electrical standards/code.</p></div></div></div></section><div class="card"><button onclick="location.href='./'">← Back to PockeTech V2</button></div></main><script src="common.js"></script><script>let lastTouched=[];let vals={};function base(id){const val=n(id);if(val===null)return null;return val*Number($(id+'Unit').value)}function fmt(v,d=3){if(!Number.isFinite(v))return '—';const a=Math.abs(v);if(a===0)return '0';if(a>=1000)return v.toFixed(2);if(a>=100)return v.toFixed(2);if(a>=10)return v.toFixed(3);return v.toFixed(d)}function display(){ $('readV').textContent=Number.isFinite(vals.v)?fmt(vals.v):'—'; if(Number.isFinite(vals.i)){if(Math.abs(vals.i)<1){$('readI').textContent=fmt(vals.i*1000);$('readIUnit').textContent='mA'}else{$('readI').textContent=fmt(vals.i);$('readIUnit').textContent='A'}}else{$('readI').textContent='—';$('readIUnit').textContent='A'} $('readR').textContent=Number.isFinite(vals.r)?fmt(vals.r):'—'; $('readP').textContent=Number.isFinite(vals.p)?fmt(vals.p):'—'}function calc(){let inputs={v:base('v'),i:base('i'),r:base('r'),p:base('p')};let filled=Object.entries(inputs).filter(([k,v])=>v!==null&&Number.isFinite(v));vals={};if(filled.length<2){display();return}let keys=lastTouched.filter(k=>inputs[k]!==null).slice(-2);if(keys.length<2)keys=filled.slice(0,2).map(x=>x[0]);let a=keys[0],b=keys[1];let V=inputs.v,I=inputs.i,R=inputs.r,P=inputs.p;if((a==='v'&&b==='i')||(a==='i'&&b==='v')){V=inputs.v;I=inputs.i;R=V/I;P=V*I}else if((a==='v'&&b==='r')||(a==='r'&&b==='v')){V=inputs.v;R=inputs.r;I=V/R;P=V*I}else if((a==='i'&&b==='r')||(a==='r'&&b==='i')){I=inputs.i;R=inputs.r;V=I*R;P=V*I}else if((a==='v'&&b==='p')||(a==='p'&&b==='v')){V=inputs.v;P=inputs.p;I=P/V;R=V/I}else if((a==='i'&&b==='p')||(a==='p'&&b==='i')){I=inputs.i;P=inputs.p;V=P/I;R=V/I}else if((a==='r'&&b==='p')||(a==='p'&&b==='r')){R=inputs.r;P=inputs.p;I=Math.sqrt(P/R);V=I*R}if(!Number.isFinite(V)||!Number.isFinite(I)||!Number.isFinite(R)||!Number.isFinite(P)||I===0||R===0){display();return}vals={v:V,i:I,r:R,p:P};display()}function touch(id){lastTouched=lastTouched.filter(x=>x!==id);lastTouched.push(id);calc()}function clearAll(){['v','i','r','p'].forEach(id=>$(id).value='');lastTouched=[];vals={};display()}function presetLoop(){clearAll();$('v').value='24';$('i').value='20';$('iUnit').value='0.001';lastTouched=['v','i'];calc()}function preset250(){clearAll();$('r').value='250';$('i').value='20';$('iUnit').value='0.001';lastTouched=['r','i'];calc()}function showTab(t){$('ohms').classList.toggle('active',t==='ohms');$('vd').classList.toggle('active',t==='vd');$('tabOhms').classList.toggle('active',t==='ohms');$('tabVD').classList.toggle('active',t==='vd')}const ohmsPer1000={cu:{14:2.525,12:1.588,10:.999,8:.628,6:.395,4:.249,2:.156,1:.124,'1/0':.0983,'2/0':.0779,'4/0':.049},al:{14:4.14,12:2.62,10:1.65,8:1.04,6:.655,4:.411,2:.259,1:.205,'1/0':.162,'2/0':.129,'4/0':.0808}};function calcVD(){const V=n('vdVolts'),A=n('vdAmps'),lenRaw=n('vdLen'),limit=n('vdLimit')??3;if(!Number.isFinite(V)||!Number.isFinite(A)||!Number.isFinite(lenRaw)||V===0){vdBlank();return}const len=$('vdLenUnit').value==='m'?lenRaw*3.28084:lenRaw;const mat=$('vdMat').value,awg=$('vdAwg').value,phase=$('vdPhase').value;const r=ohmsPer1000[mat][awg];const factor=phase==='3'?1.732:2;const drop=factor*A*r*len/1000;const pct=drop/V*100;const load=V-drop;$('vdDrop').textContent=fmt(drop,3);$('vdPct').textContent=fmt(pct,2);$('vdLoad').textContent=fmt(load,2);const st=$('vdStatus');st.className='status '+(pct<=limit?'pass':'fail');st.textContent=pct<=limit?'✅ OK under limit':'⚠️ Above limit'}function vdBlank(){$('vdDrop').textContent='—';$('vdPct').textContent='—';$('vdLoad').textContent='—';$('vdStatus').className='status';$('vdStatus').textContent='—'}function vdPreset24(){$('vdVolts').value='24';$('vdAmps').value='0.02';$('vdLen').value='500';$('vdLenUnit').value='ft';$('vdMat').value='cu';$('vdAwg').value='18';calcVD()}function vdPreset120(){$('vdVolts').value='120';$('vdAmps').value='12';$('vdLen').value='100';$('vdLenUnit').value='ft';$('vdMat').value='cu';$('vdAwg').value='12';calcVD()}function vdClear(){['vdVolts','vdAmps','vdLen'].forEach(id=>$(id).value='');vdBlank()}function wire(){['v','i','r','p'].forEach(id=>{$(id).addEventListener('input',()=>touch(id));$(id+'Unit').addEventListener('change',()=>touch(id))});['vdVolts','vdAmps','vdLen','vdLenUnit','vdMat','vdAwg','vdPhase','vdLimit'].forEach(id=>$(id).addEventListener('input',calcVD))}(function init(){wire();display();vdBlank()})();</script></body></html>
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PockeTech — Ohm's Law</title>
+<meta name="theme-color" content="#0f1115">
+<style>
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--yellow:#eab308;--ok:#166534;--ok-bg:#dcfce7;--fail:#991b1b;--fail-bg:#fee2e2;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--ok-bg:#14532d;--fail-bg:#450a0a;--shadow:0 14px 34px rgba(0,0,0,.35)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--ok-bg:#14532d;--fail-bg:#450a0a;--shadow:0 14px 34px rgba(0,0,0,.35)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
+header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+html[data-theme="dark"] header{background:rgba(15,17,21,.75)}
+.header-left{display:flex;align-items:center;gap:8px}
+.brand{display:flex;flex-direction:column}
+.header-title{font-weight:800;font-size:18px}
+.build{font-size:12px;color:var(--muted)}
+main{padding:14px;max-width:960px;margin:0 auto;padding-bottom:40px}
+button,input,select{font:inherit;border-radius:14px}
+button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;font-weight:650;transition:transform .08s,box-shadow .15s}
+button:active{transform:translateY(1px) scale(.99)}
+input,select{width:100%;padding:11px 13px;border:1px solid var(--border);background:var(--card);color:var(--fg);margin-top:6px;outline:none}
+input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
+label{font-weight:700;font-size:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.hero{background:linear-gradient(135deg,color-mix(in srgb,var(--yellow) 22%,var(--card)),var(--card) 70%);overflow:hidden;position:relative}
+.hero::after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,var(--yellow) 15%,transparent)}
+.hero-badge{display:inline-block;background:var(--yellow);color:#000;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.section-title{margin:0 0 4px;font-size:26px;font-weight:800;letter-spacing:-.5px}
+.muted{color:var(--muted);font-size:13px;line-height:1.35}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.col{flex:1 1 140px}
+.hr{height:1px;background:var(--border);margin:14px 0}
+.small-btn{padding:8px 12px;font-size:14px;border-radius:12px;width:auto}
+
+/* Tabs */
+.tab-bar{display:flex;gap:8px;margin-bottom:14px;border-bottom:2px solid var(--border)}
+.tab-btn{padding:9px 16px;border:none;background:transparent;color:var(--muted);font-weight:700;font-size:14px;border-radius:10px 10px 0 0;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab-btn.active{color:var(--yellow);border-bottom-color:var(--yellow);background:color-mix(in srgb,var(--yellow) 8%,transparent)}
+
+/* Ohm's wheel */
+.wheel-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:16px}
+.wheel{width:min(280px,75vw);aspect-ratio:1;border:3px solid color-mix(in srgb,var(--muted) 40%,var(--border));border-radius:999px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;position:relative;overflow:hidden;background:color-mix(in srgb,var(--card) 92%,var(--tile))}
+.wheel::before{content:'';position:absolute;left:50%;top:0;bottom:0;border-left:2px solid var(--border)}
+.wheel::after{content:'';position:absolute;top:50%;left:0;right:0;border-top:2px solid var(--border)}
+.quad{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:1;padding:8px}
+.q-letter{font-size:42px;font-weight:950;line-height:1;color:var(--yellow)}
+.q-label{font-size:11px;color:var(--muted);line-height:1.3;margin-top:2px}
+
+/* Result rows */
+.result-row{display:flex;align-items:center;justify-content:space-between;background:var(--tile);border:1px solid var(--border);border-radius:14px;padding:12px 16px;margin-bottom:8px}
+.result-row.highlight{border-color:var(--yellow);background:color-mix(in srgb,var(--yellow) 8%,var(--tile))}
+.r-title{font-size:14px;font-weight:700}
+.r-right{text-align:right}
+.r-val{font-size:26px;font-weight:900;color:var(--yellow);letter-spacing:-.4px}
+.r-unit{font-size:13px;color:var(--muted);font-weight:700}
+
+/* Input rows */
+.input-block{display:grid;grid-template-columns:1fr 100px;gap:10px;align-items:end;margin-bottom:10px}
+
+/* Chips */
+.chip-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{width:auto;border-radius:999px;padding:8px 13px;font-size:13px;font-weight:700}
+
+/* Formula box */
+.formula-box{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--tile);border:1px solid var(--border);border-radius:12px;padding:12px 14px;line-height:1.8;font-size:13px}
+
+/* Collapsible */
+.coll-hdr{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:2px 0}
+.coll-hdr h3{margin:0;font-size:15px;font-weight:750;pointer-events:none}
+.coll-arrow{font-size:11px;color:var(--muted);transition:transform .2s;pointer-events:none;display:inline-block}
+.coll-body{max-height:0;overflow:hidden;transition:max-height .28s ease}
+.coll-body.open{max-height:2000px}
+.coll-arrow.open{transform:rotate(180deg)}
+
+/* VD status */
+.vd-status{border-radius:14px;padding:13px;text-align:center;font-weight:800;font-size:16px;border:1px solid var(--border);margin-top:8px}
+.vd-pass{background:var(--ok-bg);color:var(--ok);border-color:color-mix(in srgb,var(--ok) 40%,var(--border))}
+.vd-fail{background:var(--fail-bg);color:var(--fail);border-color:color-mix(in srgb,var(--fail) 40%,var(--border))}
+
+footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
+@media(max-width:520px){main{padding:10px}.section-title{font-size:22px}.q-letter{font-size:34px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <button class="small-btn" onclick="location.href='./index.html'">&#8592; Back</button>
+    <div class="brand">
+      <div class="header-title">PockeTech V2</div>
+      <div class="build">Ohm's Law</div>
+    </div>
+  </div>
+  <button class="small-btn" onclick="toggleTheme()">&#127771;</button>
+</header>
+
+<main>
+
+  <!-- Hero -->
+  <div class="card hero">
+    <div class="hero-badge">&#9889; ELECTRICAL</div>
+    <h1 class="section-title">Ohm's Law</h1>
+    <p class="muted" style="margin:4px 0 0">Solve V, I, R, P from any two known values. Plus voltage drop for wire runs.</p>
+  </div>
+
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-ohms" onclick="showTab('ohms')">&#9889; Ohm's Law</button>
+    <button class="tab-btn" id="tab-vd" onclick="showTab('vd')">&#128200; Voltage Drop</button>
+  </div>
+
+  <!-- ══ OHM'S LAW ══ -->
+  <div id="pane-ohms">
+
+    <!-- Wheel -->
+    <div class="card">
+      <div class="wheel-wrap">
+        <div class="wheel">
+          <div class="quad"><div class="q-letter">V</div><div class="q-label">Voltage<br>Volts</div></div>
+          <div class="quad"><div class="q-letter">W</div><div class="q-label">Power<br>Watts</div></div>
+          <div class="quad"><div class="q-letter">I</div><div class="q-label">Current<br>Amps</div></div>
+          <div class="quad"><div class="q-letter">R</div><div class="q-label">Resistance<br>Ohms</div></div>
+        </div>
+        <p class="muted" style="text-align:center;margin:0">Enter any <strong>two</strong> known values below</p>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="card">
+      <h3 style="margin:0 0 12px;font-size:15px;font-weight:750">Results</h3>
+      <div class="result-row" id="rr-v">
+        <div class="r-title">Voltage (V)</div>
+        <div class="r-right"><div class="r-val" id="readV">&#8212;</div><div class="r-unit">V</div></div>
+      </div>
+      <div class="result-row" id="rr-i">
+        <div class="r-title">Current (I)</div>
+        <div class="r-right"><div class="r-val" id="readI">&#8212;</div><div class="r-unit" id="readIUnit">A</div></div>
+      </div>
+      <div class="result-row" id="rr-r">
+        <div class="r-title">Resistance (R)</div>
+        <div class="r-right"><div class="r-val" id="readR">&#8212;</div><div class="r-unit">&#937;</div></div>
+      </div>
+      <div class="result-row" id="rr-p">
+        <div class="r-title">Power (W)</div>
+        <div class="r-right"><div class="r-val" id="readP">&#8212;</div><div class="r-unit">W</div></div>
+      </div>
+    </div>
+
+    <!-- Inputs -->
+    <div class="card">
+      <h3 style="margin:0 0 12px;font-size:15px;font-weight:750">Enter Values</h3>
+      <div class="input-block">
+        <div><label>Voltage (V)</label><input id="v" inputmode="decimal" placeholder="24"></div>
+        <div><label>&nbsp;</label><select id="vUnit"><option value="1">V</option><option value="0.001">mV</option><option value="1000">kV</option></select></div>
+      </div>
+      <div class="input-block">
+        <div><label>Current (I)</label><input id="i" inputmode="decimal" placeholder="20"></div>
+        <div><label>&nbsp;</label><select id="iUnit"><option value="1">A</option><option value="0.001" selected>mA</option><option value="0.000001">&#956;A</option></select></div>
+      </div>
+      <div class="input-block">
+        <div><label>Resistance (R)</label><input id="r" inputmode="decimal" placeholder="250"></div>
+        <div><label>&nbsp;</label><select id="rUnit"><option value="1">&#937;</option><option value="1000">k&#937;</option><option value="1000000">M&#937;</option></select></div>
+      </div>
+      <div class="input-block">
+        <div><label>Power (W)</label><input id="p" inputmode="decimal" placeholder="0.1"></div>
+        <div><label>&nbsp;</label><select id="pUnit"><option value="1">W</option><option value="0.001">mW</option><option value="1000">kW</option></select></div>
+      </div>
+      <div class="chip-bar">
+        <button class="chip" onclick="presetLoop()">24V Loop (20 mA)</button>
+        <button class="chip" onclick="preset250()">250&#937; @ 20 mA</button>
+        <button class="chip" onclick="clearAll()">Clear</button>
+      </div>
+    </div>
+
+    <!-- Formula Reference -->
+    <div class="card">
+      <div class="coll-hdr" onclick="toggleColl(this)">
+        <h3>&#128221; Formula Reference</h3><span class="coll-arrow">&#9660;</span>
+      </div>
+      <div class="coll-body">
+        <div class="formula-box" style="margin-top:12px">
+          V = I &#215; R &nbsp;|&nbsp; I = V &#247; R &nbsp;|&nbsp; R = V &#247; I<br>
+          P = V &#215; I &nbsp;|&nbsp; P = I&#178; &#215; R &nbsp;|&nbsp; P = V&#178; &#247; R<br>
+          <span style="color:var(--muted)">Loop: 24V supply, 250&#937; burden = 1&#8211;5V output at 4&#8211;20 mA</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /pane-ohms -->
+
+  <!-- ══ VOLTAGE DROP ══ -->
+  <div id="pane-vd" style="display:none">
+
+    <div class="card">
+      <h3 style="margin:0 0 12px;font-size:15px;font-weight:750">Voltage Drop Calculator</h3>
+      <p class="muted" style="margin:0 0 14px">Calculate voltage drop by wire size, length, current and phase. Great for 24VDC control loops and power runs.</p>
+      <div class="row">
+        <div class="col"><label>Source Voltage</label><input id="vdVolts" inputmode="decimal" value="24"></div>
+        <div class="col"><label>Load Current (A)</label><input id="vdAmps" inputmode="decimal" placeholder="0.02"></div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <div class="col"><label>One-Way Length</label><input id="vdLen" inputmode="decimal" placeholder="500"></div>
+        <div class="col"><label>Length Unit</label><select id="vdLenUnit"><option value="ft">ft</option><option value="m">m</option></select></div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <div class="col"><label>Conductor</label><select id="vdMat"><option value="cu">Copper</option><option value="al">Aluminum</option></select></div>
+        <div class="col"><label>Wire Size</label>
+          <select id="vdAwg">
+            <option value="18">18 AWG</option>
+            <option value="16">16 AWG</option>
+            <option value="14">14 AWG</option>
+            <option value="12" selected>12 AWG</option>
+            <option value="10">10 AWG</option>
+            <option value="8">8 AWG</option>
+            <option value="6">6 AWG</option>
+            <option value="4">4 AWG</option>
+            <option value="2">2 AWG</option>
+            <option value="1/0">1/0 AWG</option>
+            <option value="2/0">2/0 AWG</option>
+            <option value="4/0">4/0 AWG</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <div class="col"><label>System</label><select id="vdPhase"><option value="1">1&#934; / DC / 2-wire</option><option value="3">3&#934;</option></select></div>
+        <div class="col"><label>Max Drop %</label><input id="vdLimit" inputmode="decimal" value="3"></div>
+      </div>
+      <div class="chip-bar">
+        <button class="chip" onclick="vdPreset24()">24V Control Loop</button>
+        <button class="chip" onclick="vdPreset120()">120V Circuit</button>
+        <button class="chip" onclick="vdClear()">Clear</button>
+      </div>
+    </div>
+
+    <!-- VD Results -->
+    <div class="result-row">
+      <div class="r-title">Voltage Drop</div>
+      <div class="r-right"><div class="r-val" id="vdDrop">&#8212;</div><div class="r-unit">V</div></div>
+    </div>
+    <div class="result-row" style="margin-top:8px">
+      <div class="r-title">Drop Percent</div>
+      <div class="r-right"><div class="r-val" id="vdPct">&#8212;</div><div class="r-unit">%</div></div>
+    </div>
+    <div class="result-row" style="margin-top:8px;margin-bottom:8px">
+      <div class="r-title">Load Voltage</div>
+      <div class="r-right"><div class="r-val" id="vdLoad">&#8212;</div><div class="r-unit">V</div></div>
+    </div>
+    <div id="vdStatus" class="vd-status">&#8212;</div>
+    <p class="muted" style="margin-top:10px">Uses approximate conductor resistance. Always verify against site electrical standards.</p>
+
+  </div><!-- /pane-vd -->
+
+</main>
+<footer>PockeTech V2 — Ohm's Law</footer>
+
+<script>
+// common.js inlined
+var $ = function(id){return document.getElementById(id);};
+function fmt(v,d){
+  d=d===undefined?3:d;
+  if(!isFinite(v))return '--';
+  var a=Math.abs(v);
+  if(a===0)return '0';
+  if(a>=1000)return v.toFixed(2);
+  if(a>=100)return v.toFixed(2);
+  if(a>=10)return v.toFixed(3);
+  return v.toFixed(d);
+}
+(function(){var t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+(function(){var sx,sy;document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=Math.abs(e.changedTouches[0].clientY-sy);if(sx<60&&dx>50&&dy<100)history.back();},{passive:true});})();
+function toggleTheme(){var h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',next);localStorage.setItem('pt-v2-theme',next);}
+
+function toggleColl(hdr){
+  var body=hdr.nextElementSibling;
+  var arrow=hdr.querySelector('.coll-arrow');
+  body.classList.toggle('open');
+  if(arrow)arrow.classList.toggle('open');
+}
+
+function showTab(t){
+  $('pane-ohms').style.display=t==='ohms'?'':'none';
+  $('pane-vd').style.display=t==='vd'?'':'none';
+  $('tab-ohms').className='tab-btn'+(t==='ohms'?' active':'');
+  $('tab-vd').className='tab-btn'+(t==='vd'?' active':'');
+}
+
+// ── Ohm's Law ────────────────────────────────────────────────────────────────
+var lastTouched=[], vals={};
+
+function base(id){
+  var raw=$(id).value.trim();
+  if(raw==='')return null;
+  var x=Number(raw);
+  if(!isFinite(x))return null;
+  return x*Number($(id+'Unit').value);
+}
+
+function display(){
+  $('readV').textContent=isFinite(vals.v)?fmt(vals.v):'--';
+  if(isFinite(vals.i)){
+    if(Math.abs(vals.i)<1){$('readI').textContent=fmt(vals.i*1000);$('readIUnit').textContent='mA';}
+    else{$('readI').textContent=fmt(vals.i);$('readIUnit').textContent='A';}
+  } else {$('readI').textContent='--';$('readIUnit').textContent='A';}
+  $('readR').textContent=isFinite(vals.r)?fmt(vals.r):'--';
+  $('readP').textContent=isFinite(vals.p)?fmt(vals.p):'--';
+  // highlight active results
+  ['v','i','r','p'].forEach(function(k){
+    var el=$('rr-'+k);
+    if(el)el.classList.toggle('highlight',isFinite(vals[k]));
+  });
+}
+
+function calc(){
+  var inputs={v:base('v'),i:base('i'),r:base('r'),p:base('p')};
+  var filled=Object.keys(inputs).filter(function(k){return inputs[k]!==null&&isFinite(inputs[k]);});
+  vals={};
+  if(filled.length<2){display();return;}
+  var keys=lastTouched.filter(function(k){return inputs[k]!==null;}).slice(-2);
+  if(keys.length<2)keys=filled.slice(0,2);
+  var a=keys[0],b=keys[1];
+  var V=inputs.v,I=inputs.i,R=inputs.r,P=inputs.p;
+  if((a==='v'&&b==='i')||(a==='i'&&b==='v')){V=inputs.v;I=inputs.i;R=V/I;P=V*I;}
+  else if((a==='v'&&b==='r')||(a==='r'&&b==='v')){V=inputs.v;R=inputs.r;I=V/R;P=V*I;}
+  else if((a==='i'&&b==='r')||(a==='r'&&b==='i')){I=inputs.i;R=inputs.r;V=I*R;P=V*I;}
+  else if((a==='v'&&b==='p')||(a==='p'&&b==='v')){V=inputs.v;P=inputs.p;I=P/V;R=V/I;}
+  else if((a==='i'&&b==='p')||(a==='p'&&b==='i')){I=inputs.i;P=inputs.p;V=P/I;R=V/I;}
+  else if((a==='r'&&b==='p')||(a==='p'&&b==='r')){R=inputs.r;P=inputs.p;I=Math.sqrt(P/R);V=I*R;}
+  if(!isFinite(V)||!isFinite(I)||!isFinite(R)||!isFinite(P)||I===0||R===0){display();return;}
+  vals={v:V,i:I,r:R,p:P};display();
+}
+
+function touch(id){
+  lastTouched=lastTouched.filter(function(x){return x!==id;});
+  lastTouched.push(id);calc();
+}
+
+function clearAll(){
+  ['v','i','r','p'].forEach(function(id){$(id).value='';});
+  lastTouched=[];vals={};display();
+}
+
+function presetLoop(){
+  clearAll();$('v').value='24';$('i').value='20';$('iUnit').value='0.001';
+  lastTouched=['v','i'];calc();
+}
+
+function preset250(){
+  clearAll();$('r').value='250';$('i').value='20';$('iUnit').value='0.001';
+  lastTouched=['r','i'];calc();
+}
+
+// ── Voltage Drop ─────────────────────────────────────────────────────────────
+var ohmsPer1000={
+  cu:{18:6.385,16:4.016,14:2.525,12:1.588,10:.999,8:.628,6:.395,4:.249,2:.156,1:.124,'1/0':.0983,'2/0':.0779,'4/0':.049},
+  al:{18:10.4,16:6.59,14:4.14,12:2.62,10:1.65,8:1.04,6:.655,4:.411,2:.259,1:.205,'1/0':.162,'2/0':.129,'4/0':.0808}
+};
+
+function gn(id){var raw=$(id).value.trim();if(raw==='')return null;var x=Number(raw);return isFinite(x)?x:null;}
+
+function calcVD(){
+  var V=gn('vdVolts'),A=gn('vdAmps'),lenRaw=gn('vdLen'),limit=gn('vdLimit');
+  if(limit===null)limit=3;
+  if(!isFinite(V)||!isFinite(A)||!isFinite(lenRaw)||V===0){vdBlank();return;}
+  var len=$('vdLenUnit').value==='m'?lenRaw*3.28084:lenRaw;
+  var mat=$('vdMat').value,awg=$('vdAwg').value,phase=$('vdPhase').value;
+  var r=(ohmsPer1000[mat]||{})[awg];
+  if(!r){vdBlank();return;}
+  var factor=phase==='3'?1.732:2;
+  var drop=factor*A*r*len/1000;
+  var pct=drop/V*100;
+  var load=V-drop;
+  $('vdDrop').textContent=fmt(drop,3);
+  $('vdPct').textContent=fmt(pct,2);
+  $('vdLoad').textContent=fmt(load,2);
+  var st=$('vdStatus');
+  if(pct<=limit){st.className='vd-status vd-pass';st.textContent='&#9989; OK — under '+limit+'% limit';}
+  else{st.className='vd-status vd-fail';st.textContent='&#9888;&#65039; Above '+limit+'% limit';}
+}
+
+function vdBlank(){
+  $('vdDrop').textContent='--';$('vdPct').textContent='--';$('vdLoad').textContent='--';
+  $('vdStatus').className='vd-status';$('vdStatus').textContent='--';
+}
+
+function vdPreset24(){
+  $('vdVolts').value='24';$('vdAmps').value='0.02';
+  $('vdLen').value='500';$('vdLenUnit').value='ft';
+  $('vdMat').value='cu';$('vdAwg').value='18';calcVD();
+}
+
+function vdPreset120(){
+  $('vdVolts').value='120';$('vdAmps').value='12';
+  $('vdLen').value='100';$('vdLenUnit').value='ft';
+  $('vdMat').value='cu';$('vdAwg').value='12';calcVD();
+}
+
+function vdClear(){
+  ['vdVolts','vdAmps','vdLen'].forEach(function(id){$(id).value='';});
+  vdBlank();
+}
+
+// Init
+(function init(){
+  ['v','i','r','p'].forEach(function(id){
+    $(id).addEventListener('input',function(){touch(id);});
+    $(id+'Unit').addEventListener('change',function(){touch(id);});
+  });
+  ['vdVolts','vdAmps','vdLen','vdLenUnit','vdMat','vdAwg','vdPhase','vdLimit'].forEach(function(id){
+    $(id).addEventListener('input',calcVD);
+    $(id).addEventListener('change',calcVD);
+  });
+  display();vdBlank();
+})();
+</script>
+</body>
+</html>
