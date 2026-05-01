@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><title>PockeTech – Calibration</title><meta name="theme-color" content="#0f1115">
+<style>
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--ok:#166534;--ok-bg:#dcfce7;--warn:#b45309;--warn-bg:#fef3c7;--fail:#991b1b;--fail-bg:#fee2e2;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--ok:#166534;--ok-bg:#14532d;--warn:#b45309;--warn-bg:#451a03;--fail:#991b1b;--fail-bg:#450a0a;--shadow:0 14px 34px rgba(0,0,0,.35)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--ok:#166534;--ok-bg:#14532d;--warn:#b45309;--warn-bg:#451a03;--fail:#991b1b;--fail-bg:#450a0a;--shadow:0 14px 34px rgba(0,0,0,.35)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
+header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+html[data-theme="dark"] header{background:rgba(15,17,21,.75)}
+.header-left{display:flex;align-items:center;gap:8px}
+.brand{display:flex;flex-direction:column}
+.header-title{font-weight:800;font-size:18px}
+.build{font-size:12px;color:var(--muted)}
+main{padding:14px;max-width:960px;margin:0 auto}
+button,input,select,textarea{font:inherit;border-radius:14px}
+button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;font-weight:650;transition:transform .08s ease,box-shadow .15s ease,border-color .15s ease}
+button:active{transform:translateY(1px) scale(.99)}
+input,select,textarea{width:100%;padding:11px 13px;border:1px solid var(--border);background:var(--card);color:var(--fg);margin-top:6px;outline:none}
+textarea{resize:vertical;min-height:72px;border-radius:12px}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
+label{font-weight:700;font-size:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.hero{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 28%,var(--card)),var(--card) 70%);overflow:hidden;position:relative}
+.hero:after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,transparent)}
+.hero-badge{display:inline-block;background:var(--accent);color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.section-title{margin:0 0 4px;font-size:26px;font-weight:800;letter-spacing:-.5px}
+.muted{color:var(--muted);font-size:13px;line-height:1.35}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.col{flex:1 1 160px}
+.hr{height:1px;background:var(--border);margin:14px 0}
+.small-btn{padding:8px 12px;font-size:14px;border-radius:12px;width:auto}
+.ok-btn{background:color-mix(in srgb,var(--accent) 15%,var(--tile));border-color:var(--accent);color:var(--accent)}
+.save-btn{background:var(--accent);color:#fff;border-color:var(--accent);width:100%;padding:14px;font-size:15px;border-radius:14px;margin-top:4px}
+.danger-btn{background:var(--fail-bg);color:var(--fail);border-color:var(--fail)}
+
+/* Mode Toggle */
+.mode-toggle{display:flex;background:var(–tile);border:1px solid var(–border);border-radius:14px;padding:4px;gap:4px;margin-bottom:16px}
+.mode-btn{flex:1;padding:10px;border-radius:10px;border:none;background:transparent;color:var(–muted);font-weight:700;font-size:14px;transition:all .15s ease}
+.mode-btn.active{background:var(–card);color:var(–fg);box-shadow:0 2px 8px rgba(0,0,0,.12);border:1px solid var(–border)}
+
+/* Collapsible */
+.collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:2px 0}
+.collapsible-header h3{margin:0;font-size:15px;font-weight:750}
+.chevron{transition:transform .2s ease;font-size:12px;color:var(–muted)}
+.chevron.open{transform:rotate(180deg)}
+.collapsible-body{overflow:hidden;transition:max-height .25s ease;max-height:0}
+.collapsible-body.open{max-height:2000px}
+
+/* Checkboxes */
+.check-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.check-row{display:flex;flex-direction:column;gap:6px}
+.check-row label.row-label{font-size:13px;font-weight:700;color:var(–fg);margin-bottom:2px}
+.check-options{display:flex;gap:8px;flex-wrap:wrap}
+.check-opt{display:flex;align-items:center;gap:5px;cursor:pointer}
+.check-opt input[type=checkbox]{width:16px;height:16px;margin:0;accent-color:var(–accent);border-radius:4px;cursor:pointer}
+.check-opt span{font-size:13px;font-weight:600}
+
+/* Cal Table */
+.cal-table-wrap{overflow-x:auto;margin-top:10px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{background:var(–tile);padding:10px 8px;text-align:center;font-size:12px;font-weight:750;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(–border);white-space:nowrap}
+td{border:1px solid var(–border);padding:4px}
+td.label-cell{padding:8px;font-weight:700;font-size:13px;background:var(–tile);white-space:nowrap;text-align:center}
+td input{margin:0;padding:8px 6px;border:none;border-radius:8px;font-size:14px;text-align:center;background:transparent}
+td input:focus{background:color-mix(in srgb,var(–accent) 8%,var(–card));box-shadow:none;border:1px solid var(–accent)}
+.pass-cell{background:color-mix(in srgb,#22c55e 12%,transparent)}
+.fail-cell{background:color-mix(in srgb,#ef4444 12%,transparent)}
+
+/* Test Equipment */
+.teq-table td input{font-size:13px;padding:6px 5px}
+.teq-table td{padding:3px}
+
+/* Sign-off */
+.sign-table td{padding:8px 6px;border:1px solid var(–border)}
+.sign-table td input{font-size:13px;padding:5px}
+
+/* Records */
+.record-card{background:var(–tile);border:1px solid var(–border);border-radius:14px;padding:12px 14px;margin-bottom:10px;cursor:pointer;transition:box-shadow .15s}
+.record-card:hover{box-shadow:var(–shadow)}
+.record-tag{font-weight:800;font-size:15px}
+.record-meta{font-size:12px;color:var(–muted);margin-top:2px}
+.record-badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px}
+.badge-pass{background:var(–ok-bg);color:var(–ok)}
+.badge-fail{background:var(–fail-bg);color:var(–fail)}
+.badge-in{background:color-mix(in srgb,var(–accent) 15%,transparent);color:var(–accent)}
+.badge-out{background:color-mix(in srgb,#f59e0b 15%,transparent);color:#b45309}
+.empty-state{text-align:center;color:var(–muted);padding:32px 0;font-size:14px}
+
+/* Tabs */
+.tab-bar{display:flex;gap:8px;margin-bottom:14px;border-bottom:2px solid var(–border);padding-bottom:0}
+.tab-btn{padding:9px 16px;border:none;background:transparent;color:var(–muted);font-weight:700;font-size:14px;border-radius:10px 10px 0 0;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab-btn.active{color:var(–accent);border-bottom-color:var(–accent);background:color-mix(in srgb,var(–accent) 8%,transparent)}
+
+.group-label{font-size:11px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;color:var(–muted);margin:18px 0 8px;padding:0 2px}
+.result-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:12px}
+.result-card{background:var(–tile);border:1px solid var(–border);border-radius:14px;padding:12px}
+.result-card .big{font-size:22px;font-weight:850;margin:3px 0;letter-spacing:-.4px}
+.xmtr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.xmtr-opt{display:flex;align-items:center;gap:6px;cursor:pointer;background:var(–tile);border:1px solid var(–border);border-radius:10px;padding:8px 10px}
+.xmtr-opt input{width:16px;height:16px;margin:0;accent-color:var(–accent)}
+.xmtr-opt span{font-size:13px;font-weight:600}
+@media(max-width:520px){main{padding:10px}.section-title{font-size:22px}.check-grid{grid-template-columns:1fr}.xmtr-grid{grid-template-columns:repeat(2,1fr)}.row{gap:8px}}
+footer{text-align:center;color:var(–muted);font-size:13px;padding:22px}
+</style>
+
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <button class="small-btn" onclick="location.href='./index.html'">← Back</button>
+    <div class="brand">
+      <div class="header-title">PockeTech V2</div>
+      <div class="build">Calibration</div>
+    </div>
+  </div>
+  <button class="small-btn" onclick="toggleTheme()">🌓</button>
+</header>
+
+<main>
+  <!-- TAB BAR -->
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-new" onclick="switchTab('new')">📝 New Sheet</button>
+    <button class="tab-btn" id="tab-records" onclick="switchTab('records')">📂 Records</button>
+  </div>
+
+  <!-- NEW SHEET TAB -->
+
+  <div id="pane-new">
+
+```
+<!-- Hero -->
+<div class="card hero">
+  <div class="hero-badge">📝 CAL SHEET</div>
+  <h1 class="section-title">Calibration</h1>
+  <p class="muted" style="margin:4px 0 12px">Input transmitters &amp; output valves. Fill, save, export.</p>
+  <!-- Mode Toggle -->
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="modeInput" onclick="setMode('input')">📥 Input (Transmitter)</button>
+    <button class="mode-btn" id="modeOutput" onclick="setMode('output')">📤 Output (Valve)</button>
+  </div>
+</div>
+
+<!-- Header Info -->
+<div class="card">
+  <div class="row">
+    <div class="col"><label>Work Order</label><input id="h_wo" placeholder="WO-00000"></div>
+    <div class="col"><label>Date</label><input id="h_date" type="date"></div>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <div class="col"><label>Tag No</label><input id="h_tag" placeholder="FT-1001"></div>
+    <div class="col"><label>Equipment Location</label><input id="h_loc" placeholder="HRSG-1 / Rack A"></div>
+  </div>
+</div>
+
+<!-- INPUT ONLY: Maintenance Request + Ranges -->
+<div id="input-only-top">
+  <div class="card">
+    <div class="collapsible-header" onclick="toggleCollapse('maint')">
+      <h3>Maintenance Request</h3><span class="chevron" id="chev-maint">▼</span>
+    </div>
+    <div class="collapsible-body" id="body-maint">
+      <div style="height:10px"></div>
+      <div class="check-options" style="flex-wrap:wrap;gap:10px">
+        <label class="xmtr-opt"><input type="checkbox" name="mreq" value="SCCI PM"><span>SCCI PM</span></label>
+        <label class="xmtr-opt"><input type="checkbox" name="mreq" value="Criticality PM"><span>Criticality PM</span></label>
+        <label class="xmtr-opt"><input type="checkbox" name="mreq" value="Maintenance PM"><span>Maintenance PM</span></label>
+        <label class="xmtr-opt"><input type="checkbox" name="mreq" value="Repair Request"><span>Repair Request</span></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0 0 10px;font-size:15px;font-weight:750">Transmitter &amp; DCS Range</h3>
+    <div class="row">
+      <div class="col"><label>XMTR High</label><input id="r_xmtr_hi" inputmode="decimal" placeholder="100"></div>
+      <div class="col"><label>XMTR Low</label><input id="r_xmtr_lo" inputmode="decimal" placeholder="0"></div>
+      <div class="col"><label>Units</label><input id="r_units" placeholder="psi, °F…"></div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div class="col"><label>DCS High</label><input id="r_dcs_hi" inputmode="decimal" placeholder="100"></div>
+      <div class="col"><label>DCS Low</label><input id="r_dcs_lo" inputmode="decimal" placeholder="0"></div>
+      <div class="col"><label>Engr Units</label><input id="r_engr_units" placeholder="EU"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Asset Condition -->
+<div class="card">
+  <div class="collapsible-header" onclick="toggleCollapse('asset')">
+    <h3>Asset Condition</h3><span class="chevron" id="chev-asset">▼</span>
+  </div>
+  <div class="collapsible-body" id="body-asset">
+    <div style="height:10px"></div>
+    <div id="asset-input-rows"></div>
+    <div id="asset-output-rows"></div>
+  </div>
+</div>
+
+<!-- CALIBRATION TABLE -->
+<div class="card">
+  <h3 style="margin:0 0 4px;font-size:15px;font-weight:750">Calibration Data</h3>
+  <p class="muted" id="cal-hint" style="margin:0 0 10px">0 / 25 / 50 / 75 / 100 % test points</p>
+  <div class="cal-table-wrap">
+    <table id="cal-table">
+      <thead id="cal-thead"></thead>
+      <tbody id="cal-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- INPUT ONLY: XMTR Settings + Switch Cal + Alarms -->
+<div id="input-only-bottom">
+
+  <div class="card">
+    <div class="collapsible-header" onclick="toggleCollapse('xmtr')">
+      <h3>Transmitter Settings</h3><span class="chevron" id="chev-xmtr">▼</span>
+    </div>
+    <div class="collapsible-body" id="body-xmtr">
+      <div style="height:10px"></div>
+      <div class="group-label">XMTR Action</div>
+      <div class="xmtr-grid">
+        <label class="xmtr-opt"><input type="radio" name="xact" value="LINEAR"><span>Linear</span></label>
+        <label class="xmtr-opt"><input type="radio" name="xact" value="SQ ROOT"><span>Sq Root</span></label>
+        <label class="xmtr-opt"><input type="radio" name="xact" value="N/A"><span>N/A</span></label>
+      </div>
+      <div class="group-label" style="margin-top:14px">Fail Safe Mode</div>
+      <div class="xmtr-grid">
+        <label class="xmtr-opt"><input type="radio" name="xfail" value="HIGH"><span>High</span></label>
+        <label class="xmtr-opt"><input type="radio" name="xfail" value="LOW"><span>Low</span></label>
+        <label class="xmtr-opt"><input type="radio" name="xfail" value="N/A"><span>N/A</span></label>
+      </div>
+      <div class="group-label" style="margin-top:14px">XMTR Age</div>
+      <div class="xmtr-grid">
+        <label class="xmtr-opt"><input type="radio" name="xage" value="<15YRS"><span>&lt;15 Yrs</span></label>
+        <label class="xmtr-opt"><input type="radio" name="xage" value=">15YRS"><span>&gt;15 Yrs</span></label>
+        <label class="xmtr-opt"><input type="radio" name="xage" value="N/A"><span>N/A</span></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="collapsible-header" onclick="toggleCollapse('switch')">
+      <h3>Switch Calibration</h3><span class="chevron" id="chev-switch">▼</span>
+    </div>
+    <div class="collapsible-body" id="body-switch">
+      <div style="height:10px"></div>
+      <div class="cal-table-wrap">
+        <table>
+          <thead><tr><th></th><th>Setpoint</th><th>As Found</th><th>As Left</th><th>DCS Reading</th><th>Deadband</th></tr></thead>
+          <tbody>
+            <tr><td class="label-cell">OPEN</td><td><input id="sw_open_sp" inputmode="decimal"></td><td><input id="sw_open_af" inputmode="decimal"></td><td><input id="sw_open_al" inputmode="decimal"></td><td><input id="sw_open_dcs" inputmode="decimal"></td><td><input id="sw_open_db" inputmode="decimal"></td></tr>
+            <tr><td class="label-cell">CLOSED</td><td><input id="sw_cls_sp" inputmode="decimal"></td><td><input id="sw_cls_af" inputmode="decimal"></td><td><input id="sw_cls_al" inputmode="decimal"></td><td><input id="sw_cls_dcs" inputmode="decimal"></td><td><input id="sw_cls_db" inputmode="decimal"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="collapsible-header" onclick="toggleCollapse('alarms')">
+      <h3>Alarms &amp; Shutdown Points</h3><span class="chevron" id="chev-alarms">▼</span>
+    </div>
+    <div class="collapsible-body" id="body-alarms">
+      <div style="height:10px"></div>
+      <div class="cal-table-wrap">
+        <table>
+          <thead><tr><th></th><th>Setpoint</th><th>As Found</th><th>As Left</th><th>DCS Reading</th></tr></thead>
+          <tbody>
+            <tr><td class="label-cell">ALARM</td><td><input id="al_sp" inputmode="decimal"></td><td><input id="al_af" inputmode="decimal"></td><td><input id="al_al" inputmode="decimal"></td><td><input id="al_dcs" inputmode="decimal"></td></tr>
+            <tr><td class="label-cell">SHUTDOWN</td><td><input id="sd_sp" inputmode="decimal"></td><td><input id="sd_af" inputmode="decimal"></td><td><input id="sd_al" inputmode="decimal"></td><td><input id="sd_dcs" inputmode="decimal"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OUTPUT ONLY: DCS Switch + On/Off Valve + Shutdown Function -->
+<div id="output-only-sections" style="display:none">
+
+  <div class="card">
+    <div class="collapsible-header" onclick="toggleCollapse('dcs')">
+      <h3>DCS Switch</h3><span class="chevron" id="chev-dcs">▼</span>
+    </div>
+    <div class="collapsible-body" id="body-dcs">
+      <div style="height:10px"></div>
+      <div class="check-options" style="gap:10px">
+        <label class="xmtr-opt"><input type="radio" name="dcs_sw" value="SATISFACTORY"><span>Satisfactory</span></label>
+        <label class="xmtr-opt"><input type="radio" name="dcs_sw" value="DAMAGED"><span>Damaged</span></label>
+        <label class="xmtr-opt"><input type="radio" name="dcs_sw" value="N/A"><span>N/A</span></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="collapsible-header" onclick="toggleCollapse('onoff')">
+      <h3>On / Off Valve</h3><span class="chevron" id="chev-onoff">▼</span>
+    </div>
+    <div class="collapsible-body" id="body-onoff">
+      <div style="height:10px"></div>
+      <div class="cal-table-wrap">
+        <table>
+          <thead><tr><th>Solenoid</th><th>Voltage</th><th>Pos As Found</th><th>Pos As Left</th><th>Pos Target</th></tr></thead>
+          <tbody>
+            <tr><td class="label-cell">ENERGIZED</td><td><input id="onoff_e_v" inputmode="decimal"></td><td><input id="onoff_e_af"></td><td><input id="onoff_e_al"></td><td><input id="onoff_e_tgt"></td></tr>
+            <tr><td class="label-cell">DE-ENERGIZED</td><td><input id="onoff_de_v" inputmode="decimal"></td><td><input id="onoff_de_af"></td><td><input id="onoff_de_al"></td><td><input id="onoff_de_tgt"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="collapsible-header" onclick="toggleCollapse('shutdown')">
+      <h3>Valve Shutdown Function</h3><span class="chevron" id="chev-shutdown">▼</span>
+    </div>
+    <div class="collapsible-body" id="body-shutdown">
+      <div style="height:10px"></div>
+      <div class="cal-table-wrap">
+        <table>
+          <thead><tr><th>Shutdown</th><th>Pos As Found</th><th>Pos As Left</th><th>Pos Target</th></tr></thead>
+          <tbody>
+            <tr><td class="label-cell">ACTIVE</td><td><input id="sd_act_af"></td><td><input id="sd_act_al"></td><td><input id="sd_act_tgt"></td></tr>
+            <tr><td class="label-cell">IN-ACTIVE</td><td><input id="sd_ina_af"></td><td><input id="sd_ina_al"></td><td><input id="sd_ina_tgt"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Test Equipment -->
+<div class="card">
+  <div class="collapsible-header" onclick="toggleCollapse('teq')">
+    <h3>Test Equipment</h3><span class="chevron" id="chev-teq">▼</span>
+  </div>
+  <div class="collapsible-body" id="body-teq">
+    <div style="height:10px"></div>
+    <div class="cal-table-wrap">
+      <table class="teq-table">
+        <thead><tr><th>Item</th><th>Serial No.</th><th>Cal Date</th><th>Exp Date</th></tr></thead>
+        <tbody id="teq-tbody"></tbody>
+      </table>
+    </div>
+    <button class="small-btn ok-btn" style="margin-top:10px;width:100%" onclick="addTeqRow()">+ Add Row</button>
+  </div>
+</div>
+
+<!-- Comments -->
+<div class="card">
+  <label>Comments</label>
+  <textarea id="comments" placeholder="Notes, issues, observations…"></textarea>
+</div>
+
+<!-- Sign-off -->
+<div class="card">
+  <div class="collapsible-header" onclick="toggleCollapse('signoff')">
+    <h3>Sign-Off</h3><span class="chevron" id="chev-signoff">▼</span>
+  </div>
+  <div class="collapsible-body" id="body-signoff">
+    <div style="height:12px"></div>
+    <div class="group-label">Maintenance Technician</div>
+    <div class="cal-table-wrap">
+      <table class="sign-table">
+        <thead><tr><th>Name</th><th>Signature</th><th>Date</th></tr></thead>
+        <tbody>
+          <tr><td><input id="mt1_name" placeholder="Name"></td><td><input id="mt1_sig" placeholder="Initials / Sign"></td><td><input id="mt1_date" type="date"></td></tr>
+          <tr><td><input id="mt2_name" placeholder="Name"></td><td><input id="mt2_sig" placeholder="Initials / Sign"></td><td><input id="mt2_date" type="date"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="group-label" style="margin-top:14px">Operations Technician</div>
+    <div class="cal-table-wrap">
+      <table class="sign-table">
+        <thead><tr><th>Name</th><th>Signature</th><th>Date</th></tr></thead>
+        <tbody>
+          <tr><td><input id="op1_name" placeholder="Name"></td><td><input id="op1_sig" placeholder="Initials / Sign"></td><td><input id="op1_date" type="date"></td></tr>
+          <tr><td><input id="op2_name" placeholder="Name"></td><td><input id="op2_sig" placeholder="Initials / Sign"></td><td><input id="op2_date" type="date"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Save / Clear -->
+<div class="card">
+  <div class="row">
+    <div class="col"><button class="save-btn" onclick="saveRecord()">💾 Save Record</button></div>
+    <div class="col" style="flex:0 0 auto"><button class="small-btn danger-btn" style="height:100%;padding:12px 16px" onclick="clearForm()">🗑 Clear</button></div>
+  </div>
+  <div id="save-msg" style="text-align:center;margin-top:10px;font-size:13px;color:var(--muted)"></div>
+</div>
+```
+
+  </div><!-- end pane-new -->
+
+  <!-- RECORDS TAB -->
+
+  <div id="pane-records" style="display:none">
+    <div class="card" style="padding:12px 14px">
+      <div class="row" style="align-items:center;gap:8px">
+        <div class="col"><input id="rec-search" placeholder="🔍  Search tag, WO…" oninput="renderRecords()"></div>
+        <div style="flex:0 0 auto">
+          <button class="small-btn ok-btn" onclick="exportCSV()">⬇ CSV</button>
+        </div>
+      </div>
+    </div>
+    <div id="records-list"></div>
+  </div>
+
+</main>
+<footer>PockeTech V2 — Calibration</footer>
+
+<script>
+// ─── common.js inlined ───────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+function fmt(v, d = 3){ return Number.isFinite(v) ? Number(v).toFixed(d) : '—'; }
+function n(id){ const raw=$(id).value.trim().replace('−','-'); if(raw==='')return null; const x=Number(raw); return Number.isFinite(x)?x:null; }
+function clamp(v){ return Math.min(Math.max(v,0),100); }
+function pctToMA(p){ return 4+(p/100)*16; }
+function maToPct(m){ return ((m-4)/16)*100; }
+function toggleTheme(){ const h=document.documentElement; const next=h.getAttribute('data-theme')==='dark'?'auto':'dark'; h.setAttribute('data-theme',next); localStorage.setItem('pt-v2-theme',next); }
+(function initTheme(){ const t=localStorage.getItem('pt-v2-theme'); if(t)document.documentElement.setAttribute('data-theme',t); })();
+(function initSwipeBack(){ let startX,startY; document.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;startY=e.touches[0].clientY;},{passive:true}); document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-startX;const dy=Math.abs(e.changedTouches[0].clientY-startY);if(startX<60&&dx>50&&dy<100){if(typeof showScreen==='function')showScreen('home');else history.back();}},{passive:true}); })();
+</script>
+
+<script>
+// ─── State ───────────────────────────────────────────────────────────────────
+let mode = 'input'; // 'input' | 'output'
+let records = [];
+let editingId = null;
+
+// ─── Boot ────────────────────────────────────────────────────────────────────
+(function init(){
+  loadRecords();
+  buildAssetRows();
+  buildCalTable();
+  addTeqRow(); addTeqRow(); addTeqRow();
+  setToday();
+  renderRecords();
+})();
+
+function setToday(){
+  const d = new Date().toISOString().slice(0,10);
+  document.getElementById('h_date').value = d;
+}
+
+// ─── Theme ───────────────────────────────────────────────────────────────────
+function toggleTheme(){
+  const h = document.documentElement;
+  const cur = h.getAttribute('data-theme');
+  h.setAttribute('data-theme', cur === 'dark' ? 'light' : cur === 'light' ? 'auto' : 'dark');
+}
+
+// ─── Tabs ────────────────────────────────────────────────────────────────────
+function switchTab(t){
+  document.getElementById('pane-new').style.display = t==='new' ? '' : 'none';
+  document.getElementById('pane-records').style.display = t==='records' ? '' : 'none';
+  document.getElementById('tab-new').classList.toggle('active', t==='new');
+  document.getElementById('tab-records').classList.toggle('active', t==='records');
+  if(t==='records') renderRecords();
+}
+
+// ─── Mode ────────────────────────────────────────────────────────────────────
+function setMode(m){
+  mode = m;
+  document.getElementById('modeInput').classList.toggle('active', m==='input');
+  document.getElementById('modeOutput').classList.toggle('active', m==='output');
+  document.getElementById('input-only-top').style.display = m==='input' ? '' : 'none';
+  document.getElementById('input-only-bottom').style.display = m==='input' ? '' : 'none';
+  document.getElementById('output-only-sections').style.display = m==='output' ? '' : 'none';
+  buildAssetRows();
+  buildCalTable();
+}
+
+// ─── Collapsible ─────────────────────────────────────────────────────────────
+function toggleCollapse(id){
+  const body = document.getElementById('body-'+id);
+  const chev = document.getElementById('chev-'+id);
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+
+// ─── Asset Condition ─────────────────────────────────────────────────────────
+const INPUT_ASSET_ROWS = ['INSTRUMENT','TUBING','INSULATION','HEAT TRACE','CONDUIT FLEX','DATSHEET','LOOP DRAWING'];
+const OUTPUT_ASSET_ROWS = ['VALVE BODY/PACKING','ACTUATOR','POSITIONER','POSITION INDICATOR','TUBING','INSULATION','HEAT TRACE','CONDUIT FLEX','DATSHEET','LOOP DRAWING'];
+const DOC_ROWS = ['DATSHEET','LOOP DRAWING'];
+
+function buildAssetRows(){
+  const rows = mode === 'input' ? INPUT_ASSET_ROWS : OUTPUT_ASSET_ROWS;
+  const container = document.getElementById('body-asset');
+  // clear old dynamic rows
+  const existing = container.querySelectorAll('.asset-dyn-row');
+  existing.forEach(e=>e.remove());
+
+  const frag = document.createDocumentFragment();
+  rows.forEach(r => {
+    const isDoc = DOC_ROWS.includes(r);
+    const opts = isDoc
+      ? [['UPDATED','Updated'],['MISSING INFORMATION','Missing Info'],['N/A','N/A']]
+      : [['SATISFACTORY','Satisfactory'],['DAMAGED','Damaged'],['N/A','N/A']];
+    const key = r.replace(/[^A-Z0-9]/g,'_');
+    const div = document.createElement('div');
+    div.className = 'asset-dyn-row';
+    div.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:6px';
+    div.innerHTML = `<span style="font-size:13px;font-weight:700;flex:0 0 140px">${r}</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${opts.map(([v,l])=>`<label class="xmtr-opt"><input type="radio" name="asset_${key}" value="${v}"><span>${l}</span></label>`).join('')}
+      </div>`;
+    frag.appendChild(div);
+  });
+  // insert after the static spacer div (first child)
+  container.insertBefore(frag, container.children[1] || null);
+}
+
+// ─── Calibration Table ───────────────────────────────────────────────────────
+function buildCalTable(){
+  const thead = document.getElementById('cal-thead');
+  const tbody = document.getElementById('cal-tbody');
+  const hint  = document.getElementById('cal-hint');
+
+  if(mode === 'input'){
+    hint.textContent = '0 / 25 / 50 / 75 / 100 % — fill As Found & As Left';
+    thead.innerHTML = '<tr><th>%</th><th>Input</th><th>As Found</th><th>mA AF</th><th>As Left</th><th>mA AL</th><th>DCS Reading</th><th>Target</th></tr>';
+    tbody.innerHTML = '';
+    [0,25,50,75,100].forEach(p => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="label-cell">${p}%</td>
+        <td><input class="cal-input" data-pct="${p}" data-field="inp" inputmode="decimal" placeholder="—"></td>
+        <td><input class="cal-input" data-pct="${p}" data-field="af"  inputmode="decimal" placeholder="—"></td>
+        <td><input class="cal-input" data-pct="${p}" data-field="maf" inputmode="decimal" placeholder="${fmt4_20(p)}"></td>
+        <td><input class="cal-input" data-pct="${p}" data-field="al"  inputmode="decimal" placeholder="—"></td>
+        <td><input class="cal-input" data-pct="${p}" data-field="mal" inputmode="decimal" placeholder="${fmt4_20(p)}"></td>
+        <td><input class="cal-input" data-pct="${p}" data-field="dcs" inputmode="decimal" placeholder="—"></td>
+        <td class="label-cell" style="background:transparent;font-weight:600;color:var(--muted)">${fmt4_20(p)} mA</td>`;
+      tbody.appendChild(row);
+    });
+  } else {
+    hint.textContent = '4 / 8 / 12 / 16 / 20 mA — fill % As Found & As Left';
+    thead.innerHTML = '<tr><th>mA</th><th>% As Found</th><th>% As Left</th><th>% Target</th></tr>';
+    tbody.innerHTML = '';
+    [4,8,12,16,20].forEach(ma => {
+      const tgt = Math.round((ma-4)/16*100);
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="label-cell">${ma} mA</td>
+        <td><input class="cal-input" data-ma="${ma}" data-field="af" inputmode="decimal" placeholder="—"></td>
+        <td><input class="cal-input" data-ma="${ma}" data-field="al" inputmode="decimal" placeholder="—"></td>
+        <td class="label-cell" style="background:transparent;font-weight:600;color:var(--muted)">${tgt}%</td>`;
+      tbody.appendChild(row);
+    });
+  }
+}
+
+function fmt4_20(p){ return (4 + p/100*16).toFixed(2); }
+
+// ─── Test Equipment ──────────────────────────────────────────────────────────
+let teqCount = 0;
+function addTeqRow(){
+  const tbody = document.getElementById('teq-tbody');
+  const i = teqCount++;
+  const tr = document.createElement('tr');
+  tr.id = `teq_${i}`;
+  tr.innerHTML = `<td><input placeholder="e.g. Fluke 789" id="teq_item_${i}"></td><td><input placeholder="S/N" id="teq_sn_${i}"></td><td><input type="date" id="teq_cal_${i}"></td><td><input type="date" id="teq_exp_${i}"></td>`;
+  tbody.appendChild(tr);
+}
+
+// ─── Collect Form Data ────────────────────────────────────────────────────────
+function collectForm(){
+  const g = id => (document.getElementById(id)||{}).value || '';
+  const radio = name => { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : ''; };
+  const checks = name => [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(e=>e.value);
+
+  // header
+  const header = { wo: g('h_wo'), date: g('h_date'), tag: g('h_tag'), loc: g('h_loc') };
+
+  // cal table
+  const calRows = [];
+  document.querySelectorAll('#cal-tbody tr').forEach(tr => {
+    const row = {};
+    tr.querySelectorAll('.cal-input').forEach(inp => {
+      row[inp.dataset.field] = inp.value;
+      if(inp.dataset.pct !== undefined) row.pct = inp.dataset.pct;
+      if(inp.dataset.ma  !== undefined) row.ma  = inp.dataset.ma;
+    });
+    calRows.push(row);
+  });
+
+  // asset
+  const assetRows = mode === 'input' ? INPUT_ASSET_ROWS : OUTPUT_ASSET_ROWS;
+  const asset = {};
+  assetRows.forEach(r => {
+    const key = r.replace(/[^A-Z0-9]/g,'_');
+    asset[r] = radio('asset_'+key);
+  });
+
+  // test equipment
+  const teq = [];
+  for(let i=0; i<teqCount; i++){
+    const item = g(`teq_item_${i}`), sn = g(`teq_sn_${i}`), cal = g(`teq_cal_${i}`), exp = g(`teq_exp_${i}`);
+    if(item||sn) teq.push({item,sn,cal,exp});
+  }
+
+  // signoff
+  const signoff = {
+    mt: [{name:g('mt1_name'),sig:g('mt1_sig'),date:g('mt1_date')},{name:g('mt2_name'),sig:g('mt2_sig'),date:g('mt2_date')}],
+    op: [{name:g('op1_name'),sig:g('op1_sig'),date:g('op1_date')},{name:g('op2_name'),sig:g('op2_sig'),date:g('op2_date')}]
+  };
+
+  // input extras
+  let inputData = {};
+  if(mode === 'input'){
+    inputData = {
+      mreq: checks('mreq'),
+      ranges: { xmtrHi:g('r_xmtr_hi'), xmtrLo:g('r_xmtr_lo'), units:g('r_units'), dcsHi:g('r_dcs_hi'), dcsLo:g('r_dcs_lo'), engrUnits:g('r_engr_units') },
+      xmtrAction: radio('xact'), failSafe: radio('xfail'), xmtrAge: radio('xage'),
+      switchCal: {
+        open: {sp:g('sw_open_sp'),af:g('sw_open_af'),al:g('sw_open_al'),dcs:g('sw_open_dcs'),db:g('sw_open_db')},
+        closed: {sp:g('sw_cls_sp'),af:g('sw_cls_af'),al:g('sw_cls_al'),dcs:g('sw_cls_dcs'),db:g('sw_cls_db')}
+      },
+      alarms: {
+        alarm: {sp:g('al_sp'),af:g('al_af'),al:g('al_al'),dcs:g('al_dcs')},
+        shutdown: {sp:g('sd_sp'),af:g('sd_af'),al:g('sd_al'),dcs:g('sd_dcs')}
+      }
+    };
+  }
+
+  // output extras
+  let outputData = {};
+  if(mode === 'output'){
+    outputData = {
+      dcsSwitch: radio('dcs_sw'),
+      onOffValve: {
+        energized: {v:g('onoff_e_v'),af:g('onoff_e_af'),al:g('onoff_e_al'),tgt:g('onoff_e_tgt')},
+        deEnergized: {v:g('onoff_de_v'),af:g('onoff_de_af'),al:g('onoff_de_al'),tgt:g('onoff_de_tgt')}
+      },
+      shutdown: {
+        active: {af:g('sd_act_af'),al:g('sd_act_al'),tgt:g('sd_act_tgt')},
+        inactive: {af:g('sd_ina_af'),al:g('sd_ina_al'),tgt:g('sd_ina_tgt')}
+      }
+    };
+  }
+
+  return { id: editingId || Date.now(), mode, header, asset, calRows, teq, signoff, comments: g('comments'), inputData, outputData, savedAt: new Date().toISOString() };
+}
+
+// ─── Save / Load ─────────────────────────────────────────────────────────────
+function saveRecords(){ localStorage.setItem('pt_cal_records', JSON.stringify(records)); }
+function loadRecords(){ try{ records = JSON.parse(localStorage.getItem('pt_cal_records')) || []; }catch{ records=[]; }}
+
+function saveRecord(){
+  const tag = document.getElementById('h_tag').value.trim();
+  if(!tag){ showMsg('⚠️ Enter a Tag No first', 'var(--warn)'); return; }
+  const data = collectForm();
+  if(editingId){
+    const idx = records.findIndex(r=>r.id===editingId);
+    if(idx>=0) records[idx] = data; else records.unshift(data);
+    editingId = null;
+  } else {
+    records.unshift(data);
+  }
+  saveRecords();
+  showMsg('✅ Saved — ' + tag, '#166534');
+  renderRecords();
+}
+
+function showMsg(txt, color){
+  const el = document.getElementById('save-msg');
+  el.textContent = txt;
+  el.style.color = color || 'var(--muted)';
+  setTimeout(()=>el.textContent='', 3000);
+}
+
+function deleteRecord(id){
+  if(!confirm('Delete this record?')) return;
+  records = records.filter(r=>r.id!==id);
+  saveRecords();
+  renderRecords();
+}
+
+// ─── Records List ─────────────────────────────────────────────────────────────
+function renderRecords(){
+  const list = document.getElementById('records-list');
+  const q = (document.getElementById('rec-search').value||'').toLowerCase();
+  const filtered = records.filter(r => {
+    const s = `${r.header.tag} ${r.header.wo} ${r.header.loc} ${r.mode}`.toLowerCase();
+    return s.includes(q);
+  });
+  if(!filtered.length){ list.innerHTML = `<div class="empty-state">No records yet.<br>Fill in a sheet and tap Save.</div>`; return; }
+  list.innerHTML = filtered.map(r => {
+    const hasFail = r.calRows && r.calRows.some(row => {
+      if(r.mode==='output') return false; // pass/fail not auto-computed for output
+      return false;
+    });
+    const badge = r.mode==='input'
+      ? `<span class="record-badge badge-in">INPUT</span>`
+      : `<span class="record-badge badge-out">OUTPUT</span>`;
+    const dt = r.header.date || r.savedAt.slice(0,10);
+    return `<div class="record-card" onclick="loadRecord(${r.id})">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <span class="record-tag">${r.header.tag || '(no tag)'}</span>${badge}
+          <div class="record-meta">WO: ${r.header.wo||'—'} · ${r.header.loc||'—'} · ${dt}</div>
+        </div>
+        <button class="small-btn danger-btn" onclick="event.stopPropagation();deleteRecord(${r.id})" style="padding:6px 10px;font-size:13px">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── Load Record into Form ────────────────────────────────────────────────────
+function loadRecord(id){
+  const r = records.find(rec=>rec.id===id);
+  if(!r) return;
+  editingId = r.id;
+  setMode(r.mode);
+  switchTab('new');
+
+  const s = (elId, val) => { const el=document.getElementById(elId); if(el) el.value=val||''; };
+  s('h_wo',r.header.wo); s('h_date',r.header.date); s('h_tag',r.header.tag); s('h_loc',r.header.loc);
+  s('comments',r.comments);
+
+  // cal rows
+  r.calRows.forEach(row => {
+    Object.keys(row).forEach(field => {
+      if(field==='pct'||field==='ma') return;
+      const sel = r.mode==='input'
+        ? `input.cal-input[data-pct="${row.pct}"][data-field="${field}"]`
+        : `input.cal-input[data-ma="${row.ma}"][data-field="${field}"]`;
+      const el = document.querySelector(sel);
+      if(el) el.value = row[field]||'';
+    });
+  });
+
+  // asset radios
+  if(r.asset){
+    const assetRows = r.mode==='input' ? INPUT_ASSET_ROWS : OUTPUT_ASSET_ROWS;
+    assetRows.forEach(row => {
+      const key = row.replace(/[^A-Z0-9]/g,'_');
+      const val = r.asset[row];
+      if(val){
+        const el = document.querySelector(`input[name="asset_${key}"][value="${val}"]`);
+        if(el) el.checked = true;
+      }
+    });
+  }
+
+  // input extras
+  if(r.mode==='input' && r.inputData){
+    const id2 = r.inputData;
+    (id2.mreq||[]).forEach(v=>{ const el=document.querySelector(`input[name="mreq"][value="${v}"]`); if(el) el.checked=true; });
+    const rng = id2.ranges||{};
+    s('r_xmtr_hi',rng.xmtrHi); s('r_xmtr_lo',rng.xmtrLo); s('r_units',rng.units);
+    s('r_dcs_hi',rng.dcsHi); s('r_dcs_lo',rng.dcsLo); s('r_engr_units',rng.engrUnits);
+    ['xact','xfail','xage'].forEach((n,i)=>{
+      const val = [id2.xmtrAction,id2.failSafe,id2.xmtrAge][i];
+      if(val){ const el=document.querySelector(`input[name="${n}"][value="${val}"]`); if(el) el.checked=true; }
+    });
+    const sc = id2.switchCal||{};
+    s('sw_open_sp',(sc.open||{}).sp); s('sw_open_af',(sc.open||{}).af); s('sw_open_al',(sc.open||{}).al); s('sw_open_dcs',(sc.open||{}).dcs); s('sw_open_db',(sc.open||{}).db);
+    s('sw_cls_sp',(sc.closed||{}).sp); s('sw_cls_af',(sc.closed||{}).af); s('sw_cls_al',(sc.closed||{}).al); s('sw_cls_dcs',(sc.closed||{}).dcs); s('sw_cls_db',(sc.closed||{}).db);
+    const al = id2.alarms||{};
+    s('al_sp',(al.alarm||{}).sp); s('al_af',(al.alarm||{}).af); s('al_al',(al.alarm||{}).al); s('al_dcs',(al.alarm||{}).dcs);
+    s('sd_sp',(al.shutdown||{}).sp); s('sd_af',(al.shutdown||{}).af); s('sd_al',(al.shutdown||{}).al); s('sd_dcs',(al.shutdown||{}).dcs);
+  }
+
+  // output extras
+  if(r.mode==='output' && r.outputData){
+    const od = r.outputData;
+    if(od.dcsSwitch){ const el=document.querySelector(`input[name="dcs_sw"][value="${od.dcsSwitch}"]`); if(el) el.checked=true; }
+    const oo = od.onOffValve||{};
+    s('onoff_e_v',(oo.energized||{}).v); s('onoff_e_af',(oo.energized||{}).af); s('onoff_e_al',(oo.energized||{}).al); s('onoff_e_tgt',(oo.energized||{}).tgt);
+    s('onoff_de_v',(oo.deEnergized||{}).v); s('onoff_de_af',(oo.deEnergized||{}).af); s('onoff_de_al',(oo.deEnergized||{}).al); s('onoff_de_tgt',(oo.deEnergized||{}).tgt);
+    const sd = od.shutdown||{};
+    s('sd_act_af',(sd.active||{}).af); s('sd_act_al',(sd.active||{}).al); s('sd_act_tgt',(sd.active||{}).tgt);
+    s('sd_ina_af',(sd.inactive||{}).af); s('sd_ina_al',(sd.inactive||{}).al); s('sd_ina_tgt',(sd.inactive||{}).tgt);
+  }
+
+  window.scrollTo({top:0,behavior:'smooth'});
+  showMsg('📂 Loaded — editing ' + r.header.tag, 'var(--accent)');
+}
+
+// ─── Clear Form ───────────────────────────────────────────────────────────────
+function clearForm(){
+  if(!confirm('Clear all fields?')) return;
+  editingId = null;
+  document.querySelectorAll('input:not([type=radio]):not([type=checkbox]), textarea').forEach(el=>{
+    if(el.type==='date') el.value=''; else el.value='';
+  });
+  document.querySelectorAll('input[type=radio], input[type=checkbox]').forEach(el=>el.checked=false);
+  setToday();
+  showMsg('🗑 Cleared', 'var(--muted)');
+}
+
+// ─── Export CSV ───────────────────────────────────────────────────────────────
+function exportCSV(){
+  if(!records.length){ alert('No records to export.'); return; }
+  const rows = [['ID','Mode','Tag','WO','Date','Location','Comments','Cal Points (pct/ma:AF:AL:DCS)']];
+  records.forEach(r => {
+    const calStr = (r.calRows||[]).map(row => {
+      const pt = r.mode==='input' ? `${row.pct}%` : `${row.ma}mA`;
+      return `${pt}:AF=${row.af||''}:AL=${row.al||''}:DCS=${row.dcs||''}`;
+    }).join(' | ');
+    rows.push([r.id, r.mode, r.header.tag, r.header.wo, r.header.date, r.header.loc, r.comments, calStr]);
+  });
+  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = `PockeTech_Cal_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+</script>
+
+</body>
+</html>
