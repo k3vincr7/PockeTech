@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PockeTech – Tickets</title>
+<meta name="theme-color" content="#0f1115">
+<style>
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--ok:#166534;--ok-bg:#dcfce7;--fail:#991b1b;--fail-bg:#fee2e2;--warn:#b45309;--warn-bg:#fef9c3;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--ok-bg:#14532d;--fail-bg:#450a0a;--warn-bg:#451a03;--shadow:0 14px 34px rgba(0,0,0,.35)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--ok-bg:#14532d;--fail-bg:#450a0a;--warn-bg:#451a03;--shadow:0 14px 34px rgba(0,0,0,.35)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
+header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+html[data-theme="dark"] header{background:rgba(15,17,21,.75)}
+.header-left{display:flex;align-items:center;gap:8px}
+.brand{display:flex;flex-direction:column}
+.header-title{font-weight:800;font-size:18px}
+.build{font-size:12px;color:var(--muted)}
+main{padding:14px;max-width:960px;margin:0 auto}
+button,input,select,textarea{font:inherit;border-radius:14px}
+button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;font-weight:650;transition:transform .08s,box-shadow .15s,border-color .15s}
+button:active{transform:translateY(1px) scale(.99)}
+input,select,textarea{width:100%;padding:11px 13px;border:1px solid var(--border);background:var(--card);color:var(--fg);margin-top:6px;outline:none}
+textarea{resize:vertical;min-height:80px;border-radius:12px}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
+label{font-weight:700;font-size:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.hero{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 28%,var(--card)),var(--card) 70%);overflow:hidden;position:relative}
+.hero::after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,transparent)}
+.hero-badge{display:inline-block;background:var(--accent);color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.section-title{margin:0 0 4px;font-size:26px;font-weight:800;letter-spacing:-.5px}
+.muted{color:var(--muted);font-size:13px;line-height:1.35}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.col{flex:1 1 160px}
+.small-btn{padding:8px 12px;font-size:14px;border-radius:12px;width:auto}
+.ok-btn{background:color-mix(in srgb,var(--accent) 15%,var(--tile));border-color:var(--accent);color:var(--accent)}
+.save-btn{background:var(--accent);color:#fff;border-color:var(--accent);width:100%;padding:14px;font-size:15px;border-radius:14px}
+.danger-btn{background:var(--fail-bg);color:var(--fail);border-color:var(--fail)}
+.group-label{font-size:11px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px}
+
+/* Dashboard badges */
+.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px}
+.dash-tile{background:var(–tile);border:1px solid var(–border);border-radius:14px;padding:12px 10px;text-align:center}
+.dash-num{font-size:28px;font-weight:850;letter-spacing:-.5px;margin:2px 0}
+.dash-label{font-size:11px;font-weight:700;color:var(–muted);text-transform:uppercase;letter-spacing:.06em}
+.dash-tile.high{border-color:color-mix(in srgb,#ef4444 40%,var(–border));background:color-mix(in srgb,#ef4444 8%,var(–tile))}
+.dash-tile.med{border-color:color-mix(in srgb,#f59e0b 40%,var(–border));background:color-mix(in srgb,#f59e0b 8%,var(–tile))}
+.dash-tile.ok{border-color:color-mix(in srgb,#22c55e 40%,var(–border));background:color-mix(in srgb,#22c55e 8%,var(–tile))}
+
+/* Filter chips */
+.chip-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chip{padding:8px 14px;border-radius:999px;font-size:13px;font-weight:700;border:1px solid var(–border);background:var(–tile);color:var(–muted);cursor:pointer;transition:all .15s}
+.chip.active{background:var(–accent);color:#fff;border-color:var(–accent)}
+
+/* Priority selector */
+.pri-row{display:flex;gap:8px;margin-top:6px}
+.pri-btn{flex:1;padding:10px;border-radius:12px;font-size:13px;font-weight:700;border:2px solid var(–border);background:var(–tile);color:var(–muted);transition:all .15s}
+.pri-btn.sel-high{background:color-mix(in srgb,#ef4444 15%,var(–tile));border-color:#ef4444;color:#ef4444}
+.pri-btn.sel-med{background:color-mix(in srgb,#f59e0b 15%,var(–tile));border-color:#f59e0b;color:#b45309}
+.pri-btn.sel-low{background:color-mix(in srgb,#22c55e 15%,var(–tile));border-color:#22c55e;color:#166534}
+
+/* Ticket cards */
+.ticket-card{background:var(–card);border:1px solid var(–border);border-radius:16px;margin-bottom:10px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.05);transition:box-shadow .15s}
+.ticket-card:hover{box-shadow:var(–shadow)}
+.ticket-top{display:flex;align-items:flex-start;gap:10px;padding:13px 14px;cursor:pointer}
+.ticket-pri-bar{width:4px;min-height:40px;border-radius:4px;flex-shrink:0;margin-top:2px}
+.pri-bar-high{background:#ef4444}
+.pri-bar-med{background:#f59e0b}
+.pri-bar-low{background:#22c55e}
+.ticket-main{flex:1;min-width:0}
+.ticket-tag{font-weight:800;font-size:15px}
+.ticket-summary{font-size:13px;color:var(–muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ticket-meta{font-size:11px;color:var(–muted);margin-top:4px}
+.ticket-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
+.b-open{background:color-mix(in srgb,#ef4444 15%,transparent);color:#991b1b}
+.b-prog{background:color-mix(in srgb,#f59e0b 15%,transparent);color:#b45309}
+.b-done{background:var(–ok-bg);color:var(–ok)}
+.b-type{background:color-mix(in srgb,var(–accent) 12%,transparent);color:var(–accent)}
+.b-src{background:color-mix(in srgb,#8b5cf6 15%,transparent);color:#7c3aed}
+.b-high{background:color-mix(in srgb,#ef4444 15%,transparent);color:#991b1b}
+.b-med{background:color-mix(in srgb,#f59e0b 15%,transparent);color:#b45309}
+.b-low{background:color-mix(in srgb,#22c55e 15%,transparent);color:#166534}
+
+/* Expand panel */
+.ticket-expand{display:none;padding:0 14px 14px;border-top:1px solid var(–border)}
+.ticket-expand.open{display:block}
+.ticket-photo-thumb{width:100%;max-height:180px;object-fit:cover;border-radius:12px;margin-top:10px;border:1px solid var(–border)}
+.photo-upload-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;border-radius:12px;border:2px dashed var(–border);background:var(–tile);color:var(–muted);cursor:pointer;font-size:14px;font-weight:700;margin-top:10px;transition:border-color .15s}
+.photo-upload-btn:hover{border-color:var(–accent);color:var(–accent)}
+
+/* Status select in card */
+.status-row{display:flex;gap:8px;margin-top:10px}
+.status-chip{flex:1;padding:9px 6px;border-radius:10px;font-size:12px;font-weight:700;border:1px solid var(–border);background:var(–tile);color:var(–muted);cursor:pointer;text-align:center;transition:all .15s}
+.status-chip.sel-open{background:color-mix(in srgb,#ef4444 15%,var(–tile));border-color:#ef4444;color:#991b1b}
+.status-chip.sel-prog{background:color-mix(in srgb,#f59e0b 15%,var(–tile));border-color:#f59e0b;color:#b45309}
+.status-chip.sel-done{background:var(–ok-bg);border-color:#22c55e;color:#166534}
+
+/* Tabs */
+.tab-bar{display:flex;gap:8px;margin-bottom:14px;border-bottom:2px solid var(–border)}
+.tab-btn{padding:9px 16px;border:none;background:transparent;color:var(–muted);font-weight:700;font-size:14px;border-radius:10px 10px 0 0;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab-btn.active{color:var(–accent);border-bottom-color:var(–accent);background:color-mix(in srgb,var(–accent) 8%,transparent)}
+
+.empty{text-align:center;color:var(–muted);padding:36px 0;font-size:14px}
+.from-banner{background:color-mix(in srgb,#8b5cf6 10%,var(–tile));border:1px solid color-mix(in srgb,#8b5cf6 30%,var(–border));border-radius:12px;padding:10px 13px;margin-bottom:14px;font-size:13px;font-weight:600;color:#7c3aed;display:none}
+footer{text-align:center;color:var(–muted);font-size:13px;padding:22px}
+@media(max-width:520px){main{padding:10px}.section-title{font-size:22px}.dash-num{font-size:22px}}
+</style>
+
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <button class="small-btn" onclick="location.href='./index.html'">&#8592; Back</button>
+    <div class="brand">
+      <div class="header-title">PockeTech V2</div>
+      <div class="build">Tickets</div>
+    </div>
+  </div>
+  <button class="small-btn" onclick="toggleTheme()">&#127771;</button>
+</header>
+
+<main>
+
+  <!-- TABS -->
+
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-list" onclick="switchTab('list')">&#127915; Tickets</button>
+    <button class="tab-btn" id="tab-new" onclick="switchTab('new')">&#43; New Ticket</button>
+  </div>
+
+  <!-- ══ TICKET LIST ══ -->
+
+  <div id="pane-list">
+
+```
+<!-- Hero + Dashboard -->
+<div class="card hero">
+  <div class="hero-badge">&#127915; ISSUE TRACKER</div>
+  <h1 class="section-title">Tickets</h1>
+  <p class="muted" style="margin:4px 0 14px">Track issues from the field. Link from cal sheets and loop logs.</p>
+  <div class="dash-grid">
+    <div class="dash-tile high"><div class="dash-num" id="cnt-open">0</div><div class="dash-label">Open</div></div>
+    <div class="dash-tile med"><div class="dash-num" id="cnt-prog">0</div><div class="dash-label">In Progress</div></div>
+    <div class="dash-tile ok"><div class="dash-num" id="cnt-done">0</div><div class="dash-label">Resolved</div></div>
+  </div>
+</div>
+
+<!-- Filter + Search -->
+<div class="card" style="padding:12px 14px">
+  <input id="search" placeholder="&#128269;  Search tag, summary, area..." oninput="renderList()" style="margin:0 0 10px">
+  <div class="chip-bar" id="filter-chips">
+    <button class="chip active" onclick="setFilter('all',this)">All</button>
+    <button class="chip" onclick="setFilter('OPEN',this)">Open</button>
+    <button class="chip" onclick="setFilter('IN PROGRESS',this)">In Progress</button>
+    <button class="chip" onclick="setFilter('RESOLVED',this)">Resolved</button>
+    <button class="chip" onclick="setFilter('HIGH',this)">&#128308; High</button>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end">
+    <button class="small-btn ok-btn" onclick="exportCSV()">&#8595; CSV</button>
+  </div>
+</div>
+
+<!-- List -->
+<div id="ticket-list"></div>
+```
+
+  </div><!-- /pane-list -->
+
+  <!-- ══ NEW TICKET ══ -->
+
+  <div id="pane-new" style="display:none">
+
+```
+<!-- Pre-fill banner (shows when linked from cal/loop) -->
+<div class="from-banner" id="from-banner"></div>
+
+<div class="card hero">
+  <div class="hero-badge">&#43; NEW TICKET</div>
+  <h1 class="section-title">New Ticket</h1>
+  <p class="muted" style="margin:4px 0 0">Log an instrument, valve, loop, or any field issue.</p>
+</div>
+
+<div class="card">
+  <div class="row">
+    <div class="col"><label>Tag No</label><input id="n_tag" placeholder="FT-1001"></div>
+    <div class="col"><label>Date</label><input id="n_date" type="date"></div>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <div class="col"><label>Area / Unit</label><input id="n_area" placeholder="HRSG-1, GT-2..."></div>
+    <div class="col"><label>Work Order</label><input id="n_wo" placeholder="WO-00000"></div>
+  </div>
+</div>
+
+<div class="card">
+  <label>Issue Type</label>
+  <select id="n_type">
+    <option value="">-- Select type --</option>
+    <option>Instrument</option>
+    <option>Valve</option>
+    <option>Tubing/Piping</option>
+    <option>Electrical</option>
+    <option>Loop/Wiring</option>
+    <option>DCS/PLC Card</option>
+    <option>Documentation</option>
+    <option>Other</option>
+  </select>
+
+  <div style="margin-top:12px">
+    <label>Priority</label>
+    <div class="pri-row">
+      <button class="pri-btn" id="pri-high" onclick="setPri('HIGH')">&#128308; High</button>
+      <button class="pri-btn" id="pri-med"  onclick="setPri('MED')">&#128992; Medium</button>
+      <button class="pri-btn" id="pri-low"  onclick="setPri('LOW')">&#128994; Low</button>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <label>Summary</label>
+  <input id="n_summary" placeholder="Short description (e.g. FT-1001 reading high, no process change)">
+  <label style="margin-top:12px;display:block">Description / Details</label>
+  <textarea id="n_desc" placeholder="Full details — what was found, what was done, what's needed..."></textarea>
+</div>
+
+<div class="card">
+  <label>Status</label>
+  <div class="status-row">
+    <button class="status-chip sel-open" id="ns-open" onclick="setNewStatus('OPEN')">Open</button>
+    <button class="status-chip" id="ns-prog" onclick="setNewStatus('IN PROGRESS')">In Progress</button>
+    <button class="status-chip" id="ns-done" onclick="setNewStatus('RESOLVED')">Resolved</button>
+  </div>
+</div>
+
+<div class="card">
+  <label>Photo</label>
+  <div class="photo-upload-btn" onclick="document.getElementById('photo-input').click()">
+    &#128247; Tap to attach photo
+  </div>
+  <input type="file" id="photo-input" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(this)">
+  <img id="photo-preview" class="ticket-photo-thumb" style="display:none">
+  <button id="photo-clear-btn" class="small-btn danger-btn" style="display:none;margin-top:8px;width:100%" onclick="clearPhoto()">Remove Photo</button>
+</div>
+
+<div class="card">
+  <label>Resolution Notes</label>
+  <textarea id="n_resolution" placeholder="What was done to resolve this issue..."></textarea>
+</div>
+
+<div class="card">
+  <div class="row">
+    <div class="col"><button class="save-btn" onclick="saveTicket()">&#128190; Save Ticket</button></div>
+    <div style="flex:0 0 auto"><button class="small-btn danger-btn" style="height:52px;margin-top:0" onclick="clearNewForm()">&#128465; Clear</button></div>
+  </div>
+  <div id="save-msg" style="text-align:center;margin-top:10px;font-size:13px;color:var(--muted)"></div>
+</div>
+```
+
+  </div><!-- /pane-new -->
+
+</main>
+<footer>PockeTech V2 — Tickets</footer>
+
+<script>
+// common.js inlined
+var $ = function(id){return document.getElementById(id);};
+(function(){var t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+(function(){var sx,sy;document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=Math.abs(e.changedTouches[0].clientY-sy);if(sx<60&&dx>50&&dy<100)history.back();},{passive:true});})();
+function toggleTheme(){var h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',next);localStorage.setItem('pt-v2-theme',next);}
+
+// State
+var tickets=[], activeFilter='all', editingId=null, newPri='MED', newStatus='OPEN', photoData=null;
+
+// Boot
+document.addEventListener('DOMContentLoaded',function(){
+  loadTickets();
+  $('n_date').value=new Date().toISOString().slice(0,10);
+  setPri('MED');
+  checkURLParams();
+  renderList();
+});
+
+// URL params — ?tag=FT-1001&wo=WO-123&source=cal&area=HRSG-1&summary=Failed+cal
+function checkURLParams(){
+  var p=new URLSearchParams(window.location.search);
+  var tag=p.get('tag'),wo=p.get('wo'),area=p.get('area'),source=p.get('source'),summary=p.get('summary');
+  if(tag||wo||source){
+    if(tag)$('n_tag').value=tag;
+    if(wo)$('n_wo').value=wo;
+    if(area)$('n_area').value=area;
+    if(summary)$('n_summary').value=summary;
+    if(source){
+      var banner=$('from-banner');
+      banner.style.display='block';
+      banner.textContent='&#128279; Linked from '+source.toUpperCase()+(tag?' — '+tag:'');
+    }
+    switchTab('new');
+  }
+}
+
+// Tabs
+function switchTab(t){
+  $('pane-list').style.display=t==='list'?'':'none';
+  $('pane-new').style.display=t==='new'?'':'none';
+  $('tab-list').className='tab-btn'+(t==='list'?' active':'');
+  $('tab-new').className='tab-btn'+(t==='new'?' active':'');
+  if(t==='list')renderList();
+}
+
+// Filter
+function setFilter(f,btn){
+  activeFilter=f;
+  document.querySelectorAll('.chip').forEach(function(c){c.classList.remove('active');});
+  btn.classList.add('active');
+  renderList();
+}
+
+// Priority
+function setPri(p){
+  newPri=p;
+  $('pri-high').className='pri-btn'+(p==='HIGH'?' sel-high':'');
+  $('pri-med').className='pri-btn'+(p==='MED'?' sel-med':'');
+  $('pri-low').className='pri-btn'+(p==='LOW'?' sel-low':'');
+}
+
+// Status (new form)
+function setNewStatus(s){
+  newStatus=s;
+  $('ns-open').className='status-chip'+(s==='OPEN'?' sel-open':'');
+  $('ns-prog').className='status-chip'+(s==='IN PROGRESS'?' sel-prog':'');
+  $('ns-done').className='status-chip'+(s==='RESOLVED'?' sel-done':'');
+}
+
+// Photo
+function handlePhoto(input){
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    photoData=e.target.result;
+    $('photo-preview').src=photoData;
+    $('photo-preview').style.display='block';
+    $('photo-clear-btn').style.display='block';
+  };
+  reader.readAsDataURL(file);
+}
+function clearPhoto(){photoData=null;$('photo-preview').style.display='none';$('photo-clear-btn').style.display='none';$('photo-input').value='';}
+
+// Save
+function loadTickets(){try{tickets=JSON.parse(localStorage.getItem('pt_tickets_v2'))||[];}catch(e){tickets=[];}}
+function saveTickets(){try{localStorage.setItem('pt_tickets_v2',JSON.stringify(tickets));}catch(e){showMsg('Storage full','var(--warn)');}}
+
+function saveTicket(){
+  var tag=$('n_tag').value.trim();
+  if(!tag){showMsg('Enter a Tag No first','var(--warn)');return;}
+  var summary=$('n_summary').value.trim();
+  if(!summary){showMsg('Enter a summary','var(--warn)');return;}
+  var t={
+    id:editingId||Date.now(),
+    tag:tag, date:$('n_date').value, area:$('n_area').value.trim(), wo:$('n_wo').value.trim(),
+    type:$('n_type').value, priority:newPri, summary:summary,
+    desc:$('n_desc').value.trim(), status:newStatus,
+    resolution:$('n_resolution').value.trim(),
+    photo:photoData, savedAt:new Date().toISOString()
+  };
+  if(editingId){
+    var idx=tickets.findIndex(function(x){return x.id===editingId;});
+    if(idx>=0)tickets[idx]=t;else tickets.unshift(t);
+    editingId=null;
+  } else {
+    tickets.unshift(t);
+  }
+  saveTickets();
+  showMsg('Saved — '+tag,'#166534');
+  setTimeout(function(){clearNewForm();switchTab('list');},800);
+}
+
+function showMsg(txt,color){var el=$('save-msg');el.textContent=txt;el.style.color=color||'var(--muted)';setTimeout(function(){el.textContent='';},3000);}
+
+function clearNewForm(){
+  editingId=null;newPri='MED';newStatus='OPEN';photoData=null;
+  ['n_tag','n_date','n_area','n_wo','n_summary','n_desc','n_resolution'].forEach(function(id){$(id).value='';});
+  $('n_type').value='';
+  $('n_date').value=new Date().toISOString().slice(0,10);
+  $('photo-preview').style.display='none';$('photo-clear-btn').style.display='none';$('photo-input').value='';
+  $('from-banner').style.display='none';
+  setPri('MED');setNewStatus('OPEN');
+}
+
+// Delete
+function deleteTicket(id){
+  if(!confirm('Delete this ticket?'))return;
+  tickets=tickets.filter(function(t){return t.id!==id;});
+  saveTickets();renderList();
+}
+
+// Quick status update from card
+function updateStatus(id,s){
+  var t=tickets.find(function(x){return x.id===id;});
+  if(t){t.status=s;saveTickets();renderList();}
+}
+
+// Edit
+function editTicket(id){
+  var t=tickets.find(function(x){return x.id===id;});
+  if(!t)return;
+  editingId=t.id;
+  $('n_tag').value=t.tag||'';$('n_date').value=t.date||'';$('n_area').value=t.area||'';$('n_wo').value=t.wo||'';
+  $('n_type').value=t.type||'';$('n_summary').value=t.summary||'';$('n_desc').value=t.desc||'';$('n_resolution').value=t.resolution||'';
+  setPri(t.priority||'MED');setNewStatus(t.status||'OPEN');
+  photoData=t.photo||null;
+  if(photoData){$('photo-preview').src=photoData;$('photo-preview').style.display='block';$('photo-clear-btn').style.display='block';}
+  else{$('photo-preview').style.display='none';$('photo-clear-btn').style.display='none';}
+  switchTab('new');window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Toggle expand on card
+function toggleExpand(id){
+  var el=document.getElementById('expand-'+id);
+  if(el)el.classList.toggle('open');
+}
+
+// Render list
+function renderList(){
+  var list=$('ticket-list');
+  var q=($('search').value||'').toLowerCase();
+  var open=0,prog=0,done=0;
+  tickets.forEach(function(t){if(t.status==='OPEN')open++;else if(t.status==='IN PROGRESS')prog++;else if(t.status==='RESOLVED')done++;});
+  $('cnt-open').textContent=open;$('cnt-prog').textContent=prog;$('cnt-done').textContent=done;
+
+  var filtered=tickets.filter(function(t){
+    var matchQ=(t.tag+' '+t.summary+' '+t.area+' '+t.type+' '+t.wo).toLowerCase().indexOf(q)>=0;
+    if(!matchQ)return false;
+    if(activeFilter==='all')return true;
+    if(activeFilter==='HIGH')return t.priority==='HIGH';
+    return t.status===activeFilter;
+  });
+
+  if(!filtered.length){list.innerHTML='<div class="empty">No tickets found.<br>Tap + New Ticket to add one.</div>';return;}
+
+  list.innerHTML=filtered.map(function(t){
+    var priBar='pri-bar-'+(t.priority==='HIGH'?'high':t.priority==='LOW'?'low':'med');
+    var statusBadge=t.status==='OPEN'?'b-open':t.status==='IN PROGRESS'?'b-prog':'b-done';
+    var priBadge=t.priority==='HIGH'?'b-high':t.priority==='LOW'?'b-low':'b-med';
+    var priLabel=t.priority==='HIGH'?'&#128308; High':t.priority==='LOW'?'&#128994; Low':'&#128992; Med';
+    return '<div class="ticket-card">'+
+      '<div class="ticket-top" onclick="toggleExpand('+t.id+')">'+
+        '<div class="ticket-pri-bar '+priBar+'"></div>'+
+        '<div class="ticket-main">'+
+          '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">'+
+            '<span class="ticket-tag">'+t.tag+'</span>'+
+            '<span style="font-size:11px;color:var(--muted);white-space:nowrap">'+t.date+'</span>'+
+          '</div>'+
+          '<div class="ticket-summary">'+(t.summary||'No summary')+'</div>'+
+          '<div class="ticket-meta">'+(t.area||'')+(t.wo?' &middot; '+t.wo:'')+'</div>'+
+          '<div class="ticket-badges">'+
+            '<span class="badge '+statusBadge+'">'+t.status+'</span>'+
+            '<span class="badge '+priBadge+'">'+priLabel+'</span>'+
+            (t.type?'<span class="badge b-type">'+t.type+'</span>':'')+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="ticket-expand" id="expand-'+t.id+'">'+
+        (t.desc?'<p style="margin:10px 0 6px;font-size:13px;color:var(--muted)">'+t.desc+'</p>':'')+
+        (t.resolution?'<p style="margin:6px 0;font-size:13px;background:var(--ok-bg);color:var(--ok);border-radius:10px;padding:8px 10px">&#9989; '+t.resolution+'</p>':'')+
+        (t.photo?'<img src="'+t.photo+'" class="ticket-photo-thumb">':'')+
+        '<div class="group-label" style="margin-top:12px">Update Status</div>'+
+        '<div class="status-row">'+
+          '<button class="status-chip'+(t.status==='OPEN'?' sel-open':'')+'" onclick="updateStatus('+t.id+',\'OPEN\')">Open</button>'+
+          '<button class="status-chip'+(t.status==='IN PROGRESS'?' sel-prog':'')+'" onclick="updateStatus('+t.id+',\'IN PROGRESS\')">In Progress</button>'+
+          '<button class="status-chip'+(t.status==='RESOLVED'?' sel-done':'')+'" onclick="updateStatus('+t.id+',\'RESOLVED\')">Resolved</button>'+
+        '</div>'+
+        '<div class="row" style="margin-top:12px;gap:8px">'+
+          '<button class="ok-btn small-btn" style="flex:1" onclick="editTicket('+t.id+')">&#9998; Edit</button>'+
+          '<button class="small-btn danger-btn" onclick="deleteTicket('+t.id+')">Del</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+// Export CSV
+function exportCSV(){
+  if(!tickets.length){alert('No tickets to export.');return;}
+  var rows=[['ID','Date','Tag','Area','WO','Type','Priority','Status','Summary','Description','Resolution']];
+  tickets.forEach(function(t){rows.push([t.id,t.date,t.tag,t.area,t.wo,t.type,t.priority,t.status,t.summary,t.desc,t.resolution]);});
+  var csv=rows.map(function(r){return r.map(function(c){return'"'+String(c||'').replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  var a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='PockeTech_Tickets_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+</script>
+
+</body>
+</html>
