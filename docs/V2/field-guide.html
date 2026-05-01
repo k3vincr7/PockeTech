@@ -1,153 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="en" data-theme="auto">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>PockeTech — Field Guide</title>
-
+<meta name="theme-color" content="#0f1115">
 <style>
-:root{
-  --bg:#f6f8fc;
-  --fg:#0c1116;
-  --muted:#5a6572;
-  --tile:#ffffff;
-  --border:#d6dbe3;
-  --accent:#1f6bff;
-  --radius:18px;
-}
-
-body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  background:radial-gradient(circle at top,#e9eef7,#f6f8fc 50%);
-  color:var(--fg);
-}
-
-main{
-  padding:14px;
-  max-width:960px;
-  margin:auto;
-}
-
-.hero{
-  background:linear-gradient(135deg,#dfe8ff,#f6f8fc);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:18px;
-  margin-bottom:14px;
-}
-
-.title{
-  font-size:26px;
-  font-weight:800;
-}
-
-.subtitle{
-  margin-top:6px;
-  color:var(--muted);
-}
-
-.list{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-
-.item{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:18px;
-  border-radius:18px;
-  background:var(--tile);
-  border:1px solid var(--border);
-  text-decoration:none;
-  color:var(--fg);
-  font-size:18px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.04);
-}
-
-.item:active{
-  transform:scale(0.97);
-}
-
-.left{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.arrow{
-  color:var(--muted);
-  font-size:20px;
-}
-
-.back{
-  margin-top:16px;
-  padding:16px;
-  border-radius:18px;
-  background:var(--tile);
-  border:1px solid var(--border);
-  text-align:center;
-  font-weight:600;
-}
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
+header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+html[data-theme="dark"] header{background:rgba(15,17,21,.75)}
+.header-left{display:flex;align-items:center;gap:8px}
+.brand{display:flex;flex-direction:column}
+.header-title{font-weight:800;font-size:18px}
+.build{font-size:12px;color:var(--muted)}
+.small-btn{padding:8px 12px;font-size:14px;border-radius:12px;width:auto;cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);font:inherit;font-weight:650}
+main{padding:14px;max-width:960px;margin:0 auto;padding-bottom:30px}
+.hero{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 28%,var(--card)),var(--card) 70%);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:18px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+.hero::after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,transparent)}
+.hero-badge{display:inline-block;background:var(--accent);color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.hero-title{font-size:26px;font-weight:800;letter-spacing:-.5px;margin:0 0 4px}
+.hero-sub{color:var(--muted);font-size:13px;margin:0}
+.section-label{font-size:11px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px;padding:0 2px}
+.list{display:flex;flex-direction:column;gap:10px}
+.item{display:flex;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:16px;text-decoration:none;color:var(--fg);box-shadow:0 4px 12px rgba(0,0,0,.05);overflow:hidden;transition:box-shadow .15s,transform .1s}
+.item:active{transform:scale(.98)}
+.item:hover{box-shadow:var(--shadow)}
+.item-accent{width:5px;min-height:72px;flex-shrink:0}
+.item-body{flex:1;padding:14px 12px}
+.item-top{display:flex;align-items:center;gap:10px}
+.item-emoji{font-size:26px;line-height:1}
+.item-title{font-size:16px;font-weight:750}
+.item-desc{font-size:12px;color:var(--muted);margin-top:3px;padding-left:36px}
+.item-arrow{padding:0 16px;color:var(--muted);font-size:20px;font-weight:300}
+.ac-blue{background:#1f6bff}
+.ac-orange{background:#f59e0b}
+.ac-red{background:#ef4444}
+.ac-teal{background:#14b8a6}
+.ac-purple{background:#8b5cf6}
+.ac-green{background:#22c55e}
+.ac-indigo{background:#6366f1}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
+@media(max-width:520px){main{padding:10px}.hero-title{font-size:22px}}
 </style>
-
 </head>
-
 <body>
+
+<header>
+  <div class="header-left">
+    <button class="small-btn" onclick="location.href='./index.html'">&#8592; Back</button>
+    <div class="brand">
+      <div class="header-title">PockeTech V2</div>
+      <div class="build">Field Guide</div>
+    </div>
+  </div>
+  <button class="small-btn" onclick="toggleTheme()">&#127771;</button>
+</header>
 
 <main>
 
-<div class="hero">
-  <div class="title">📚 Field Guide</div>
-  <div class="subtitle">Quick learning for real field situations</div>
-</div>
+  <div class="hero">
+    <div class="hero-badge">&#128218; FIELD GUIDE</div>
+    <h1 class="hero-title">Field Guide</h1>
+    <p class="hero-sub">Quick reference for real field situations — signals, valves, instruments &amp; more.</p>
+  </div>
 
-<div class="list">
+  <div class="section-label">Signals &amp; Loops</div>
+  <div class="list">
+    <a class="item" href="./jr-420.html">
+      <div class="item-accent ac-blue"></div>
+      <div class="item-body">
+        <div class="item-top"><span class="item-emoji">&#128200;</span><span class="item-title">4&#8211;20 mA Basics</span></div>
+        <div class="item-desc">Signals, math, loop wiring, source vs sink</div>
+      </div>
+      <div class="item-arrow">&#8250;</div>
+    </a>
+  </div>
 
-  <a class="item" href="./jr-420.html">
-    <div class="left">📈 4–20 mA Basics</div>
-    <div class="arrow">›</div>
-  </a>
+  <div class="section-label">Valves</div>
+  <div class="list">
+    <a class="item" href="./jr-control-valve.html">
+      <div class="item-accent ac-orange"></div>
+      <div class="item-body">
+        <div class="item-top"><span class="item-emoji">&#9881;&#65039;</span><span class="item-title">Control Valve (AO)</span></div>
+        <div class="item-desc">ATO/ATC, fail positions, I/P, positioner setup</div>
+      </div>
+      <div class="item-arrow">&#8250;</div>
+    </a>
+    <a class="item" href="./jr-onoff-valve.html">
+      <div class="item-accent ac-red"></div>
+      <div class="item-body">
+        <div class="item-top"><span class="item-emoji">&#128678;</span><span class="item-title">On / Off Valve (DO / XV)</span></div>
+        <div class="item-desc">Solenoids, energize/de-energize, stroke testing</div>
+      </div>
+      <div class="item-arrow">&#8250;</div>
+    </a>
+  </div>
 
-  <a class="item" href="./jr-control-valve.html">
-    <div class="left">⚙️ Control Valve (AO)</div>
-    <div class="arrow">›</div>
-  </a>
+  <div class="section-label">Instruments</div>
+  <div class="list">
+    <a class="item" href="./jr-level.html">
+      <div class="item-accent ac-teal"></div>
+      <div class="item-body">
+        <div class="item-top"><span class="item-emoji">&#129371;</span><span class="item-title">Level (DP)</span></div>
+        <div class="item-desc">DP transmitters, wet legs, zero/span</div>
+      </div>
+      <div class="item-arrow">&#8250;</div>
+    </a>
+    <a class="item" href="./jr-temperature.html">
+      <div class="item-accent ac-red"></div>
+      <div class="item-body">
+        <div class="item-top"><span class="item-emoji">&#127777;&#65039;</span><span class="item-title">Temperature (RTD &amp; TC)</span></div>
+        <div class="item-desc">Color codes, ranges, wiring, common faults</div>
+      </div>
+      <div class="item-arrow">&#8250;</div>
+    </a>
+    <a class="item" href="./jr-pressure.html">
+      <div class="item-accent ac-green"></div>
+      <div class="item-body">
+        <div class="item-top"><span class="item-emoji">&#129514;</span><span class="item-title">Pressure</span></div>
+        <div class="item-desc">Gauge vs absolute, units, switch setting, manifolds</div>
+      </div>
+      <div class="item-arrow">&#8250;</div>
+    </a>
+  </div>
 
-  <a class="item" href="./jr-onoff-valve.html">
-  <div class="left">🚦 On / Off Valve (DO / XV)</div>
-  <div class="arrow">›</div>
-</a>
-
-  <a class="item" href="./jr-level.html">
-  <div class="left">🫙 Level (DP)</div>
-  <div class="arrow">›</div>
-</a>
-
-  <a class="item" href="./jr-temperature.html">
-  <div class="left">🌡️ Temperature (RTD & TC)</div>
-  <div class="arrow">›</div>
-</a>
-
-  <a class="item" href="./jr-pressure.html">
-  <div class="left">🧪 Pressure</div>
-  <div class="arrow">›</div>
-</a>
-
-  <a class="item" href="./jr-workflow.html">
-  <div class="left">🛠️ Field Workflow</div>
-  <div class="arrow">›</div>
-</a>
-
-</div>
-
-<div class="back" onclick="location.href='./index.html'">
-  ← Back
-</div>
+  <div class="section-label">Procedures &amp; Reference</div>
+  <div class="list">
+    <a class="item" href="./jr-workflow.html">
+      <div class="item-accent ac-indigo"></div>
+      <div class="item-body">
+        <div class="item-top"><span class="item-emoji">&#128295;</span><span class="item-title">Field Workflow</span></div>
+        <div class="item-desc">Loop check steps, commissioning sequence, best practices</div>
+      </div>
+      <div class="item-arrow">&#8250;</div>
+    </a>
+    <a class="item" href="./jr-tech.html">
+      <div class="item-accent ac-purple"></div>
+      <div class="item-body">
+        <div class="item-top"><span class="item-emoji">&#128218;</span><span class="item-title">Jr. Tech Reference</span></div>
+        <div class="item-desc">Tag abbreviations, color codes, signal math, field lingo</div>
+      </div>
+      <div class="item-arrow">&#8250;</div>
+    </a>
+  </div>
 
 </main>
+<footer>PockeTech V2 — Field Guide</footer>
+
+<script>
+(function(){var t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+function toggleTheme(){var h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',next);localStorage.setItem('pt-v2-theme',next);}
+</script>
 
 </body>
 </html>
