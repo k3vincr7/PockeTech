@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PockeTech – Settings</title>
+<meta name="theme-color" content="#0f1115">
+<style>
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--ok:#166534;--ok-bg:#dcfce7;--fail:#991b1b;--fail-bg:#fee2e2;--warn:#b45309;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--ok-bg:#14532d;--fail-bg:#450a0a;--shadow:0 14px 34px rgba(0,0,0,.35)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--ok-bg:#14532d;--fail-bg:#450a0a;--shadow:0 14px 34px rgba(0,0,0,.35)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
+header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+html[data-theme="dark"] header{background:rgba(15,17,21,.75)}
+.header-left{display:flex;align-items:center;gap:8px}
+.brand{display:flex;flex-direction:column}
+.header-title{font-weight:800;font-size:18px}
+.build{font-size:12px;color:var(--muted)}
+main{padding:14px;max-width:960px;margin:0 auto}
+button,input,select{font:inherit;border-radius:14px}
+button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;font-weight:650;transition:transform .08s,box-shadow .15s,border-color .15s}
+button:active{transform:translateY(1px) scale(.99)}
+input,select{width:100%;padding:11px 13px;border:1px solid var(--border);background:var(--card);color:var(--fg);margin-top:6px;outline:none}
+input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
+label{font-weight:700;font-size:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.hero{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 28%,var(--card)),var(--card) 70%);overflow:hidden;position:relative}
+.hero::after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,transparent)}
+.hero-badge{display:inline-block;background:var(--accent);color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.section-title{margin:0 0 4px;font-size:26px;font-weight:800;letter-spacing:-.5px}
+.muted{color:var(--muted);font-size:13px;line-height:1.35}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.col{flex:1 1 160px}
+.small-btn{padding:8px 12px;font-size:14px;border-radius:12px;width:auto}
+.save-btn{background:var(--accent);color:#fff;border-color:var(--accent);width:100%;padding:13px;font-size:15px;border-radius:14px}
+.danger-btn{background:var(--fail-bg);color:var(--fail);border-color:var(--fail)}
+.warn-btn{background:color-mix(in srgb,#f59e0b 12%,var(--tile));color:var(--warn);border-color:#f59e0b}
+.ok-btn{background:color-mix(in srgb,var(--accent) 15%,var(--tile));border-color:var(--accent);color:var(--accent)}
+.group-label{font-size:11px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px}
+.group-label:first-child{margin-top:0}
+
+/* Setting rows */
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(–border);gap:12px}
+.setting-row:last-child{border-bottom:none}
+.setting-row-left{flex:1}
+.setting-label{font-weight:700;font-size:14px}
+.setting-desc{font-size:12px;color:var(–muted);margin-top:2px}
+
+/* Theme toggle */
+.theme-toggle{display:flex;background:var(–tile);border:1px solid var(–border);border-radius:12px;padding:3px;gap:3px}
+.theme-btn{padding:7px 12px;border-radius:9px;border:1px solid transparent;background:transparent;color:var(–muted);font-weight:700;font-size:13px;transition:all .15s;width:auto}
+.theme-btn.active{background:var(–card);color:var(–fg);border-color:var(–border);box-shadow:0 2px 6px rgba(0,0,0,.1)}
+
+/* Units toggle */
+.units-toggle{display:flex;background:var(–tile);border:1px solid var(–border);border-radius:12px;padding:3px;gap:3px}
+.units-btn{padding:7px 14px;border-radius:9px;border:1px solid transparent;background:transparent;color:var(–muted);font-weight:700;font-size:13px;transition:all .15s;width:auto}
+.units-btn.active{background:var(–accent);color:#fff;border-color:var(–accent)}
+
+/* Stats grid */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
+.stat-tile{background:var(–tile);border:1px solid var(–border);border-radius:14px;padding:12px 10px;text-align:center}
+.stat-num{font-size:24px;font-weight:850;letter-spacing:-.4px;margin:2px 0}
+.stat-label{font-size:11px;font-weight:700;color:var(–muted);text-transform:uppercase;letter-spacing:.06em}
+
+/* Clear buttons */
+.clear-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.clear-btn-full{grid-column:1/-1}
+
+/* About */
+.about-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(–border)}
+.about-row:last-child{border-bottom:none}
+.about-key{font-size:13px;color:var(–muted);font-weight:600}
+.about-val{font-size:13px;font-weight:700}
+
+/* Toast */
+#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(–fg);color:var(–card);padding:10px 20px;border-radius:999px;font-size:13px;font-weight:700;opacity:0;transition:all .25s;z-index:999;white-space:nowrap;pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+footer{text-align:center;color:var(–muted);font-size:13px;padding:22px}
+@media(max-width:520px){main{padding:10px}.section-title{font-size:22px}.stats-grid{gap:8px}.stat-num{font-size:20px}}
+</style>
+
+</head>
+<body>
+
+<div id="toast"></div>
+
+<header>
+  <div class="header-left">
+    <button class="small-btn" onclick="location.href='./index.html'">&#8592; Back</button>
+    <div class="brand">
+      <div class="header-title">PockeTech V2</div>
+      <div class="build">Settings</div>
+    </div>
+  </div>
+  <button class="small-btn" onclick="toggleTheme()">&#127771;</button>
+</header>
+
+<main>
+
+  <!-- Hero -->
+
+  <div class="card hero">
+    <div class="hero-badge">&#9881;&#65039; SETTINGS</div>
+    <h1 class="section-title">Settings</h1>
+    <p class="muted" style="margin:4px 0 0">Customize PockeTech for your team and plant.</p>
+  </div>
+
+  <!-- ── Display ── -->
+
+  <div class="card">
+    <div class="group-label">Display</div>
+
+```
+<div class="setting-row">
+  <div class="setting-row-left">
+    <div class="setting-label">Theme</div>
+    <div class="setting-desc">Auto follows your device setting</div>
+  </div>
+  <div class="theme-toggle">
+    <button class="theme-btn" id="theme-auto" onclick="setTheme('auto')">Auto</button>
+    <button class="theme-btn" id="theme-light" onclick="setTheme('light')">&#9728;</button>
+    <button class="theme-btn" id="theme-dark" onclick="setTheme('dark')">&#9790;</button>
+  </div>
+</div>
+
+<div class="setting-row">
+  <div class="setting-row-left">
+    <div class="setting-label">Units</div>
+    <div class="setting-desc">Default unit system for tools</div>
+  </div>
+  <div class="units-toggle">
+    <button class="units-btn" id="units-imperial" onclick="setUnits('imperial')">Imperial</button>
+    <button class="units-btn" id="units-metric" onclick="setUnits('metric')">Metric</button>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- ── Team / User ── -->
+
+  <div class="card">
+    <div class="group-label">Team / User</div>
+    <div class="row">
+      <div class="col">
+        <label>Technician Name</label>
+        <input id="s_tech" placeholder="Your name" oninput="markDirty()">
+      </div>
+      <div class="col">
+        <label>Badge / ID</label>
+        <input id="s_badge" placeholder="Employee ID" oninput="markDirty()">
+      </div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div class="col">
+        <label>Plant / Facility</label>
+        <input id="s_plant" placeholder="e.g. LNG Plant 1" oninput="markDirty()">
+      </div>
+      <div class="col">
+        <label>Unit / Area</label>
+        <input id="s_unit" placeholder="e.g. Power Island" oninput="markDirty()">
+      </div>
+    </div>
+    <button class="save-btn" style="margin-top:14px" onclick="saveProfile()">&#128190; Save Profile</button>
+  </div>
+
+  <!-- ── Data Summary ── -->
+
+  <div class="card">
+    <div class="group-label">Saved Data</div>
+    <div class="stats-grid">
+      <div class="stat-tile">
+        <div class="stat-num" id="stat-cal">0</div>
+        <div class="stat-label">Cal Sheets</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-num" id="stat-loop">0</div>
+        <div class="stat-label">Loop Logs</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-num" id="stat-tickets">0</div>
+        <div class="stat-label">Tickets</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Export ── -->
+
+  <div class="card">
+    <div class="group-label">Export</div>
+    <p class="muted" style="margin:0 0 12px">Download all records as CSV files for reporting or backup.</p>
+    <div class="row" style="gap:8px">
+      <button class="ok-btn" style="flex:1;border-radius:12px;padding:11px" onclick="exportData('cal')">&#8595; Cal Sheets</button>
+      <button class="ok-btn" style="flex:1;border-radius:12px;padding:11px" onclick="exportData('loop')">&#8595; Loop Log</button>
+      <button class="ok-btn" style="flex:1;border-radius:12px;padding:11px" onclick="exportData('tickets')">&#8595; Tickets</button>
+    </div>
+    <button class="save-btn" style="margin-top:10px" onclick="exportData('all')">&#8595; Export All Records</button>
+  </div>
+
+  <!-- ── Clear Data ── -->
+
+  <div class="card">
+    <div class="group-label">Clear Data</div>
+    <p class="muted" style="margin:0 0 12px">Permanently delete saved records. This cannot be undone.</p>
+    <div class="clear-grid">
+      <button class="warn-btn" style="border-radius:12px;padding:11px;font-size:13px" onclick="clearData('cal')">Clear Cal Sheets</button>
+      <button class="warn-btn" style="border-radius:12px;padding:11px;font-size:13px" onclick="clearData('loop')">Clear Loop Log</button>
+      <button class="warn-btn" style="border-radius:12px;padding:11px;font-size:13px" onclick="clearData('tickets')">Clear Tickets</button>
+      <button class="warn-btn" style="border-radius:12px;padding:11px;font-size:13px" onclick="clearData('profile')">Clear Profile</button>
+      <button class="danger-btn clear-btn-full" style="border-radius:12px;padding:12px;font-size:14px" onclick="clearData('all')">&#9888;&#65039; Clear Everything</button>
+    </div>
+  </div>
+
+  <!-- ── About ── -->
+
+  <div class="card">
+    <div class="group-label">About</div>
+    <div class="about-row"><span class="about-key">App</span><span class="about-val">PockeTech</span></div>
+    <div class="about-row"><span class="about-key">Version</span><span class="about-val">V 2.0</span></div>
+    <div class="about-row"><span class="about-key">Built for</span><span class="about-val">Instrument &amp; Controls Technicians</span></div>
+    <div class="about-row"><span class="about-key">Developer</span><span class="about-val">Kevin C.</span></div>
+    <div class="about-row"><span class="about-key">Cal Records</span><span class="about-val" id="about-cal-key">pt_cal_v2</span></div>
+    <div class="about-row"><span class="about-key">Ticket Records</span><span class="about-val">pt_tickets_v2</span></div>
+  </div>
+
+</main>
+<footer>PockeTech V2 — Settings</footer>
+
+<script>
+var $ = function(id){return document.getElementById(id);};
+var dirty = false;
+
+// Theme
+(function(){var t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+(function(){var sx,sy;document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=Math.abs(e.changedTouches[0].clientY-sy);if(sx<60&&dx>50&&dy<100)history.back();},{passive:true});})();
+
+function toggleTheme(){
+  var h=document.documentElement,cur=h.getAttribute('data-theme');
+  var next=cur==='dark'?'auto':cur==='auto'?'light':'dark';
+  setTheme(next);
+}
+
+function setTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  localStorage.setItem('pt-v2-theme',t);
+  $('theme-auto').className='theme-btn'+(t==='auto'?' active':'');
+  $('theme-light').className='theme-btn'+(t==='light'?' active':'');
+  $('theme-dark').className='theme-btn'+(t==='dark'?' active':'');
+  toast('Theme: '+t.charAt(0).toUpperCase()+t.slice(1));
+}
+
+function setUnits(u){
+  localStorage.setItem('pt-v2-units',u);
+  $('units-imperial').className='units-btn'+(u==='imperial'?' active':'');
+  $('units-metric').className='units-btn'+(u==='metric'?' active':'');
+  toast('Units: '+u.charAt(0).toUpperCase()+u.slice(1));
+}
+
+function markDirty(){dirty=true;}
+
+function saveProfile(){
+  var profile={tech:$('s_tech').value.trim(),badge:$('s_badge').value.trim(),plant:$('s_plant').value.trim(),unit:$('s_unit').value.trim()};
+  localStorage.setItem('pt-v2-profile',JSON.stringify(profile));
+  dirty=false;
+  toast('Profile saved');
+}
+
+function loadProfile(){
+  try{
+    var p=JSON.parse(localStorage.getItem('pt-v2-profile'))||{};
+    if($('s_tech'))$('s_tech').value=p.tech||'';
+    if($('s_badge'))$('s_badge').value=p.badge||'';
+    if($('s_plant'))$('s_plant').value=p.plant||'';
+    if($('s_unit'))$('s_unit').value=p.unit||'';
+  }catch(e){}
+}
+
+function loadStats(){
+  try{var cal=JSON.parse(localStorage.getItem('pt_cal_v2'))||[];$('stat-cal').textContent=cal.length;}catch(e){$('stat-cal').textContent='0';}
+  try{var loop=JSON.parse(localStorage.getItem('pt_loop_log'))||[];$('stat-loop').textContent=loop.length;}catch(e){$('stat-loop').textContent='0';}
+  try{var tix=JSON.parse(localStorage.getItem('pt_tickets_v2'))||[];$('stat-tickets').textContent=tix.length;}catch(e){$('stat-tickets').textContent='0';}
+}
+
+function loadThemeState(){
+  var t=localStorage.getItem('pt-v2-theme')||'auto';
+  setTheme(t);
+}
+
+function loadUnitsState(){
+  var u=localStorage.getItem('pt-v2-units')||'imperial';
+  setUnits(u);
+}
+
+// Export
+function exportData(type){
+  if(type==='cal'||type==='all') doExport('pt_cal_v2','PockeTech_Cal',['ID','Mode','Tag','WO','Date','Location','Comments']);
+  if(type==='loop'||type==='all') doExport('pt_loop_log','PockeTech_LoopLog',['ID','Tag','Date','Status','Notes']);
+  if(type==='tickets'||type==='all') doExport('pt_tickets_v2','PockeTech_Tickets',['ID','Date','Tag','Area','WO','Type','Priority','Status','Summary','Description','Resolution']);
+  toast('Export ready');
+}
+
+function doExport(key,filename,headers){
+  var data=[];
+  try{data=JSON.parse(localStorage.getItem(key))||[];}catch(e){}
+  if(!data.length){toast('No '+filename+' records');return;}
+  var rows=[headers];
+  data.forEach(function(r){
+    if(key==='pt_cal_v2') rows.push([r.id,r.mode,(r.header||{}).tag,(r.header||{}).wo,(r.header||{}).date,(r.header||{}).loc,r.comments]);
+    else if(key==='pt_tickets_v2') rows.push([r.id,r.date,r.tag,r.area,r.wo,r.type,r.priority,r.status,r.summary,r.desc,r.resolution]);
+    else rows.push([r.id,r.tag,r.date,r.status,r.notes]);
+  });
+  var csv=rows.map(function(r){return r.map(function(c){return'"'+String(c||'').replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  var a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download=filename+'_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+// Clear
+function clearData(type){
+  var labels={cal:'Cal Sheets',loop:'Loop Log',tickets:'Tickets',profile:'Profile',all:'ALL data'};
+  if(!confirm('Clear '+labels[type]+'? This cannot be undone.'))return;
+  if(type==='cal'||type==='all') localStorage.removeItem('pt_cal_v2');
+  if(type==='loop'||type==='all') localStorage.removeItem('pt_loop_log');
+  if(type==='tickets'||type==='all') localStorage.removeItem('pt_tickets_v2');
+  if(type==='profile'||type==='all'){
+    localStorage.removeItem('pt-v2-profile');
+    ['s_tech','s_badge','s_plant','s_unit'].forEach(function(id){$(id).value='';});
+  }
+  loadStats();
+  toast(labels[type]+' cleared');
+}
+
+// Toast
+function toast(msg){
+  var t=$('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2000);
+}
+
+// Boot
+document.addEventListener('DOMContentLoaded',function(){
+  loadThemeState();
+  loadUnitsState();
+  loadProfile();
+  loadStats();
+});
+
+// Warn on unsaved profile changes
+window.addEventListener('beforeunload',function(e){
+  if(dirty){e.preventDefault();e.returnValue='';}
+});
+</script>
+
+</body>
+</html>
