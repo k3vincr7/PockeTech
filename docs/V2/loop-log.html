@@ -504,7 +504,13 @@ white-space:nowrap;
   <button class="footer-btn" onclick="location.href='./'">← BACK</button>
 </div>
 
-<script src="common.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+function fmt(v,d){d=d||3;return(typeof v==='number'&&isFinite(v))?Number(v).toFixed(d):'--';}
+(function(){var t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+(function(){var sx,sy;document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=Math.abs(e.changedTouches[0].clientY-sy);if(sx<60&&dx>50&&dy<100)history.back();},{passive:true});})();
+function toggleTheme(){var h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',next);localStorage.setItem('pt-v2-theme',next);}
+</script>
 
 <script>
 const STORE = 'pt-v2-looplog-v2';
