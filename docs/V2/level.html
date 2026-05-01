@@ -1,1 +1,565 @@
-<!DOCTYPE html><html lang="en" data-theme="auto"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>PockeTech V2 — Level Helper Pro</title><style>:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--ok:#166534;--warn:#92400e;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}html[data-theme=dark]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}@media(prefers-color-scheme:dark){html[data-theme=auto]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}html[data-theme=dark] header{background:rgba(15,17,21,.75)}main{padding:14px;max-width:960px;margin:0 auto}.title{font-weight:850;font-size:18px}.build,.muted{font-size:13px;color:var(--muted);line-height:1.35}button,input,select{font:inherit;border-radius:14px}button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;font-weight:650}button:active{transform:translateY(1px) scale(.99)}input,select{width:100%;padding:13px;border:1px solid var(--border);background:var(--card);color:var(--fg);margin-top:7px;outline:none}input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}input[type=range]{accent-color:var(--accent);padding:0;border:none;background:transparent;margin-top:10px}label{font-weight:700;font-size:14px}.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}.hero{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 28%,var(--card)),var(--card) 70%);overflow:hidden;position:relative}.hero:after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,transparent)}.row{display:flex;gap:12px;flex-wrap:wrap}.col{flex:1 1 230px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-bottom:14px}.result{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:14px}.big{font-size:28px;font-weight:850;margin:4px 0;letter-spacing:-.4px}.ok{background:var(--ok);border-color:var(--ok);color:white}.warn{background:var(--warn);border-color:var(--warn);color:white}.small{padding:8px 10px;font-size:14px;border-radius:12px;width:auto}.help{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 18%,var(--tile)),var(--tile));border-color:color-mix(in srgb,var(--accent) 50%,var(--border));width:100%;text-align:left}.chipbar{display:flex;gap:8px;flex-wrap:wrap}.chip{width:auto;border-radius:999px;padding:9px 13px}.slider{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:14px;margin-top:14px}.pill{display:inline-block;padding:5px 9px;border:1px solid var(--border);border-radius:999px;background:var(--tile);font-size:12px;color:var(--muted);margin-top:6px}.wet-only{display:none}.tank{height:160px;border:2px solid var(--border);border-radius:18px;position:relative;overflow:hidden;background:var(--card)}.fill{position:absolute;bottom:0;left:0;right:0;height:0;background:color-mix(in srgb,var(--accent) 45%,transparent);transition:height .12s ease}.pctTag{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:850}.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}th,td{border:1px solid var(--border);padding:9px;text-align:left}th{background:var(--tile)}@media(max-width:520px){main{padding:12px}.card{padding:14px}.big{font-size:24px}}</style></head><body><header><div><div class="title">PockeTech V2</div><div class="build">Level Helper Pro</div></div><button class="small" onclick="toggleTheme()">🌓</button></header><main><div class="card hero"><h1 style="margin:0 0 6px">Level Helper Pro</h1><p class="muted" style="margin:0">Open tank, dry leg, wet leg, TX offset, HP/LP breakdown, saved setups, and SG presets.</p></div><div class="card"><button class="help" onclick="location.href='./level-descriptions.html?v=4'">ℹ️ Tank Type Help — descriptions, examples, and visuals</button></div><div class="card"><div class="row"><div class="col"><label>Tank Type</label><select id="type"><option value="open">Open Tank</option><option value="dry">Closed Tank — Dry Leg</option><option value="wet">Closed Tank — Wet Leg</option></select></div><div class="col"><label>Tap-to-Tap Span</label><input id="span" type="text" inputmode="text" placeholder="72"></div><div class="col"><label>Span Units</label><select id="spanUnit"><option value="in">in</option><option value="ft">ft</option><option value="m">m</option></select></div></div><div class="row" style="margin-top:12px"><div class="col"><label>Process Liquid Preset</label><select id="procPreset"><option value="custom">Custom / manual</option><option value="1.000">Water — 1.000</option><option value="0.740">Gasoline — 0.740</option><option value="0.850">Diesel — 0.850</option><option value="0.800">Crude oil light — 0.800</option><option value="0.920">Crude oil heavy — 0.920</option><option value="1.260">Glycerin — 1.260</option><option value="0.789">Methanol — 0.789</option><option value="0.789">Ethanol — 0.789</option><option value="1.260">Caustic soda 50% — 1.260</option><option value="1.200">Brine / salt water — 1.200</option></select></div><div class="col"><label>Process Liquid SG</label><input id="procSG" type="text" inputmode="text" value="1.0"></div><div class="col"><label>dP Units</label><select id="dpUnit"><option value="inh2o">inH₂O</option><option value="psi">psi</option><option value="kpa">kPa</option></select></div><div class="col"><label>Level Units Label</label><input id="levelUnit" placeholder="in, ft, %, etc."></div></div><div class="row" style="margin-top:12px"><div class="col"><label>TX Elevation Offset</label><input id="offset" type="text" inputmode="text" placeholder="0" value="0"><div class="pill">+ below lower tap / − above lower tap</div></div><div class="col"><label>Offset Units</label><select id="offsetUnit"><option value="in">in</option><option value="ft">ft</option><option value="m">m</option></select></div><div class="col"><label>Fill Fluid Preset</label><select id="offsetPreset"><option value="custom">Custom / manual</option><option value="1.000">Water — 1.000</option><option value="0.740">Gasoline — 0.740</option><option value="0.850">Diesel — 0.850</option><option value="0.800">Crude oil light — 0.800</option><option value="0.920">Crude oil heavy — 0.920</option><option value="1.260">Glycerin — 1.260</option><option value="0.789">Methanol — 0.789</option><option value="0.789">Ethanol — 0.789</option><option value="1.260">Caustic soda 50% — 1.260</option><option value="1.200">Brine / salt water — 1.200</option></select></div><div class="col"><label>Fill Fluid SG for Offset</label><input id="offsetSG" type="text" inputmode="text" value="1.0"></div></div><div class="row wet-only" style="margin-top:12px"><div class="col"><label>Wet Leg Height</label><input id="wetH" type="text" inputmode="text" placeholder="same as span usually"></div><div class="col"><label>Wet Leg Units</label><select id="wetUnit"><option value="in">in</option><option value="ft">ft</option><option value="m">m</option></select></div><div class="col"><label>Wet Leg Fluid Preset</label><select id="wetPreset"><option value="custom">Custom / manual</option><option value="1.000">Water — 1.000</option><option value="0.740">Gasoline — 0.740</option><option value="0.850">Diesel — 0.850</option><option value="0.800">Crude oil light — 0.800</option><option value="0.920">Crude oil heavy — 0.920</option><option value="1.260">Glycerin — 1.260</option><option value="0.789">Methanol — 0.789</option><option value="0.789">Ethanol — 0.789</option><option value="1.260">Caustic soda 50% — 1.260</option><option value="1.200">Brine / salt water — 1.200</option></select></div><div class="col"><label>Wet Leg SG</label><input id="wetSG" type="text" inputmode="text" value="1.0"></div></div></div><div class="card"><div class="row"><div class="col"><label>Level %</label><input id="pct" type="text" inputmode="text" placeholder="50"></div><div class="col"><label>Level</label><input id="level" type="text" inputmode="text" placeholder="half span"></div><div class="col"><label>mA</label><input id="ma" type="text" inputmode="text" placeholder="12"></div><div class="col"><label>dP</label><input id="dp" type="text" inputmode="text" placeholder="calculated"></div></div><div class="slider"><label>Live Level Slider</label><input id="slider" type="range" min="0" max="100" step="0.1" value="50"><div class="chipbar" style="margin-top:10px"><button class="chip" onclick="setPct(0)">0%</button><button class="chip" onclick="setPct(25)">25%</button><button class="chip" onclick="setPct(50)">50%</button><button class="chip" onclick="setPct(75)">75%</button><button class="chip" onclick="setPct(100)">100%</button></div></div></div><div class="grid"><div class="result"><div class="muted">Level %</div><div class="big" id="readPct">—</div></div><div class="result"><div class="muted">Level</div><div class="big" id="readLevel">—</div></div><div class="result"><div class="muted">dP</div><div class="big" id="readDP">—</div></div><div class="result"><div class="muted">mA</div><div class="big" id="readMA">—</div></div></div><div class="card"><h3 style="margin-top:0">HP / LP Breakdown</h3><div class="grid"><div class="result"><div class="muted">HP Side</div><div class="big" id="readHP">—</div></div><div class="result"><div class="muted">LP Side</div><div class="big" id="readLP">—</div></div><div class="result"><div class="muted">Offset Head</div><div class="big" id="readOffset">—</div></div></div><p class="muted">Final dP = HP side − LP side + TX offset head.</p></div><div class="card"><div class="row"><div class="col"><div class="tank"><div id="fill" class="fill"></div><div id="pctTag" class="pctTag">—</div></div></div><div class="col"><div class="muted">Calculated transmitter range</div><div class="big" id="rangeText">—</div><p class="muted">Wet leg usually creates a negative LRV because the LP side has constant head.</p></div></div></div><div class="card"><h3 style="margin-top:0">Saved Setups</h3><div class="row"><div class="col"><label>Setup Name</label><input id="setupName" placeholder="HRSG Drum, Tank 101, etc."></div><div class="col"><label>Load Setup</label><select id="savedList"></select></div></div><div class="row" style="margin-top:12px"><div class="col"><button class="ok" onclick="saveSetup()">Save Setup</button></div><div class="col"><button onclick="loadSetup()">Load Selected</button></div><div class="col"><button class="warn" onclick="deleteSetup()">Delete Selected</button></div></div></div><div class="card"><div class="row"><div class="col"><button class="ok" onclick="buildTable()">Build 5-Point Table</button></div><div class="col"><button onclick="clearLive()">Clear Live Inputs</button></div></div><div class="scroll"><table id="steps"><thead><tr><th>%</th><th>Level</th><th>HP</th><th>LP</th><th>dP</th><th>mA</th></tr></thead><tbody></tbody></table></div></div><div class="card"><button onclick="location.href='./'">← Back to PockeTech V2</button></div></main><script src="common.js"></script><script>let source='pct';const saveKey='pt-v2-level-setups';function uLabel(){const u=$('levelUnit').value.trim();return u?' '+u:''}function dpLabel(){return $('dpUnit').value==='psi'?' psi':$('dpUnit').value==='kpa'?' kPa':' inH₂O'}function toIn(v,u){if(!Number.isFinite(v))return NaN;if(u==='ft')return v*12;if(u==='m')return v*39.3700787;return v}function fromIn(v,u){if(!Number.isFinite(v))return NaN;if(u==='ft')return v/12;if(u==='m')return v/39.3700787;return v}function outDP(x){if($('dpUnit').value==='psi')return x/27.6807;if($('dpUnit').value==='kpa')return x*0.24908891;return x}function inDP(v){if($('dpUnit').value==='psi')return v*27.6807;if($('dpUnit').value==='kpa')return v/0.24908891;return v}function applyPreset(sel,input){if($(sel).value!=='custom')$(input).value=$(sel).value;source='pct';recalc()}function offsetHead(){const off=toIn(n('offset')??0,$('offsetUnit').value),sg=n('offsetSG')??1;return Number.isFinite(off)&&Number.isFinite(sg)?off*sg:0}function calcRange(){const span=toIn(n('span'),$('spanUnit').value),sg=n('procSG');if(!Number.isFinite(span)||!Number.isFinite(sg)||span===0)return null;const off=offsetHead();let lrv=off,urv=span*sg+off,lp=0;if($('type').value==='wet'){const wh=toIn(n('wetH'),$('wetUnit').value),wsg=n('wetSG');if(!Number.isFinite(wh)||!Number.isFinite(wsg))return null;lp=wh*wsg;lrv=0-lp+off;urv=span*sg-lp+off}return{span,sg,lrv,urv,lp,off}}function hpAtPct(p){const r=calcRange();return r?p/100*r.span*r.sg:NaN}function lpRef(){const r=calcRange();return r?r.lp:NaN}function dpFromPct(p){const r=calcRange();return r?r.lrv+p/100*(r.urv-r.lrv):NaN}function pctFromDP(dpIn){const r=calcRange();return r&&r.urv!==r.lrv?(dpIn-r.lrv)/(r.urv-r.lrv)*100:null}function levelFromPct(p){const span=toIn(n('span'),$('spanUnit').value);return Number.isFinite(span)?fromIn(p/100*span,$('spanUnit').value):NaN}function pctFromLevel(lv){const span=toIn(n('span'),$('spanUnit').value),lvIn=toIn(lv,$('spanUnit').value);return Number.isFinite(span)&&span!==0?lvIn/span*100:null}function read(p){const r=calcRange(),dpIn=Number.isFinite(p)?dpFromPct(p):NaN,lv=Number.isFinite(p)?levelFromPct(p):NaN,hp=Number.isFinite(p)?hpAtPct(p):NaN,lp=lpRef(),off=offsetHead();$('readPct').textContent=Number.isFinite(p)?fmt(p,2)+' %':'—';$('readLevel').textContent=Number.isFinite(lv)?fmt(lv,3)+uLabel():'—';$('readDP').textContent=Number.isFinite(dpIn)?fmt(outDP(dpIn),3)+dpLabel():'—';$('readMA').textContent=Number.isFinite(p)?fmt(pctToMA(p),3)+' mA':'—';$('readHP').textContent=Number.isFinite(hp)?fmt(outDP(hp),3)+dpLabel():'—';$('readLP').textContent=Number.isFinite(lp)?fmt(outDP(lp),3)+dpLabel():'—';$('readOffset').textContent=Number.isFinite(off)?fmt(outDP(off),3)+dpLabel():'—';$('fill').style.height=Number.isFinite(p)?clamp(p)+'%':'0%';$('pctTag').textContent=Number.isFinite(p)?fmt(p,1)+'%':'—';if(r)$('rangeText').textContent=`LRV ${fmt(outDP(r.lrv),3)}${dpLabel()} / URV ${fmt(outDP(r.urv),3)}${dpLabel()}`}function syncFromPct(w=false){let p=n('pct');if(p===null){read(NaN);return}p=clamp(p);const dpIn=dpFromPct(p),lv=levelFromPct(p);if(w){$('pct').value=fmt(p,2);$('level').value=fmt(lv,3);$('ma').value=fmt(pctToMA(p),3);$('dp').value=fmt(outDP(dpIn),3)}$('slider').value=p;read(p)}function syncFromLevel(w=false){const lv=n('level');if(lv===null){read(NaN);return}let p=clamp(pctFromLevel(lv));const dpIn=dpFromPct(p);if(w){$('pct').value=fmt(p,2);$('ma').value=fmt(pctToMA(p),3);$('dp').value=fmt(outDP(dpIn),3)}$('slider').value=p;read(p)}function syncFromMA(w=false){const m=n('ma');if(m===null){read(NaN);return}let p=clamp(maToPct(m));const dpIn=dpFromPct(p),lv=levelFromPct(p);if(w){$('pct').value=fmt(p,2);$('level').value=fmt(lv,3);$('dp').value=fmt(outDP(dpIn),3)}$('slider').value=p;read(p)}function syncFromDP(w=false){const d=n('dp');if(d===null){read(NaN);return}let p=clamp(pctFromDP(inDP(d)));const lv=levelFromPct(p);if(w){$('pct').value=fmt(p,2);$('level').value=fmt(lv,3);$('ma').value=fmt(pctToMA(p),3)}$('slider').value=p;read(p)}function setPct(p){source='pct';$('pct').value=p;syncFromPct(true)}function buildTable(){const r=calcRange();if(!r)return;const tb=$('steps').querySelector('tbody');tb.innerHTML='';[0,25,50,75,100].forEach(p=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${p}%</td><td>${fmt(levelFromPct(p),3)}${uLabel()}</td><td>${fmt(outDP(hpAtPct(p)),3)}${dpLabel()}</td><td>${fmt(outDP(lpRef()),3)}${dpLabel()}</td><td>${fmt(outDP(dpFromPct(p)),3)}${dpLabel()}</td><td>${fmt(pctToMA(p),3)}</td>`;tb.appendChild(tr)})}function clearLive(){['pct','level','ma','dp'].forEach(id=>$(id).value='');$('slider').value=50;$('steps').querySelector('tbody').innerHTML='';read(NaN)}function refreshWet(){document.querySelectorAll('.wet-only').forEach(e=>e.style.display=$('type').value==='wet'?'flex':'none')}function recalc(){source==='level'?syncFromLevel(false):source==='ma'?syncFromMA(false):source==='dp'?syncFromDP(false):syncFromPct(false)}function ids(){return ['type','span','spanUnit','procSG','procPreset','dpUnit','levelUnit','offset','offsetUnit','offsetSG','offsetPreset','wetH','wetUnit','wetSG','wetPreset']}function getSetups(){try{return JSON.parse(localStorage.getItem(saveKey)||'{}')}catch{return {}}}function renderSaved(){const list=$('savedList'),setups=getSetups();list.innerHTML='';Object.keys(setups).sort().forEach(name=>{const o=document.createElement('option');o.value=name;o.textContent=name;list.appendChild(o)});if(!list.children.length){const o=document.createElement('option');o.value='';o.textContent='No saved setups';list.appendChild(o)}}function saveSetup(){const name=$('setupName').value.trim();if(!name){alert('Enter a setup name first.');return}const setups=getSetups(),data={};ids().forEach(id=>data[id]=$(id).value);setups[name]=data;localStorage.setItem(saveKey,JSON.stringify(setups));renderSaved();$('savedList').value=name}function loadSetup(){const name=$('savedList').value;if(!name)return;const setup=getSetups()[name];if(!setup)return;Object.entries(setup).forEach(([id,val])=>{if($(id))$(id).value=val});$('setupName').value=name;refreshWet();recalc()}function deleteSetup(){const name=$('savedList').value;if(!name)return;const setups=getSetups();delete setups[name];localStorage.setItem(saveKey,JSON.stringify(setups));renderSaved()}function wire(){ids().forEach(id=>$(id).addEventListener('input',()=>{refreshWet();recalc()}));$('type').addEventListener('change',()=>{refreshWet();recalc()});$('procPreset').addEventListener('change',()=>applyPreset('procPreset','procSG'));$('offsetPreset').addEventListener('change',()=>applyPreset('offsetPreset','offsetSG'));$('wetPreset').addEventListener('change',()=>applyPreset('wetPreset','wetSG'));['pct','level','ma','dp'].forEach(id=>$(id).addEventListener('input',()=>{source=id;({pct:syncFromPct,level:syncFromLevel,ma:syncFromMA,dp:syncFromDP}[id])(false)}));$('pct').addEventListener('change',()=>syncFromPct(true));$('level').addEventListener('change',()=>syncFromLevel(true));$('ma').addEventListener('change',()=>syncFromMA(true));$('dp').addEventListener('change',()=>syncFromDP(true));$('slider').addEventListener('input',()=>{source='pct';$('pct').value=$('slider').value;syncFromPct(true)})}(function init(){wire();refreshWet();renderSaved();read(NaN)})();</script></body></html>
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PockeTech — Level</title>
+<meta name="theme-color" content="#0f1115">
+<style>
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--teal:#14b8a6;--ok:#166534;--ok-bg:#dcfce7;--warn:#b45309;--warn-bg:#fef9c3;--fail:#991b1b;--fail-bg:#fee2e2;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--teal:#2dd4bf;--ok-bg:#14532d;--warn-bg:#451a03;--fail-bg:#450a0a;--shadow:0 14px 34px rgba(0,0,0,.35)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--teal:#2dd4bf;--ok-bg:#14532d;--warn-bg:#451a03;--fail-bg:#450a0a;--shadow:0 14px 34px rgba(0,0,0,.35)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
+header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+html[data-theme="dark"] header{background:rgba(15,17,21,.75)}
+.header-left{display:flex;align-items:center;gap:8px}
+.brand{display:flex;flex-direction:column}
+.header-title{font-weight:800;font-size:18px}
+.build{font-size:12px;color:var(--muted)}
+main{padding:14px;max-width:960px;margin:0 auto;padding-bottom:40px}
+button,input,select{font:inherit;border-radius:14px}
+button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;font-weight:650;transition:transform .08s,box-shadow .15s}
+button:active{transform:translateY(1px) scale(.99)}
+input,select{width:100%;padding:11px 13px;border:1px solid var(--border);background:var(--card);color:var(--fg);margin-top:6px;outline:none}
+input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
+input[type=range]{accent-color:var(--teal);padding:0;border:none;background:transparent;margin-top:10px;width:100%}
+label{font-weight:700;font-size:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.hero{background:linear-gradient(135deg,color-mix(in srgb,var(--teal) 22%,var(--card)),var(--card) 70%);overflow:hidden;position:relative}
+.hero::after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,var(--teal) 15%,transparent)}
+.hero-badge{display:inline-block;background:var(--teal);color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.section-title{margin:0 0 4px;font-size:26px;font-weight:800;letter-spacing:-.5px}
+.muted{color:var(--muted);font-size:13px;line-height:1.35}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.col{flex:1 1 140px}
+.hr{height:1px;background:var(--border);margin:14px 0}
+.small-btn{padding:8px 12px;font-size:14px;border-radius:12px;width:auto}
+.ok-btn{background:var(--teal);color:#fff;border-color:var(--teal);width:100%;padding:13px;font-size:15px;border-radius:14px}
+.warn-btn{background:var(--warn-bg);color:var(--warn);border-color:var(--warn)}
+.sec-label{font-size:11px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+.pill{display:inline-block;padding:4px 9px;border:1px solid var(--border);border-radius:999px;background:var(--tile);font-size:11px;color:var(--muted);margin-top:6px}
+
+/* Result grid */
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.result-card{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:14px;text-align:center}
+.result-card .big{font-size:22px;font-weight:850;margin:4px 0;letter-spacing:-.4px}
+.result-card .label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.result-card.teal{border-color:color-mix(in srgb,var(--teal) 50%,var(--border));background:color-mix(in srgb,var(--teal) 8%,var(--tile))}
+
+/* Slider */
+.slider-wrap{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:14px;margin-top:12px}
+.chip-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{width:auto;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700}
+.chip.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+
+/* Collapsible */
+.coll-hdr{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:2px 0}
+.coll-hdr h3{margin:0;font-size:15px;font-weight:750;pointer-events:none}
+.coll-arrow{font-size:11px;color:var(--muted);transition:transform .2s;pointer-events:none;display:inline-block}
+.coll-body{max-height:0;overflow:hidden;transition:max-height .28s ease}
+.coll-body.open{max-height:3000px}
+.coll-arrow.open{transform:rotate(180deg)}
+
+/* Tank visual */
+.tank{height:160px;border:2px solid var(--border);border-radius:18px;position:relative;overflow:hidden;background:var(--card)}
+.tank-fill{position:absolute;bottom:0;left:0;right:0;height:0;background:color-mix(in srgb,var(--teal) 45%,transparent);transition:height .15s ease}
+.tank-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:850}
+.tank-wrap{display:flex;gap:14px;align-items:stretch;flex-wrap:wrap}
+.tank-wrap .tank{flex:1;min-width:120px}
+.tank-info{flex:2;min-width:160px;display:flex;flex-direction:column;justify-content:center;gap:8px}
+
+/* Table */
+.scroll-x{overflow-x:auto;margin-top:10px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--tile);padding:9px 8px;text-align:center;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--border);white-space:nowrap}
+td{border:1px solid var(--border);padding:9px 8px;text-align:center}
+
+/* Help button */
+.help-btn{width:100%;text-align:left;background:linear-gradient(135deg,color-mix(in srgb,var(--teal) 12%,var(--tile)),var(--tile));border-color:color-mix(in srgb,var(--teal) 40%,var(--border));color:var(--fg);border-radius:14px;padding:13px 16px;font-size:14px}
+
+.wet-only{display:none}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
+@media(max-width:520px){main{padding:10px}.section-title{font-size:22px}.result-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <button class="small-btn" onclick="location.href='./index.html'">&#8592; Back</button>
+    <div class="brand">
+      <div class="header-title">PockeTech V2</div>
+      <div class="build">Level</div>
+    </div>
+  </div>
+  <button class="small-btn" onclick="toggleTheme()">&#127771;</button>
+</header>
+
+<main>
+
+  <!-- Hero -->
+  <div class="card hero">
+    <div class="hero-badge">&#129371; LEVEL</div>
+    <h1 class="section-title">Level Helper</h1>
+    <p class="muted" style="margin:4px 0 0">Open tank, dry leg, wet leg — HP/LP breakdown, saved setups, SG presets.</p>
+  </div>
+
+  <!-- Help -->
+  <button class="help-btn card" onclick="location.href='./level-descriptions.html?v=4'" style="margin-bottom:14px">
+    &#8505;&#65039; Tank Type Help — descriptions, examples &amp; visuals
+  </button>
+
+  <!-- Tank Config -->
+  <div class="card">
+    <h3 style="margin:0 0 12px;font-size:15px;font-weight:750">Tank Configuration</h3>
+    <div class="row">
+      <div class="col">
+        <label>Tank Type</label>
+        <select id="type">
+          <option value="open">Open Tank</option>
+          <option value="dry">Closed Tank — Dry Leg</option>
+          <option value="wet">Closed Tank — Wet Leg</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>Tap-to-Tap Span</label>
+        <input id="span" inputmode="decimal" placeholder="72">
+      </div>
+      <div class="col">
+        <label>Span Units</label>
+        <select id="spanUnit">
+          <option value="in">in</option>
+          <option value="ft">ft</option>
+          <option value="m">m</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>dP Units</label>
+        <select id="dpUnit">
+          <option value="inh2o">inH&#8322;O</option>
+          <option value="psi">psi</option>
+          <option value="kpa">kPa</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>Level Units Label</label>
+        <input id="levelUnit" placeholder="in, ft, %, etc.">
+      </div>
+    </div>
+  </div>
+
+  <!-- Process Liquid -->
+  <div class="card">
+    <h3 style="margin:0 0 12px;font-size:15px;font-weight:750">Process Liquid</h3>
+    <div class="row">
+      <div class="col">
+        <label>Liquid Preset</label>
+        <select id="procPreset">
+          <option value="custom">Custom / manual</option>
+          <option value="1.000">Water — 1.000</option>
+          <option value="0.740">Gasoline — 0.740</option>
+          <option value="0.850">Diesel — 0.850</option>
+          <option value="0.800">Crude oil light — 0.800</option>
+          <option value="0.920">Crude oil heavy — 0.920</option>
+          <option value="1.260">Glycerin — 1.260</option>
+          <option value="0.789">Methanol — 0.789</option>
+          <option value="0.789">Ethanol — 0.789</option>
+          <option value="1.260">Caustic soda 50% — 1.260</option>
+          <option value="1.200">Brine / salt water — 1.200</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>Process Liquid SG</label>
+        <input id="procSG" inputmode="decimal" value="1.0">
+      </div>
+    </div>
+  </div>
+
+  <!-- TX Offset -->
+  <div class="card">
+    <h3 style="margin:0 0 12px;font-size:15px;font-weight:750">TX Elevation Offset</h3>
+    <div class="row">
+      <div class="col">
+        <label>Offset Distance</label>
+        <input id="offset" inputmode="decimal" placeholder="0" value="0">
+        <div class="pill">+ below lower tap &nbsp;/&nbsp; &#8722; above lower tap</div>
+      </div>
+      <div class="col">
+        <label>Offset Units</label>
+        <select id="offsetUnit">
+          <option value="in">in</option>
+          <option value="ft">ft</option>
+          <option value="m">m</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>Fill Fluid Preset</label>
+        <select id="offsetPreset">
+          <option value="custom">Custom / manual</option>
+          <option value="1.000">Water — 1.000</option>
+          <option value="0.740">Gasoline — 0.740</option>
+          <option value="0.850">Diesel — 0.850</option>
+          <option value="0.800">Crude oil light — 0.800</option>
+          <option value="0.920">Crude oil heavy — 0.920</option>
+          <option value="1.260">Glycerin — 1.260</option>
+          <option value="0.789">Methanol — 0.789</option>
+          <option value="0.789">Ethanol — 0.789</option>
+          <option value="1.260">Caustic soda 50% — 1.260</option>
+          <option value="1.200">Brine / salt water — 1.200</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>Fill Fluid SG</label>
+        <input id="offsetSG" inputmode="decimal" value="1.0">
+      </div>
+    </div>
+  </div>
+
+  <!-- Wet Leg (hidden unless wet selected) -->
+  <div class="card wet-only" id="wetCard">
+    <h3 style="margin:0 0 12px;font-size:15px;font-weight:750">Wet Leg</h3>
+    <div class="row">
+      <div class="col">
+        <label>Wet Leg Height</label>
+        <input id="wetH" inputmode="decimal" placeholder="same as span usually">
+      </div>
+      <div class="col">
+        <label>Wet Leg Units</label>
+        <select id="wetUnit">
+          <option value="in">in</option>
+          <option value="ft">ft</option>
+          <option value="m">m</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>Wet Leg Fluid Preset</label>
+        <select id="wetPreset">
+          <option value="custom">Custom / manual</option>
+          <option value="1.000">Water — 1.000</option>
+          <option value="0.740">Gasoline — 0.740</option>
+          <option value="0.850">Diesel — 0.850</option>
+          <option value="0.800">Crude oil light — 0.800</option>
+          <option value="0.920">Crude oil heavy — 0.920</option>
+          <option value="1.260">Glycerin — 1.260</option>
+          <option value="0.789">Methanol — 0.789</option>
+          <option value="0.789">Ethanol — 0.789</option>
+          <option value="1.260">Caustic soda 50% — 1.260</option>
+          <option value="1.200">Brine / salt water — 1.200</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>Wet Leg SG</label>
+        <input id="wetSG" inputmode="decimal" value="1.0">
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Signal -->
+  <div class="card">
+    <h3 style="margin:0 0 12px;font-size:15px;font-weight:750">Live Signal</h3>
+    <div class="row">
+      <div class="col"><label>Level %</label><input id="pct" inputmode="decimal" placeholder="50"></div>
+      <div class="col"><label>Level</label><input id="level" inputmode="decimal" placeholder="half span"></div>
+      <div class="col"><label>mA</label><input id="ma" inputmode="decimal" placeholder="12"></div>
+      <div class="col"><label>dP</label><input id="dp" inputmode="decimal" placeholder="calculated"></div>
+    </div>
+    <div class="slider-wrap">
+      <label>Live Level Slider</label>
+      <input id="slider" type="range" min="0" max="100" step="0.1" value="50">
+      <div class="chip-bar">
+        <button class="chip" id="c0"   onclick="setPct(0)">0%</button>
+        <button class="chip" id="c25"  onclick="setPct(25)">25%</button>
+        <button class="chip" id="c50"  onclick="setPct(50)">50%</button>
+        <button class="chip" id="c75"  onclick="setPct(75)">75%</button>
+        <button class="chip" id="c100" onclick="setPct(100)">100%</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="result-grid">
+    <div class="result-card teal"><div class="label">Level %</div><div class="big" id="readPct">&#8212;</div></div>
+    <div class="result-card"><div class="label">Level</div><div class="big" id="readLevel">&#8212;</div></div>
+    <div class="result-card"><div class="label">dP</div><div class="big" id="readDP">&#8212;</div></div>
+    <div class="result-card"><div class="label">mA</div><div class="big" id="readMA">&#8212;</div></div>
+  </div>
+
+  <!-- Tank Visual + Range -->
+  <div class="card">
+    <div class="tank-wrap">
+      <div class="tank">
+        <div id="tank-fill" class="tank-fill"></div>
+        <div id="tank-pct" class="tank-pct">&#8212;</div>
+      </div>
+      <div class="tank-info">
+        <div>
+          <div style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Calculated TX Range</div>
+          <div style="font-size:20px;font-weight:850;margin:4px 0;letter-spacing:-.3px" id="rangeText">&#8212;</div>
+        </div>
+        <p class="muted" style="margin:0">Wet leg creates negative LRV — constant head on LP side suppresses zero.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- HP/LP Breakdown -->
+  <div class="card">
+    <div class="coll-hdr" onclick="toggleColl(this)">
+      <h3>&#128200; HP / LP Breakdown</h3><span class="coll-arrow">&#9660;</span>
+    </div>
+    <div class="coll-body">
+      <div style="height:10px"></div>
+      <div class="result-grid">
+        <div class="result-card"><div class="label">HP Side</div><div class="big" id="readHP">&#8212;</div></div>
+        <div class="result-card"><div class="label">LP Side</div><div class="big" id="readLP">&#8212;</div></div>
+        <div class="result-card"><div class="label">Offset Head</div><div class="big" id="readOffset">&#8212;</div></div>
+      </div>
+      <p class="muted" style="margin-top:8px">Final dP = HP side &#8722; LP side + TX offset head.</p>
+    </div>
+  </div>
+
+  <!-- 5-Point Table -->
+  <div class="card">
+    <div class="coll-hdr" onclick="toggleColl(this)">
+      <h3>&#128203; 5-Point Reference Table</h3><span class="coll-arrow">&#9660;</span>
+    </div>
+    <div class="coll-body">
+      <div class="scroll-x">
+        <table id="steps">
+          <thead><tr><th>%</th><th>Level</th><th>HP</th><th>LP</th><th>dP</th><th>mA</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="muted" style="margin-top:8px">Updates automatically when configuration changes.</p>
+    </div>
+  </div>
+
+  <!-- Saved Setups -->
+  <div class="card">
+    <div class="coll-hdr" onclick="toggleColl(this)">
+      <h3>&#128190; Saved Setups</h3><span class="coll-arrow">&#9660;</span>
+    </div>
+    <div class="coll-body">
+      <div style="height:12px"></div>
+      <div class="row">
+        <div class="col"><label>Setup Name</label><input id="setupName" placeholder="HRSG Drum, Tank 101..."></div>
+        <div class="col"><label>Load Setup</label><select id="savedList"></select></div>
+      </div>
+      <div class="row" style="margin-top:10px;gap:8px">
+        <button class="ok-btn" style="flex:1;padding:11px;font-size:14px;border-radius:12px" onclick="saveSetup()">&#128190; Save</button>
+        <button style="flex:1;padding:11px;font-size:14px;border-radius:12px" onclick="loadSetup()">&#8635; Load</button>
+        <button class="warn-btn" style="flex:1;padding:11px;font-size:14px;border-radius:12px" onclick="deleteSetup()">&#128465; Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clear -->
+  <div class="card">
+    <button style="width:100%;border-radius:12px;padding:12px" onclick="clearLive()">&#128465; Clear Live Inputs</button>
+  </div>
+
+</main>
+<footer>PockeTech V2 — Level</footer>
+
+<script>
+// common.js inlined
+var $ = function(id){return document.getElementById(id);};
+function fmt(v,d){d=d===undefined?3:d;return(typeof v==='number'&&isFinite(v))?Number(v).toFixed(d):'--';}
+(function(){var t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+(function(){var sx,sy;document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=Math.abs(e.changedTouches[0].clientY-sy);if(sx<60&&dx>50&&dy<100)history.back();},{passive:true});})();
+function toggleTheme(){var h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',next);localStorage.setItem('pt-v2-theme',next);}
+function pctToMA(p){return 4+(p/100)*16;}
+function maToPct(m){return((m-4)/16)*100;}
+function clamp(v){return Math.min(Math.max(v,0),100);}
+
+function toggleColl(hdr){
+  var body=hdr.nextElementSibling;
+  var arrow=hdr.querySelector('.coll-arrow');
+  body.classList.toggle('open');
+  if(arrow)arrow.classList.toggle('open');
+}
+
+var source='pct';
+var saveKey='pt-v2-level-setups';
+
+function uLabel(){var u=$(  'levelUnit').value.trim();return u?' '+u:'';}
+function dpLabel(){return $('dpUnit').value==='psi'?' psi':$('dpUnit').value==='kpa'?' kPa':' inH\u2082O';}
+function toIn(v,u){if(!isFinite(v))return NaN;if(u==='ft')return v*12;if(u==='m')return v*39.3700787;return v;}
+function fromIn(v,u){if(!isFinite(v))return NaN;if(u==='ft')return v/12;if(u==='m')return v/39.3700787;return v;}
+function outDP(x){if($('dpUnit').value==='psi')return x/27.6807;if($('dpUnit').value==='kpa')return x*0.24908891;return x;}
+function inDP(v){if($('dpUnit').value==='psi')return v*27.6807;if($('dpUnit').value==='kpa')return v/0.24908891;return v;}
+
+function gn(id){var raw=$(id).value.trim();if(raw==='')return null;var x=Number(raw);return isFinite(x)?x:null;}
+
+function applyPreset(sel,input){if($(sel).value!=='custom')$(input).value=$(sel).value;source='pct';recalc();}
+
+function offsetHead(){var off=toIn(gn('offset')||0,$('offsetUnit').value),sg=gn('offsetSG')||1;return isFinite(off)&&isFinite(sg)?off*sg:0;}
+
+function calcRange(){
+  var span=toIn(gn('span'),$('spanUnit').value),sg=gn('procSG');
+  if(!isFinite(span)||!isFinite(sg)||span===0)return null;
+  var off=offsetHead(),lp=0,lrv=off,urv=span*sg+off;
+  if($('type').value==='wet'){
+    var wh=toIn(gn('wetH'),$('wetUnit').value),wsg=gn('wetSG');
+    if(!isFinite(wh)||!isFinite(wsg))return null;
+    lp=wh*wsg;lrv=0-lp+off;urv=span*sg-lp+off;
+  }
+  return{span:span,sg:sg,lrv:lrv,urv:urv,lp:lp,off:off};
+}
+
+function hpAtPct(p){var r=calcRange();return r?p/100*r.span*r.sg:NaN;}
+function lpRef(){var r=calcRange();return r?r.lp:NaN;}
+function dpFromPct(p){var r=calcRange();return r?r.lrv+p/100*(r.urv-r.lrv):NaN;}
+function pctFromDP(dpIn){var r=calcRange();return r&&r.urv!==r.lrv?(dpIn-r.lrv)/(r.urv-r.lrv)*100:null;}
+function levelFromPct(p){var span=toIn(gn('span'),$('spanUnit').value);return isFinite(span)?fromIn(p/100*span,$('spanUnit').value):NaN;}
+function pctFromLevel(lv){var span=toIn(gn('span'),$('spanUnit').value),lvIn=toIn(lv,$('spanUnit').value);return isFinite(span)&&span!==0?lvIn/span*100:null;}
+
+function updateChips(p){
+  [0,25,50,75,100].forEach(function(v){
+    var el=$('c'+v);
+    if(el)el.className='chip'+(Math.abs(p-v)<0.1?' active':'');
+  });
+}
+
+function read(p){
+  var r=calcRange();
+  var dpIn=isFinite(p)?dpFromPct(p):NaN;
+  var lv=isFinite(p)?levelFromPct(p):NaN;
+  var hp=isFinite(p)?hpAtPct(p):NaN;
+  var lp=lpRef(),off=offsetHead();
+  $('readPct').textContent=isFinite(p)?fmt(p,2)+' %':'--';
+  $('readLevel').textContent=isFinite(lv)?fmt(lv,3)+uLabel():'--';
+  $('readDP').textContent=isFinite(dpIn)?fmt(outDP(dpIn),3)+dpLabel():'--';
+  $('readMA').textContent=isFinite(p)?fmt(pctToMA(p),3)+' mA':'--';
+  $('readHP').textContent=isFinite(hp)?fmt(outDP(hp),3)+dpLabel():'--';
+  $('readLP').textContent=isFinite(lp)?fmt(outDP(lp),3)+dpLabel():'--';
+  $('readOffset').textContent=isFinite(off)?fmt(outDP(off),3)+dpLabel():'--';
+  var fillH=isFinite(p)?clamp(p):0;
+  $('tank-fill').style.height=fillH+'%';
+  $('tank-pct').textContent=isFinite(p)?fmt(p,1)+'%':'--';
+  if(r)$('rangeText').textContent='LRV '+fmt(outDP(r.lrv),3)+dpLabel()+' / URV '+fmt(outDP(r.urv),3)+dpLabel();
+  else $('rangeText').textContent='--';
+  buildTable();
+}
+
+function syncFromPct(w){
+  var p=gn('pct');if(p===null){read(NaN);return;}
+  p=clamp(p);var dpIn=dpFromPct(p),lv=levelFromPct(p);
+  if(w){$('pct').value=fmt(p,2);$('level').value=fmt(lv,3);$('ma').value=fmt(pctToMA(p),3);$('dp').value=fmt(outDP(dpIn),3);}
+  $('slider').value=p;updateChips(p);read(p);
+}
+function syncFromLevel(w){
+  var lv=gn('level');if(lv===null){read(NaN);return;}
+  var p=clamp(pctFromLevel(lv));var dpIn=dpFromPct(p);
+  if(w){$('pct').value=fmt(p,2);$('ma').value=fmt(pctToMA(p),3);$('dp').value=fmt(outDP(dpIn),3);}
+  $('slider').value=p;updateChips(p);read(p);
+}
+function syncFromMA(w){
+  var m=gn('ma');if(m===null){read(NaN);return;}
+  var p=clamp(maToPct(m));var dpIn=dpFromPct(p),lv=levelFromPct(p);
+  if(w){$('pct').value=fmt(p,2);$('level').value=fmt(lv,3);$('dp').value=fmt(outDP(dpIn),3);}
+  $('slider').value=p;updateChips(p);read(p);
+}
+function syncFromDP(w){
+  var d=gn('dp');if(d===null){read(NaN);return;}
+  var p=clamp(pctFromDP(inDP(d)));var lv=levelFromPct(p);
+  if(w){$('pct').value=fmt(p,2);$('level').value=fmt(lv,3);$('ma').value=fmt(pctToMA(p),3);}
+  $('slider').value=p;updateChips(p);read(p);
+}
+
+function setPct(p){source='pct';$('pct').value=p;syncFromPct(true);}
+
+function buildTable(){
+  var r=calcRange();
+  var tb=$('steps').querySelector('tbody');tb.innerHTML='';
+  if(!r)return;
+  [0,25,50,75,100].forEach(function(p){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+p+'%</td><td>'+fmt(levelFromPct(p),3)+uLabel()+'</td><td>'+fmt(outDP(hpAtPct(p)),3)+dpLabel()+'</td><td>'+fmt(outDP(lpRef()),3)+dpLabel()+'</td><td>'+fmt(outDP(dpFromPct(p)),3)+dpLabel()+'</td><td>'+fmt(pctToMA(p),3)+'</td>';
+    tb.appendChild(tr);
+  });
+}
+
+function clearLive(){
+  ['pct','level','ma','dp'].forEach(function(id){$(id).value='';});
+  $('slider').value=50;
+  read(NaN);
+}
+
+function refreshWet(){
+  var isWet=$('type').value==='wet';
+  document.querySelectorAll('.wet-only').forEach(function(e){e.style.display=isWet?'block':'none';});
+}
+
+function recalc(){
+  if(source==='level')syncFromLevel(false);
+  else if(source==='ma')syncFromMA(false);
+  else if(source==='dp')syncFromDP(false);
+  else syncFromPct(false);
+}
+
+var configIds=['type','span','spanUnit','procSG','procPreset','dpUnit','levelUnit','offset','offsetUnit','offsetSG','offsetPreset','wetH','wetUnit','wetSG','wetPreset'];
+
+function getSetups(){try{return JSON.parse(localStorage.getItem(saveKey)||'{}')}catch(e){return{};}}
+function renderSaved(){
+  var list=$('savedList'),setups=getSetups();
+  list.innerHTML='';
+  Object.keys(setups).sort().forEach(function(name){
+    var o=document.createElement('option');o.value=name;o.textContent=name;list.appendChild(o);
+  });
+  if(!list.children.length){var o=document.createElement('option');o.value='';o.textContent='No saved setups';list.appendChild(o);}
+}
+function saveSetup(){
+  var name=$('setupName').value.trim();
+  if(!name){alert('Enter a setup name first.');return;}
+  var setups=getSetups(),data={};
+  configIds.forEach(function(id){data[id]=$(id).value;});
+  setups[name]=data;
+  localStorage.setItem(saveKey,JSON.stringify(setups));
+  renderSaved();$('savedList').value=name;
+}
+function loadSetup(){
+  var name=$('savedList').value;if(!name)return;
+  var setup=getSetups()[name];if(!setup)return;
+  Object.keys(setup).forEach(function(id){if($(id))$(id).value=setup[id];});
+  $('setupName').value=name;
+  refreshWet();recalc();
+}
+function deleteSetup(){
+  var name=$('savedList').value;if(!name)return;
+  var setups=getSetups();delete setups[name];
+  localStorage.setItem(saveKey,JSON.stringify(setups));renderSaved();
+}
+
+// Wire events
+(function init(){
+  configIds.forEach(function(id){
+    if($(id))$(id).addEventListener('input',function(){refreshWet();recalc();});
+  });
+  $('type').addEventListener('change',function(){refreshWet();recalc();});
+  $('procPreset').addEventListener('change',function(){applyPreset('procPreset','procSG');});
+  $('offsetPreset').addEventListener('change',function(){applyPreset('offsetPreset','offsetSG');});
+  $('wetPreset').addEventListener('change',function(){applyPreset('wetPreset','wetSG');});
+  ['pct','level','ma','dp'].forEach(function(id){
+    $(id).addEventListener('input',function(){
+      source=id;
+      if(id==='pct')syncFromPct(false);
+      else if(id==='level')syncFromLevel(false);
+      else if(id==='ma')syncFromMA(false);
+      else syncFromDP(false);
+    });
+    $(id).addEventListener('change',function(){
+      if(id==='pct')syncFromPct(true);
+      else if(id==='level')syncFromLevel(true);
+      else if(id==='ma')syncFromMA(true);
+      else syncFromDP(true);
+    });
+  });
+  $('slider').addEventListener('input',function(){
+    source='pct';$('pct').value=$('slider').value;syncFromPct(true);
+  });
+  refreshWet();renderSaved();read(NaN);
+})();
+</script>
+</body>
+</html>
