@@ -42,43 +42,43 @@ label{font-weight:700;font-size:14px}
 .group-label:first-child{margin-top:0}
 
 /* Setting rows */
-.setting-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(–border);gap:12px}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);gap:12px}
 .setting-row:last-child{border-bottom:none}
 .setting-row-left{flex:1}
 .setting-label{font-weight:700;font-size:14px}
-.setting-desc{font-size:12px;color:var(–muted);margin-top:2px}
+.setting-desc{font-size:12px;color:var(--muted);margin-top:2px}
 
 /* Theme toggle */
-.theme-toggle{display:flex;background:var(–tile);border:1px solid var(–border);border-radius:12px;padding:3px;gap:3px}
-.theme-btn{padding:7px 12px;border-radius:9px;border:1px solid transparent;background:transparent;color:var(–muted);font-weight:700;font-size:13px;transition:all .15s;width:auto}
-.theme-btn.active{background:var(–card);color:var(–fg);border-color:var(–border);box-shadow:0 2px 6px rgba(0,0,0,.1)}
+.theme-toggle{display:flex;background:var(--tile);border:1px solid var(--border);border-radius:12px;padding:3px;gap:3px}
+.theme-btn{padding:7px 12px;border-radius:9px;border:1px solid transparent;background:transparent;color:var(--muted);font-weight:700;font-size:13px;transition:all .15s;width:auto}
+.theme-btn.active{background:var(--card);color:var(--fg);border-color:var(--border);box-shadow:0 2px 6px rgba(0,0,0,.1)}
 
 /* Units toggle */
-.units-toggle{display:flex;background:var(–tile);border:1px solid var(–border);border-radius:12px;padding:3px;gap:3px}
+.units-toggle{display:flex;background:var(--tile);border:1px solid var(--border);border-radius:12px;padding:3px;gap:3px}
 .units-btn{padding:7px 14px;border-radius:9px;border:1px solid transparent;background:transparent;color:var(–muted);font-weight:700;font-size:13px;transition:all .15s;width:auto}
-.units-btn.active{background:var(–accent);color:#fff;border-color:var(–accent)}
+.units-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 
 /* Stats grid */
 .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
-.stat-tile{background:var(–tile);border:1px solid var(–border);border-radius:14px;padding:12px 10px;text-align:center}
+.stat-tile{background:var(--tile);border:1px solid var(--border);border-radius:14px;padding:12px 10px;text-align:center}
 .stat-num{font-size:24px;font-weight:850;letter-spacing:-.4px;margin:2px 0}
-.stat-label{font-size:11px;font-weight:700;color:var(–muted);text-transform:uppercase;letter-spacing:.06em}
+.stat-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 
 /* Clear buttons */
 .clear-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
 .clear-btn-full{grid-column:1/-1}
 
 /* About */
-.about-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(–border)}
+.about-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
 .about-row:last-child{border-bottom:none}
-.about-key{font-size:13px;color:var(–muted);font-weight:600}
+.about-key{font-size:13px;color:var(--muted);font-weight:600}
 .about-val{font-size:13px;font-weight:700}
 
 /* Toast */
-#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(–fg);color:var(–card);padding:10px 20px;border-radius:999px;font-size:13px;font-weight:700;opacity:0;transition:all .25s;z-index:999;white-space:nowrap;pointer-events:none}
+#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--fg);color:var(--card);padding:10px 20px;border-radius:999px;font-size:13px;font-weight:700;opacity:0;transition:all .25s;z-index:999;white-space:nowrap;pointer-events:none}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-footer{text-align:center;color:var(–muted);font-size:13px;padding:22px}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
 @media(max-width:520px){main{padding:10px}.section-title{font-size:22px}.stats-grid{gap:8px}.stat-num{font-size:20px}}
 </style>
 
@@ -113,7 +113,7 @@ footer{text-align:center;color:var(–muted);font-size:13px;padding:22px}
   <div class="card">
     <div class="group-label">Display</div>
 
-```
+
 <div class="setting-row">
   <div class="setting-row-left">
     <div class="setting-label">Theme</div>
@@ -136,7 +136,7 @@ footer{text-align:center;color:var(–muted);font-size:13px;padding:22px}
     <button class="units-btn" id="units-metric" onclick="setUnits('metric')">Metric</button>
   </div>
 </div>
-```
+
 
   </div>
 
