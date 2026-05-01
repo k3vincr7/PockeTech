@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PockeTech — Jr. Tech Reference</title>
+<meta name="theme-color" content="#0f1115">
+<style>
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
+header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+html[data-theme="dark"] header{background:rgba(15,17,21,.75)}
+.header-left{display:flex;align-items:center;gap:8px}
+.brand{display:flex;flex-direction:column}
+.header-title{font-weight:800;font-size:18px}
+.build{font-size:12px;color:var(--muted)}
+.small-btn{padding:8px 12px;font-size:14px;border-radius:12px;width:auto;cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);font:inherit;font-weight:650}
+main{padding:14px;max-width:960px;margin:0 auto;padding-bottom:40px}
+
+/* Hero */
+.hero{background:linear-gradient(135deg,color-mix(in srgb,#8b5cf6 28%,var(--card)),var(--card) 70%);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:18px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+.hero::after{content:’’;position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,#8b5cf6 15%,transparent)}
+.hero-badge{display:inline-block;background:#8b5cf6;color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.hero-title{font-size:26px;font-weight:800;letter-spacing:-.5px;margin:0 0 4px}
+.hero-sub{color:var(--muted);font-size:13px;margin:0}
+
+/* Section label */
+.section-label{font-size:11px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin:20px 0 8px;padding:0 2px}
+
+/* Card */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+
+/* Collapsible */
+.coll-hdr{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:2px 0}
+.coll-hdr h3{margin:0;font-size:15px;font-weight:750;pointer-events:none;display:flex;align-items:center;gap:8px}
+.coll-arrow{font-size:11px;color:var(--muted);transition:transform .2s;pointer-events:none;display:inline-block}
+.coll-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.coll-body.open{max-height:4000px}
+.coll-arrow.open{transform:rotate(180deg)}
+
+/* Tables */
+.scroll-x{overflow-x:auto;margin-top:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--tile);padding:9px 10px;text-align:left;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--border);white-space:nowrap;color:var(--muted)}
+td{border:1px solid var(--border);padding:9px 10px;vertical-align:top;line-height:1.4}
+tr:nth-child(even) td{background:color-mix(in srgb,var(--tile) 40%,var(--card))}
+
+/* AI/AO/DI/DO cards */
+.io-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.io-card{border-radius:14px;padding:14px;border:1px solid var(--border)}
+.io-card.ai{background:color-mix(in srgb,#1f6bff 10%,var(--card));border-color:color-mix(in srgb,#1f6bff 30%,var(--border))}
+.io-card.ao{background:color-mix(in srgb,#f59e0b 10%,var(--card));border-color:color-mix(in srgb,#f59e0b 30%,var(--border))}
+.io-card.di{background:color-mix(in srgb,#22c55e 10%,var(--card));border-color:color-mix(in srgb,#22c55e 30%,var(--border))}
+.io-card.do-card{background:color-mix(in srgb,#ef4444 10%,var(--card));border-color:color-mix(in srgb,#ef4444 30%,var(--border))}
+.io-label{font-size:22px;font-weight:900;letter-spacing:-.5px}
+.io-full{font-size:12px;font-weight:700;color:var(--muted);margin:2px 0 8px}
+.io-signal{font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;display:inline-block;margin-bottom:8px}
+.sig-ai{background:color-mix(in srgb,#1f6bff 15%,transparent);color:#1f6bff}
+.sig-ao{background:color-mix(in srgb,#f59e0b 15%,transparent);color:#b45309}
+.sig-di{background:color-mix(in srgb,#22c55e 15%,transparent);color:#166534}
+.sig-do{background:color-mix(in srgb,#ef4444 15%,transparent);color:#991b1b}
+.io-why{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:8px}
+.io-example{font-size:12px;font-weight:700;padding:6px 8px;background:var(--tile);border-radius:8px;border-left:3px solid var(--border)}
+
+/* Rule box */
+.rule-box{background:color-mix(in srgb,#8b5cf6 10%,var(--tile));border:1px solid color-mix(in srgb,#8b5cf6 30%,var(--border));border-radius:12px;padding:12px 14px;margin-top:12px;font-size:13px;font-weight:700;color:#7c3aed;line-height:1.5}
+
+/* Color swatch */
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:middle;margin-right:4px;border:1px solid rgba(0,0,0,.15)}
+
+/* Signal math */
+.math-box{background:var(--tile);border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:13px;font-family:monospace;line-height:2;margin-top:10px}
+.math-box span{color:var(--accent);font-weight:700}
+
+/* Fault rows */
+.fault-row{padding:10px 0;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px}
+.fault-row:last-child{border-bottom:none}
+.fault-symptom{font-weight:700;font-size:14px}
+.fault-cause{font-size:12px;color:var(--muted)}
+.fault-fix{font-size:12px;color:#166534;font-weight:600}
+html[data-theme=“dark”] .fault-fix{color:#4ade80}
+
+/* Phonetic table compact */
+.alpha-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px;margin-top:10px}
+.alpha-item{background:var(--tile);border:1px solid var(–border);border-radius:8px;padding:7px 10px;font-size:13px}
+.alpha-char{font-weight:900;font-size:15px}
+.alpha-word{color:var(--muted);font-size:11px}
+
+footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
+@media(max-width:520px){main{padding:10px}.hero-title{font-size:22px}.io-grid{grid-template-columns:1fr}}
+</style>
+
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <button class="small-btn" onclick="location.href='./field-guide.html'">&#8592; Back</button>
+    <div class="brand">
+      <div class="header-title">PockeTech V2</div>
+      <div class="build">Jr. Tech Reference</div>
+    </div>
+  </div>
+  <button class="small-btn" onclick="toggleTheme()">&#127771;</button>
+</header>
+
+<main>
+
+  <div class="hero">
+    <div class="hero-badge">&#128218; JR. TECH</div>
+    <h1 class="hero-title">Jr. Tech Reference</h1>
+    <p class="hero-sub">Tag abbreviations, I/O types, color codes, signal math, faults &amp; field lingo.</p>
+  </div>
+
+  <!-- ── AI / AO / DI / DO ── -->
+
+  <div class="section-label">AI / AO / DI / DO — What &amp; Why</div>
+  <div class="card">
+    <div class="coll-hdr" onclick="toggleColl(this)">
+      <h3>&#128268; I/O Types Explained</h3><span class="coll-arrow">&#9660;</span>
+    </div>
+    <div class="coll-body open">
+      <div class="rule-box">&#128161; Golden Rule: Always think from the DCS/PLC perspective. If the signal is coming IN to the DCS = Input. If it's going OUT of the DCS = Output. That's it.</div>
+      <div class="io-grid">
+        <div class="io-card ai">
+          <div class="io-label">AI</div>
+          <div class="io-full">Analog Input</div>
+          <span class="io-signal sig-ai">4–20 mA</span>
+          <div class="io-why">The DCS is <strong>listening</strong>. A transmitter in the field is measuring something (pressure, flow, temp, level) and sending a 4–20 mA signal back to the DCS card. The DCS reads it.</div>
+          <div class="io-example">&#128204; FT-1001 flow transmitter → 4–20 mA → AI card</div>
+        </div>
+        <div class="io-card ao">
+          <div class="io-label">AO</div>
+          <div class="io-full">Analog Output</div>
+          <span class="io-signal sig-ao">4–20 mA</span>
+          <div class="io-why">The DCS is <strong>commanding</strong>. The DCS sends a 4–20 mA signal out to a control valve positioner or I/P to tell it where to go. The valve listens.</div>
+          <div class="io-example">&#128204; DCS → 4–20 mA → I/P → CV-2001 control valve</div>
+        </div>
+        <div class="io-card di">
+          <div class="io-label">DI</div>
+          <div class="io-full">Digital Input</div>
+          <span class="io-signal sig-di">24 VDC ON/OFF</span>
+          <div class="io-why">The DCS is <strong>reading a state</strong>. Is that switch open or closed? Is that motor running or stopped? It's a simple yes/no signal coming IN to the DCS — either 24VDC or 0V.</div>
+          <div class="io-example">&#128204; XV-2001 limit switch → OPEN/CLOSED → DI card</div>
+        </div>
+        <div class="io-card do-card">
+          <div class="io-label">DO</div>
+          <div class="io-full">Digital Output</div>
+          <span class="io-signal sig-do">24 VDC ON/OFF</span>
+          <div class="io-why">The DCS is <strong>commanding an action</strong>. Energize that solenoid. Start that motor. Trip that valve. The DCS sends 24VDC out to make something happen.</div>
+          <div class="io-example">&#128204; DCS → 24VDC → solenoid → XV-2001 opens</div>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Quick Reference</div>
+        <div class="scroll-x" style="margin-top:0">
+          <table>
+            <thead><tr><th>Type</th><th>Full Name</th><th>Signal</th><th>Direction</th><th>Field Example</th></tr></thead>
+            <tbody>
+              <tr><td><strong>AI</strong></td><td>Analog Input</td><td>4–20 mA</td><td>Field → DCS</td><td>Transmitters (FT, PT, TT, LT)</td></tr>
+              <tr><td><strong>AO</strong></td><td>Analog Output</td><td>4–20 mA</td><td>DCS → Field</td><td>Control valves, I/P converters</td></tr>
+              <tr><td><strong>DI</strong></td><td>Digital Input</td><td>24VDC ON/OFF</td><td>Field → DCS</td><td>Limit switches, PSH/PSL, motor status</td></tr>
+              <tr><td><strong>DO</strong></td><td>Digital Output</td><td>24VDC ON/OFF</td><td>DCS → Field</td><td>Solenoids, motor starters, XV valves</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ISA Tag Abbreviations ── -->
+
+  <div class="section-label">ISA Tag Abbreviations</div>
+  <div class="card">
+    <div class="coll-hdr" onclick="toggleColl(this)">
+      <h3>&#127991; Tag Names Decoded</h3><span class="coll-arrow">&#9660;</span>
+    </div>
+    <div class="coll-body">
+      <div class="scroll-x">
+        <table>
+          <thead><tr><th>Tag</th><th>Full Name</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><strong>FT</strong></td><td>Flow Transmitter</td><td>AI</td><td>Sends 4–20 mA to DCS</td></tr>
+            <tr><td><strong>PT</strong></td><td>Pressure Transmitter</td><td>AI</td><td>Sends 4–20 mA to DCS</td></tr>
+            <tr><td><strong>TT</strong></td><td>Temperature Transmitter</td><td>AI</td><td>RTD or TC head transmitter</td></tr>
+            <tr><td><strong>LT</strong></td><td>Level Transmitter</td><td>AI</td><td>DP, guided radar, etc.</td></tr>
+            <tr><td><strong>CV</strong></td><td>Control Valve</td><td>AO</td><td>Receives 4–20 mA from DCS</td></tr>
+            <tr><td><strong>XV</strong></td><td>On/Off Valve</td><td>DO/DI</td><td>DO to open/close, DI for position feedback</td></tr>
+            <tr><td><strong>PSH</strong></td><td>Pressure Switch High</td><td>DI</td><td>Trips when pressure goes high</td></tr>
+            <tr><td><strong>PSL</strong></td><td>Pressure Switch Low</td><td>DI</td><td>Trips when pressure goes low</td></tr>
+            <tr><td><strong>LSH/LSL</strong></td><td>Level Switch High/Low</td><td>DI</td><td>Float or paddle type</td></tr>
+            <tr><td><strong>LSHH/LSLL</strong></td><td>Level Switch High-High/Low-Low</td><td>DI</td><td>Safety shutdowns</td></tr>
+            <tr><td><strong>PSV</strong></td><td>Pressure Safety Valve</td><td>—</td><td>Mechanical relief, no signal</td></tr>
+            <tr><td><strong>FIC</strong></td><td>Flow Indicating Controller</td><td>—</td><td>DCS controller block</td></tr>
+            <tr><td><strong>PIC</strong></td><td>Pressure Indicating Controller</td><td>—</td><td>DCS controller block</td></tr>
+            <tr><td><strong>TIC</strong></td><td>Temperature Indicating Controller</td><td>—</td><td>DCS controller block</td></tr>
+            <tr><td><strong>LIC</strong></td><td>Level Indicating Controller</td><td>—</td><td>DCS controller block</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-top:8px">Always follow your project P&amp;IDs — site conventions can vary.</p>
+    </div>
+  </div>
+
+  <!-- ── Signal Math ── -->
+
+  <div class="section-label">Signal Math</div>
+  <div class="card">
+    <div class="coll-hdr" onclick="toggleColl(this)">
+      <h3>&#129518; Quick Conversions</h3><span class="coll-arrow">&#9660;</span>
+    </div>
+    <div class="coll-body">
+      <div class="math-box">
+        <div>mA &#8594; % &nbsp;&nbsp; <span>(mA &#8722; 4) &#247; 16 &#215; 100</span></div>
+        <div>% &#8594; mA &nbsp;&nbsp; <span>4 + (% &#247; 100 &#215; 16)</span></div>
+        <div>0% = <span>4 mA</span> &nbsp;|&nbsp; 25% = <span>8 mA</span> &nbsp;|&nbsp; 50% = <span>12 mA</span> &nbsp;|&nbsp; 75% = <span>16 mA</span> &nbsp;|&nbsp; 100% = <span>20 mA</span></div>
+        <div style="margin-top:8px">3&#8211;15 psi (I/P) &nbsp; <span>3 + (% &#247; 100 &#215; 12)</span></div>
+        <div>EU value &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span>LRV + (% &#247; 100 &#215; span)</span></div>
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:var(--muted)">Square root extraction — use for DP flow only. Linear for pressure, level, temperature.</div>
+    </div>
+  </div>
+
+  <!-- ── TC / RTD Color Codes ── -->
+
+  <div class="section-label">Thermocouple &amp; RTD Color Codes</div>
+  <div class="card">
+    <div class="coll-hdr" onclick="toggleColl(this)">
+      <h3>&#127777;&#65039; TC / RTD Wiring</h3><span class="coll-arrow">&#9660;</span>
+    </div>
+    <div class="coll-body">
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button class="small-btn" id="btn-ansi" onclick="setStd('ANSI')" style="background:var(--accent);color:#fff;border-color:var(--accent)">ANSI (US)</button>
+        <button class="small-btn" id="btn-iec" onclick="setStd('IEC')">IEC (Intl)</button>
+      </div>
+      <div class="scroll-x">
+        <table id="tc-table">
+          <thead><tr><th>Type</th><th>+ Lead</th><th>&#8722; Lead</th><th>Notes</th></tr></thead>
+          <tbody id="tc-tbody"></tbody>
+        </table>
+      </div>
+      <p style="font-size:12px;color:#991b1b;font-weight:700;margin-top:8px">&#9888; In ANSI thermocouples RED is NEGATIVE. Always verify with site drawings.</p>
+      <div style="margin-top:12px;font-size:13px;font-weight:750">RTD (Pt100) Wiring</div>
+      <div class="scroll-x">
+        <table>
+          <thead><tr><th>Config</th><th>Wires</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>2-wire</td><td>Any pair</td><td>Lead resistance adds error — avoid for precision</td></tr>
+            <tr><td>3-wire</td><td>Red, Red, White (ANSI)</td><td>Controller compensates one lead — most common</td></tr>
+            <tr><td>4-wire</td><td>Matched pairs</td><td>Best accuracy — two sense, two drive</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Common Faults ── -->
+
+  <div class="section-label">Common Faults &amp; Fixes</div>
+  <div class="card">
+    <div class="coll-hdr" onclick="toggleColl(this)">
+      <h3>&#128293; Troubleshooting</h3><span class="coll-arrow">&#9660;</span>
+    </div>
+    <div class="coll-body" style="padding-top:10px">
+      <div class="fault-row">
+        <div class="fault-symptom">&#128308; DCS reads 0% / 4 mA flatline</div>
+        <div class="fault-cause">Cause: No loop power, broken wire, blown fuse, wrong card polarity</div>
+        <div class="fault-fix">Fix: Check 24VDC at TX terminals, verify wiring polarity, check fuse on AI card</div>
+      </div>
+      <div class="fault-row">
+        <div class="fault-symptom">&#128308; DCS reads 100% / 20 mA flatline</div>
+        <div class="fault-cause">Cause: TX fail-high, shorted wiring, card fault</div>
+        <div class="fault-fix">Fix: Disconnect TX and put mA source on loop — if DCS reads correct, TX is bad</div>
+      </div>
+      <div class="fault-row">
+        <div class="fault-symptom">&#128992; Noisy / jumping signal</div>
+        <div class="fault-cause">Cause: Shield not grounded, running next to high voltage, loose terminal</div>
+        <div class="fault-fix">Fix: Land shield at one end only (marshaling panel), tighten terminals, re-route cable</div>
+      </div>
+      <div class="fault-row">
+        <div class="fault-symptom">&#128992; Control valve not responding to DCS</div>
+        <div class="fault-cause">Cause: No air supply, I/P not calibrated, AO card fault, positioner issue</div>
+        <div class="fault-fix">Fix: Check air supply first, verify 4–20 mA at I/P input, bench test positioner</div>
+      </div>
+      <div class="fault-row">
+        <div class="fault-symptom">&#128308; XV valve not opening on DO command</div>
+        <div class="fault-cause">Cause: Solenoid not energizing, no air, interlock active, wiring fault</div>
+        <div class="fault-fix">Fix: Check DO output voltage at field terminal, verify no active interlocks in DCS</div>
+      </div>
+      <div class="fault-row">
+        <div class="fault-symptom">&#128992; DCS reading doesn't match field gauge</div>
+        <div class="fault-cause">Cause: Wrong LRV/URV in TX, calibration drift, wrong EU in DCS</div>
+        <div class="fault-fix">Fix: Verify TX range matches DCS range, trim zero and span at TX</div>
+      </div>
+      <div class="fault-row">
+        <div class="fault-symptom">&#128308; Loop reads negative or below 4 mA</div>
+        <div class="fault-cause">Cause: Reversed polarity on AI card or at TX terminals</div>
+        <div class="fault-fix">Fix: Swap +/&#8722; wires at TX or at AI card — check loop drawing for correct polarity</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Field Lingo ── -->
+
+  <div class="section-label">Field Lingo</div>
+  <div class="card">
+    <div class="coll-hdr" onclick="toggleColl(this)">
+      <h3>&#128483;&#65039; Phonetic Alphabet</h3><span class="coll-arrow">&#9660;</span>
+    </div>
+    <div class="coll-body">
+      <div class="alpha-grid" id="alpha-grid"></div>
+      <p style="font-size:12px;color:var(--muted);margin-top:10px">Use when calling out tag numbers on radio — "Foxtrot Tango One Zero Zero One"</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="coll-hdr" onclick="toggleColl(this)">
+      <h3>&#128267; Radio Prowords</h3><span class="coll-arrow">&#9660;</span>
+    </div>
+    <div class="coll-body">
+      <div class="scroll-x">
+        <table>
+          <thead><tr><th>Word</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Copy</strong></td><td>Received and understood</td></tr>
+            <tr><td><strong>Affirmative</strong></td><td>Yes</td></tr>
+            <tr><td><strong>Negative</strong></td><td>No</td></tr>
+            <tr><td><strong>Say again</strong></td><td>Please repeat</td></tr>
+            <tr><td><strong>Standby</strong></td><td>Wait one moment</td></tr>
+            <tr><td><strong>Over</strong></td><td>Done talking, your turn</td></tr>
+            <tr><td><strong>Out</strong></td><td>Conversation complete</td></tr>
+            <tr><td><strong>Wilco</strong></td><td>Will comply</td></tr>
+            <tr><td><strong>Break</strong></td><td>Separating two subjects</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="coll-hdr" onclick="toggleColl(this)">
+      <h3>&#128207; SI Prefixes</h3><span class="coll-arrow">&#9660;</span>
+    </div>
+    <div class="coll-body">
+      <div class="scroll-x">
+        <table>
+          <thead><tr><th>Prefix</th><th>Symbol</th><th>Factor</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>nano</td><td>n</td><td>10&#8315;&#179;</td><td>nA</td></tr>
+            <tr><td>micro</td><td>&#956;</td><td>10&#8315;&#8310;</td><td>&#956;A, &#956;V</td></tr>
+            <tr><td>milli</td><td>m</td><td>10&#8315;&#179;</td><td>mA, mV</td></tr>
+            <tr><td>kilo</td><td>k</td><td>10&#179;</td><td>kPa, k&#937;</td></tr>
+            <tr><td>mega</td><td>M</td><td>10&#8310;</td><td>MW, M&#937;</td></tr>
+            <tr><td>giga</td><td>G</td><td>10&#8313;</td><td>G&#937;</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</main>
+<footer>PockeTech V2 — Jr. Tech Reference</footer>
+
+<script>
+(function(){var t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+function toggleTheme(){var h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',next);localStorage.setItem('pt-v2-theme',next);}
+
+function toggleColl(hdr){
+  var body=hdr.nextElementSibling;
+  var arrow=hdr.querySelector('.coll-arrow');
+  body.classList.toggle('open');
+  if(arrow)arrow.classList.toggle('open');
+}
+
+// TC Color Tables
+var TC={
+  ANSI:[
+    ['J','White','Red','Iron/Constantan — general purpose'],
+    ['K','Yellow','Red','Chromel/Alumel — most common'],
+    ['T','Blue','Red','Copper/Constantan — low temp'],
+    ['E','Purple','Red','Chromel/Constantan — high sensitivity'],
+    ['N','Orange','Red','Nicrosil/Nisil — stable high temp'],
+    ['R','Black','Red','PtRh/Pt — high temp furnaces'],
+    ['S','Black','Red','PtRh/Pt — high temp furnaces'],
+    ['B','Grey','Red','PtRh/Pt — very high temp']
+  ],
+  IEC:[
+    ['J','Black','White','Iron/Constantan'],
+    ['K','Green','White','Chromel/Alumel — most common'],
+    ['T','Brown','White','Copper/Constantan — low temp'],
+    ['E','Purple','White','Chromel/Constantan'],
+    ['N','Pink','White','Nicrosil/Nisil'],
+    ['R','Orange','White','PtRh/Pt — high temp'],
+    ['S','Orange','White','PtRh/Pt — high temp'],
+    ['B','Grey','White','PtRh/Pt — very high temp']
+  ]
+};
+
+var colorMap={
+  'White':'#f5f5f5','Red':'#ef4444','Yellow':'#eab308','Blue':'#3b82f6',
+  'Purple':'#8b5cf6','Orange':'#f97316','Black':'#1f2937','Grey':'#6b7280',
+  'Brown':'#92400e','Green':'#22c55e','Pink':'#ec4899'
+};
+
+var currentStd='ANSI';
+
+function setStd(s){
+  currentStd=s;
+  document.getElementById('btn-ansi').style.cssText=s==='ANSI'?'background:var(--accent);color:#fff;border-color:var(--accent)':'';
+  document.getElementById('btn-iec').style.cssText=s==='IEC'?'background:var(--accent);color:#fff;border-color:var(--accent)':'';
+  renderTC();
+}
+
+function renderTC(){
+  var tbody=document.getElementById('tc-tbody');
+  tbody.innerHTML='';
+  TC[currentStd].forEach(function(r){
+    var posColor=colorMap[r[1]]||'#ccc';
+    var negColor=colorMap[r[2]]||'#ccc';
+    tbody.innerHTML+='<tr><td><strong>'+r[0]+'</strong></td>'+
+      '<td><span class="swatch" style="background:'+posColor+'"></span>'+r[1]+'</td>'+
+      '<td><span class="swatch" style="background:'+negColor+'"></span>'+r[2]+'</td>'+
+      '<td>'+r[3]+'</td></tr>';
+  });
+}
+
+// Phonetic alphabet
+var alpha=[
+  ['A','Alpha'],['B','Bravo'],['C','Charlie'],['D','Delta'],['E','Echo'],
+  ['F','Foxtrot'],['G','Golf'],['H','Hotel'],['I','India'],['J','Juliett'],
+  ['K','Kilo'],['L','Lima'],['M','Mike'],['N','November'],['O','Oscar'],
+  ['P','Papa'],['Q','Quebec'],['R','Romeo'],['S','Sierra'],['T','Tango'],
+  ['U','Uniform'],['V','Victor'],['W','Whiskey'],['X','X-ray'],['Y','Yankee'],['Z','Zulu']
+];
+
+var grid=document.getElementById('alpha-grid');
+alpha.forEach(function(a){
+  grid.innerHTML+='<div class="alpha-item"><div class="alpha-char">'+a[0]+'</div><div class="alpha-word">'+a[1]+'</div></div>';
+});
+
+// Init
+renderTC();
+</script>
+
+</body>
+</html>
