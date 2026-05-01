@@ -297,7 +297,7 @@ function loadUnitsState(){
 // Export
 function exportData(type){
   if(type==='cal'||type==='all') doExport('pt_cal_v2','PockeTech_Cal',['ID','Mode','Tag','WO','Date','Location','Comments']);
-  if(type==='loop'||type==='all') doExport('pt_loop_log','PockeTech_LoopLog',['ID','Tag','Date','Status','Notes']);
+  if(type==='loop'||type==='all') doExport('pt-v2-looplog-v2','PockeTech_LoopLog',['ID','Tag','Date','Status','Notes']);
   if(type==='tickets'||type==='all') doExport('pt_tickets_v2','PockeTech_Tickets',['ID','Date','Tag','Area','WO','Type','Priority','Status','Summary','Description','Resolution']);
   toast('Export ready');
 }
