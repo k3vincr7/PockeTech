@@ -1,1 +1,420 @@
-<!DOCTYPE html><html lang="en" data-theme="auto"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>PockeTech V2 — I/P 3-15</title><meta name="theme-color" content="#0f1115"><style>:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--ok:#166534;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}html[data-theme=dark]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}@media(prefers-color-scheme:dark){html[data-theme=auto]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}html[data-theme=dark] header{background:rgba(15,17,21,.75)}main{padding:14px;max-width:960px;margin:0 auto}.brand{display:flex;flex-direction:column}.title{font-weight:850;font-size:18px}.build,.muted{font-size:13px;color:var(--muted);line-height:1.35}button,input{font:inherit;border-radius:14px}button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;font-weight:650}button:active{transform:translateY(1px) scale(.99)}input{width:100%;padding:13px;border:1px solid var(--border);background:var(--card);color:var(--fg);margin-top:7px;outline:none}input:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}input[type=range]{accent-color:var(--accent);padding:0;border:none;background:transparent;margin-top:10px}label{font-weight:700;font-size:14px}.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}.hero{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 28%,var(--card)),var(--card) 70%);overflow:hidden;position:relative}.hero:after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,transparent)}.row{display:flex;gap:12px;flex-wrap:wrap}.col{flex:1 1 230px}.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-bottom:14px}.result-card{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:14px}.big{font-size:28px;font-weight:850;margin:4px 0;letter-spacing:-.4px}.slider-wrap{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:14px;margin-top:14px}.chipbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.chip{width:auto;border-radius:999px;padding:9px 13px}.ok{background:var(--ok);border-color:var(--ok);color:white}.small-btn{padding:8px 10px;font-size:14px;border-radius:12px;width:auto}.scroll-x{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}th,td{border:1px solid var(--border);padding:9px;text-align:left}th{background:var(--tile)}.copy-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.copy-row button{flex:1 1 120px}.note{background:color-mix(in srgb,var(--accent) 10%,var(--tile));border:1px solid color-mix(in srgb,var(--accent) 35%,var(--border));border-radius:14px;padding:12px;color:var(--muted);font-size:13px;line-height:1.35}@media(max-width:520px){main{padding:12px}.card{padding:14px}.big{font-size:24px}}</style></head><body><header><div class="brand"><div class="title">PockeTech V2</div><div class="build">I/P 3–15</div></div><button class="small-btn" onclick="toggleTheme()">🌓</button></header><main><div class="card hero"><h1 style="margin:0 0 6px">I/P 3–15</h1><p class="muted" style="margin:0">Convert 4–20 mA, 3–15 PSI, and percent for I/P converters and valve signal checks.</p></div><div class="card"><div class="row"><div class="col"><label>mA</label><input id="ma" type="text" inputmode="text" placeholder="12"></div><div class="col"><label>PSI</label><input id="psi" type="text" inputmode="text" placeholder="9"></div><div class="col"><label>%</label><input id="pct" type="text" inputmode="text" placeholder="50"></div></div><div class="slider-wrap"><label>Live % Slider</label><input id="slider" type="range" min="0" max="100" step="0.1" value="50"><div class="chipbar"><button class="chip" onclick="setPct(0)">0%</button><button class="chip" onclick="setPct(25)">25%</button><button class="chip" onclick="setPct(50)">50%</button><button class="chip" onclick="setPct(75)">75%</button><button class="chip" onclick="setPct(100)">100%</button></div></div></div><div class="result-grid"><div class="result-card"><div class="muted">Percent</div><div class="big" id="readPct">—</div></div><div class="result-card"><div class="muted">mA</div><div class="big" id="readMA">—</div></div><div class="result-card"><div class="muted">PSI</div><div class="big" id="readPSI">—</div></div></div><div class="card"><h2 style="margin-top:0">Copy Values</h2><div class="copy-row"><button onclick="copyVal('ma')">Copy mA</button><button onclick="copyVal('psi')">Copy PSI</button><button onclick="copyVal('pct')">Copy %</button></div><p class="muted" id="copyMsg" style="margin-bottom:0"></p></div><div class="card"><div class="row"><div class="col"><button class="ok" onclick="buildTable()">Build 5-Point Table</button></div><div class="col"><button onclick="clearAll()">Clear</button></div></div><div class="scroll-x"><table id="steps"><thead><tr><th>%</th><th>mA</th><th>PSI</th></tr></thead><tbody></tbody></table></div></div><div class="card"><div class="note">Standard I/P range: 4 mA = 3 PSI, 20 mA = 15 PSI. Midpoint: 12 mA = 9 PSI = 50%.</div></div><div class="card"><button onclick="location.href='./'">← Back to PockeTech V2</button></div></main><script src="common.js"></script><script>let source='pct';function pctToPSI(p){return 3+(p/100)*12}function psiToPct(p){return ((p-3)/12)*100}function read(p){if(!Number.isFinite(p)){$('readPct').textContent='—';$('readMA').textContent='—';$('readPSI').textContent='—';return}p=clamp(p);$('readPct').textContent=fmt(p,2)+' %';$('readMA').textContent=fmt(pctToMA(p),3)+' mA';$('readPSI').textContent=fmt(pctToPSI(p),3)+' PSI';$('slider').value=p}function writeAll(p){p=clamp(p);$('pct').value=fmt(p,2);$('ma').value=fmt(pctToMA(p),3);$('psi').value=fmt(pctToPSI(p),3);read(p)}function syncPct(w=false){const p=n('pct');if(p===null){read(NaN);return}w?writeAll(p):read(p)}function syncMA(w=false){const m=n('ma');if(m===null){read(NaN);return}const p=clamp(maToPct(m));if(w)writeAll(p);else read(p)}function syncPSI(w=false){const ps=n('psi');if(ps===null){read(NaN);return}const p=clamp(psiToPct(ps));if(w)writeAll(p);else read(p)}function setPct(p){source='pct';$('pct').value=p;writeAll(p)}function buildTable(){const tb=$('steps').querySelector('tbody');tb.innerHTML='';[0,25,50,75,100].forEach(p=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${p}%</td><td>${fmt(pctToMA(p),3)}</td><td>${fmt(pctToPSI(p),3)}</td>`;tb.appendChild(tr)})}function clearAll(){['pct','ma','psi'].forEach(id=>$(id).value='');$('steps').querySelector('tbody').innerHTML='';$('slider').value=50;read(NaN);$('copyMsg').textContent=''}async function copyVal(type){let text='';const p=source==='ma'?clamp(maToPct(n('ma')??NaN)):source==='psi'?clamp(psiToPct(n('psi')??NaN)):clamp(n('pct')??NaN);if(!Number.isFinite(p)){ $('copyMsg').textContent='Nothing to copy yet.'; return }if(type==='ma')text=fmt(pctToMA(p),3)+' mA';if(type==='psi')text=fmt(pctToPSI(p),3)+' PSI';if(type==='pct')text=fmt(p,2)+' %';try{await navigator.clipboard.writeText(text);$('copyMsg').textContent='Copied: '+text}catch{$('copyMsg').textContent=text}}function wire(){$('pct').addEventListener('input',()=>{source='pct';syncPct(false)});$('pct').addEventListener('change',()=>syncPct(true));$('ma').addEventListener('input',()=>{source='ma';syncMA(false)});$('ma').addEventListener('change',()=>syncMA(true));$('psi').addEventListener('input',()=>{source='psi';syncPSI(false)});$('psi').addEventListener('change',()=>syncPSI(true));$('slider').addEventListener('input',()=>{source='pct';$('pct').value=$('slider').value;writeAll(Number($('slider').value))})}(function init(){wire();read(NaN)})();</script></body></html>
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PockeTech — I/P 3–15</title>
+<meta name="theme-color" content="#0f1115">
+<style>
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--purple:#8b5cf6;--ok:#166534;--ok-bg:#dcfce7;--fail:#991b1b;--fail-bg:#fee2e2;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--ok-bg:#14532d;--fail-bg:#450a0a;--shadow:0 14px 34px rgba(0,0,0,.35)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--ok-bg:#14532d;--fail-bg:#450a0a;--shadow:0 14px 34px rgba(0,0,0,.35)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
+header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+html[data-theme="dark"] header{background:rgba(15,17,21,.75)}
+.header-left{display:flex;align-items:center;gap:8px}
+.brand{display:flex;flex-direction:column}
+.header-title{font-weight:800;font-size:18px}
+.build{font-size:12px;color:var(--muted)}
+main{padding:14px;max-width:960px;margin:0 auto;padding-bottom:40px}
+button,input{font:inherit;border-radius:14px}
+button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;font-weight:650;transition:transform .08s,box-shadow .15s}
+button:active{transform:translateY(1px) scale(.99)}
+input{width:100%;padding:11px 13px;border:1px solid var(--border);background:var(--card);color:var(--fg);margin-top:6px;outline:none}
+input:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
+input[type=range]{accent-color:var(--purple);padding:0;border:none;background:transparent;margin-top:10px;width:100%}
+label{font-weight:700;font-size:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.hero{background:linear-gradient(135deg,color-mix(in srgb,var(--purple) 22%,var(--card)),var(--card) 70%);overflow:hidden;position:relative}
+.hero::after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,var(--purple) 15%,transparent)}
+.hero-badge{display:inline-block;background:var(--purple);color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.section-title{margin:0 0 4px;font-size:26px;font-weight:800;letter-spacing:-.5px}
+.muted{color:var(--muted);font-size:13px;line-height:1.35}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.col{flex:1 1 140px}
+.hr{height:1px;background:var(--border);margin:14px 0}
+.small-btn{padding:8px 12px;font-size:14px;border-radius:12px;width:auto}
+
+/* Source tag */
+.source-tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--purple) 15%,transparent);color:var(--purple);margin-left:6px;vertical-align:middle}
+
+/* Result grid */
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.result-card{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:14px;text-align:center;cursor:pointer;transition:box-shadow .15s,border-color .15s}
+.result-card:hover{box-shadow:var(--shadow)}
+.result-card.active{border-color:var(--purple);background:color-mix(in srgb,var(--purple) 8%,var(--tile))}
+.result-card .label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.result-card .big{font-size:24px;font-weight:850;margin:4px 0;letter-spacing:-.4px;color:var(--purple)}
+.result-card .tap-hint{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* Slider */
+.slider-wrap{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:14px;margin-top:12px}
+.chip-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{width:auto;border-radius:999px;padding:8px 13px;font-size:13px;font-weight:700}
+.chip.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+
+/* Collapsible */
+.coll-hdr{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:2px 0}
+.coll-hdr h3{margin:0;font-size:15px;font-weight:750;pointer-events:none}
+.coll-arrow{font-size:11px;color:var(--muted);transition:transform .2s;pointer-events:none;display:inline-block}
+.coll-body{max-height:0;overflow:hidden;transition:max-height .28s ease}
+.coll-body.open{max-height:3000px}
+.coll-arrow.open{transform:rotate(180deg)}
+
+/* Table */
+.scroll-x{overflow-x:auto;margin-top:10px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{background:var(--tile);padding:9px 10px;text-align:center;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--border)}
+td{border:1px solid var(--border);padding:9px 10px;text-align:center}
+
+/* Copy buttons */
+.copy-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.copy-bar button{flex:1 1 100px;padding:10px;font-size:13px;border-radius:12px}
+.copy-btn-active{background:var(--ok-bg);color:var(--ok);border-color:var(--ok)}
+
+/* Reference rows */
+.ref-row{padding:10px 0;border-bottom:1px solid var(--border)}
+.ref-row:last-child{border-bottom:none}
+.ref-title{font-weight:700;font-size:14px;margin-bottom:3px}
+.ref-desc{font-size:13px;color:var(--muted);line-height:1.4}
+
+/* Note box */
+.note-box{background:color-mix(in srgb,var(--purple) 8%,var(--tile));border:1px solid color-mix(in srgb,var(--purple) 25%,var(--border));border-radius:12px;padding:12px 14px;font-size:13px;color:var(--muted);line-height:1.4;margin-top:10px}
+
+/* Split range mode toggle */
+.mode-toggle{display:flex;background:var(--tile);border:1px solid var(--border);border-radius:14px;padding:4px;gap:4px;margin-bottom:14px}
+.mode-btn{flex:1;padding:9px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--muted);font-weight:700;font-size:13px;transition:all .15s}
+.mode-btn.active{background:var(--card);color:var(--fg);box-shadow:0 2px 8px rgba(0,0,0,.12);border-color:var(--border)}
+
+footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
+@media(max-width:520px){main{padding:10px}.section-title{font-size:22px}.result-grid{gap:8px}.result-card .big{font-size:20px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <button class="small-btn" onclick="location.href='./index.html'">&#8592; Back</button>
+    <div class="brand">
+      <div class="header-title">PockeTech V2</div>
+      <div class="build">I/P 3&#8211;15</div>
+    </div>
+  </div>
+  <button class="small-btn" onclick="toggleTheme()">&#127771;</button>
+</header>
+
+<main>
+
+  <!-- Hero -->
+
+  <div class="card hero">
+    <div class="hero-badge">&#127917; I/P</div>
+    <h1 class="section-title">I/P 3&#8211;15</h1>
+    <p class="muted" style="margin:4px 0 0">Convert 4&#8211;20 mA, 3&#8211;15 PSI and percent. Supports split range and custom bench set.</p>
+  </div>
+
+  <!-- Mode Toggle -->
+
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="btn-std" onclick="setMode('std')">Standard 4&#8211;20 mA</button>
+    <button class="mode-btn" id="btn-split" onclick="setMode('split')">Split Range / Custom</button>
+  </div>
+
+  <!-- Split Range Inputs (hidden by default) -->
+
+  <div id="split-card" class="card" style="display:none">
+    <h3 style="margin:0 0 12px;font-size:15px;font-weight:750">Custom mA Range</h3>
+    <p class="muted" style="margin:0 0 12px">Use when positioner is set to a split range (e.g. 4&#8211;12 mA = 0&#8211;100%) or non-standard bench set.</p>
+    <div class="row">
+      <div class="col"><label>mA Low (0%)</label><input id="ma_lo" inputmode="decimal" placeholder="4" value="4"></div>
+      <div class="col"><label>mA High (100%)</label><input id="ma_hi" inputmode="decimal" placeholder="20" value="20"></div>
+      <div class="col"><label>PSI Low (0%)</label><input id="psi_lo" inputmode="decimal" placeholder="3" value="3"></div>
+      <div class="col"><label>PSI High (100%)</label><input id="psi_hi" inputmode="decimal" placeholder="15" value="15"></div>
+    </div>
+  </div>
+
+  <!-- Live Signal -->
+
+  <div class="card">
+    <h3 style="margin:0 0 12px;font-size:15px;font-weight:750">Live Signal <span id="source-tag" class="source-tag">from %</span></h3>
+    <div class="row">
+      <div class="col"><label>mA</label><input id="ma" inputmode="decimal" placeholder="12.000"></div>
+      <div class="col"><label>PSI</label><input id="psi" inputmode="decimal" placeholder="9.000"></div>
+      <div class="col"><label>%</label><input id="pct" inputmode="decimal" placeholder="50"></div>
+    </div>
+    <div class="slider-wrap">
+      <label>Live % Slider</label>
+      <input id="slider" type="range" min="0" max="100" step="0.1" value="50">
+      <div class="chip-bar">
+        <button class="chip" id="c0"   onclick="setPct(0)">0%</button>
+        <button class="chip" id="c25"  onclick="setPct(25)">25%</button>
+        <button class="chip" id="c50"  onclick="setPct(50)">50%</button>
+        <button class="chip" id="c75"  onclick="setPct(75)">75%</button>
+        <button class="chip" id="c100" onclick="setPct(100)">100%</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results — tap to convert from -->
+
+  <div class="result-grid">
+    <div class="result-card" id="rc-pct" onclick="setFrom('pct')">
+      <div class="label">Percent</div>
+      <div class="big" id="readPct">&#8212;</div>
+      <div class="tap-hint">tap to convert from</div>
+    </div>
+    <div class="result-card" id="rc-ma" onclick="setFrom('ma')">
+      <div class="label">mA</div>
+      <div class="big" id="readMA">&#8212;</div>
+      <div class="tap-hint">tap to convert from</div>
+    </div>
+    <div class="result-card" id="rc-psi" onclick="setFrom('psi')">
+      <div class="label">PSI</div>
+      <div class="big" id="readPSI">&#8212;</div>
+      <div class="tap-hint">tap to convert from</div>
+    </div>
+  </div>
+
+  <!-- Copy Values -->
+
+  <div class="card">
+    <h3 style="margin:0 0 4px;font-size:15px;font-weight:750">Copy Values</h3>
+    <p class="muted" style="margin:0 0 4px">Tap to copy to clipboard for DCS entry or documentation.</p>
+    <div class="copy-bar">
+      <button id="copy-ma"  onclick="copyVal('ma')">Copy mA</button>
+      <button id="copy-psi" onclick="copyVal('psi')">Copy PSI</button>
+      <button id="copy-pct" onclick="copyVal('pct')">Copy %</button>
+    </div>
+    <p class="muted" id="copyMsg" style="margin:8px 0 0;font-size:12px"></p>
+  </div>
+
+  <!-- 5-Point Table -->
+
+  <div class="card">
+    <div class="coll-hdr" onclick="toggleColl(this)">
+      <h3>&#128203; 5-Point Reference Table</h3><span class="coll-arrow">&#9660;</span>
+    </div>
+    <div class="coll-body">
+      <div class="scroll-x">
+        <table id="steps">
+          <thead><tr><th>%</th><th>mA</th><th>PSI</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="muted" style="margin-top:8px">Auto-updates when range changes.</p>
+    </div>
+  </div>
+
+  <!-- Field Reference -->
+
+  <div class="card">
+    <div class="coll-hdr" onclick="toggleColl(this)">
+      <h3>&#128221; I/P Field Reference</h3><span class="coll-arrow">&#9660;</span>
+    </div>
+    <div class="coll-body">
+      <div style="height:10px"></div>
+
+```
+  <div class="ref-row">
+    <div class="ref-title">What is an I/P?</div>
+    <div class="ref-desc">Current-to-Pressure converter. Takes a 4&#8211;20 mA signal from the DCS/AO card and converts it to a 3&#8211;15 PSI pneumatic signal to move a control valve or actuator.</div>
+  </div>
+
+  <div class="ref-row">
+    <div class="ref-title">Standard Bench Set</div>
+    <div class="ref-desc">4 mA = 3 PSI (0%) &nbsp;|&nbsp; 12 mA = 9 PSI (50%) &nbsp;|&nbsp; 20 mA = 15 PSI (100%). Confirm with the positioner datasheet — some use 6&#8211;30 PSI.</div>
+  </div>
+
+  <div class="ref-row">
+    <div class="ref-title">Split Range Example</div>
+    <div class="ref-desc">Two valves on one AO: Valve A = 4&#8211;12 mA (0&#8211;100%), Valve B = 12&#8211;20 mA (0&#8211;100%). Use the Split Range mode above to calculate each valve's signal range.</div>
+  </div>
+
+  <div class="ref-row">
+    <div class="ref-title">No Output / Low Output</div>
+    <div class="ref-desc">Check: instrument air supply (min 20 PSI supply), input mA signal at I/P terminals, zero/span screws on I/P body, clogged nozzle or flapper.</div>
+  </div>
+
+  <div class="ref-row">
+    <div class="ref-title">Calibration Steps</div>
+    <div class="ref-desc">1. Apply 4 mA — adjust zero until output = 3 PSI. 2. Apply 20 mA — adjust span until output = 15 PSI. 3. Repeat until stable. Verify at 50% (12 mA = 9 PSI).</div>
+  </div>
+
+  <div class="ref-row">
+    <div class="ref-title">Air Supply Requirement</div>
+    <div class="ref-desc">Instrument air must be clean, dry, and at least 5 PSI above max output. For 3&#8211;15 PSI output, supply should be minimum 20 PSI.</div>
+  </div>
+
+  <div class="note-box">
+    &#128161; <strong>Tip:</strong> If valve hunts or oscillates, check for air supply pressure fluctuation or positioner feedback linkage issues — not the I/P itself.
+  </div>
+</div>
+```
+
+  </div>
+
+</main>
+<footer>PockeTech V2 — I/P 3&#8211;15</footer>
+
+<script>
+// common.js inlined
+var $ = function(id){return document.getElementById(id);};
+function fmt(v,d){d=d===undefined?3:d;return(typeof v==='number'&&isFinite(v))?Number(v).toFixed(d):'--';}
+(function(){var t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+(function(){var sx,sy;document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=Math.abs(e.changedTouches[0].clientY-sy);if(sx<60&&dx>50&&dy<100)history.back();},{passive:true});})();
+function toggleTheme(){var h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',next);localStorage.setItem('pt-v2-theme',next);}
+
+function toggleColl(hdr){
+  var body=hdr.nextElementSibling;
+  var arrow=hdr.querySelector('.coll-arrow');
+  body.classList.toggle('open');
+  if(arrow)arrow.classList.toggle('open');
+}
+
+var source='pct';
+var currentMode='std';
+
+function gn(id){var raw=$(id).value.trim();if(raw==='')return null;var x=Number(raw);return isFinite(x)?x:null;}
+
+// Get current ranges
+function getRanges(){
+  if(currentMode==='std') return{maLo:4,maHi:20,psiLo:3,psiHi:15};
+  var maLo=gn('ma_lo'),maHi=gn('ma_hi'),psiLo=gn('psi_lo'),psiHi=gn('psi_hi');
+  return{
+    maLo: maLo!==null?maLo:4,
+    maHi: maHi!==null?maHi:20,
+    psiLo: psiLo!==null?psiLo:3,
+    psiHi: psiHi!==null?psiHi:15
+  };
+}
+
+function pctToMA(p){var r=getRanges();return r.maLo+(p/100)*(r.maHi-r.maLo);}
+function pctToPSI(p){var r=getRanges();return r.psiLo+(p/100)*(r.psiHi-r.psiLo);}
+function maToPct(m){var r=getRanges();if(r.maHi===r.maLo)return 0;return((m-r.maLo)/(r.maHi-r.maLo))*100;}
+function psiToPct(ps){var r=getRanges();if(r.psiHi===r.psiLo)return 0;return((ps-r.psiLo)/(r.psiHi-r.psiLo))*100;}
+function clamp(v){return Math.min(Math.max(v,0),100);}
+
+function setMode(m){
+  currentMode=m;
+  $('btn-std').className='mode-btn'+(m==='std'?' active':'');
+  $('btn-split').className='mode-btn'+(m==='split'?' active':'');
+  $('split-card').style.display=m==='split'?'':'none';
+  recalc();buildTable();
+}
+
+function updateSourceTag(s){
+  var el=$('source-tag');
+  var labels={ma:'from mA',psi:'from PSI',pct:'from %',slider:'from slider'};
+  el.textContent=labels[s]||'';
+}
+
+function updateChips(p){
+  [0,25,50,75,100].forEach(function(v){
+    var el=$('c'+v);
+    if(el)el.className='chip'+(Math.abs(p-v)<0.1?' active':'');
+  });
+}
+
+function updateResults(p){
+  var ma=pctToMA(p),psi=pctToPSI(p);
+  $('readPct').textContent=isFinite(p)?fmt(p,2)+' %':'--';
+  $('readMA').textContent=isFinite(p)?fmt(ma,3)+' mA':'--';
+  $('readPSI').textContent=isFinite(p)?fmt(psi,3)+' PSI':'--';
+  // highlight active card
+  ['rc-pct','rc-ma','rc-psi'].forEach(function(id){$(id).classList.remove('active');});
+  var active=source==='ma'?'rc-ma':source==='psi'?'rc-psi':'rc-pct';
+  $(active).classList.add('active');
+  if(isFinite(p))updateChips(p);
+}
+
+function syncFromPct(write){
+  var p=gn('pct');if(p===null){updateResults(NaN);return;}
+  p=clamp(p);
+  if(write){$('ma').value=fmt(pctToMA(p),3);$('psi').value=fmt(pctToPSI(p),3);}
+  $('slider').value=p;updateResults(p);
+}
+function syncFromMA(write){
+  var m=gn('ma');if(m===null){updateResults(NaN);return;}
+  var p=clamp(maToPct(m));
+  if(write){$('pct').value=fmt(p,2);$('psi').value=fmt(pctToPSI(p),3);}
+  $('slider').value=p;updateResults(p);
+}
+function syncFromPSI(write){
+  var ps=gn('psi');if(ps===null){updateResults(NaN);return;}
+  var p=clamp(psiToPct(ps));
+  if(write){$('pct').value=fmt(p,2);$('ma').value=fmt(pctToMA(p),3);}
+  $('slider').value=p;updateResults(p);
+}
+
+function recalc(){
+  if(source==='ma')syncFromMA(false);
+  else if(source==='psi')syncFromPSI(false);
+  else syncFromPct(false);
+}
+
+function setPct(p){
+  source='slider';updateSourceTag('slider');
+  $('pct').value=p;$('slider').value=p;
+  syncFromPct(true);
+}
+
+function setFrom(field){
+  var val=$('read'+(field==='pct'?'Pct':field==='ma'?'MA':'PSI')).textContent;
+  var num=parseFloat(val);
+  if(!isFinite(num))return;
+  source=field;updateSourceTag(field);
+  $(field).value=num;
+  if(field==='ma')syncFromMA(true);
+  else if(field==='psi')syncFromPSI(true);
+  else syncFromPct(true);
+}
+
+function buildTable(){
+  var tb=$('steps').querySelector('tbody');tb.innerHTML='';
+  [0,25,50,75,100].forEach(function(p){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+p+'%</td><td>'+fmt(pctToMA(p),3)+'</td><td>'+fmt(pctToPSI(p),3)+'</td>';
+    tb.appendChild(tr);
+  });
+}
+
+// Copy
+function copyVal(type){
+  var p=source==='ma'?clamp(maToPct(gn('ma')||NaN)):source==='psi'?clamp(psiToPct(gn('psi')||NaN)):clamp(gn('pct')||NaN);
+  if(!isFinite(p)){$('copyMsg').textContent='Nothing to copy yet.';return;}
+  var text=type==='ma'?fmt(pctToMA(p),3)+' mA':type==='psi'?fmt(pctToPSI(p),3)+' PSI':fmt(p,2)+' %';
+  var btn=$('copy-'+type);
+  try{
+    navigator.clipboard.writeText(text).then(function(){
+      $('copyMsg').textContent='Copied: '+text;
+      btn.className=btn.className+' copy-btn-active';
+      setTimeout(function(){btn.className=btn.className.replace(' copy-btn-active','');$('copyMsg').textContent='';},2000);
+    });
+  } catch(e){
+    $('copyMsg').textContent=text;
+  }
+}
+
+// Init
+(function init(){
+  $('pct').addEventListener('input',function(){source='pct';updateSourceTag('pct');syncFromPct(false);});
+  $('pct').addEventListener('change',function(){syncFromPct(true);});
+  $('ma').addEventListener('input',function(){source='ma';updateSourceTag('ma');syncFromMA(false);});
+  $('ma').addEventListener('change',function(){syncFromMA(true);});
+  $('psi').addEventListener('input',function(){source='psi';updateSourceTag('psi');syncFromPSI(false);});
+  $('psi').addEventListener('change',function(){syncFromPSI(true);});
+  $('slider').addEventListener('input',function(){
+    source='pct';updateSourceTag('slider');
+    $('pct').value=$('slider').value;syncFromPct(true);
+  });
+  ['ma_lo','ma_hi','psi_lo','psi_hi'].forEach(function(id){
+    $(id).addEventListener('input',function(){recalc();buildTable();});
+  });
+  buildTable();
+  updateResults(NaN);
+})();
+</script>
+
+</body>
+</html>
