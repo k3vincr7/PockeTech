@@ -576,6 +576,7 @@ function renderRecords(){
         '<div><span class="rec-tag">'+(r.header.tag||'(no tag)')+'</span>'+badge+
           '<div class="rec-meta">WO: '+(r.header.wo||'--')+' &middot; '+(r.header.loc||'--')+' &middot; '+dt+'</div>'+
         '</div>'+
+        '<button class="small-btn ok-btn" onclick="event.stopPropagation();flagTicket('+r.id+')" style="padding:6px 10px;font-size:12px">🎫</button>'+
         '<button class="small-btn danger-btn" onclick="event.stopPropagation();deleteRecord('+r.id+')" style="padding:6px 10px;font-size:12px">Del</button>'+
       '</div></div>';
   }).join('');
@@ -629,6 +630,18 @@ function clearForm(){
   document.querySelectorAll('input[type=radio],input[type=checkbox]').forEach(function(el){el.checked=false;});
   $('h_date').value=new Date().toISOString().slice(0,10);
   showMsg('Cleared','var(--muted)');
+}
+
+// Flag Ticket
+function flagTicket(id){
+  var r=records.find(function(x){return x.id===id;});
+  if(!r)return;
+  var url='./tickets.html?tag='+encodeURIComponent(r.header.tag)+
+    '&wo='+encodeURIComponent(r.header.wo||'')+
+    '&area='+encodeURIComponent(r.header.loc||'')+
+    '&source=cal'+
+    '&summary='+encodeURIComponent('Cal issue — '+r.header.tag);
+  location.href=url;
 }
 
 // Export CSV
