@@ -224,8 +224,8 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
   <h4 style="margin:0 0 4px;font-size:14px;font-weight:750">DCS vs Field Check</h4>
   <p class="muted" style="margin:0 0 12px">Operator gives you a DCS reading — compare it against what you're seeing in the field.</p>
   <div class="row">
-    <div class="col"><label>DCS Value (EU)</label><input id="dcsEU" inputmode="decimal" placeholder="50.0"></div>
-    <div class="col"><label>Field Value (EU)</label><input id="fieldEU" inputmode="decimal" placeholder="49.8"></div>
+    <div class="col"><label>DCS Value (EU)</label><div class="input-wrap"><input id="dcsEU" inputmode="decimal" placeholder="50.0"><button class="sign-btn" onclick="toggleSign('dcsEU')">±</button></div></div>
+    <div class="col"><label>Field Value (EU)</label><div class="input-wrap"><input id="fieldEU" inputmode="decimal" placeholder="49.8"><button class="sign-btn" onclick="toggleSign('fieldEU')">±</button></div></div>
     <div class="col"><label>Tolerance &#177; EU</label><input id="tolEU" inputmode="decimal" placeholder="optional"></div>
   </div>
   <div class="result-grid" style="margin-top:12px">
@@ -258,6 +258,7 @@ function fmt(v,d){d=d===undefined?3:d;return(typeof v==='number'&&isFinite(v))?N
 (function(){var t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
 (function(){var sx,sy;document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=Math.abs(e.changedTouches[0].clientY-sy);if(sx<60&&dx>50&&dy<100)history.back();},{passive:true});})();
 function toggleTheme(){var h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',next);localStorage.setItem('pt-v2-theme',next);}
+function toggleSign(id){var el=document.getElementById(id),v=el.value.trim();if(!v)return;var neg=v.startsWith('-');el.blur();el.value=neg?v.slice(1):'-'+v;el.dispatchEvent(new Event('input',{bubbles:true}));}
 
 // Collapsible
 function toggleColl(hdr){

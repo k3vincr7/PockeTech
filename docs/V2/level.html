@@ -371,6 +371,7 @@ function fmt(v,d){d=d===undefined?3:d;return(typeof v==='number'&&isFinite(v))?N
 (function(){var t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
 (function(){var sx,sy;document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=Math.abs(e.changedTouches[0].clientY-sy);if(sx<60&&dx>50&&dy<100)history.back();},{passive:true});})();
 function toggleTheme(){var h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',next);localStorage.setItem('pt-v2-theme',next);}
+function toggleSign(id){var el=document.getElementById(id),v=el.value.trim();if(!v)return;var neg=v.startsWith('-');el.blur();el.value=neg?v.slice(1):'-'+v;el.dispatchEvent(new Event('input',{bubbles:true}));}
 function pctToMA(p){return 4+(p/100)*16;}
 function maToPct(m){return((m-4)/16)*100;}
 function clamp(v){return Math.min(Math.max(v,0),100);}
