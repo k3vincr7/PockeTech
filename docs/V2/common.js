@@ -17,7 +17,9 @@ function toggleSign(id) {
   const el = document.getElementById(id);
   const v = el.value.trim();
   if (!v) return;
-  el.value = v.startsWith('-') ? v.slice(1) : '-' + v;
+  const neg = v.startsWith('-');
+  el.blur();
+  el.value = neg ? v.slice(1) : '-' + v;
   el.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
