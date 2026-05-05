@@ -1,83 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PockeTech — Field Workflow</title>
-
+<!DOCTYPE html><html lang="en" data-theme="auto"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0c1116"><title>PockeTech — Field Workflow</title>
 <style>
-:root{
-  --bg:#f6f8fc;
-  --fg:#0c1116;
-  --muted:#5a6572;
-  --tile:#ffffff;
-  --border:#d6dbe3;
-  --radius:18px;
-}
-
-body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  background:radial-gradient(circle at top,#e9eef7,#f6f8fc 50%);
-  color:var(--fg);
-}
-
-main{
-  padding:14px;
-  max-width:960px;
-  margin:auto;
-}
-
-.card{
-  background:var(--tile);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:16px;
-  margin-bottom:14px;
-}
-
-.title{
-  font-size:22px;
-  font-weight:800;
-}
-
-.subtitle{
-  color:var(--muted);
-  margin-top:4px;
-}
-
-.step{
-  margin-top:10px;
-  padding:12px;
-  border-radius:12px;
-  background:#eef2f7;
-  font-weight:600;
-}
-
-.note{
-  margin-top:8px;
-  padding:12px;
-  border-radius:12px;
-  background:#f2f5fb;
-  font-size:14px;
-}
-
-.bad{color:#dc2626;font-weight:600;}
-.good{color:#16a34a;font-weight:600;}
-
-.back{
-  padding:16px;
-  border-radius:18px;
-  background:var(--tile);
-  border:1px solid var(--border);
-  text-align:center;
-  font-weight:600;
-}
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--tile:#ffffff;--border:#d6dbe3;--accent:#1f6bff;--note:#eef2f7;--radius:18px}
+html[data-theme=dark]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--tile:#151922;--border:#2a2f3a;--accent:#3a7afe;--note:#1e2435}
+@media(prefers-color-scheme:dark){html[data-theme=auto]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--tile:#151922;--border:#2a2f3a;--accent:#3a7afe;--note:#1e2435}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
+header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+html[data-theme=dark] header{background:rgba(15,17,21,.75)}
+@media(prefers-color-scheme:dark){html[data-theme=auto] header{background:rgba(15,17,21,.75)}}
+.theme-btn{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:8px 10px;font-size:14px;border-radius:12px;font:inherit}
+.theme-btn:active{transform:scale(.97)}
+main{padding:14px;max-width:960px;margin:auto}
+.card{background:var(--tile);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+.title{font-size:22px;font-weight:800}
+.subtitle{color:var(--muted);margin-top:4px}
+.step{margin-top:10px;padding:12px;border-radius:12px;background:var(--note);font-weight:600}
+.note{margin-top:8px;padding:12px;border-radius:12px;background:color-mix(in srgb,var(--note) 60%,var(--bg));font-size:14px}
+.bad{color:#dc2626;font-weight:600}
+.good{color:#16a34a;font-weight:600}
+.back{padding:16px;border-radius:18px;background:var(--tile);border:1px solid var(--border);text-align:center;font-weight:600;cursor:pointer;margin-bottom:14px}
+.back:active{transform:scale(.98)}
 </style>
 </head>
-
 <body>
-
+<header>
+  <div><div style="font-weight:850;font-size:18px">PockeTech V2</div><div style="font-size:12px;color:var(--muted)">Field Guide</div></div>
+  <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+</header>
 <main>
 
 <div class="card">
@@ -101,7 +50,7 @@ main{
   <div class="note">0 / 25 / 50 / 75 / 100%</div>
 
   <div class="step">Reality Check</div>
-  <div class="note">If it’s not linear → something is wrong</div>
+  <div class="note">If it's not linear → something is wrong</div>
 
 </div>
 
@@ -154,19 +103,19 @@ main{
   <div class="title">5. Real Failure Scenarios</div>
 
   <div class="note">
-    ⚠️ Signal good, valve not moving → Air problem  
+    ⚠️ Signal good, valve not moving → Air problem
   </div>
 
   <div class="note">
-    ⚠️ No signal → Wiring / I/O issue  
+    ⚠️ No signal → Wiring / I/O issue
   </div>
 
   <div class="note">
-    ⚠️ Wrong reading → Scaling / calibration  
+    ⚠️ Wrong reading → Scaling / calibration
   </div>
 
   <div class="note">
-    ⚠️ Interlock not working → Logic / permissives  
+    ⚠️ Interlock not working → Logic / permissives
   </div>
 
 </div>
@@ -180,7 +129,7 @@ main{
   </div>
 
   <div class="step">Break the loop in sections</div>
-  <div class="note">Don’t guess — isolate</div>
+  <div class="note">Don't guess — isolate</div>
 
   <div class="step">Check simplest thing first</div>
   <div class="note">Air, power, wiring before blaming logic</div>
@@ -195,11 +144,8 @@ main{
   </p>
 </div>
 
-<div class="back" onclick="location.href='./jrtech.html'">
-  ← Back
-</div>
+<div class="back" onclick="location.href='./jrtech.html'">← Back to Field Guide</div>
 
 </main>
-
-</body>
-</h
+<script src="common.js"></script>
+</body></html>
