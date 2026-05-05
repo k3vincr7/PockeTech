@@ -57,6 +57,9 @@ label{font-weight:700;font-size:14px}
 .coll-hdr{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:2px 0}
 .coll-hdr h3{margin:0;font-size:15px;font-weight:750;pointer-events:none}
 .coll-arrow{font-size:11px;color:var(--muted);transition:transform .2s;pointer-events:none;display:inline-block}
+.input-wrap{display:flex;gap:6px;align-items:stretch;margin-top:6px}
+.input-wrap input{flex:1;width:auto;margin-top:0}
+.sign-btn{flex-shrink:0;width:46px;padding:0;font-size:20px;border-radius:14px}
 .coll-body{max-height:0;overflow:hidden;transition:max-height .28s ease}
 .coll-body.open{max-height:3000px}
 .coll-arrow.open{transform:rotate(180deg)}
@@ -182,7 +185,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
     <div class="row">
       <div class="col">
         <label>Offset Distance</label>
-        <input id="offset" inputmode="decimal" placeholder="0" value="0">
+        <div class="input-wrap"><input id="offset" inputmode="decimal" placeholder="0" value="0"><button class="sign-btn" onclick="toggleSign('offset')">±</button></div>
         <div class="pill">+ below lower tap &nbsp;/&nbsp; &#8722; above lower tap</div>
       </div>
       <div class="col">

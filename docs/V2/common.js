@@ -13,6 +13,14 @@ function n(id) {
 
 function clamp(v) { return Math.min(Math.max(v, 0), 100); }
 
+function toggleSign(id) {
+  const el = document.getElementById(id);
+  const v = el.value.trim();
+  if (!v) return;
+  el.value = v.startsWith('-') ? v.slice(1) : '-' + v;
+  el.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
 function pctToMA(p) { return 4 + (p / 100) * 16; }
 function maToPct(m) { return ((m - 4) / 16) * 100; }
 

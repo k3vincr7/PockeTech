@@ -59,6 +59,9 @@ label{font-weight:700;font-size:14px}
 .toggle-row{display:flex;align-items:center;gap:10px;padding:4px 0}
 .toggle-row input[type=checkbox]{width:20px;height:20px;accent-color:var(--accent);margin:0;cursor:pointer}
 .toggle-label{font-size:14px;font-weight:700;cursor:pointer}
+.input-wrap{display:flex;gap:6px;align-items:stretch;margin-top:6px}
+.input-wrap input{flex:1;width:auto;margin-top:0}
+.sign-btn{flex-shrink:0;width:46px;padding:0;font-size:20px;border-radius:14px}
 
 /* Collapsible */
 .coll-hdr{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:2px 0}
@@ -113,8 +116,8 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
   <div class="card">
     <h3 style="margin:0 0 12px;font-size:15px;font-weight:750">Range Setup</h3>
     <div class="row">
-      <div class="col"><label>LRV</label><input id="lrv" inputmode="decimal" value="0"></div>
-      <div class="col"><label>URV</label><input id="urv" inputmode="decimal" value="100"></div>
+      <div class="col"><label>LRV</label><div class="input-wrap"><input id="lrv" inputmode="decimal" value="0"><button class="sign-btn" onclick="toggleSign('lrv')">±</button></div></div>
+      <div class="col"><label>URV</label><div class="input-wrap"><input id="urv" inputmode="decimal" value="100"><button class="sign-btn" onclick="toggleSign('urv')">±</button></div></div>
       <div class="col"><label>EU Label</label><input id="unit" placeholder="psi, gpm, &#176;F"></div>
     </div>
     <div class="hr"></div>
@@ -132,7 +135,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
     <div class="row">
       <div class="col"><label>mA</label><input id="ma" inputmode="decimal" placeholder="12.000"></div>
       <div class="col"><label>%</label><input id="pct" inputmode="decimal" placeholder="50"></div>
-      <div class="col"><label>EU</label><input id="eu" inputmode="decimal" placeholder="50"></div>
+      <div class="col"><label>EU</label><div class="input-wrap"><input id="eu" inputmode="decimal" placeholder="50"><button class="sign-btn" onclick="toggleSign('eu')">±</button></div></div>
     </div>
     <div class="slider-wrap">
       <label>Live % Slider</label>
