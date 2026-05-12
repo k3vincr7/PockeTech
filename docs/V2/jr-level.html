@@ -1,139 +1,172 @@
-<!DOCTYPE html><html lang="en" data-theme="auto"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0c1116"><title>PockeTech — Level (DP)</title>
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PockeTech — Level (DP)</title>
+<meta name="theme-color" content="#0f1115">
 <style>
-:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--tile:#ffffff;--border:#d6dbe3;--accent:#1f6bff;--note:#eef2f7;--radius:18px}
-html[data-theme=dark]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--tile:#151922;--border:#2a2f3a;--accent:#3a7afe;--note:#1e2435}
-@media(prefers-color-scheme:dark){html[data-theme=auto]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--tile:#151922;--border:#2a2f3a;--accent:#3a7afe;--note:#1e2435}}
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#14b8a6;--note:#eef2f7;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#2dd4bf;--note:#1e2435;--shadow:0 14px 34px rgba(0,0,0,.35)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#2dd4bf;--note:#1e2435;--shadow:0 14px 34px rgba(0,0,0,.35)}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
 header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-html[data-theme=dark] header{background:rgba(15,17,21,.75)}
-@media(prefers-color-scheme:dark){html[data-theme=auto] header{background:rgba(15,17,21,.75)}}
-.theme-btn{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:8px 10px;font-size:14px;border-radius:12px;font:inherit}
-.theme-btn:active{transform:scale(.97)}
-main{padding:14px;max-width:960px;margin:auto}
-.card{background:var(--tile);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px}
-.title{font-size:22px;font-weight:800}
-.subtitle{color:var(--muted);margin-top:4px}
-.note{margin-top:10px;padding:14px;border-radius:14px;background:var(--note);font-size:15px;line-height:1.4}
-ul{padding-left:18px}
+html[data-theme="dark"] header{background:rgba(15,17,21,.75)}
+.header-left{display:flex;align-items:center;gap:8px}
+.brand{display:flex;flex-direction:column}
+.header-title{font-weight:800;font-size:18px}
+.build{font-size:12px;color:var(--muted)}
+.small-btn{padding:8px 12px;font-size:14px;border-radius:12px;width:auto;cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);font:inherit;font-weight:650}
+main{padding:14px;max-width:960px;margin:0 auto;padding-bottom:30px}
+.hero{background:linear-gradient(135deg,color-mix(in srgb,#14b8a6 28%,var(--card)),var(--card) 70%);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:18px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+.hero::after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,#14b8a6 18%,transparent)}
+.hero-badge{display:inline-block;background:#14b8a6;color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.hero-title{font-size:26px;font-weight:800;letter-spacing:-.5px;margin:0 0 4px}
+.hero-sub{color:var(--muted);font-size:13px;margin:0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.section-label{font-size:11px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+.card-title{font-size:17px;font-weight:800;margin:0 0 10px}
+.note{padding:12px 14px;border-radius:14px;background:var(--note);font-size:14px;line-height:1.5;margin-bottom:8px}
+.note:last-child{margin-bottom:0}
+.note-label{font-weight:750;margin-bottom:3px}
 .highlight{font-weight:700}
-.bad{color:#dc2626;font-weight:600}
-.good{color:#16a34a;font-weight:600}
-.back{padding:16px;border-radius:18px;background:var(--tile);border:1px solid var(--border);text-align:center;font-weight:600;cursor:pointer;margin-bottom:14px}
-.back:active{transform:scale(.98)}
+ul{padding-left:18px;margin:8px 0 0;line-height:1.9}
+li{font-size:14px}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.tank-card{border-radius:14px;padding:13px 14px;border:1px solid var(--border)}
+.tank-open{background:color-mix(in srgb,#14b8a6 10%,var(--card));border-color:color-mix(in srgb,#14b8a6 30%,var(--border))}
+.tank-closed{background:color-mix(in srgb,#6366f1 10%,var(--card));border-color:color-mix(in srgb,#6366f1 30%,var(--border))}
+.tank-label{font-size:13px;font-weight:800;margin-bottom:4px}
+.tank-open .tank-label{color:#0f766e}
+.tank-closed .tank-label{color:#4338ca}
+html[data-theme="dark"] .tank-open .tank-label{color:#2dd4bf}
+html[data-theme="dark"] .tank-closed .tank-label{color:#818cf8}
+.tank-body{font-size:13px;line-height:1.5;color:var(--muted)}
+.fault-row{padding:10px 0;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:3px}
+.fault-row:last-child{border-bottom:none;padding-bottom:0}
+.fault-symptom{font-weight:700;font-size:14px}
+.fault-fix{font-size:13px;color:var(--muted)}
+.tip-box{background:color-mix(in srgb,#14b8a6 10%,var(--tile));border:1px solid color-mix(in srgb,#14b8a6 30%,var(--border));border-radius:14px;padding:13px 14px;font-size:14px;font-weight:600;color:#0f766e;line-height:1.5;margin-bottom:8px}
+.tip-box:last-child{margin-bottom:0}
+html[data-theme="dark"] .tip-box{color:#2dd4bf}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
+@media(max-width:520px){main{padding:10px}.hero-title{font-size:22px}.row-2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+
 <header>
-  <div><div style="font-weight:850;font-size:18px">PockeTech V2</div><div style="font-size:12px;color:var(--muted)">Field Guide</div></div>
-  <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+  <div class="header-left">
+    <button class="small-btn" onclick="location.href='./field-guide.html'">&#8592; Back</button>
+    <div class="brand">
+      <div class="header-title">PockeTech V2</div>
+      <div class="build">Field Guide</div>
+    </div>
+  </div>
+  <button class="small-btn" onclick="toggleTheme()">&#127771;</button>
 </header>
+
 <main>
 
-<div class="card">
-  <div class="title">🫽 Level (DP)</div>
-  <div class="subtitle">How differential pressure measures level</div>
-</div>
-
-<div class="card">
-  <div class="title">The Core Idea</div>
-  <p>Level is measured using pressure. The more liquid above a point, the more pressure it creates.</p>
-</div>
-
-<div class="card">
-  <div class="title">How it Actually Works</div>
-
-  <div class="note">
-    ⬇️ <span class="highlight">High Side (Bottom Tap)</span><br>
-    Sees pressure from liquid height
+  <div class="hero">
+    <div class="hero-badge">&#129509; LEVEL (DP)</div>
+    <h1 class="hero-title">Level Measurement (DP)</h1>
+    <p class="hero-sub">How differential pressure tells you what's in the tank.</p>
   </div>
 
-  <div class="note">
-    ⬆️ <span class="highlight">Low Side (Top Tap)</span><br>
-    Used as reference (atmosphere or vapor space)
+  <div class="section-label">The Fundamentals</div>
+
+  <div class="card">
+    <div class="card-title">How DP measures level</div>
+    <p style="margin:0 0 12px;font-size:14px;line-height:1.6">Level is measured using <strong>pressure</strong>. The more liquid above a point, the more pressure it creates. A DP transmitter measures the difference between a high-side tap (bottom) and a low-side reference (top).</p>
+    <div class="note">
+      <div class="note-label">&#11015;&#65039; High Side (Bottom Tap)</div>
+      Sees pressure from the full liquid column above. This is the measurement side.
+    </div>
+    <div class="note">
+      <div class="note-label">&#11014;&#65039; Low Side (Top Tap)</div>
+      Used as reference — atmosphere for open tanks, vapor space for closed tanks.
+    </div>
+    <div class="note">
+      <div class="note-label">&#9878;&#65039; DP Transmitter</div>
+      Measures High &#8722; Low. The result is proportional to liquid height (hydrostatic head).
+    </div>
   </div>
 
-  <div class="note">
-    ⚖️ <span class="highlight">DP Transmitter</span><br>
-    Measures difference between high and low pressure
+  <div class="section-label">Tank Configuration</div>
+
+  <div class="card">
+    <div class="card-title">Open vs Closed Tank</div>
+    <div class="row-2">
+      <div class="tank-card tank-open">
+        <div class="tank-label">&#127787;&#65039; Open Tank</div>
+        <div class="tank-body">Top is open to atmosphere. Low side vents to air. Simple — only liquid height affects the reading.</div>
+      </div>
+      <div class="tank-card tank-closed">
+        <div class="tank-label">&#128274; Closed / Pressurized</div>
+        <div class="tank-body">Low side connects to vapor space. Tank pressure cancels out — only liquid level is measured.</div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:10px">&#9888;&#65039; On a closed tank, the low side <strong>must</strong> connect to the vapor space — not atmosphere. Otherwise tank pressure adds a constant error to every reading.</div>
   </div>
 
-</div>
+  <div class="section-label">Wet Leg vs Dry Leg</div>
 
-<div class="card">
-  <div class="title">Open Tank</div>
-  <div class="note">
-    🌬️ Top is open to atmosphere<br>
-    Low side = atmosphere<br>
-    Only liquid height affects measurement
-  </div>
-  <ul>
-    <li>More level → more pressure → higher reading</li>
-    <li>Simple setup</li>
-  </ul>
-</div>
-
-<div class="card">
-  <div class="title">Closed Tank</div>
-  <div class="note">
-    🔒 Tank is pressurized<br>
-    Low side connected to vapor space<br>
-    Cancels out tank pressure
-  </div>
-  <ul>
-    <li>Measures only liquid level, not tank pressure</li>
-  </ul>
-</div>
-
-<div class="card">
-  <div class="title">Wet Leg vs Dry Leg</div>
-
-  <div class="note">
-    💧 <span class="highlight">Wet Leg</span><br>
-    Low side is filled with liquid (constant head pressure)<br>
-    Used when vapor may condense
+  <div class="card">
+    <div class="card-title">What's in the low-side impulse line?</div>
+    <div class="note">
+      <div class="note-label">&#128167; Wet Leg</div>
+      Low-side impulse line is filled with a reference liquid (constant head pressure). Used when process vapor may condense — keeps the leg from filling unpredictably. Transmitter is calibrated with the wet leg offset accounted for.
+    </div>
+    <div class="note">
+      <div class="note-label">&#127787;&#65039; Dry Leg</div>
+      Low side stays gas-filled. Simpler setup, but any condensation in the leg will shift your reading. Usually requires periodic draining.
+    </div>
+    <div class="note">&#9888;&#65039; If a wet leg loses fluid (leak or evaporation), the transmitter will read <strong>high</strong> — the head pressure you're subtracting is gone.</div>
   </div>
 
-  <div class="note">
-    🌫️ <span class="highlight">Dry Leg</span><br>
-    Low side stays dry (gas only)<br>
-    Simpler but sensitive to condensation
+  <div class="section-label">Quick Troubleshooting</div>
+
+  <div class="card">
+    <div class="fault-row">
+      <div class="fault-symptom">&#128308; Reading stuck — not responding to actual level change</div>
+      <div class="fault-fix">&#8594; Plugged impulse line (high or low side). Check manifold block valves are fully open.</div>
+    </div>
+    <div class="fault-row">
+      <div class="fault-symptom">&#128308; Reading suddenly shifted high or low</div>
+      <div class="fault-fix">&#8594; Wet leg lost fluid, or condensation entered a dry leg. Check reference leg first.</div>
+    </div>
+    <div class="fault-row">
+      <div class="fault-symptom">&#128992; Reading drifts slowly over time</div>
+      <div class="fault-fix">&#8594; Slow leg leak, condensation buildup, or process density change. Check leg integrity.</div>
+    </div>
+    <div class="fault-row">
+      <div class="fault-symptom">&#128308; Reading pegged at 0% or 100%</div>
+      <div class="fault-fix">&#8594; Check 5-valve manifold — equalizer may be open, or one process valve may be closed.</div>
+    </div>
+    <div class="fault-row">
+      <div class="fault-symptom">&#128308; Reading oscillates or is noisy</div>
+      <div class="fault-fix">&#8594; Turbulence or agitation at the tap. Configure damping at the transmitter.</div>
+    </div>
   </div>
 
-</div>
+  <div class="section-label">Field Tips</div>
 
-<div class="card">
-  <div class="title">Common Problems</div>
-
-  <div class="note">
-    ❌ Plugged impulse line<br>
-    → Reading stuck or slow
+  <div class="card">
+    <div class="tip-box">&#128161; Always ask: what's on the high side, and what's on the low side? That question tells you the full measurement picture before touching anything.</div>
+    <div class="tip-box">&#128161; Before zeroing or calibrating, confirm the 5-valve manifold is in the correct position — equalizer closed, both process valves open.</div>
+    <div class="tip-box">&#128161; If you suspect a plugged leg, stroke the drain or vent carefully with pressure equalized. A sudden level shift after clearing confirms the leg was blocked.</div>
   </div>
-
-  <div class="note">
-    ❌ Wet leg lost fluid<br>
-    → Reading shifts or becomes inaccurate
-  </div>
-
-  <div class="note">
-    ❌ Condensation in dry leg<br>
-    → False level reading
-  </div>
-
-  <div class="note">
-    ❌ Transmitter mounted too low<br>
-    → Offset error
-  </div>
-
-</div>
-
-<div class="card">
-  <div class="title">Field Tip</div>
-  <p>Always ask: What is on the high side? What is on the low side? That tells you everything.</p>
-</div>
-
-<div class="back" onclick="location.href='./field-guide.html'">← Back to Field Guide</div>
 
 </main>
-<script src="common.js"></script>
-</body></html>
+<footer>PockeTech V2 — Level (DP)</footer>
+
+<script>
+(function(){var t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+(function(){var sx,sy;document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=Math.abs(e.changedTouches[0].clientY-sy);if(sx<60&&dx>50&&dy<100)history.back();},{passive:true});})();
+function toggleTheme(){var h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',next);localStorage.setItem('pt-v2-theme',next);}
+</script>
+
+</body>
+</html>

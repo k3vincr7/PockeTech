@@ -1,158 +1,179 @@
-<!DOCTYPE html><html lang="en" data-theme="auto"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0c1116"><title>PockeTech — Control Valve (AO)</title>
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PockeTech — Control Valve (AO)</title>
+<meta name="theme-color" content="#0f1115">
 <style>
-:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--tile:#ffffff;--border:#d6dbe3;--accent:#1f6bff;--note:#eef2f7;--radius:18px}
-html[data-theme=dark]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--tile:#151922;--border:#2a2f3a;--accent:#3a7afe;--note:#1e2435}
-@media(prefers-color-scheme:dark){html[data-theme=auto]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--tile:#151922;--border:#2a2f3a;--accent:#3a7afe;--note:#1e2435}}
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#f59e0b;--note:#eef2f7;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#f59e0b;--note:#1e2435;--shadow:0 14px 34px rgba(0,0,0,.35)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#f59e0b;--note:#1e2435;--shadow:0 14px 34px rgba(0,0,0,.35)}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
 header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-html[data-theme=dark] header{background:rgba(15,17,21,.75)}
-@media(prefers-color-scheme:dark){html[data-theme=auto] header{background:rgba(15,17,21,.75)}}
-.theme-btn{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:8px 10px;font-size:14px;border-radius:12px;font:inherit}
-.theme-btn:active{transform:scale(.97)}
-main{padding:14px;max-width:960px;margin:auto}
-.card{background:var(--tile);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px}
-.title{font-size:22px;font-weight:800}
-.subtitle{color:var(--muted);margin-top:4px}
-.note{margin-top:10px;padding:14px;border-radius:14px;background:var(--note);font-size:15px;line-height:1.4}
-ul{padding-left:18px}
+html[data-theme="dark"] header{background:rgba(15,17,21,.75)}
+.header-left{display:flex;align-items:center;gap:8px}
+.brand{display:flex;flex-direction:column}
+.header-title{font-weight:800;font-size:18px}
+.build{font-size:12px;color:var(--muted)}
+.small-btn{padding:8px 12px;font-size:14px;border-radius:12px;width:auto;cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);font:inherit;font-weight:650}
+main{padding:14px;max-width:960px;margin:0 auto;padding-bottom:30px}
+.hero{background:linear-gradient(135deg,color-mix(in srgb,#f59e0b 28%,var(--card)),var(--card) 70%);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:18px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+.hero::after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,#f59e0b 18%,transparent)}
+.hero-badge{display:inline-block;background:#f59e0b;color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.hero-title{font-size:26px;font-weight:800;letter-spacing:-.5px;margin:0 0 4px}
+.hero-sub{color:var(--muted);font-size:13px;margin:0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.section-label{font-size:11px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+.card-title{font-size:17px;font-weight:800;margin:0 0 10px}
+.note{padding:12px 14px;border-radius:14px;background:var(--note);font-size:14px;line-height:1.5;margin-bottom:8px}
+.note:last-child{margin-bottom:0}
+.note-label{font-weight:750;margin-bottom:3px}
 .highlight{font-weight:700}
-.bad{color:#dc2626;font-weight:600}
-.good{color:#16a34a;font-weight:600}
-.back{padding:16px;border-radius:18px;background:var(--tile);border:1px solid var(--border);text-align:center;font-weight:600;cursor:pointer;margin-bottom:14px}
-.back:active{transform:scale(.98)}
+ul{padding-left:18px;margin:10px 0 0;line-height:1.9}
+li{font-size:14px}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.action-card{border-radius:14px;padding:13px 14px;border:1px solid var(--border)}
+.ac-open{background:color-mix(in srgb,#22c55e 10%,var(--card));border-color:color-mix(in srgb,#22c55e 30%,var(--border))}
+.ac-close{background:color-mix(in srgb,#ef4444 10%,var(--card));border-color:color-mix(in srgb,#ef4444 30%,var(--border))}
+.ac-label{font-size:13px;font-weight:800;margin-bottom:4px}
+.ac-open .ac-label{color:#166534}
+.ac-close .ac-label{color:#991b1b}
+html[data-theme="dark"] .ac-open .ac-label{color:#4ade80}
+html[data-theme="dark"] .ac-close .ac-label{color:#f87171}
+.ac-body{font-size:13px;line-height:1.5;color:var(--muted)}
+.fault-row{padding:10px 0;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:3px}
+.fault-row:last-child{border-bottom:none;padding-bottom:0}
+.fault-symptom{font-weight:700;font-size:14px}
+.fault-fix{font-size:13px;color:var(--muted)}
+.tip-box{background:color-mix(in srgb,#f59e0b 10%,var(--tile));border:1px solid color-mix(in srgb,#f59e0b 30%,var(--border));border-radius:14px;padding:13px 14px;font-size:14px;font-weight:600;color:#b45309;line-height:1.5;margin-bottom:8px}
+.tip-box:last-child{margin-bottom:0}
+html[data-theme="dark"] .tip-box{color:#fcd34d}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
+@media(max-width:520px){main{padding:10px}.hero-title{font-size:22px}.row-2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+
 <header>
-  <div><div style="font-weight:850;font-size:18px">PockeTech V2</div><div style="font-size:12px;color:var(--muted)">Field Guide</div></div>
-  <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+  <div class="header-left">
+    <button class="small-btn" onclick="location.href='./field-guide.html'">&#8592; Back</button>
+    <div class="brand">
+      <div class="header-title">PockeTech V2</div>
+      <div class="build">Field Guide</div>
+    </div>
+  </div>
+  <button class="small-btn" onclick="toggleTheme()">&#127771;</button>
 </header>
+
 <main>
 
-<div class="card">
-  <div class="title">⚙️ Control Valve (AO)</div>
-  <div class="subtitle">How a signal actually moves a valve</div>
-</div>
-
-<div class="card">
-  <div class="title">What is happening?</div>
-  <p>
-    A control valve does NOT move from electricity directly.
-    It moves using air, controlled by a 4–20 mA signal.
-  </p>
-</div>
-
-<div class="card">
-  <div class="title">How it Actually Works</div>
-
-  <div class="note">
-    🧠 <span class="highlight">PLC / DCS (Output)</span><br>
-    Sends 4–20 mA signal (command)
+  <div class="hero">
+    <div class="hero-badge">&#9881;&#65039; CONTROL VALVE</div>
+    <h1 class="hero-title">Control Valve (AO)</h1>
+    <p class="hero-sub">How a 4&#8211;20 mA signal actually moves a valve in the field.</p>
   </div>
 
-  <div class="note">
-    🎛️ <span class="highlight">Positioner (I/P)</span><br>
-    Converts signal → air pressure
+  <div class="section-label">The Fundamentals</div>
+
+  <div class="card">
+    <div class="card-title">What's actually happening?</div>
+    <p style="margin:0 0 12px;font-size:14px;line-height:1.6">A control valve does <strong>not</strong> move from electricity directly. The 4&#8211;20 mA signal controls air, and air moves the valve.</p>
+    <div class="note">
+      <div class="note-label">&#129504; DCS / PLC (AO Card)</div>
+      Sends a 4&#8211;20 mA command signal to the positioner.
+    </div>
+    <div class="note">
+      <div class="note-label">&#127775; Positioner (I/P Converter)</div>
+      Converts the mA signal into a proportional air pressure (3&#8211;15 psi typical).
+    </div>
+    <div class="note">
+      <div class="note-label">&#128168; Air Supply</div>
+      Instrument air (typically 20&#8211;30 psi) provides the force to stroke the actuator.
+    </div>
+    <div class="note">
+      <div class="note-label">&#9881;&#65039; Actuator / Valve</div>
+      Air pressure moves the actuator, which opens or closes the valve body.
+    </div>
   </div>
 
-  <div class="note">
-    💨 <span class="highlight">Air Supply</span><br>
-    Provides the force to move actuator
+  <div class="section-label">Valve Action</div>
+
+  <div class="card">
+    <div class="card-title">ATO vs ATC</div>
+    <div class="row-2">
+      <div class="action-card ac-open">
+        <div class="ac-label">&#128994; Air-To-Open (ATO)</div>
+        <div class="ac-body">Air pressure opens the valve. Loss of air = valve <strong>closes</strong> (Fail Closed).</div>
+      </div>
+      <div class="action-card ac-close">
+        <div class="ac-label">&#128308; Air-To-Close (ATC)</div>
+        <div class="ac-body">Air pressure closes the valve. Loss of air = valve <strong>opens</strong> (Fail Open).</div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:10px">&#9888;&#65039; <strong>Always</strong> confirm ATO vs ATC before stroking. The valve may move opposite of what you expect depending on how the positioner is configured.</div>
   </div>
 
-  <div class="note">
-    ⚙️ <span class="highlight">Valve / Actuator</span><br>
-    Moves based on air pressure
+  <div class="section-label">Fail States</div>
+
+  <div class="card">
+    <div class="card-title">What happens when things go wrong</div>
+    <div class="note">
+      <div class="note-label">&#128168; Loss of Air</div>
+      Valve goes to its spring-return fail position (FC or FO depending on design).
+    </div>
+    <div class="note">
+      <div class="note-label">&#128268; Loss of Signal (4&#8211;20 mA)</div>
+      Positioner may fail to last position, fail closed, or fail open — check the positioner datasheet.
+    </div>
+    <div class="note">
+      <div class="note-label">&#127775; Positioner Failure</div>
+      Valve may stop responding, hunt, or drift. Check positioner display/LED if equipped.
+    </div>
   </div>
 
-</div>
+  <div class="section-label">Quick Troubleshooting</div>
 
-<div class="card">
-  <div class="title">Valve Action (ATO vs ATC)</div>
-
-  <div class="note">
-    🔼 <span class="highlight">Air-To-Open (ATO)</span><br>
-    Air pressure OPENS the valve<br>
-    No air → valve CLOSES (fail closed)
+  <div class="card">
+    <div class="fault-row">
+      <div class="fault-symptom">&#128308; Signal changing — valve not moving</div>
+      <div class="fault-fix">&#8594; Check air supply first. No air = no movement, regardless of signal.</div>
+    </div>
+    <div class="fault-row">
+      <div class="fault-symptom">&#128308; Valve stuck in one position</div>
+      <div class="fault-fix">&#8594; Check positioner feedback linkage. Check for mechanical binding.</div>
+    </div>
+    <div class="fault-row">
+      <div class="fault-symptom">&#128992; Valve moving backwards (opposite of command)</div>
+      <div class="fault-fix">&#8594; Signal may be reversed at AO card, OR wrong ATO/ATC configuration.</div>
+    </div>
+    <div class="fault-row">
+      <div class="fault-symptom">&#128992; Weak or slow movement</div>
+      <div class="fault-fix">&#8594; Low air supply pressure, clogged air filter, or weak regulator.</div>
+    </div>
+    <div class="fault-row">
+      <div class="fault-symptom">&#128308; Valve hunting / unstable</div>
+      <div class="fault-fix">&#8594; Positioner gain too high, or mechanical slop in linkage.</div>
+    </div>
   </div>
 
-  <div class="note">
-    🔽 <span class="highlight">Air-To-Close (ATC)</span><br>
-    Air pressure CLOSES the valve<br>
-    No air → valve OPENS (fail open)
+  <div class="section-label">Field Tips</div>
+
+  <div class="card">
+    <div class="tip-box">&#128161; Always check air before touching the signal. 90% of control valve problems start with no air or low air pressure.</div>
+    <div class="tip-box">&#128161; Stroke the valve manually at the positioner first. If it moves, the problem is electrical. If it doesn't, the problem is mechanical or pneumatic.</div>
+    <div class="tip-box">&#128161; Confirm fail state with the P&amp;ID before removing air or signal — FO vs FC is a safety decision, not a default.</div>
   </div>
-
-</div>
-
-<div class="card">
-  <div class="title">Fail States (What happens when things go wrong)</div>
-
-  <div class="note">
-    ❌ <span class="highlight">Loss of Air</span><br>
-    Valve goes to its fail position (open or closed)
-  </div>
-
-  <div class="note">
-    ❌ <span class="highlight">Loss of Signal (4–20 mA)</span><br>
-    Valve may fail or hold position depending on configuration
-  </div>
-
-  <div class="note">
-    ❌ <span class="highlight">Positioner Failure</span><br>
-    Valve may stop responding or drift
-  </div>
-
-  <div class="note">
-    ❌ <span class="highlight">Air Regulator / Tubing Issue</span><br>
-    Weak or no movement even with correct signal
-  </div>
-
-</div>
-
-<div class="card">
-  <div class="title">Real Field Example</div>
-  <ul>
-    <li>4 mA → Closed (or Open depending on valve action)</li>
-    <li>12 mA → 50% Position</li>
-    <li>20 mA → Fully Open (or Closed depending on setup)</li>
-  </ul>
-</div>
-
-<div class="card">
-  <div class="title">Quick Troubleshooting</div>
-
-  <div class="note">
-    ⚠️ Signal is changing but valve NOT moving<br>
-    → Check air supply FIRST
-  </div>
-
-  <div class="note">
-    ⚠️ Valve stuck in one position<br>
-    → Check positioner or linkage
-  </div>
-
-  <div class="note">
-    ⚠️ Valve moving backwards<br>
-    → Signal reversed OR wrong valve action (ATO vs ATC)
-  </div>
-
-  <div class="note">
-    ⚠️ Slow or weak movement<br>
-    → Check regulator, tubing, or air pressure
-  </div>
-
-</div>
-
-<div class="card">
-  <div class="title">Field Tip</div>
-  <p>
-    No air = no movement. Always check air before touching the signal.
-  </p>
-</div>
-
-<div class="back" onclick="location.href='./field-guide.html'">← Back to Field Guide</div>
 
 </main>
-<script src="common.js"></script>
-</body></html>
+<footer>PockeTech V2 — Control Valve (AO)</footer>
+
+<script>
+(function(){var t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+(function(){var sx,sy;document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=Math.abs(e.changedTouches[0].clientY-sy);if(sx<60&&dx>50&&dy<100)history.back();},{passive:true});})();
+function toggleTheme(){var h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',next);localStorage.setItem('pt-v2-theme',next);}
+</script>
+
+</body>
+</html>
