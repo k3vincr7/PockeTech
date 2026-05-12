@@ -42,28 +42,28 @@ label{font-weight:700;font-size:14px}
 
 /* Dashboard badges */
 .dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px}
-.dash-tile{background:var(–tile);border:1px solid var(–border);border-radius:14px;padding:12px 10px;text-align:center}
+.dash-tile{background:var(--tile);border:1px solid var(--border);border-radius:14px;padding:12px 10px;text-align:center}
 .dash-num{font-size:28px;font-weight:850;letter-spacing:-.5px;margin:2px 0}
-.dash-label{font-size:11px;font-weight:700;color:var(–muted);text-transform:uppercase;letter-spacing:.06em}
-.dash-tile.high{border-color:color-mix(in srgb,#ef4444 40%,var(–border));background:color-mix(in srgb,#ef4444 8%,var(–tile))}
-.dash-tile.med{border-color:color-mix(in srgb,#f59e0b 40%,var(–border));background:color-mix(in srgb,#f59e0b 8%,var(–tile))}
-.dash-tile.ok{border-color:color-mix(in srgb,#22c55e 40%,var(–border));background:color-mix(in srgb,#22c55e 8%,var(–tile))}
+.dash-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.dash-tile.high{border-color:color-mix(in srgb,#ef4444 40%,var(--border));background:color-mix(in srgb,#ef4444 8%,var(--tile))}
+.dash-tile.med{border-color:color-mix(in srgb,#f59e0b 40%,var(--border));background:color-mix(in srgb,#f59e0b 8%,var(--tile))}
+.dash-tile.ok{border-color:color-mix(in srgb,#22c55e 40%,var(--border));background:color-mix(in srgb,#22c55e 8%,var(--tile))}
 
 /* Filter chips */
 .chip-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.chip{padding:8px 14px;border-radius:999px;font-size:13px;font-weight:700;border:1px solid var(–border);background:var(–tile);color:var(–muted);cursor:pointer;transition:all .15s}
-.chip.active{background:var(–accent);color:#fff;border-color:var(–accent)}
+.chip{padding:8px 14px;border-radius:999px;font-size:13px;font-weight:700;border:1px solid var(--border);background:var(--tile);color:var(--muted);cursor:pointer;transition:all .15s}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 
 /* Priority selector */
 .pri-row{display:flex;gap:8px;margin-top:6px}
-.pri-btn{flex:1;padding:10px;border-radius:12px;font-size:13px;font-weight:700;border:2px solid var(–border);background:var(–tile);color:var(–muted);transition:all .15s}
-.pri-btn.sel-high{background:color-mix(in srgb,#ef4444 15%,var(–tile));border-color:#ef4444;color:#ef4444}
-.pri-btn.sel-med{background:color-mix(in srgb,#f59e0b 15%,var(–tile));border-color:#f59e0b;color:#b45309}
-.pri-btn.sel-low{background:color-mix(in srgb,#22c55e 15%,var(–tile));border-color:#22c55e;color:#166534}
+.pri-btn{flex:1;padding:10px;border-radius:12px;font-size:13px;font-weight:700;border:2px solid var(--border);background:var(--tile);color:var(--muted);transition:all .15s}
+.pri-btn.sel-high{background:color-mix(in srgb,#ef4444 15%,var(--tile));border-color:#ef4444;color:#ef4444}
+.pri-btn.sel-med{background:color-mix(in srgb,#f59e0b 15%,var(--tile));border-color:#f59e0b;color:#b45309}
+.pri-btn.sel-low{background:color-mix(in srgb,#22c55e 15%,var(--tile));border-color:#22c55e;color:#166534}
 
 /* Ticket cards */
-.ticket-card{background:var(–card);border:1px solid var(–border);border-radius:16px;margin-bottom:10px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.05);transition:box-shadow .15s}
-.ticket-card:hover{box-shadow:var(–shadow)}
+.ticket-card{background:var(--card);border:1px solid var(--border);border-radius:16px;margin-bottom:10px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.05);transition:box-shadow .15s}
+.ticket-card:hover{box-shadow:var(--shadow)}
 .ticket-top{display:flex;align-items:flex-start;gap:10px;padding:13px 14px;cursor:pointer}
 .ticket-pri-bar{width:4px;min-height:40px;border-radius:4px;flex-shrink:0;margin-top:2px}
 .pri-bar-high{background:#ef4444}
@@ -71,41 +71,41 @@ label{font-weight:700;font-size:14px}
 .pri-bar-low{background:#22c55e}
 .ticket-main{flex:1;min-width:0}
 .ticket-tag{font-weight:800;font-size:15px}
-.ticket-summary{font-size:13px;color:var(–muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ticket-meta{font-size:11px;color:var(–muted);margin-top:4px}
+.ticket-summary{font-size:13px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ticket-meta{font-size:11px;color:var(--muted);margin-top:4px}
 .ticket-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
 .b-open{background:color-mix(in srgb,#ef4444 15%,transparent);color:#991b1b}
 .b-prog{background:color-mix(in srgb,#f59e0b 15%,transparent);color:#b45309}
-.b-done{background:var(–ok-bg);color:var(–ok)}
-.b-type{background:color-mix(in srgb,var(–accent) 12%,transparent);color:var(–accent)}
+.b-done{background:var(--ok-bg);color:var(--ok)}
+.b-type{background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent)}
 .b-src{background:color-mix(in srgb,#8b5cf6 15%,transparent);color:#7c3aed}
 .b-high{background:color-mix(in srgb,#ef4444 15%,transparent);color:#991b1b}
 .b-med{background:color-mix(in srgb,#f59e0b 15%,transparent);color:#b45309}
 .b-low{background:color-mix(in srgb,#22c55e 15%,transparent);color:#166534}
 
 /* Expand panel */
-.ticket-expand{display:none;padding:0 14px 14px;border-top:1px solid var(–border)}
+.ticket-expand{display:none;padding:0 14px 14px;border-top:1px solid var(--border)}
 .ticket-expand.open{display:block}
-.ticket-photo-thumb{width:100%;max-height:180px;object-fit:cover;border-radius:12px;margin-top:10px;border:1px solid var(–border)}
-.photo-upload-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;border-radius:12px;border:2px dashed var(–border);background:var(–tile);color:var(–muted);cursor:pointer;font-size:14px;font-weight:700;margin-top:10px;transition:border-color .15s}
-.photo-upload-btn:hover{border-color:var(–accent);color:var(–accent)}
+.ticket-photo-thumb{width:100%;max-height:180px;object-fit:cover;border-radius:12px;margin-top:10px;border:1px solid var(--border)}
+.photo-upload-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;border-radius:12px;border:2px dashed var(--border);background:var(--tile);color:var(--muted);cursor:pointer;font-size:14px;font-weight:700;margin-top:10px;transition:border-color .15s}
+.photo-upload-btn:hover{border-color:var(--accent);color:var(--accent)}
 
 /* Status select in card */
 .status-row{display:flex;gap:8px;margin-top:10px}
-.status-chip{flex:1;padding:9px 6px;border-radius:10px;font-size:12px;font-weight:700;border:1px solid var(–border);background:var(–tile);color:var(–muted);cursor:pointer;text-align:center;transition:all .15s}
-.status-chip.sel-open{background:color-mix(in srgb,#ef4444 15%,var(–tile));border-color:#ef4444;color:#991b1b}
-.status-chip.sel-prog{background:color-mix(in srgb,#f59e0b 15%,var(–tile));border-color:#f59e0b;color:#b45309}
-.status-chip.sel-done{background:var(–ok-bg);border-color:#22c55e;color:#166534}
+.status-chip{flex:1;padding:9px 6px;border-radius:10px;font-size:12px;font-weight:700;border:1px solid var(--border);background:var(--tile);color:var(--muted);cursor:pointer;text-align:center;transition:all .15s}
+.status-chip.sel-open{background:color-mix(in srgb,#ef4444 15%,var(--tile));border-color:#ef4444;color:#991b1b}
+.status-chip.sel-prog{background:color-mix(in srgb,#f59e0b 15%,var(--tile));border-color:#f59e0b;color:#b45309}
+.status-chip.sel-done{background:var(--ok-bg);border-color:#22c55e;color:#166534}
 
 /* Tabs */
-.tab-bar{display:flex;gap:8px;margin-bottom:14px;border-bottom:2px solid var(–border)}
-.tab-btn{padding:9px 16px;border:none;background:transparent;color:var(–muted);font-weight:700;font-size:14px;border-radius:10px 10px 0 0;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
-.tab-btn.active{color:var(–accent);border-bottom-color:var(–accent);background:color-mix(in srgb,var(–accent) 8%,transparent)}
+.tab-bar{display:flex;gap:8px;margin-bottom:14px;border-bottom:2px solid var(--border)}
+.tab-btn{padding:9px 16px;border:none;background:transparent;color:var(--muted);font-weight:700;font-size:14px;border-radius:10px 10px 0 0;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
 
-.empty{text-align:center;color:var(–muted);padding:36px 0;font-size:14px}
-.from-banner{background:color-mix(in srgb,#8b5cf6 10%,var(–tile));border:1px solid color-mix(in srgb,#8b5cf6 30%,var(–border));border-radius:12px;padding:10px 13px;margin-bottom:14px;font-size:13px;font-weight:600;color:#7c3aed;display:none}
-footer{text-align:center;color:var(–muted);font-size:13px;padding:22px}
+.empty{text-align:center;color:var(--muted);padding:36px 0;font-size:14px}
+.from-banner{background:color-mix(in srgb,#8b5cf6 10%,var(--tile));border:1px solid color-mix(in srgb,#8b5cf6 30%,var(--border));border-radius:12px;padding:10px 13px;margin-bottom:14px;font-size:13px;font-weight:600;color:#7c3aed;display:none}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
 @media(max-width:520px){main{padding:10px}.section-title{font-size:22px}.dash-num{font-size:22px}}
 </style>
 
@@ -136,7 +136,6 @@ footer{text-align:center;color:var(–muted);font-size:13px;padding:22px}
 
   <div id="pane-list">
 
-```
 <!-- Hero + Dashboard -->
 <div class="card hero">
   <div class="hero-badge">&#127915; ISSUE TRACKER</div>
@@ -166,7 +165,6 @@ footer{text-align:center;color:var(–muted);font-size:13px;padding:22px}
 
 <!-- List -->
 <div id="ticket-list"></div>
-```
 
   </div><!-- /pane-list -->
 
@@ -174,7 +172,6 @@ footer{text-align:center;color:var(–muted);font-size:13px;padding:22px}
 
   <div id="pane-new" style="display:none">
 
-```
 <!-- Pre-fill banner (shows when linked from cal/loop) -->
 <div class="from-banner" id="from-banner"></div>
 
@@ -257,7 +254,6 @@ footer{text-align:center;color:var(–muted);font-size:13px;padding:22px}
   </div>
   <div id="save-msg" style="text-align:center;margin-top:10px;font-size:13px;color:var(--muted)"></div>
 </div>
-```
 
   </div><!-- /pane-new -->
 
