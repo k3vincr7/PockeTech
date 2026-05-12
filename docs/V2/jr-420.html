@@ -1,98 +1,150 @@
-<!DOCTYPE html><html lang="en" data-theme="auto"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0c1116"><title>PockeTech — 4–20 mA Basics</title>
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PockeTech — 4–20 mA Basics</title>
+<meta name="theme-color" content="#0f1115">
 <style>
-:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--tile:#ffffff;--border:#d6dbe3;--accent:#1f6bff;--note:#eef2f7;--radius:18px}
-html[data-theme=dark]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--tile:#151922;--border:#2a2f3a;--accent:#3a7afe;--note:#1e2435}
-@media(prefers-color-scheme:dark){html[data-theme=auto]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--tile:#151922;--border:#2a2f3a;--accent:#3a7afe;--note:#1e2435}}
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--note:#eef2f7;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--note:#1e2435;--shadow:0 14px 34px rgba(0,0,0,.35)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--note:#1e2435;--shadow:0 14px 34px rgba(0,0,0,.35)}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
 header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-html[data-theme=dark] header{background:rgba(15,17,21,.75)}
-@media(prefers-color-scheme:dark){html[data-theme=auto] header{background:rgba(15,17,21,.75)}}
-.theme-btn{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:8px 10px;font-size:14px;border-radius:12px;font:inherit}
-.theme-btn:active{transform:scale(.97)}
-main{padding:14px;max-width:960px;margin:auto}
-.card{background:var(--tile);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px}
-.title{font-size:22px;font-weight:800}
-.subtitle{color:var(--muted);margin-top:4px}
-.note{margin-top:10px;padding:14px;border-radius:14px;background:var(--note);font-size:15px;line-height:1.4}
-ul{padding-left:18px}
+html[data-theme="dark"] header{background:rgba(15,17,21,.75)}
+.header-left{display:flex;align-items:center;gap:8px}
+.brand{display:flex;flex-direction:column}
+.header-title{font-weight:800;font-size:18px}
+.build{font-size:12px;color:var(--muted)}
+.small-btn{padding:8px 12px;font-size:14px;border-radius:12px;width:auto;cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);font:inherit;font-weight:650}
+main{padding:14px;max-width:960px;margin:0 auto;padding-bottom:30px}
+.hero{background:linear-gradient(135deg,color-mix(in srgb,#1f6bff 28%,var(--card)),var(--card) 70%);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:18px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+.hero::after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,#1f6bff 18%,transparent)}
+.hero-badge{display:inline-block;background:#1f6bff;color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.hero-title{font-size:26px;font-weight:800;letter-spacing:-.5px;margin:0 0 4px}
+.hero-sub{color:var(--muted);font-size:13px;margin:0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.section-label{font-size:11px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+.card-title{font-size:17px;font-weight:800;margin:0 0 10px}
+.note{padding:12px 14px;border-radius:14px;background:var(--note);font-size:14px;line-height:1.5;margin-bottom:8px}
+.note:last-child{margin-bottom:0}
+.note-label{font-weight:750;margin-bottom:3px}
 .highlight{font-weight:700}
-.back{padding:16px;border-radius:18px;background:var(--tile);border:1px solid var(--border);text-align:center;font-weight:600;cursor:pointer;margin-bottom:14px}
-.back:active{transform:scale(.98)}
+ul{padding-left:18px;margin:10px 0 0;line-height:1.9}
+li{font-size:14px}
+.formula{background:var(--tile);border:1px solid var(--border);border-radius:14px;padding:14px 16px;font-size:14px;font-family:monospace;line-height:2.2;margin-top:4px}
+.formula span{color:var(--accent);font-weight:700}
+.tip-box{background:color-mix(in srgb,#1f6bff 10%,var(--tile));border:1px solid color-mix(in srgb,#1f6bff 30%,var(--border));border-radius:14px;padding:13px 14px;font-size:14px;font-weight:600;color:#1f6bff;line-height:1.5;margin-bottom:8px}
+.tip-box:last-child{margin-bottom:0}
+html[data-theme="dark"] .tip-box{color:#6ea6ff}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
+@media(max-width:520px){main{padding:10px}.hero-title{font-size:22px}}
 </style>
 </head>
 <body>
+
 <header>
-  <div><div style="font-weight:850;font-size:18px">PockeTech V2</div><div style="font-size:12px;color:var(--muted)">Field Guide</div></div>
-  <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+  <div class="header-left">
+    <button class="small-btn" onclick="location.href='./field-guide.html'">&#8592; Back</button>
+    <div class="brand">
+      <div class="header-title">PockeTech V2</div>
+      <div class="build">Field Guide</div>
+    </div>
+  </div>
+  <button class="small-btn" onclick="toggleTheme()">&#127771;</button>
 </header>
+
 <main>
 
-<div class="card">
-  <div class="title">📈 4–20 mA Basics</div>
-  <div class="subtitle">What it is and how it actually works in the field</div>
-</div>
-
-<div class="card">
-  <div class="title">What is 4–20 mA?</div>
-  <p>
-    A 4–20 mA signal is a current loop used to represent a measurement.
-  </p>
-  <ul>
-    <li>4 mA = 0% (Low range)</li>
-    <li>20 mA = 100% (High range)</li>
-  </ul>
-</div>
-
-<div class="card">
-  <div class="title">How the Loop Actually Works</div>
-
-  <div class="note">
-    🔋 <span class="highlight">Power Supply</span><br>
-    Provides voltage to drive the loop
+  <div class="hero">
+    <div class="hero-badge">&#128200; 4&#8211;20 mA</div>
+    <h1 class="hero-title">4&#8211;20 mA Basics</h1>
+    <p class="hero-sub">What it is, how it works in the field, and the math behind it.</p>
   </div>
 
-  <div class="note">
-    🎛️ <span class="highlight">Transmitter (TX)</span><br>
-    Controls the current (4–20 mA) based on the process value
+  <div class="section-label">The Fundamentals</div>
+
+  <div class="card">
+    <div class="card-title">What is 4&#8211;20 mA?</div>
+    <p style="margin:0 0 12px;font-size:14px;line-height:1.6">A 4&#8211;20 mA signal is a <strong>current loop</strong> used to represent a measurement. Current — not voltage — so wire resistance doesn't affect the reading.</p>
+    <div class="note">4 mA &nbsp;= <span class="highlight">0%</span> &nbsp;— Low range (LRV). Signal is alive at 4, not 0.</div>
+    <div class="note">12 mA = <span class="highlight">50%</span> — Always. Memorize this one.</div>
+    <div class="note">20 mA = <span class="highlight">100%</span> — High range (URV)</div>
+    <div class="note">Below 3.6 mA or above 21 mA = <span class="highlight">Fault / NAMUR alarm</span></div>
   </div>
 
-  <div class="note">
-    🧠 <span class="highlight">PLC / DCS</span><br>
-    Reads the current and converts it into engineering units
+  <div class="section-label">How the Loop Works</div>
+
+  <div class="card">
+    <div class="card-title">Signal Path</div>
+    <div class="note">
+      <div class="note-label">&#128267; Power Supply (24 VDC)</div>
+      Drives the loop. Usually sourced from the DCS AI card or a dedicated loop supply in the panel.
+    </div>
+    <div class="note">
+      <div class="note-label">&#127775; Transmitter (TX)</div>
+      Senses the process (pressure, level, temp, flow) and <strong>controls</strong> how much current flows — like a variable resistor.
+    </div>
+    <div class="note">
+      <div class="note-label">&#129504; PLC / DCS (AI Card)</div>
+      Reads current through a precision resistor (250 &#937; typical), converts it to voltage, then scales to engineering units.
+    </div>
+    <div class="note">
+      <div class="note-label">&#128260; Return Path</div>
+      Current must complete the loop back to the supply. An open anywhere = below 4 mA = fault alarm at DCS.
+    </div>
   </div>
 
-  <div class="note">
-    🔁 <span class="highlight">Return Path</span><br>
-    Current must return to complete the loop
+  <div class="section-label">Signal Math</div>
+
+  <div class="card">
+    <div class="card-title">Quick Conversions</div>
+    <div class="formula">
+      <div>mA &#8594; % &nbsp;&nbsp; <span>(mA &#8722; 4) &#247; 16 &#215; 100</span></div>
+      <div>% &#8594; mA &nbsp;&nbsp; <span>4 + (% &#247; 100 &#215; 16)</span></div>
+      <div>mA &#8594; EU &nbsp; <span>LRV + (mA &#8722; 4) &#247; 16 &#215; span</span></div>
+    </div>
+    <div style="margin-top:12px">
+      <div style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Key Milestones</div>
+      <ul>
+        <li>4 mA = 0%</li>
+        <li>8 mA = 25%</li>
+        <li>12 mA = 50%</li>
+        <li>16 mA = 75%</li>
+        <li>20 mA = 100%</li>
+      </ul>
+    </div>
   </div>
 
-</div>
+  <div class="section-label">Real Field Example</div>
 
-<div class="card">
-  <div class="title">Real Field Example</div>
-  <p>Range: 0–100 psi</p>
-  <ul>
-    <li>4 mA → 0 psi</li>
-    <li>12 mA → 50 psi</li>
-    <li>20 mA → 100 psi</li>
-  </ul>
-</div>
+  <div class="card">
+    <div class="card-title">Range: 0&#8211;100 PSI</div>
+    <ul>
+      <li>TX sees 0 psi &#8594; sends 4 mA &#8594; DCS reads 0 psi</li>
+      <li>TX sees 50 psi &#8594; sends 12 mA &#8594; DCS reads 50 psi</li>
+      <li>TX sees 100 psi &#8594; sends 20 mA &#8594; DCS reads 100 psi</li>
+    </ul>
+    <div class="note" style="margin-top:12px">EU = LRV + (mA &#8722; 4) &#247; 16 &#215; span<br>Example: 12 mA = 0 + (12&#8722;4) &#247; 16 &#215; 100 = <strong>50 psi</strong></div>
+  </div>
 
-<div class="card">
-  <div class="title">Quick Formula</div>
-  <p><strong>% = (mA - 4) / 16 × 100</strong></p>
-</div>
+  <div class="section-label">Field Tips</div>
 
-<div class="card">
-  <div class="title">Field Tip</div>
-  <p>
-    12 mA is always 50%. Doesn't matter if it's pressure, level, or flow.
-  </p>
-</div>
-
-<div class="back" onclick="location.href='./field-guide.html'">← Back to Field Guide</div>
+  <div class="card">
+    <div class="tip-box">&#128161; 12 mA is always 50% — regardless of range. Pressure, flow, level, temperature. Use it to sanity-check any reading instantly.</div>
+    <div class="tip-box">&#128161; Reading below 3.6 mA? Check for an open wire or blown fuse before touching the transmitter.</div>
+    <div class="tip-box">&#128161; Current is the same everywhere in the loop — measure it in series at any point and you'll get the same mA reading.</div>
+  </div>
 
 </main>
-<script src="common.js"></script>
-</body></html>
+<footer>PockeTech V2 — 4&#8211;20 mA Basics</footer>
+
+<script>
+(function(){var t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+(function(){var sx,sy;document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=Math.abs(e.changedTouches[0].clientY-sy);if(sx<60&&dx>50&&dy<100)history.back();},{passive:true});})();
+function toggleTheme(){var h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',next);localStorage.setItem('pt-v2-theme',next);}
+</script>
+
+</body>
+</html>
