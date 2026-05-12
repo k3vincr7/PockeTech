@@ -1,153 +1,170 @@
-<!DOCTYPE html><html lang="en" data-theme="auto"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0c1116"><title>PockeTech — Temperature (RTD & TC)</title>
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PockeTech — Temperature (RTD &amp; TC)</title>
+<meta name="theme-color" content="#0f1115">
 <style>
-:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--tile:#ffffff;--border:#d6dbe3;--accent:#1f6bff;--note:#eef2f7;--radius:18px}
-html[data-theme=dark]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--tile:#151922;--border:#2a2f3a;--accent:#3a7afe;--note:#1e2435}
-@media(prefers-color-scheme:dark){html[data-theme=auto]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--tile:#151922;--border:#2a2f3a;--accent:#3a7afe;--note:#1e2435}}
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#ef4444;--note:#eef2f7;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#f87171;--note:#1e2435;--shadow:0 14px 34px rgba(0,0,0,.35)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#f87171;--note:#1e2435;--shadow:0 14px 34px rgba(0,0,0,.35)}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
 header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-html[data-theme=dark] header{background:rgba(15,17,21,.75)}
-@media(prefers-color-scheme:dark){html[data-theme=auto] header{background:rgba(15,17,21,.75)}}
-.theme-btn{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:8px 10px;font-size:14px;border-radius:12px;font:inherit}
-.theme-btn:active{transform:scale(.97)}
-main{padding:14px;max-width:960px;margin:auto}
-.card{background:var(--tile);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px}
-.title{font-size:22px;font-weight:800}
-.subtitle{color:var(--muted);margin-top:4px}
-.note{margin-top:10px;padding:14px;border-radius:14px;background:var(--note);font-size:15px;line-height:1.4}
-ul{padding-left:18px}
+html[data-theme="dark"] header{background:rgba(15,17,21,.75)}
+.header-left{display:flex;align-items:center;gap:8px}
+.brand{display:flex;flex-direction:column}
+.header-title{font-weight:800;font-size:18px}
+.build{font-size:12px;color:var(--muted)}
+.small-btn{padding:8px 12px;font-size:14px;border-radius:12px;width:auto;cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);font:inherit;font-weight:650}
+main{padding:14px;max-width:960px;margin:0 auto;padding-bottom:30px}
+.hero{background:linear-gradient(135deg,color-mix(in srgb,#ef4444 22%,var(--card)),var(--card) 70%);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:18px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+.hero::after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,#ef4444 15%,transparent)}
+.hero-badge{display:inline-block;background:#ef4444;color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.hero-title{font-size:26px;font-weight:800;letter-spacing:-.5px;margin:0 0 4px}
+.hero-sub{color:var(--muted);font-size:13px;margin:0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.section-label{font-size:11px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+.card-title{font-size:17px;font-weight:800;margin:0 0 10px}
+.note{padding:12px 14px;border-radius:14px;background:var(--note);font-size:14px;line-height:1.5;margin-bottom:8px}
+.note:last-child{margin-bottom:0}
+.note-label{font-weight:750;margin-bottom:3px}
 .highlight{font-weight:700}
-.bad{color:#dc2626;font-weight:600}
-.good{color:#16a34a;font-weight:600}
-.back{padding:16px;border-radius:18px;background:var(--tile);border:1px solid var(--border);text-align:center;font-weight:600;cursor:pointer;margin-bottom:14px}
-.back:active{transform:scale(.98)}
+ul{padding-left:18px;margin:8px 0 0;line-height:1.9}
+li{font-size:14px}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.sensor-card{border-radius:14px;padding:13px 14px;border:1px solid var(--border)}
+.sc-rtd{background:color-mix(in srgb,#3b82f6 10%,var(--card));border-color:color-mix(in srgb,#3b82f6 30%,var(--border))}
+.sc-tc{background:color-mix(in srgb,#ef4444 10%,var(--card));border-color:color-mix(in srgb,#ef4444 30%,var(--border))}
+.sc-label{font-size:13px;font-weight:800;margin-bottom:4px}
+.sc-rtd .sc-label{color:#1d4ed8}
+.sc-tc .sc-label{color:#991b1b}
+html[data-theme="dark"] .sc-rtd .sc-label{color:#93c5fd}
+html[data-theme="dark"] .sc-tc .sc-label{color:#f87171}
+.sc-body{font-size:13px;line-height:1.5;color:var(--muted)}
+.fault-row{padding:10px 0;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:3px}
+.fault-row:last-child{border-bottom:none;padding-bottom:0}
+.fault-symptom{font-weight:700;font-size:14px}
+.fault-fix{font-size:13px;color:var(--muted)}
+.tip-box{background:color-mix(in srgb,#ef4444 8%,var(--tile));border:1px solid color-mix(in srgb,#ef4444 25%,var(--border));border-radius:14px;padding:13px 14px;font-size:14px;font-weight:600;color:#991b1b;line-height:1.5;margin-bottom:8px}
+.tip-box:last-child{margin-bottom:0}
+html[data-theme="dark"] .tip-box{color:#f87171}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
+@media(max-width:520px){main{padding:10px}.hero-title{font-size:22px}.row-2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+
 <header>
-  <div><div style="font-weight:850;font-size:18px">PockeTech V2</div><div style="font-size:12px;color:var(--muted)">Field Guide</div></div>
-  <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+  <div class="header-left">
+    <button class="small-btn" onclick="location.href='./field-guide.html'">&#8592; Back</button>
+    <div class="brand">
+      <div class="header-title">PockeTech V2</div>
+      <div class="build">Field Guide</div>
+    </div>
+  </div>
+  <button class="small-btn" onclick="toggleTheme()">&#127771;</button>
 </header>
+
 <main>
 
-<div class="card">
-  <div class="title">🌡️ Temperature (RTD & Thermocouple)</div>
-  <div class="subtitle">What it is and how it actually behaves in the field</div>
-</div>
-
-<div class="card">
-  <div class="title">The Core Idea</div>
-  <p>Temperature is NOT measured directly. It is converted into an electrical signal and then scaled.</p>
-</div>
-
-<div class="card">
-  <div class="title">🧪 RTD (Resistance Temperature Detector)</div>
-
-  <div class="note">
-    🔬 <span class="highlight">How it Works</span><br>
-    Resistance increases as temperature increases
+  <div class="hero">
+    <div class="hero-badge">&#127777;&#65039; TEMPERATURE</div>
+    <h1 class="hero-title">Temperature (RTD &amp; TC)</h1>
+    <p class="hero-sub">Two sensor types, two different principles — know which one you're working with.</p>
   </div>
 
-  <div class="note">
-    📊 <span class="highlight">Common Types</span><br>
-    Pt100 → 100Ω at 0°C (most common)<br>
-    Pt1000 → 1000Ω at 0°C (better noise resistance)
+  <div class="section-label">Sensor Types</div>
+
+  <div class="card">
+    <div class="card-title">RTD vs Thermocouple</div>
+    <div class="row-2">
+      <div class="sensor-card sc-rtd">
+        <div class="sc-label">&#128268; RTD</div>
+        <div class="sc-body">Resistance increases with temperature. Very accurate and stable. Common: PT100 (100 &#937; at 0°C), PT1000.</div>
+      </div>
+      <div class="sensor-card sc-tc">
+        <div class="sc-label">&#9889; Thermocouple (TC)</div>
+        <div class="sc-body">Two dissimilar metals generate millivolts. Wider range, faster response. Common types: J, K, T, E.</div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:10px">&#9888;&#65039; These are <strong>not interchangeable</strong>. The transmitter or DCS input card must be configured for the correct sensor type — a wrong config gives a wrong reading with no alarm.</div>
   </div>
 
-  <div class="note">
-    🔌 <span class="highlight">Wiring Types</span><br>
-    2-wire → simplest, least accurate<br>
-    3-wire → most common (compensates lead resistance)<br>
-    4-wire → highest accuracy
+  <div class="section-label">How RTDs Work</div>
+
+  <div class="card">
+    <div class="card-title">Wiring configurations</div>
+    <div class="note">
+      <div class="note-label">&#128268; 2-Wire RTD</div>
+      Simplest wiring. Lead wire resistance adds directly to the reading — creates a positive offset error. Avoid on long cable runs.
+    </div>
+    <div class="note">
+      <div class="note-label">&#128268; 3-Wire RTD</div>
+      Third wire lets the transmitter measure and cancel lead resistance. Standard for most field installations.
+    </div>
+    <div class="note">
+      <div class="note-label">&#128268; 4-Wire RTD</div>
+      Fully eliminates lead resistance error. Used in lab or high-precision applications.
+    </div>
   </div>
 
-  <ul>
-    <li>Very accurate and stable</li>
-    <li>Slower response than thermocouples</li>
-  </ul>
+  <div class="section-label">How Thermocouples Work</div>
 
-</div>
-
-<div class="card">
-  <div class="title">⚡ Thermocouple (TC)</div>
-
-  <div class="note">
-    🔥 <span class="highlight">How it Works</span><br>
-    Generates a small voltage (mV) from heat difference
+  <div class="card">
+    <div class="card-title">mV signal and cold junction compensation</div>
+    <div class="note">
+      <div class="note-label">&#9889; Cold Junction Compensation (CJC)</div>
+      A TC measures the difference between the hot junction (process) and the cold junction (terminal block). The transmitter measures terminal block temperature and compensates. If CJC fails, the reading drifts with ambient temperature.
+    </div>
+    <div class="note">
+      <div class="note-label">&#128737;&#65039; TC Extension Wire</div>
+      Must match the TC type all the way from the sensor to the transmitter. Using regular copper wire for TC extension introduces a new unwanted junction and corrupts the measurement.
+    </div>
   </div>
 
-  <div class="note">
-    📊 <span class="highlight">Common Types</span><br>
-    Type K → most common, high temperature<br>
-    Type J → lower temp, older systems<br>
-    Type T → precise low temperature
+  <div class="section-label">Quick Troubleshooting</div>
+
+  <div class="card">
+    <div class="fault-row">
+      <div class="fault-symptom">&#128308; Reading pegged at max / shows OPEN</div>
+      <div class="fault-fix">&#8594; Open circuit in sensor or lead wiring. Check continuity at the head. PT100 should read ~109 &#937; at room temp (~25°C).</div>
+    </div>
+    <div class="fault-row">
+      <div class="fault-symptom">&#128308; Reading pegged at min / shows SHORT</div>
+      <div class="fault-fix">&#8594; Short circuit in sensor leads. Check for moisture in the connection head or damaged insulation.</div>
+    </div>
+    <div class="fault-row">
+      <div class="fault-symptom">&#128992; Reading off by a fixed amount — always high or low</div>
+      <div class="fault-fix">&#8594; 2-wire RTD lead resistance error, or wrong sensor type configured at the transmitter.</div>
+    </div>
+    <div class="fault-row">
+      <div class="fault-symptom">&#128992; TC reading drifts with ambient temperature</div>
+      <div class="fault-fix">&#8594; Cold junction compensation failure, or copper wire used instead of proper TC extension wire.</div>
+    </div>
+    <div class="fault-row">
+      <div class="fault-symptom">&#128308; Correct at one temp, wrong everywhere else</div>
+      <div class="fault-fix">&#8594; Wrong TC type selected (K configured, J installed). Always check the sensor identification tag.</div>
+    </div>
   </div>
 
-  <ul>
-    <li>Fast response</li>
-    <li>Handles very high temperatures</li>
-    <li>Less accurate than RTDs</li>
-  </ul>
+  <div class="section-label">Field Tips</div>
 
-</div>
-
-<div class="card">
-  <div class="title">🔁 Signal Behavior</div>
-
-  <div class="note">
-    🧪 <span class="highlight">RTD</span><br>
-    Sends resistance (Ω)
+  <div class="card">
+    <div class="tip-box">&#128161; TC polarity matters. Reversed leads make the reading move opposite of actual temperature. In the US, red is usually negative on TC extension wire.</div>
+    <div class="tip-box">&#128161; Confirm sensor type before troubleshooting anything else. A K-type and J-type look identical physically — the only difference is the alloy and the tag.</div>
+    <div class="tip-box">&#128161; Never run TC extension wire in the same conduit as power wiring. Induced voltage causes erratic readings that are very hard to trace back to the source.</div>
   </div>
-
-  <div class="note">
-    ⚡ <span class="highlight">Thermocouple</span><br>
-    Sends millivolts (mV)
-  </div>
-
-  <div class="note">
-    🎛️ <span class="highlight">Transmitter</span><br>
-    Converts signal → 4–20 mA for the control system
-  </div>
-
-</div>
-
-<div class="card">
-  <div class="title">Common Problems</div>
-
-  <div class="note">
-    ❌ <span class="highlight">RTD Open Circuit</span><br>
-    → Reading goes HIGH
-  </div>
-
-  <div class="note">
-    ❌ <span class="highlight">RTD Shorted</span><br>
-    → Reading goes LOW
-  </div>
-
-  <div class="note">
-    ❌ <span class="highlight">TC Reversed</span><br>
-    → Negative or incorrect reading
-  </div>
-
-  <div class="note">
-    ❌ <span class="highlight">Wrong TC Type</span><br>
-    → Incorrect temperature scaling
-  </div>
-
-  <div class="note">
-    ❌ <span class="highlight">Loose / Bad Wiring</span><br>
-    → Jumping or unstable readings
-  </div>
-
-</div>
-
-<div class="card">
-  <div class="title">Field Tip</div>
-  <p>Always confirm sensor type BEFORE troubleshooting. RTD and Thermocouple behave completely differently.</p>
-</div>
-
-<div class="back" onclick="location.href='./field-guide.html'">← Back to Field Guide</div>
 
 </main>
-<script src="common.js"></script>
-</body></html>
+<footer>PockeTech V2 — Temperature (RTD &amp; TC)</footer>
+
+<script>
+(function(){var t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+(function(){var sx,sy;document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=Math.abs(e.changedTouches[0].clientY-sy);if(sx<60&&dx>50&&dy<100)history.back();},{passive:true});})();
+function toggleTheme(){var h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',next);localStorage.setItem('pt-v2-theme',next);}
+</script>
+
+</body>
+</html>

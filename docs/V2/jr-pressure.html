@@ -1,156 +1,181 @@
-<!DOCTYPE html><html lang="en" data-theme="auto"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0c1116"><title>PockeTech — Pressure</title>
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PockeTech — Pressure</title>
+<meta name="theme-color" content="#0f1115">
 <style>
-:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--tile:#ffffff;--border:#d6dbe3;--accent:#1f6bff;--note:#eef2f7;--radius:18px}
-html[data-theme=dark]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--tile:#151922;--border:#2a2f3a;--accent:#3a7afe;--note:#1e2435}
-@media(prefers-color-scheme:dark){html[data-theme=auto]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--tile:#151922;--border:#2a2f3a;--accent:#3a7afe;--note:#1e2435}}
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#22c55e;--note:#eef2f7;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#4ade80;--note:#1e2435;--shadow:0 14px 34px rgba(0,0,0,.35)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#4ade80;--note:#1e2435;--shadow:0 14px 34px rgba(0,0,0,.35)}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
 header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-html[data-theme=dark] header{background:rgba(15,17,21,.75)}
-@media(prefers-color-scheme:dark){html[data-theme=auto] header{background:rgba(15,17,21,.75)}}
-.theme-btn{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:8px 10px;font-size:14px;border-radius:12px;font:inherit}
-.theme-btn:active{transform:scale(.97)}
-main{padding:14px;max-width:960px;margin:auto}
-.card{background:var(--tile);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px}
-.title{font-size:22px;font-weight:800}
-.subtitle{color:var(--muted);margin-top:4px}
-.note{margin-top:10px;padding:14px;border-radius:14px;background:var(--note);font-size:15px;line-height:1.4}
-ul{padding-left:18px}
+html[data-theme="dark"] header{background:rgba(15,17,21,.75)}
+.header-left{display:flex;align-items:center;gap:8px}
+.brand{display:flex;flex-direction:column}
+.header-title{font-weight:800;font-size:18px}
+.build{font-size:12px;color:var(--muted)}
+.small-btn{padding:8px 12px;font-size:14px;border-radius:12px;width:auto;cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);font:inherit;font-weight:650}
+main{padding:14px;max-width:960px;margin:0 auto;padding-bottom:30px}
+.hero{background:linear-gradient(135deg,color-mix(in srgb,#22c55e 22%,var(--card)),var(--card) 70%);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:18px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+.hero::after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,#22c55e 15%,transparent)}
+.hero-badge{display:inline-block;background:#22c55e;color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.hero-title{font-size:26px;font-weight:800;letter-spacing:-.5px;margin:0 0 4px}
+.hero-sub{color:var(--muted);font-size:13px;margin:0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.section-label{font-size:11px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+.card-title{font-size:17px;font-weight:800;margin:0 0 10px}
+.note{padding:12px 14px;border-radius:14px;background:var(--note);font-size:14px;line-height:1.5;margin-bottom:8px}
+.note:last-child{margin-bottom:0}
+.note-label{font-weight:750;margin-bottom:3px}
 .highlight{font-weight:700}
-.bad{color:#dc2626;font-weight:600}
-.good{color:#16a34a;font-weight:600}
-.back{padding:16px;border-radius:18px;background:var(--tile);border:1px solid var(--border);text-align:center;font-weight:600;cursor:pointer;margin-bottom:14px}
-.back:active{transform:scale(.98)}
+ul{padding-left:18px;margin:8px 0 0;line-height:1.9}
+li{font-size:14px}
+.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:4px}
+.pt-card{border-radius:14px;padding:13px 14px;border:1px solid var(--border);text-align:center}
+.pt-gauge{background:color-mix(in srgb,#22c55e 10%,var(--card));border-color:color-mix(in srgb,#22c55e 30%,var(--border))}
+.pt-abs{background:color-mix(in srgb,#3b82f6 10%,var(--card));border-color:color-mix(in srgb,#3b82f6 30%,var(--border))}
+.pt-dp{background:color-mix(in srgb,#f59e0b 10%,var(--card));border-color:color-mix(in srgb,#f59e0b 30%,var(--border))}
+.pt-label{font-size:16px;font-weight:900;margin-bottom:4px}
+.pt-gauge .pt-label{color:#166534}
+.pt-abs .pt-label{color:#1d4ed8}
+.pt-dp .pt-label{color:#b45309}
+html[data-theme="dark"] .pt-gauge .pt-label{color:#4ade80}
+html[data-theme="dark"] .pt-abs .pt-label{color:#93c5fd}
+html[data-theme="dark"] .pt-dp .pt-label{color:#fcd34d}
+.pt-desc{font-size:12px;color:var(--muted);line-height:1.4}
+.fault-row{padding:10px 0;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:3px}
+.fault-row:last-child{border-bottom:none;padding-bottom:0}
+.fault-symptom{font-weight:700;font-size:14px}
+.fault-fix{font-size:13px;color:var(--muted)}
+.tip-box{background:color-mix(in srgb,#22c55e 10%,var(--tile));border:1px solid color-mix(in srgb,#22c55e 30%,var(--border));border-radius:14px;padding:13px 14px;font-size:14px;font-weight:600;color:#166534;line-height:1.5;margin-bottom:8px}
+.tip-box:last-child{margin-bottom:0}
+html[data-theme="dark"] .tip-box{color:#4ade80}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
+@media(max-width:520px){main{padding:10px}.hero-title{font-size:22px}.row-3{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+
 <header>
-  <div><div style="font-weight:850;font-size:18px">PockeTech V2</div><div style="font-size:12px;color:var(--muted)">Field Guide</div></div>
-  <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+  <div class="header-left">
+    <button class="small-btn" onclick="location.href='./field-guide.html'">&#8592; Back</button>
+    <div class="brand">
+      <div class="header-title">PockeTech V2</div>
+      <div class="build">Field Guide</div>
+    </div>
+  </div>
+  <button class="small-btn" onclick="toggleTheme()">&#127771;</button>
 </header>
+
 <main>
 
-<div class="card">
-  <div class="title">🧪 Pressure</div>
-  <div class="subtitle">How pressure is measured and behaves in the field</div>
-</div>
-
-<div class="card">
-  <div class="title">The Core Idea</div>
-  <p>
-    Pressure transmitters measure force per area and convert it into a signal (usually 4–20 mA).
-  </p>
-</div>
-
-<div class="card">
-  <div class="title">Types of Pressure</div>
-
-  <div class="note">
-    🌬️ <span class="highlight">Gauge Pressure (PSIG)</span><br>
-    Measured relative to atmosphere
+  <div class="hero">
+    <div class="hero-badge">&#129514; PRESSURE</div>
+    <h1 class="hero-title">Pressure Measurement</h1>
+    <p class="hero-sub">Gauge, absolute, differential — know your reference before you touch anything.</p>
   </div>
 
-  <div class="note">
-    🌌 <span class="highlight">Absolute Pressure (PSIA)</span><br>
-    Measured from vacuum (0 reference)
+  <div class="section-label">Pressure Types</div>
+
+  <div class="card">
+    <div class="card-title">Three references, three different readings</div>
+    <div class="row-3">
+      <div class="pt-card pt-gauge">
+        <div class="pt-label">PSIG</div>
+        <div class="pt-desc">Gauge — referenced to atmosphere. Most common in process plants.</div>
+      </div>
+      <div class="pt-card pt-abs">
+        <div class="pt-label">PSIA</div>
+        <div class="pt-desc">Absolute — referenced to perfect vacuum. Used in vacuum systems and vapor pressure.</div>
+      </div>
+      <div class="pt-card pt-dp">
+        <div class="pt-label">DP / PSID</div>
+        <div class="pt-desc">Differential — measures the difference between two pressures. Used for flow and level.</div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:10px">&#9888;&#65039; At sea level: PSIA = PSIG + 14.7. A transmitter configured for gauge reads <strong>0</strong> at atmospheric pressure — not 14.7.</div>
   </div>
 
-  <div class="note">
-    ⚖️ <span class="highlight">Differential Pressure (DP)</span><br>
-    Difference between two pressures
+  <div class="section-label">How It Works</div>
+
+  <div class="card">
+    <div class="card-title">Signal path from process to DCS</div>
+    <div class="note">
+      <div class="note-label">&#129514; Process Connection</div>
+      Process pressure acts on the transmitter sensing diaphragm through an impulse line or direct mount.
+    </div>
+    <div class="note">
+      <div class="note-label">&#128268; Sensing Cell</div>
+      The diaphragm deflects proportionally to pressure. A capacitive or piezoresistive element converts deflection to an electrical signal.
+    </div>
+    <div class="note">
+      <div class="note-label">&#128200; Output</div>
+      Electronics scale the signal to 4&#8211;20 mA. 4 mA = LRV (low range), 20 mA = URV (high range).
+    </div>
   </div>
 
-</div>
+  <div class="section-label">Impulse Lines</div>
 
-<div class="card">
-  <div class="title">How it Actually Works</div>
-
-  <div class="note">
-    🔧 <span class="highlight">Process Pressure</span><br>
-    Applies force to sensor (diaphragm)
+  <div class="card">
+    <div class="card-title">What connects the transmitter to the process</div>
+    <div class="note">
+      <div class="note-label">&#128295; Block Valve</div>
+      Isolates the transmitter from the process. Must be fully open during normal operation.
+    </div>
+    <div class="note">
+      <div class="note-label">&#128295; Block-and-Bleed Manifold</div>
+      Allows isolation and venting of the transmitter without disturbing the process. Use it to zero-check in place.
+    </div>
+    <div class="note">
+      <div class="note-label">&#9888;&#65039; Plugged Lines</div>
+      Solids, wax, or freezing can plug the impulse line — the reading sticks at the last value. Slow response is the first sign.
+    </div>
   </div>
 
-  <div class="note">
-    ⚙️ <span class="highlight">Transmitter</span><br>
-    Converts pressure into electrical signal
+  <div class="section-label">Quick Troubleshooting</div>
+
+  <div class="card">
+    <div class="fault-row">
+      <div class="fault-symptom">&#128308; Reading stuck — not responding to process changes</div>
+      <div class="fault-fix">&#8594; Plugged impulse line or closed block valve. Check manifold and tap condition.</div>
+    </div>
+    <div class="fault-row">
+      <div class="fault-symptom">&#128308; Reading consistently low</div>
+      <div class="fault-fix">&#8594; Leak in impulse line or process connection. Check for visible weeping at fittings.</div>
+    </div>
+    <div class="fault-row">
+      <div class="fault-symptom">&#128992; Reading has a constant offset (always high or low by a fixed amount)</div>
+      <div class="fault-fix">&#8594; Zero calibration error. Isolate, vent, and re-zero at the transmitter with no process pressure applied.</div>
+    </div>
+    <div class="fault-row">
+      <div class="fault-symptom">&#128308; Reading noisy or unstable</div>
+      <div class="fault-fix">&#8594; Turbulent process, vibration, or loose process connection. Check mounting and configure damping.</div>
+    </div>
+    <div class="fault-row">
+      <div class="fault-symptom">&#128308; Reading shows full-scale or goes to FAULT</div>
+      <div class="fault-fix">&#8594; Overpressure event may have damaged the sensing cell. Check process history and compare against transmitter URL.</div>
+    </div>
   </div>
 
-  <div class="note">
-    🎛️ <span class="highlight">Output</span><br>
-    Sends 4–20 mA to PLC / DCS
+  <div class="section-label">Field Tips</div>
+
+  <div class="card">
+    <div class="tip-box">&#128161; Always verify your reference point first — atmospheric, vacuum, or another pressure point. That one question tells you which transmitter type you need.</div>
+    <div class="tip-box">&#128161; To zero-check in the field: close the block valve, open the bleed, and verify the transmitter reads 0 (for gauge). If it doesn't, note the offset before adjusting.</div>
+    <div class="tip-box">&#128161; Never exceed the transmitter's URL (Upper Range Limit) — even briefly. Overpressure shifts the zero permanently and can rupture the diaphragm.</div>
   </div>
-
-</div>
-
-<div class="card">
-  <div class="title">Real Field Behavior</div>
-  <ul>
-    <li>Higher pressure → higher mA</li>
-    <li>Stable pressure → stable reading</li>
-    <li>Process changes show directly in signal</li>
-  </ul>
-</div>
-
-<div class="card">
-  <div class="title">Common Problems</div>
-
-  <div class="note">
-    ❌ <span class="highlight">Plugged Impulse Line</span><br>
-    → Reading stuck or slow
-  </div>
-
-  <div class="note">
-    ❌ <span class="highlight">Leak in Line</span><br>
-    → Reading lower than actual
-  </div>
-
-  <div class="note">
-    ❌ <span class="highlight">Bad Calibration</span><br>
-    → Offset or incorrect span
-  </div>
-
-  <div class="note">
-    ❌ <span class="highlight">Sensor Damage</span><br>
-    → Unstable or incorrect readings
-  </div>
-
-</div>
-
-<div class="card">
-  <div class="title">Quick Troubleshooting</div>
-
-  <div class="note">
-    ⚠️ Reading not changing<br>
-    → Check impulse line for blockage
-  </div>
-
-  <div class="note">
-    ⚠️ Reading too low<br>
-    → Check for leaks or venting
-  </div>
-
-  <div class="note">
-    ⚠️ Reading offset<br>
-    → Check zero calibration
-  </div>
-
-  <div class="note">
-    ⚠️ Reading unstable<br>
-    → Check process conditions or sensor health
-  </div>
-
-</div>
-
-<div class="card">
-  <div class="title">Field Tip</div>
-  <p>
-    Always verify your reference: atmospheric, vacuum, or another pressure.
-    That tells you what you're actually measuring.
-  </p>
-</div>
-
-<div class="back" onclick="location.href='./field-guide.html'">← Back to Field Guide</div>
 
 </main>
-<script src="common.js"></script>
-</body></html>
+<footer>PockeTech V2 — Pressure</footer>
+
+<script>
+(function(){var t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+(function(){var sx,sy;document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=Math.abs(e.changedTouches[0].clientY-sy);if(sx<60&&dx>50&&dy<100)history.back();},{passive:true});})();
+function toggleTheme(){var h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',next);localStorage.setItem('pt-v2-theme',next);}
+</script>
+
+</body>
+</html>
