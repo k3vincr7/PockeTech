@@ -156,8 +156,8 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
 // common.js inlined
 const $ = id => document.getElementById(id);
 function fmt(v, d=1){ return Number.isFinite(v) ? Number(v).toFixed(d) : '—'; }
-function toggleTheme(){const h=document.documentElement;const nx=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',nx);localStorage.setItem('pt-v2-theme',nx);}
-(function(){const t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+function toggleTheme(){const h=document.documentElement;const nx=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',nx);try{localStorage.setItem('pt-v2-theme',nx);}catch(_){}}
+(function(){try{const t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(_){}})();
 
 // State
 const S = { mode: 'none', baseline: null, current: 0, delta: 0, threshold: 20, raw: [0,0,0] };
