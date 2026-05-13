@@ -267,7 +267,7 @@ function orientationFallback() {
   if (typeof DeviceOrientationEvent.requestPermission === 'function') {
     // iOS 13+ requires permission from a user gesture
     setStatus('warn', '⚠ Tap "Enable Sensor" to allow access (iOS)');
-    $('iosBtn').style.display = '';
+    $('iosBtn').style.display = 'block';
     return;
   }
   attachOrientation();
