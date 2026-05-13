@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><title>Percent — PockeTech V2</title><meta name="theme-color" content="#0f1115">
+<style>
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--ok:#166534;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px;--clr:#6366f1}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
+header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+html[data-theme="dark"] header{background:rgba(15,17,21,.75)}
+.header-left{display:flex;align-items:center;gap:8px}
+.brand{display:flex;flex-direction:column}
+.header-title{font-weight:800;font-size:18px}
+.build{font-size:12px;color:var(--muted)}
+main{padding:14px;max-width:600px;margin:0 auto}
+.section-title{margin:0 0 6px;font-size:28px;font-weight:900;letter-spacing:-.5px}
+button,input{font:inherit;border-radius:14px}
+button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;font-weight:650;transition:transform .08s ease,box-shadow .15s ease,border-color .15s ease}
+button:active{transform:translateY(1px) scale(.99)}
+input{width:100%;padding:13px;border:1px solid var(--border);background:var(--card);color:var(--fg);margin-top:7px;outline:none}
+input:focus{border-color:var(--clr);box-shadow:0 0 0 3px color-mix(in srgb,var(--clr) 20%,transparent)}
+input[type="range"]{accent-color:var(--clr);padding:0;border:none;background:transparent;margin-top:10px;box-shadow:none}
+input[type="checkbox"]{width:auto;margin:0;transform:scale(1.2);accent-color:var(--clr)}
+label{font-weight:700;font-size:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.hero{background:linear-gradient(135deg,color-mix(in srgb,var(--clr) 14%,var(--card)),var(--card));overflow:hidden;position:relative}
+.hero:after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,var(--clr) 14%,transparent)}
+.badge{display:inline-block;background:var(--clr);color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 10px;border-radius:999px;margin-bottom:10px;text-transform:uppercase}
+.muted{color:var(--muted);font-size:13px;line-height:1.45}
+.big{font-size:28px;font-weight:850;margin:4px 0;letter-spacing:-.4px}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.result-card{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:14px}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.col{flex:1 1 120px}
+.small-btn{padding:8px 10px;font-size:14px;border-radius:12px;width:auto}
+.ok-btn{width:100%;background:color-mix(in srgb,var(--clr) 12%,var(--card));border-color:var(--clr);color:var(--clr)}
+.hr{height:1px;background:var(--border);margin:14px 0}
+.chipbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{width:auto;border-radius:999px;padding:9px 14px;font-size:14px}
+.slider-wrap{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:14px;margin-top:14px}
+.toggle-line{display:flex;align-items:center;gap:10px;cursor:pointer}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px;overflow:hidden;border-radius:12px}
+th,td{border:1px solid var(--border);padding:9px;text-align:left}
+th{background:var(--tile);font-weight:700}
+.scroll-x{overflow-x:auto}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
+@media(max-width:520px){main{padding:12px}.section-title{font-size:24px}.card{padding:14px}.big{font-size:22px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <button class="small-btn" onclick="history.back()">← Back</button>
+    <div class="brand">
+      <div class="header-title">PockeTech V2</div>
+      <div class="build">Percent</div>
+    </div>
+  </div>
+  <button class="small-btn" onclick="toggleTheme()">🌓</button>
+</header>
+<main>
+
+<div class="card hero">
+  <span class="badge">Percent</span>
+  <h1 class="section-title">Percent Calculator</h1>
+  <p class="muted" style="margin:0">Convert between %, engineering units, and 4–20 mA. Enter either value — bidirectional.</p>
+</div>
+
+<!-- Config -->
+<div class="card">
+  <div class="row">
+    <div class="col"><label>LRV</label><input id="lrv" inputmode="decimal" placeholder="0" value="0"></div>
+    <div class="col"><label>URV</label><input id="urv" inputmode="decimal" placeholder="100"></div>
+    <div class="col"><label>EU Label</label><input id="unit" placeholder="psi, °F, inH₂O"></div>
+  </div>
+  <div class="hr"></div>
+  <label class="toggle-line">
+    <input type="checkbox" id="sqrt_mode"> Square-root mode (flow / DP)
+  </label>
+  <p class="muted" style="margin:6px 0 0">Linear: EU = LRV + (% / 100) × span. Square-root: EU = LRV + (% / 100)² × span — useful when % is flow and EU is DP.</p>
+</div>
+
+<!-- Live inputs -->
+<div class="card">
+  <div class="row">
+    <div class="col"><label>Percent</label><input id="pct" inputmode="decimal" placeholder="50"></div>
+    <div class="col"><label>EU</label><input id="eu" inputmode="decimal" placeholder="50"></div>
+  </div>
+  <div class="slider-wrap">
+    <label>Live Slider</label>
+    <input id="slider" type="range" min="0" max="100" step="0.1" value="50">
+    <div class="chipbar">
+      <button class="chip" onclick="setP(0)">0%</button>
+      <button class="chip" onclick="setP(25)">25%</button>
+      <button class="chip" onclick="setP(50)">50%</button>
+      <button class="chip" onclick="setP(75)">75%</button>
+      <button class="chip" onclick="setP(100)">100%</button>
+    </div>
+  </div>
+</div>
+
+<!-- Results -->
+<div class="result-grid">
+  <div class="result-card">
+    <div class="muted">Percent</div>
+    <div class="big" id="r_pct">—</div>
+  </div>
+  <div class="result-card">
+    <div class="muted" id="r_eu_lbl">EU</div>
+    <div class="big" id="r_eu">—</div>
+  </div>
+  <div class="result-card">
+    <div class="muted">4–20 mA</div>
+    <div class="big" id="r_ma">—</div>
+  </div>
+</div>
+
+<!-- Table builder -->
+<div class="card">
+  <div class="row">
+    <div class="col"><button class="ok-btn" onclick="buildTable()">Build Table</button></div>
+    <div class="col"><button style="width:100%" onclick="clearAll()">Clear</button></div>
+  </div>
+  <div id="tableWrap" class="scroll-x" style="display:none">
+    <table id="tbl">
+      <thead><tr><th>%</th><th id="th_eu">EU</th><th>mA</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+</main>
+<footer>PockeTech V2 — Percent</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+function fmt(v, d=3){ return Number.isFinite(v) ? Number(v).toFixed(d) : '—'; }
+function toggleTheme(){const h=document.documentElement;const nx=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',nx);try{localStorage.setItem('pt-v2-theme',nx);}catch(_){}}
+(function(){try{const t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(_){}})();
+
+let source = 'pct';
+
+function num(id){ const raw=$(id).value.trim().replace('−','-'); if(!raw) return null; const n=Number(raw); return Number.isFinite(n)?n:null; }
+function unitLabel(){ const u=$('unit').value.trim(); return u?' '+u:''; }
+function getRange(){ const l=num('lrv'),u=num('urv'); return(l===null||u===null||l===u)?null:{l,u}; }
+function clamp(v){ return Math.min(Math.max(v,0),100); }
+
+function euFromPct(p,l,u){ return $('sqrt_mode').checked?l+((p/100)**2)*(u-l):l+(p/100)*(u-l); }
+function pctFromEu(eu,l,u){
+  const s=u-l; if(s===0) return null;
+  if($('sqrt_mode').checked){ const f=(eu-l)/s; return f<0?0:f>1?100:Math.sqrt(f)*100; }
+  return((eu-l)/s)*100;
+}
+
+function draw(p,eu){
+  const pOk=Number.isFinite(p),euOk=Number.isFinite(eu);
+  $('r_pct').textContent=pOk?fmt(p,2)+' %':'—';
+  $('r_ma').textContent=pOk?fmt(4+(p/100)*16,3)+' mA':'—';
+  $('r_eu').textContent=euOk?fmt(eu,4)+unitLabel():'—';
+  const lbl=$('unit').value.trim()||'EU';
+  $('r_eu_lbl').textContent=lbl;
+  $('th_eu').textContent=lbl;
+}
+
+function syncFromPct(write=false){
+  const r=getRange(),p0=num('pct');
+  if(!r||p0===null){draw(NaN,NaN);return;}
+  const p=clamp(p0),eu=euFromPct(p,r.l,r.u);
+  if(write){$('pct').value=fmt(p,2);$('eu').value=fmt(eu,4);}
+  $('slider').value=p;
+  draw(p,eu);
+}
+
+function syncFromEu(write=false){
+  const r=getRange(),eu=num('eu');
+  if(!r||eu===null){draw(NaN,NaN);return;}
+  const raw=pctFromEu(eu,r.l,r.u);
+  if(raw===null){draw(NaN,eu);return;}
+  const p=clamp(raw);
+  if(write)$('pct').value=fmt(p,2);
+  $('slider').value=p;
+  draw(p,eu);
+}
+
+function setP(p){source='pct';$('pct').value=p;syncFromPct(true);}
+
+function buildTable(){
+  const r=getRange();if(!r)return;
+  const tb=$('tbl').querySelector('tbody');tb.innerHTML='';
+  [0,25,50,75,100].forEach(p=>{
+    const eu=euFromPct(p,r.l,r.u);
+    const row=document.createElement('tr');
+    row.innerHTML=`<td>${p}%</td><td>${fmt(eu,4)}${unitLabel()}</td><td>${fmt(4+(p/100)*16,3)}</td>`;
+    tb.appendChild(row);
+  });
+  $('tableWrap').style.display='';
+}
+
+function clearAll(){
+  ['pct','eu'].forEach(id=>$(id).value='');
+  $('slider').value=50;
+  $('tbl').querySelector('tbody').innerHTML='';
+  $('tableWrap').style.display='none';
+  draw(NaN,NaN);
+}
+
+['lrv','urv','unit'].forEach(id=>$(id).addEventListener('input',()=>source==='eu'?syncFromEu():syncFromPct()));
+$('sqrt_mode').addEventListener('change',()=>syncFromPct(true));
+$('pct').addEventListener('input',()=>{source='pct';syncFromPct();});
+$('pct').addEventListener('change',()=>syncFromPct(true));
+$('eu').addEventListener('input',()=>{source='eu';syncFromEu();});
+$('eu').addEventListener('change',()=>syncFromEu(true));
+$('slider').addEventListener('input',()=>{source='pct';$('pct').value=$('slider').value;syncFromPct(true);});
+</script>
+</body>
+</html>
