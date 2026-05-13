@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><title>Magnetic Detector — PockeTech V2</title><meta name="theme-color" content="#0f1115">
+<style>
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#1f6bff;--ok:#166534;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px;--mag:#c026d3}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#3a7afe;--shadow:0 14px 34px rgba(0,0,0,.35)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
+header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+html[data-theme="dark"] header{background:rgba(15,17,21,.75)}
+.header-left{display:flex;align-items:center;gap:8px}
+.brand{display:flex;flex-direction:column}
+.header-title{font-weight:800;font-size:18px}
+.build{font-size:12px;color:var(--muted)}
+main{padding:14px;max-width:600px;margin:0 auto}
+.section-title{margin:0 0 6px;font-size:28px;font-weight:900;letter-spacing:-.5px}
+button,input{font:inherit;border-radius:14px}
+button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;font-weight:650;transition:transform .08s ease,box-shadow .15s ease}
+button:active{transform:translateY(1px) scale(.99)}
+input[type="range"]{width:100%;accent-color:var(--mag);padding:0;border:none;background:transparent;margin-top:10px}
+label{font-weight:700;font-size:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.hero{background:linear-gradient(135deg,color-mix(in srgb,var(--mag) 14%,var(--card)),var(--card));overflow:hidden;position:relative}
+.hero:after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,var(--mag) 14%,transparent)}
+.badge{display:inline-block;background:var(--mag);color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 10px;border-radius:999px;margin-bottom:10px;text-transform:uppercase}
+.muted{color:var(--muted);font-size:13px;line-height:1.45}
+.big{font-size:22px;font-weight:850;margin:2px 0;letter-spacing:-.3px}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.result-card{background:var(--tile);border:1px solid var(--border);border-radius:14px;padding:12px}
+.small-btn{padding:8px 10px;font-size:14px;border-radius:12px;width:auto}
+.hr{height:1px;background:var(--border);margin:14px 0}
+.chipbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{width:auto;border-radius:999px;padding:8px 14px;font-size:14px}
+details summary{cursor:pointer;font-weight:700;font-size:15px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details summary::-webkit-details-marker{display:none}
+details summary::after{content:'›';font-size:20px;color:var(--muted);transition:transform .2s}
+details[open] summary::after{transform:rotate(90deg)}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
+@media(max-width:520px){main{padding:12px}.section-title{font-size:24px}.card{padding:14px}.big{font-size:18px}}
+
+/* Detector-specific */
+.status-circle{width:140px;height:140px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 18px;border:3px solid var(--border);background:var(--tile);transition:border-color .3s,background .3s}
+.s-icon{font-size:42px;line-height:1}
+.s-text{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-top:5px;color:var(--muted)}
+.status-circle.detected{border-color:var(--mag);background:color-mix(in srgb,var(--mag) 12%,var(--card));animation:mpulse 1s ease-in-out infinite}
+.status-circle.detected .s-text{color:var(--mag)}
+@keyframes mpulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--mag) 40%,transparent)}50%{box-shadow:0 0 0 18px transparent}}
+.mag-num{text-align:center;line-height:1}
+.mag-val{font-size:48px;font-weight:900;letter-spacing:-.5px;color:var(--mag)}
+.mag-unit-lbl{font-size:20px;color:var(--muted);font-weight:400}
+.mag-delta{text-align:center;font-size:13px;color:var(--muted);margin-top:6px}
+.bar-wrap{height:10px;background:var(--tile);border-radius:999px;overflow:hidden;position:relative;margin-top:14px}
+.bar-fill{height:100%;background:var(--mag);border-radius:999px;transition:width .1s linear;width:0}
+.bar-mark{position:absolute;top:0;bottom:0;width:2px;background:color-mix(in srgb,var(--mag) 55%,transparent)}
+.calib-btn{width:100%;background:color-mix(in srgb,var(--mag) 12%,var(--card));border-color:var(--mag);color:var(--mag);font-size:16px;padding:14px}
+.ios-btn{display:none;width:100%;margin-top:12px;background:color-mix(in srgb,var(--mag) 12%,var(--card));border-color:var(--mag);color:var(--mag)}
+.api-badge{display:inline-block;font-size:12px;font-weight:700;padding:4px 12px;border-radius:999px}
+.api-none{background:var(--tile);color:var(--muted);border:1px solid var(--border)}
+.api-ok{background:color-mix(in srgb,#16a34a 12%,transparent);color:#16a34a;border:1px solid #16a34a}
+.api-warn{background:color-mix(in srgb,#d97706 12%,transparent);color:#d97706;border:1px solid #d97706}
+.api-err{background:color-mix(in srgb,#dc2626 12%,transparent);color:#dc2626;border:1px solid #dc2626}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <button class="small-btn" onclick="history.back()">← Back</button>
+    <div class="brand">
+      <div class="header-title">PockeTech V2</div>
+      <div class="build">Magnetic Detector</div>
+    </div>
+  </div>
+  <button class="small-btn" onclick="toggleTheme()">🌓</button>
+</header>
+<main>
+
+<div class="card hero">
+  <span class="badge">Magnetic</span>
+  <h1 class="section-title">Solenoid Detector</h1>
+  <p class="muted" style="margin:0">Uses the phone's magnetometer to detect energized solenoids, relays, and valve actuators.</p>
+</div>
+
+<!-- Live status -->
+<div class="card">
+  <div id="statusCircle" class="status-circle">
+    <span id="sIcon" class="s-icon">○</span>
+    <span id="sText" class="s-text">Set Zero</span>
+  </div>
+  <div class="mag-num">
+    <span id="magVal" class="mag-val">—</span><span id="magUnit" class="mag-unit-lbl"> µT</span>
+  </div>
+  <div id="deltaRow" class="mag-delta" style="display:none">
+    Δ <strong id="deltaVal">—</strong><span id="deltaUnit"> µT</span> from baseline
+  </div>
+  <div class="bar-wrap">
+    <div id="barFill" class="bar-fill"></div>
+    <div class="bar-mark" style="left:33.3%"></div>
+  </div>
+</div>
+
+<!-- Controls -->
+<div class="card">
+  <button id="calibBtn" class="calib-btn" onclick="calibrate()">📍 Set Baseline</button>
+  <p class="muted" style="margin:8px 0 0">Move away from all metal and magnets, then tap to zero the reading.</p>
+
+  <button id="iosBtn" class="ios-btn" onclick="iosStart()">🔓 Enable Sensor (iOS)</button>
+
+  <div class="hr"></div>
+  <label>Detection Sensitivity</label>
+  <input type="range" id="threshSlider" min="2" max="80" value="20" step="1" oninput="setThresh(+this.value)">
+  <div class="chipbar">
+    <button class="chip" onclick="setThresh(8)">High</button>
+    <button class="chip" onclick="setThresh(20)">Med</button>
+    <button class="chip" onclick="setThresh(45)">Low</button>
+  </div>
+  <p class="muted" style="margin:8px 0 0">Threshold: <span id="threshVal">20</span><span id="threshUnit"> µT</span></p>
+</div>
+
+<!-- Sensor status badge -->
+<div style="margin-bottom:14px">
+  <span id="apiStatus" class="api-badge api-none">Starting…</span>
+</div>
+
+<!-- Raw values -->
+<details class="card">
+  <summary>Raw Sensor Values</summary>
+  <div class="result-grid" style="margin-top:12px">
+    <div class="result-card"><div class="muted" id="lx">X</div><div class="big" id="rawX">—</div></div>
+    <div class="result-card"><div class="muted" id="ly">Y</div><div class="big" id="rawY">—</div></div>
+    <div class="result-card"><div class="muted" id="lz">Z</div><div class="big" id="rawZ">—</div></div>
+  </div>
+  <p id="baselineRow" class="muted" style="margin:10px 0 0;display:none">Baseline locked: <strong id="baselineVal"></strong></p>
+</details>
+
+<!-- How to use -->
+<details class="card">
+  <summary>How to Use</summary>
+  <ol style="margin:12px 0 0;padding-left:18px;line-height:1.9;color:var(--muted);font-size:14px">
+    <li>Hold the phone away from metal surfaces, motors, and magnets</li>
+    <li>Tap <strong>Set Baseline</strong> to zero the reading</li>
+    <li>Slowly sweep the phone near the solenoid coil or valve body</li>
+    <li>Status lights up <strong>DETECTED</strong> when a magnetic field is present</li>
+  </ol>
+  <div class="hr"></div>
+  <p class="muted" style="margin:0"><strong>Best results:</strong> hold within 1–3 inches of the coil. Works on solenoid valves, relay coils, contactors, and motor windings. Reduce sensitivity (Low) if nearby steel causes false positives.</p>
+  <div class="hr"></div>
+  <p class="muted" style="margin:0"><strong>Android (Chrome):</strong> Full µT readings via Magnetometer API. <strong>iPhone (Safari):</strong> Compass distortion mode — shows heading deviation in degrees instead of µT. Both modes detect field changes reliably.</p>
+</details>
+
+</main>
+<footer>PockeTech V2 — Magnetic Detector</footer>
+
+<script>
+// common.js inlined
+const $ = id => document.getElementById(id);
+function fmt(v, d=1){ return Number.isFinite(v) ? Number(v).toFixed(d) : '—'; }
+function toggleTheme(){const h=document.documentElement;const nx=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',nx);localStorage.setItem('pt-v2-theme',nx);}
+(function(){const t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+
+// State
+const S = { mode: 'none', baseline: null, current: 0, delta: 0, threshold: 20, raw: [0,0,0] };
+
+function unit() { return S.mode === 'orientation' ? '°' : ' µT'; }
+
+function draw() {
+  const { baseline, current, delta, threshold } = S;
+  const u = unit();
+  const det = baseline !== null && delta >= threshold;
+
+  $('magVal').textContent = fmt(current);
+  ['magUnit','deltaUnit','threshUnit'].forEach(id => $(id).textContent = u);
+
+  if (baseline !== null) {
+    $('deltaRow').style.display = '';
+    $('deltaVal').textContent = fmt(delta);
+  }
+
+  $('rawX').textContent = fmt(S.raw[0]);
+  $('rawY').textContent = fmt(S.raw[1]);
+  $('rawZ').textContent = fmt(S.raw[2]);
+
+  const pct = Math.min((delta / Math.max(threshold, 0.01)) * 33.3, 100);
+  $('barFill').style.width = pct + '%';
+
+  const circ = $('statusCircle');
+  if (baseline === null) {
+    circ.className = 'status-circle';
+    $('sIcon').textContent = '○';
+    $('sText').textContent = 'Set Zero';
+  } else if (det) {
+    circ.className = 'status-circle detected';
+    $('sIcon').textContent = '⚡';
+    $('sText').textContent = 'DETECTED';
+  } else {
+    circ.className = 'status-circle';
+    $('sIcon').textContent = '✓';
+    $('sText').textContent = 'CLEAR';
+  }
+}
+
+function setStatus(type, msg) {
+  $('apiStatus').className = 'api-badge api-' + type;
+  $('apiStatus').textContent = msg;
+}
+
+function fromMag(x, y, z) {
+  S.raw = [x, y, z];
+  S.current = Math.sqrt(x*x + y*y + z*z);
+  S.delta = S.baseline !== null ? Math.abs(S.current - S.baseline) : 0;
+  draw();
+}
+
+function fromOri(e) {
+  const a = e.alpha ?? 0, b = e.beta ?? 0, g = e.gamma ?? 0;
+  S.raw = [a, b, g];
+  S.current = a;
+  if (S.baseline !== null) {
+    let d = Math.abs(a - S.baseline);
+    if (d > 180) d = 360 - d;
+    S.delta = d;
+  } else {
+    S.delta = 0;
+  }
+  draw();
+}
+
+function calibrate() {
+  S.baseline = S.current;
+  $('baselineRow').style.display = '';
+  $('baselineVal').textContent = fmt(S.baseline) + unit();
+  draw();
+}
+
+function setThresh(v) {
+  S.threshold = v;
+  $('threshSlider').value = v;
+  $('threshVal').textContent = v;
+  draw();
+}
+
+function startSensor() {
+  if (typeof Magnetometer !== 'undefined') {
+    try {
+      const s = new Magnetometer({ frequency: 10 });
+      s.addEventListener('reading', () => fromMag(s.x, s.y, s.z));
+      s.addEventListener('error', () => orientationFallback());
+      s.start();
+      S.mode = 'magnetometer';
+      setStatus('ok', '● Magnetometer active — readings in µT');
+      return;
+    } catch(_) {}
+  }
+  orientationFallback();
+}
+
+function orientationFallback() {
+  if (!('DeviceOrientationEvent' in window)) {
+    setStatus('err', '✕ No magnetic sensor available on this browser');
+    return;
+  }
+  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+    setStatus('warn', '⚠ Tap "Enable Sensor" to allow access (iOS)');
+    $('iosBtn').style.display = '';
+    return;
+  }
+  attachOrientation();
+}
+
+function attachOrientation() {
+  const evt = ('ondeviceorientationabsolute' in window) ? 'deviceorientationabsolute' : 'deviceorientation';
+  window.addEventListener(evt, fromOri, true);
+  S.mode = 'orientation';
+  $('lx').textContent = 'Heading';
+  $('ly').textContent = 'Tilt ↕';
+  $('lz').textContent = 'Tilt ↔';
+  setThresh(10);
+  setStatus('warn', '⚠ Compass mode — detects heading distortion (degrees, not µT)');
+}
+
+function iosStart() {
+  DeviceOrientationEvent.requestPermission()
+    .then(state => {
+      if (state === 'granted') {
+        $('iosBtn').style.display = 'none';
+        attachOrientation();
+      } else {
+        setStatus('err', '✕ Sensor permission denied');
+      }
+    })
+    .catch(e => setStatus('err', '✕ ' + (e.message || 'Permission error')));
+}
+
+startSensor();
+</script>
+</body>
+</html>
