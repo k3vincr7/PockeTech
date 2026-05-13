@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PockeTech — Tank Volume</title>
+<meta name="theme-color" content="#0f1115">
+<style>
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--accent:#f59e0b;--note:#eef2f7;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#fbbf24;--note:#1e2435;--shadow:0 14px 34px rgba(0,0,0,.35)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--accent:#fbbf24;--note:#1e2435;--shadow:0 14px 34px rgba(0,0,0,.35)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
+header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+html[data-theme="dark"] header,html[data-theme="auto"] header{transition:background .2s}
+html[data-theme="dark"] header{background:rgba(15,17,21,.75)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"] header{background:rgba(15,17,21,.75)}}
+.header-left{display:flex;align-items:center;gap:8px}
+.brand{display:flex;flex-direction:column}
+.header-title{font-weight:800;font-size:18px}
+.build{font-size:12px;color:var(--muted)}
+.small-btn{padding:8px 12px;font-size:14px;border-radius:12px;width:auto;cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);font:inherit;font-weight:650}
+main{padding:14px;max-width:960px;margin:0 auto;padding-bottom:40px}
+.hero{background:linear-gradient(135deg,color-mix(in srgb,#f59e0b 28%,var(--card)),var(--card) 70%);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:18px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+.hero::after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,#f59e0b 18%,transparent)}
+.hero-badge{display:inline-block;background:#f59e0b;color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.hero-title{font-size:26px;font-weight:800;letter-spacing:-.5px;margin:0 0 4px}
+.hero-sub{color:var(--muted);font-size:13px;margin:0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.section-label{font-size:11px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+.seg-row{display:flex;gap:8px;margin-bottom:0}
+.seg-btn{flex:1;padding:11px 8px;font-size:13px;font-weight:700;border-radius:12px;border:1px solid var(--border);background:var(--tile);color:var(--muted);cursor:pointer;font:inherit;transition:all .12s}
+.seg-btn.active{background:color-mix(in srgb,#f59e0b 14%,var(--card));border-color:color-mix(in srgb,#f59e0b 60%,var(--border));color:#92400e;font-weight:800}
+html[data-theme="dark"] .seg-btn.active{color:#fcd34d}
+@media(prefers-color-scheme:dark){html[data-theme="auto"] .seg-btn.active{color:#fcd34d}}
+.field-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.field-row:last-child{margin-bottom:0}
+.field-row label{font-size:13px;font-weight:700;min-width:100px;flex-shrink:0}
+.field-row input{flex:1;padding:11px 12px;border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--fg);font:inherit;font-size:14px;outline:none}
+.field-row input:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
+.field-row .unit-tag{font-size:13px;color:var(--muted);font-weight:700;min-width:28px;text-align:right}
+.unit-toggle{display:flex;gap:6px;margin-bottom:14px}
+.unit-btn{padding:7px 14px;font-size:13px;font-weight:700;border-radius:10px;border:1px solid var(--border);background:var(--tile);color:var(--muted);cursor:pointer;font:inherit}
+.unit-btn.active{background:color-mix(in srgb,#f59e0b 14%,var(--card));border-color:color-mix(in srgb,#f59e0b 60%,var(--border));color:#92400e}
+html[data-theme="dark"] .unit-btn.active{color:#fcd34d}
+@media(prefers-color-scheme:dark){html[data-theme="auto"] .unit-btn.active{color:#fcd34d}}
+.calc-btn{width:100%;padding:14px;font-size:16px;font-weight:800;border-radius:14px;border:none;background:#f59e0b;color:#fff;cursor:pointer;margin-top:4px;transition:opacity .12s}
+.calc-btn:active{opacity:.85}
+.results-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.res-card{background:var(--tile);border:1px solid var(--border);border-radius:14px;padding:13px 14px}
+.res-card.accent{background:color-mix(in srgb,#f59e0b 12%,var(--tile));border-color:color-mix(in srgb,#f59e0b 40%,var(--border))}
+.res-label{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.res-val{font-size:22px;font-weight:850;letter-spacing:-.3px}
+.res-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.res-card.full{grid-column:1/-1}
+.nonlinear-box{background:color-mix(in srgb,#f59e0b 10%,var(--tile));border:1px solid color-mix(in srgb,#f59e0b 35%,var(--border));border-radius:14px;padding:13px 14px;font-size:14px;font-weight:600;color:#92400e;line-height:1.5;margin-top:12px}
+html[data-theme="dark"] .nonlinear-box{color:#fcd34d}
+@media(prefers-color-scheme:dark){html[data-theme="auto"] .nonlinear-box{color:#fcd34d}}
+.err-box{background:color-mix(in srgb,#ef4444 10%,var(--tile));border:1px solid color-mix(in srgb,#ef4444 35%,var(--border));border-radius:12px;padding:11px 14px;font-size:13px;font-weight:600;color:#991b1b;margin-top:10px;display:none}
+html[data-theme="dark"] .err-box{color:#f87171}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
+@media(max-width:520px){main{padding:10px}.hero-title{font-size:22px}.results-grid{grid-template-columns:1fr}.field-row label{min-width:80px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <button class="small-btn" onclick="location.href='./index.html'">&#8592; Back</button>
+    <div class="brand">
+      <div class="header-title">PockeTech V2</div>
+      <div class="build">Tank Volume</div>
+    </div>
+  </div>
+  <button class="small-btn" onclick="toggleTheme()">&#127771;</button>
+</header>
+
+<main>
+
+  <div class="hero">
+    <div class="hero-badge">&#128730; TANK VOLUME</div>
+    <h1 class="hero-title">Tank Volume Calculator</h1>
+    <p class="hero-sub">Height &harr; Level % &harr; Volume &nbsp;&mdash;&nbsp; accounts for horizontal cylinder non-linearity.</p>
+  </div>
+
+  <div class="section-label">Tank Shape</div>
+  <div class="seg-row">
+    <button class="seg-btn active" id="sbtn-horiz" onclick="setShape('horiz')">&#9711; Horiz Cylinder</button>
+    <button class="seg-btn" id="sbtn-vert" onclick="setShape('vert')">&#9675; Vert Cylinder</button>
+    <button class="seg-btn" id="sbtn-rect" onclick="setShape('rect')">&#9645; Rectangular</button>
+  </div>
+
+  <div class="section-label">Dimensions</div>
+  <div class="card">
+    <div class="unit-toggle">
+      <button class="unit-btn active" id="ubtn-in" onclick="setUnit('in')">inches</button>
+      <button class="unit-btn" id="ubtn-ft" onclick="setUnit('ft')">feet</button>
+    </div>
+
+    <div id="dims-horiz">
+      <div class="field-row">
+        <label>Diameter</label>
+        <input id="horiz-diam" type="number" inputmode="decimal" min="0" placeholder="e.g. 16">
+        <span class="unit-tag dim-unit">in</span>
+      </div>
+      <div class="field-row">
+        <label>Length</label>
+        <input id="horiz-len" type="number" inputmode="decimal" min="0" placeholder="e.g. 480">
+        <span class="unit-tag dim-unit">in</span>
+      </div>
+    </div>
+
+    <div id="dims-vert" style="display:none">
+      <div class="field-row">
+        <label>Diameter</label>
+        <input id="vert-diam" type="number" inputmode="decimal" min="0" placeholder="e.g. 48">
+        <span class="unit-tag dim-unit">in</span>
+      </div>
+      <div class="field-row">
+        <label>Total Height</label>
+        <input id="vert-totalh" type="number" inputmode="decimal" min="0" placeholder="e.g. 120">
+        <span class="unit-tag dim-unit">in</span>
+      </div>
+    </div>
+
+    <div id="dims-rect" style="display:none">
+      <div class="field-row">
+        <label>Width</label>
+        <input id="rect-w" type="number" inputmode="decimal" min="0" placeholder="e.g. 48">
+        <span class="unit-tag dim-unit">in</span>
+      </div>
+      <div class="field-row">
+        <label>Length</label>
+        <input id="rect-l" type="number" inputmode="decimal" min="0" placeholder="e.g. 96">
+        <span class="unit-tag dim-unit">in</span>
+      </div>
+      <div class="field-row">
+        <label>Total Height</label>
+        <input id="rect-totalh" type="number" inputmode="decimal" min="0" placeholder="e.g. 60">
+        <span class="unit-tag dim-unit">in</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Calculate From</div>
+  <div class="card">
+    <div class="seg-row" style="margin-bottom:14px">
+      <button class="seg-btn active" id="mbtn-height" onclick="setMode('height')">Height</button>
+      <button class="seg-btn" id="mbtn-pct" onclick="setMode('pct')">Level %</button>
+      <button class="seg-btn" id="mbtn-vol" onclick="setMode('vol')">Volume</button>
+    </div>
+
+    <div id="input-height">
+      <div class="field-row">
+        <label>Liquid Height</label>
+        <input id="val-height" type="number" inputmode="decimal" min="0" placeholder="e.g. 8">
+        <span class="unit-tag dim-unit">in</span>
+      </div>
+    </div>
+    <div id="input-pct" style="display:none">
+      <div class="field-row">
+        <label>Level %</label>
+        <input id="val-pct" type="number" inputmode="decimal" min="0" max="100" placeholder="e.g. 50">
+        <span class="unit-tag">%</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:-6px;padding-left:110px">Height &divide; tank height &times; 100 &mdash; what your instrument reads</div>
+    </div>
+    <div id="input-vol" style="display:none">
+      <div class="field-row">
+        <label>Volume</label>
+        <input id="val-vol" type="number" inputmode="decimal" min="0" placeholder="e.g. 500">
+        <span class="unit-tag">gal</span>
+      </div>
+    </div>
+
+    <div class="err-box" id="err-box">&#9888; Enter all required fields.</div>
+    <button class="calc-btn" onclick="calculate()">Calculate</button>
+  </div>
+
+  <div id="results-section" style="display:none">
+    <div class="section-label">Results</div>
+    <div class="card">
+      <div class="results-grid">
+        <div class="res-card">
+          <div class="res-label">Liquid Height</div>
+          <div class="res-val" id="res-height-in">—</div>
+          <div class="res-sub" id="res-height-ft"></div>
+        </div>
+        <div class="res-card">
+          <div class="res-label">Level %</div>
+          <div class="res-val" id="res-levelpct">—</div>
+          <div class="res-sub">height &divide; max height</div>
+        </div>
+        <div class="res-card accent">
+          <div class="res-label">Volume</div>
+          <div class="res-val" id="res-vol-gal">—</div>
+          <div class="res-sub" id="res-vol-cuft"></div>
+        </div>
+        <div class="res-card accent">
+          <div class="res-label">Volume %</div>
+          <div class="res-val" id="res-volpct">—</div>
+          <div class="res-sub">volume &divide; total capacity</div>
+        </div>
+        <div class="res-card full">
+          <div class="res-label">Total Capacity</div>
+          <div class="res-val" id="res-total-gal">—</div>
+          <div class="res-sub" id="res-total-cuft"></div>
+        </div>
+      </div>
+      <div class="nonlinear-box" id="nonlinear-note" style="display:none">
+        &#9888;&#65039; <strong>Horizontal cylinder:</strong> Level % and Volume % are different because of the circular cross-section. At 25% height you only have ~19.5% of volume. At 75% height you have ~80.5%. This calculator accounts for that.
+      </div>
+    </div>
+  </div>
+
+</main>
+<footer>PockeTech V2 — Tank Volume</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+function fmt(v, d=2) { return Number.isFinite(v) ? Number(v).toFixed(d) : '—'; }
+function n(id) { const raw = $(id).value.trim(); if (raw === '') return null; const x = Number(raw); return Number.isFinite(x) ? x : null; }
+function toggleTheme() { const h = document.documentElement, next = h.getAttribute('data-theme') === 'dark' ? 'auto' : 'dark'; h.setAttribute('data-theme', next); localStorage.setItem('pt-v2-theme', next); }
+(function(){ const t = localStorage.getItem('pt-v2-theme'); if (t) document.documentElement.setAttribute('data-theme', t); })();
+
+let shape = 'horiz', mode = 'height', dimUnit = 'in';
+
+function setShape(s) {
+  shape = s;
+  ['horiz','vert','rect'].forEach(x => {
+    $('dims-' + x).style.display = x === s ? '' : 'none';
+    $('sbtn-' + x).classList.toggle('active', x === s);
+  });
+  $('results-section').style.display = 'none';
+}
+
+function setMode(m) {
+  mode = m;
+  ['height','pct','vol'].forEach(x => {
+    $('input-' + x).style.display = x === m ? '' : 'none';
+    $('mbtn-' + x).classList.toggle('active', x === m);
+  });
+}
+
+function setUnit(u) {
+  dimUnit = u;
+  $('ubtn-in').classList.toggle('active', u === 'in');
+  $('ubtn-ft').classList.toggle('active', u === 'ft');
+  document.querySelectorAll('.dim-unit').forEach(el => el.textContent = u);
+}
+
+function toIn(v) { return dimUnit === 'ft' ? v * 12 : v; }
+
+const CU_IN_PER_GAL = 231;
+
+function segArea(h, r) {
+  if (h <= 0) return 0;
+  if (h >= 2 * r) return Math.PI * r * r;
+  const c = Math.max(-1, Math.min(1, (r - h) / r));
+  return r * r * Math.acos(c) - (r - h) * Math.sqrt(Math.max(0, 2 * r * h - h * h));
+}
+
+function horizVol(h, r, len) { return segArea(h, r) * len; }
+function horizTotal(r, len) { return Math.PI * r * r * len; }
+
+function horizHeightFromVol(V, r, len) {
+  if (V <= 0) return 0;
+  const Vt = horizTotal(r, len);
+  if (V >= Vt) return 2 * r;
+  let lo = 0, hi = 2 * r;
+  for (let i = 0; i < 64; i++) {
+    const mid = (lo + hi) / 2;
+    horizVol(mid, r, len) < V ? (lo = mid) : (hi = mid);
+  }
+  return (lo + hi) / 2;
+}
+
+function showErr(msg) {
+  const b = $('err-box');
+  b.textContent = '⚠ ' + msg;
+  b.style.display = '';
+  $('results-section').style.display = 'none';
+}
+
+function clearErr() { $('err-box').style.display = 'none'; }
+
+function showResults(hIn, levelPct, volPct, volGal, totalGal) {
+  $('res-height-in').textContent = fmt(hIn, 2) + ' in';
+  $('res-height-ft').textContent = fmt(hIn / 12, 3) + ' ft';
+  $('res-levelpct').textContent = fmt(levelPct, 1) + '%';
+  $('res-volpct').textContent = fmt(volPct, 1) + '%';
+  $('res-vol-gal').textContent = fmt(volGal, 1) + ' gal';
+  $('res-vol-cuft').textContent = fmt(volGal / 7.48052, 2) + ' ft³';
+  $('res-total-gal').textContent = fmt(totalGal, 1) + ' gal';
+  $('res-total-cuft').textContent = fmt(totalGal / 7.48052, 2) + ' ft³';
+  const showNote = shape === 'horiz' && Math.abs(levelPct - volPct) > 0.05;
+  $('nonlinear-note').style.display = showNote ? '' : 'none';
+  $('results-section').style.display = '';
+}
+
+function calculate() {
+  clearErr();
+  let h, volCuIn, totalCuIn, maxH;
+
+  if (shape === 'horiz') {
+    const diam = n('horiz-diam'), len = n('horiz-len');
+    if (!diam || diam <= 0 || !len || len <= 0) return showErr('Enter diameter and length.');
+    const r = toIn(diam) / 2, L = toIn(len);
+    totalCuIn = horizTotal(r, L);
+    maxH = 2 * r;
+    if (mode === 'height') {
+      const hv = n('val-height');
+      if (hv === null) return showErr('Enter liquid height.');
+      h = Math.min(Math.max(toIn(hv), 0), maxH);
+      volCuIn = horizVol(h, r, L);
+    } else if (mode === 'pct') {
+      const pv = n('val-pct');
+      if (pv === null) return showErr('Enter level %.');
+      h = maxH * Math.min(Math.max(pv, 0), 100) / 100;
+      volCuIn = horizVol(h, r, L);
+    } else {
+      const gv = n('val-vol');
+      if (gv === null) return showErr('Enter volume in gallons.');
+      volCuIn = Math.min(Math.max(gv * CU_IN_PER_GAL, 0), totalCuIn);
+      h = horizHeightFromVol(volCuIn, r, L);
+    }
+  } else if (shape === 'vert') {
+    const diam = n('vert-diam'), totalHv = n('vert-totalh');
+    if (!diam || diam <= 0 || !totalHv || totalHv <= 0) return showErr('Enter diameter and total height.');
+    const r = toIn(diam) / 2, H = toIn(totalHv);
+    totalCuIn = Math.PI * r * r * H;
+    maxH = H;
+    if (mode === 'height') {
+      const hv = n('val-height');
+      if (hv === null) return showErr('Enter liquid height.');
+      h = Math.min(Math.max(toIn(hv), 0), H);
+    } else if (mode === 'pct') {
+      const pv = n('val-pct');
+      if (pv === null) return showErr('Enter level %.');
+      h = H * Math.min(Math.max(pv, 0), 100) / 100;
+    } else {
+      const gv = n('val-vol');
+      if (gv === null) return showErr('Enter volume in gallons.');
+      volCuIn = Math.min(Math.max(gv * CU_IN_PER_GAL, 0), totalCuIn);
+      h = H * volCuIn / totalCuIn;
+    }
+    if (volCuIn === undefined) volCuIn = Math.PI * r * r * h;
+  } else {
+    const w = n('rect-w'), l = n('rect-l'), totalHv = n('rect-totalh');
+    if (!w || w <= 0 || !l || l <= 0 || !totalHv || totalHv <= 0) return showErr('Enter all three dimensions.');
+    const W = toIn(w), L = toIn(l), H = toIn(totalHv);
+    totalCuIn = W * L * H;
+    maxH = H;
+    if (mode === 'height') {
+      const hv = n('val-height');
+      if (hv === null) return showErr('Enter liquid height.');
+      h = Math.min(Math.max(toIn(hv), 0), H);
+    } else if (mode === 'pct') {
+      const pv = n('val-pct');
+      if (pv === null) return showErr('Enter level %.');
+      h = H * Math.min(Math.max(pv, 0), 100) / 100;
+    } else {
+      const gv = n('val-vol');
+      if (gv === null) return showErr('Enter volume in gallons.');
+      volCuIn = Math.min(Math.max(gv * CU_IN_PER_GAL, 0), totalCuIn);
+      h = H * volCuIn / totalCuIn;
+    }
+    if (volCuIn === undefined) volCuIn = W * L * h;
+  }
+
+  const levelPct = (h / maxH) * 100;
+  const volPct = (volCuIn / totalCuIn) * 100;
+  showResults(h, levelPct, volPct, volCuIn / CU_IN_PER_GAL, totalCuIn / CU_IN_PER_GAL);
+}
+
+(function(){ var sx, sy; document.addEventListener('touchstart', function(e){ sx=e.touches[0].clientX; sy=e.touches[0].clientY; }, {passive:true}); document.addEventListener('touchend', function(e){ var dx=e.changedTouches[0].clientX-sx, dy=Math.abs(e.changedTouches[0].clientY-sy); if(sx<60&&dx>50&&dy<100)history.back(); }, {passive:true}); })();
+</script>
+
+</body>
+</html>
