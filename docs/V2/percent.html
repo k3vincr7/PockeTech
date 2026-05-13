@@ -44,6 +44,9 @@ label{font-weight:700;font-size:14px}
 table{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px;overflow:hidden;border-radius:12px}
 th,td{border:1px solid var(--border);padding:9px;text-align:left}
 th{background:var(--tile);font-weight:700}
+.input-wrap{display:flex;gap:6px;align-items:stretch;margin-top:7px}
+.input-wrap input{flex:1;width:auto;margin-top:0}
+.sign-btn{flex-shrink:0;width:46px;padding:0;font-size:20px;border-radius:14px}
 .scroll-x{overflow-x:auto}
 footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
 @media(max-width:520px){main{padding:12px}.section-title{font-size:24px}.card{padding:14px}.big{font-size:22px}}
@@ -71,8 +74,8 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
 <!-- Config -->
 <div class="card">
   <div class="row">
-    <div class="col"><label>LRV</label><input id="lrv" inputmode="decimal" placeholder="0" value="0"></div>
-    <div class="col"><label>URV</label><input id="urv" inputmode="decimal" placeholder="100"></div>
+    <div class="col"><label>LRV</label><div class="input-wrap"><input id="lrv" inputmode="decimal" placeholder="0" value="0"><button class="sign-btn" onclick="toggleSign('lrv')">&#177;</button></div></div>
+    <div class="col"><label>URV</label><div class="input-wrap"><input id="urv" inputmode="decimal" placeholder="100"><button class="sign-btn" onclick="toggleSign('urv')">&#177;</button></div></div>
     <div class="col"><label>EU Label</label><input id="unit" placeholder="psi, °F, inH₂O"></div>
   </div>
   <div class="hr"></div>
@@ -86,7 +89,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
 <div class="card">
   <div class="row">
     <div class="col"><label>Percent</label><input id="pct" inputmode="decimal" placeholder="50"></div>
-    <div class="col"><label>EU</label><input id="eu" inputmode="decimal" placeholder="50"></div>
+    <div class="col"><label>EU</label><div class="input-wrap"><input id="eu" inputmode="decimal" placeholder="50"><button class="sign-btn" onclick="toggleSign('eu')">&#177;</button></div></div>
   </div>
   <div class="slider-wrap">
     <label>Live Slider</label>
@@ -184,6 +187,7 @@ function syncFromEu(write=false){
   draw(p,eu);
 }
 
+function toggleSign(id){var el=$(id),v=el.value.trim();if(!v)return;var neg=v.startsWith('-');el.blur();el.value=neg?v.slice(1):'-'+v;el.dispatchEvent(new Event('input',{bubbles:true}));}
 function setP(p){source='pct';$('pct').value=p;syncFromPct(true);}
 
 function buildTable(){
