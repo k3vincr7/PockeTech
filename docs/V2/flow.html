@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PockeTech — Sq Root Flow</title>
+<meta name="theme-color" content="#0f1115">
+<style>
+:root{--bg:#f6f8fc;--fg:#0c1116;--muted:#5a6572;--card:#fff;--tile:#eef2f7;--border:#d6dbe3;--sky:#0ea5e9;--shadow:0 12px 30px rgba(15,23,42,.10);--radius:18px}
+html[data-theme="dark"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--sky:#38bdf8;--shadow:0 14px 34px rgba(0,0,0,.35)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"]{--bg:#0f1115;--fg:#e8e8e8;--muted:#a0a0a0;--card:#151922;--tile:#202838;--border:#2a2f3a;--sky:#38bdf8;--shadow:0 14px 34px rgba(0,0,0,.35)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at top,var(--tile),var(--bg) 42%);color:var(--fg);min-height:100vh}
+header{background:rgba(255,255,255,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+html[data-theme="dark"] header{background:rgba(15,17,21,.75)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"] header{background:rgba(15,17,21,.75)}}
+.header-left{display:flex;align-items:center;gap:8px}
+.brand{display:flex;flex-direction:column}
+.header-title{font-weight:800;font-size:18px}
+.build{font-size:12px;color:var(--muted)}
+main{padding:14px;max-width:960px;margin:0 auto;padding-bottom:40px}
+button,input,select{font:inherit;border-radius:14px}
+button{cursor:pointer;border:1px solid var(--border);background:var(--tile);color:var(--fg);padding:12px;font-weight:650;transition:transform .08s,box-shadow .15s}
+button:active{transform:translateY(1px) scale(.99)}
+input,select{width:100%;padding:11px 13px;border:1px solid var(--border);background:var(--card);color:var(--fg);margin-top:6px;outline:none}
+input:focus,select:focus{border-color:var(--sky);box-shadow:0 0 0 3px color-mix(in srgb,var(--sky) 20%,transparent)}
+input[type=range]{accent-color:var(--sky);padding:0;border:none;background:transparent;margin-top:10px;width:100%}
+label{font-weight:700;font-size:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.hero{background:linear-gradient(135deg,color-mix(in srgb,var(--sky) 22%,var(--card)),var(--card) 70%);overflow:hidden;position:relative}
+.hero::after{content:'';position:absolute;right:-55px;top:-60px;width:150px;height:150px;border-radius:999px;background:color-mix(in srgb,var(--sky) 15%,transparent)}
+.hero-badge{display:inline-block;background:var(--sky);color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.section-title{margin:0 0 4px;font-size:26px;font-weight:800;letter-spacing:-.5px}
+.muted{color:var(--muted);font-size:13px;line-height:1.35}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.col{flex:1 1 140px}
+.small-btn{padding:8px 12px;font-size:14px;border-radius:12px;width:auto}
+.ok-btn{background:var(--sky);color:#fff;border-color:var(--sky);width:100%;padding:13px;font-size:15px;border-radius:14px}
+.sec-label{font-size:11px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+/* Results */
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.result-card{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:14px;text-align:center}
+.result-card .big{font-size:22px;font-weight:850;margin:4px 0;letter-spacing:-.4px}
+.result-card .lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.result-card.sky{border-color:color-mix(in srgb,var(--sky) 50%,var(--border));background:color-mix(in srgb,var(--sky) 8%,var(--tile))}
+/* Slider */
+.slider-wrap{background:var(--tile);border:1px solid var(--border);border-radius:16px;padding:14px;margin-top:12px}
+.chip-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{width:auto;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700}
+.chip.active{background:var(--sky);color:#fff;border-color:var(--sky)}
+/* Collapsible */
+.coll-hdr{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:2px 0}
+.coll-hdr h3{margin:0;font-size:15px;font-weight:750;pointer-events:none}
+.coll-arrow{font-size:11px;color:var(--muted);transition:transform .2s;pointer-events:none;display:inline-block}
+.coll-body{max-height:0;overflow:hidden;transition:max-height .28s ease}
+.coll-body.open{max-height:3000px}
+.coll-arrow.open{transform:rotate(180deg)}
+/* Table */
+.scroll-x{overflow-x:auto;margin-top:10px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--tile);padding:9px 8px;text-align:center;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--border);white-space:nowrap}
+td{border:1px solid var(--border);padding:9px 8px;text-align:center}
+/* Non-linearity viz */
+.nl-bar-wrap{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0}
+.nl-col{display:flex;flex-direction:column;align-items:center;gap:4px}
+.nl-track{width:28px;height:80px;background:var(--tile);border:1px solid var(--border);border-radius:8px;position:relative;overflow:hidden}
+.nl-fill-dp{position:absolute;bottom:0;left:0;right:0;background:color-mix(in srgb,var(--sky) 35%,transparent);transition:height .2s}
+.nl-fill-flow{position:absolute;bottom:0;left:0;right:0;width:50%;background:var(--sky);transition:height .2s}
+.nl-label{font-size:10px;font-weight:800;color:var(--muted);text-align:center;line-height:1.2}
+/* Tip box */
+.tip-box{background:color-mix(in srgb,var(--sky) 10%,var(--tile));border:1px solid color-mix(in srgb,var(--sky) 30%,var(--border));border-radius:14px;padding:13px 14px;font-size:14px;font-weight:600;color:#0369a1;line-height:1.5;margin-bottom:8px}
+.tip-box:last-child{margin-bottom:0}
+html[data-theme="dark"] .tip-box{color:#38bdf8}
+@media(prefers-color-scheme:dark){html[data-theme="auto"] .tip-box{color:#38bdf8}}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:22px}
+@media(max-width:520px){main{padding:10px}.section-title{font-size:22px}.result-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <button class="small-btn" onclick="location.href='./index.html'">&#8592; Back</button>
+    <div class="brand">
+      <div class="header-title">PockeTech V2</div>
+      <div class="build">Sq Root Flow</div>
+    </div>
+  </div>
+  <button class="small-btn" onclick="toggleTheme()">&#127771;</button>
+</header>
+
+<main>
+
+  <div class="card hero">
+    <div class="hero-badge">&#8730; SQ ROOT FLOW</div>
+    <h1 class="section-title">Square Root Flow</h1>
+    <p class="muted" style="margin:4px 0 0">Flow&nbsp;%&nbsp;= &radic;(DP&nbsp;%) &mdash; bidirectional, live sync, 5-point reference table.</p>
+  </div>
+
+  <!-- DP Span -->
+  <div class="card">
+    <h3 style="margin:0 0 12px;font-size:15px;font-weight:750">DP Span</h3>
+    <div class="row">
+      <div class="col">
+        <label>DP LRV</label>
+        <input id="dp_lrv" inputmode="decimal" placeholder="0" value="0">
+      </div>
+      <div class="col">
+        <label>DP URV</label>
+        <input id="dp_urv" inputmode="decimal" placeholder="e.g. 100">
+      </div>
+      <div class="col">
+        <label>DP Units</label>
+        <input id="dp_unit" placeholder="inH&#8322;O, psi, kPa">
+      </div>
+    </div>
+  </div>
+
+  <!-- Flow Range -->
+  <div class="card">
+    <h3 style="margin:0 0 12px;font-size:15px;font-weight:750">Flow Range</h3>
+    <div class="row">
+      <div class="col">
+        <label>Flow LRV</label>
+        <input id="fl_lrv" inputmode="decimal" placeholder="0" value="0">
+      </div>
+      <div class="col">
+        <label>Flow URV (Max)</label>
+        <input id="fl_urv" inputmode="decimal" placeholder="e.g. 500">
+      </div>
+      <div class="col">
+        <label>Flow Units</label>
+        <input id="fl_unit" placeholder="GPM, BPD, SCFM&hellip;">
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Signal -->
+  <div class="card">
+    <h3 style="margin:0 0 12px;font-size:15px;font-weight:750">Live Signal</h3>
+    <div class="row">
+      <div class="col"><label>Flow %</label><input id="inp_fpct" inputmode="decimal" placeholder="50"></div>
+      <div class="col"><label>DP %</label><input id="inp_dppct" inputmode="decimal" placeholder="25"></div>
+      <div class="col"><label>DP</label><input id="inp_dp" inputmode="decimal" placeholder="25 inH&#8322;O"></div>
+      <div class="col"><label>mA</label><input id="inp_ma" inputmode="decimal" placeholder="12"></div>
+      <div class="col"><label>Actual Flow</label><input id="inp_flow" inputmode="decimal" placeholder="250 GPM"></div>
+    </div>
+    <div class="slider-wrap">
+      <label>Flow % Slider</label>
+      <input id="slider" type="range" min="0" max="100" step="0.1" value="50">
+      <div class="chip-bar">
+        <button class="chip" id="c0"   onclick="setFlow(0)">0%</button>
+        <button class="chip" id="c25"  onclick="setFlow(25)">25%</button>
+        <button class="chip" id="c50"  onclick="setFlow(50)">50%</button>
+        <button class="chip" id="c75"  onclick="setFlow(75)">75%</button>
+        <button class="chip" id="c100" onclick="setFlow(100)">100%</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="result-grid">
+    <div class="result-card sky"><div class="lbl">Flow %</div><div class="big" id="r_fpct">&#8212;</div></div>
+    <div class="result-card sky"><div class="lbl">Actual Flow</div><div class="big" id="r_flow">&#8212;</div></div>
+    <div class="result-card"><div class="lbl">DP %</div><div class="big" id="r_dppct">&#8212;</div></div>
+    <div class="result-card"><div class="lbl">DP</div><div class="big" id="r_dp">&#8212;</div></div>
+    <div class="result-card"><div class="lbl">mA</div><div class="big" id="r_ma">&#8212;</div></div>
+  </div>
+
+  <!-- 5-Point Table -->
+  <div class="card">
+    <div class="coll-hdr" onclick="toggleColl(this)">
+      <h3>&#128203; 5-Point Reference Table</h3><span class="coll-arrow">&#9660;</span>
+    </div>
+    <div class="coll-body">
+      <div class="scroll-x">
+        <table id="ref_table">
+          <thead><tr><th>Flow %</th><th>DP %</th><th>DP</th><th>mA</th><th>Actual Flow</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="muted" style="margin-top:8px">Updates automatically when DP span and flow range are set.</p>
+    </div>
+  </div>
+
+  <!-- Non-linearity reference -->
+  <div class="card">
+    <div class="coll-hdr" onclick="toggleColl(this)">
+      <h3>&#128200; DP % vs Flow % Non-Linearity</h3><span class="coll-arrow">&#9660;</span>
+    </div>
+    <div class="coll-body">
+      <div style="height:10px"></div>
+      <div class="nl-bar-wrap" id="nl_bars">
+        <!-- built by JS -->
+      </div>
+      <p class="muted" style="margin:6px 0 0">Sky bar = Flow %. Background bar = DP %. At 25% DP you only have 50% flow. At 50% DP you have 70.7% flow.</p>
+      <div class="scroll-x" style="margin-top:10px">
+        <table>
+          <thead><tr><th>DP %</th><th>4&#8211;20 mA (DP linear)</th><th>Flow %</th><th>mA (flow linear)</th></tr></thead>
+          <tbody>
+            <tr><td>0%</td><td>4.00 mA</td><td>0%</td><td>4.00 mA</td></tr>
+            <tr><td>6.25%</td><td>5.00 mA</td><td>25%</td><td>8.00 mA</td></tr>
+            <tr><td>25%</td><td>8.00 mA</td><td>50%</td><td>12.00 mA</td></tr>
+            <tr><td>56.25%</td><td>13.00 mA</td><td>75%</td><td>16.00 mA</td></tr>
+            <tr><td>100%</td><td>20.00 mA</td><td>100%</td><td>20.00 mA</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Field Tips -->
+  <div class="card">
+    <div class="tip-box">&#128161; To simulate 50% flow at the DCS, inject 8 mA at the transmitter input — that's 25% DP, which the square root extractor converts to 50% flow.</div>
+    <div class="tip-box">&#128161; Low-flow cutoff: most flow computers and transmitters have a programmable cutoff around 10% flow (= 1% DP = ~4.16 mA). Below that, output snaps to zero to avoid noisy near-zero readings.</div>
+    <div class="tip-box">&#128161; Know where the sqrt happens — in the transmitter (HART config) or in the DCS/flow computer. Injecting mA at the wrong point gives you wrong results. Confirm before you calibrate.</div>
+    <div class="tip-box">&#128161; At 25% DP you only have 50% flow. If the operator sees 50% flow and process pressure looks right, the DP cell is likely reading correctly — the relationship is non-linear by design.</div>
+  </div>
+
+</main>
+<footer>PockeTech V2 — Sq Root Flow</footer>
+
+<script>
+// common.js inlined
+var $ = function(id){return document.getElementById(id);};
+function fmt(v,d){d=d===undefined?3:d;return(typeof v==='number'&&isFinite(v))?Number(v).toFixed(d):'--';}
+(function(){var t=localStorage.getItem('pt-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+(function(){var sx,sy;document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});document.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=Math.abs(e.changedTouches[0].clientY-sy);if(sx<60&&dx>50&&dy<100)history.back();},{passive:true});})();
+function toggleTheme(){var h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'auto':'dark';h.setAttribute('data-theme',next);localStorage.setItem('pt-v2-theme',next);}
+
+function toggleColl(hdr){
+  var body=hdr.nextElementSibling;
+  var arrow=hdr.querySelector('.coll-arrow');
+  body.classList.toggle('open');
+  if(arrow)arrow.classList.toggle('open');
+}
+
+// ── Math ─────────────────────────────────────────────────────────────────────
+// Flow % → DP %
+function flowToDpPct(fp){return(fp/100)*(fp/100)*100;}
+// DP % → Flow %
+function dpPctToFlow(dp){return dp<0?0:dp>100?100:Math.sqrt(dp/100)*100;}
+// DP % → actual DP value
+function dpPctToVal(dp,lrv,urv){return lrv+(dp/100)*(urv-lrv);}
+// actual DP value → DP %
+function dpValToPct(v,lrv,urv){return urv===lrv?null:(v-lrv)/(urv-lrv)*100;}
+// Flow % → mA (mA tracks DP, not flow — this is what the DP transmitter outputs)
+function dpPctToMA(dp){return 4+(dp/100)*16;}
+// mA → DP %
+function maToDpPct(ma){return((ma-4)/16)*100;}
+// Flow % → actual flow
+function flowPctToActual(fp,lrv,urv){return lrv+(fp/100)*(urv-lrv);}
+// actual flow → flow %
+function actualToFlowPct(v,lrv,urv){return urv===lrv?null:(v-lrv)/(urv-lrv)*100;}
+
+function clamp(v,lo,hi){return Math.min(Math.max(v,lo===undefined?0:lo),hi===undefined?100:hi);}
+function gn(id){var raw=$(id).value.trim();if(raw==='')return null;var x=Number(raw);return isFinite(x)?x:null;}
+function uDP(){var u=$(  'dp_unit').value.trim();return u?' '+u:'';}
+function uFL(){var u=$('fl_unit').value.trim();return u?' '+u:'';}
+function dpRange(){var l=gn('dp_lrv'),u=gn('dp_urv');return(l===null||u===null||l===u)?null:{l:l,u:u};}
+function flRange(){var l=gn('fl_lrv'),u=gn('fl_urv');return(l===null||u===null||l===u)?null:{l:l,u:u};}
+
+// ── Display ──────────────────────────────────────────────────────────────────
+var source='fpct';
+
+function updateChips(fp){
+  [0,25,50,75,100].forEach(function(v){
+    var el=$('c'+v);if(el)el.className='chip'+(Math.abs(fp-v)<0.05?' active':'');
+  });
+}
+
+function display(fp){
+  var dp=flowToDpPct(fp);
+  var dr=dpRange(),fr=flRange();
+  var dpVal=dr?dpPctToVal(dp,dr.l,dr.u):NaN;
+  var ma=dpPctToMA(dp);
+  var flVal=fr?flowPctToActual(fp,fr.l,fr.u):NaN;
+  $('r_fpct').textContent=isFinite(fp)?fmt(fp,2)+' %':'--';
+  $('r_dppct').textContent=isFinite(dp)?fmt(dp,2)+' %':'--';
+  $('r_dp').textContent=(isFinite(dpVal)&&dr)?fmt(dpVal,3)+uDP():'--';
+  $('r_ma').textContent=isFinite(ma)?fmt(ma,3)+' mA':'--';
+  $('r_flow').textContent=(isFinite(flVal)&&fr)?fmt(flVal,3)+uFL():'--';
+  $('slider').value=clamp(fp);
+  updateChips(fp);
+  buildTable();
+  buildBars(fp,dp);
+}
+
+// ── Sync functions ────────────────────────────────────────────────────────────
+function syncFromFpct(write){
+  var fp=gn('inp_fpct');if(fp===null){display(NaN);return;}
+  fp=clamp(fp);
+  var dp=flowToDpPct(fp),dr=dpRange(),fr=flRange();
+  var dpVal=dr?dpPctToVal(dp,dr.l,dr.u):NaN;
+  var ma=dpPctToMA(dp);
+  var flVal=fr?flowPctToActual(fp,fr.l,fr.u):NaN;
+  if(write){
+    $('inp_fpct').value=fmt(fp,2);
+    $('inp_dppct').value=fmt(dp,2);
+    if(isFinite(dpVal))$('inp_dp').value=fmt(dpVal,3);
+    $('inp_ma').value=fmt(ma,3);
+    if(isFinite(flVal))$('inp_flow').value=fmt(flVal,3);
+  }
+  display(fp);
+}
+
+function syncFromDppct(write){
+  var dp=gn('inp_dppct');if(dp===null){display(NaN);return;}
+  dp=clamp(dp);
+  var fp=dpPctToFlow(dp),dr=dpRange(),fr=flRange();
+  var dpVal=dr?dpPctToVal(dp,dr.l,dr.u):NaN;
+  var ma=dpPctToMA(dp);
+  var flVal=fr?flowPctToActual(fp,fr.l,fr.u):NaN;
+  if(write){
+    $('inp_fpct').value=fmt(fp,2);
+    $('inp_dppct').value=fmt(dp,2);
+    if(isFinite(dpVal))$('inp_dp').value=fmt(dpVal,3);
+    $('inp_ma').value=fmt(ma,3);
+    if(isFinite(flVal))$('inp_flow').value=fmt(flVal,3);
+  }
+  display(fp);
+}
+
+function syncFromDP(write){
+  var v=gn('inp_dp');if(v===null){display(NaN);return;}
+  var dr=dpRange();if(!dr)return;
+  var dp=clamp(dpValToPct(v,dr.l,dr.u));
+  var fp=dpPctToFlow(dp),fr=flRange();
+  var ma=dpPctToMA(dp);
+  var flVal=fr?flowPctToActual(fp,fr.l,fr.u):NaN;
+  if(write){
+    $('inp_fpct').value=fmt(fp,2);
+    $('inp_dppct').value=fmt(dp,2);
+    $('inp_ma').value=fmt(ma,3);
+    if(isFinite(flVal))$('inp_flow').value=fmt(flVal,3);
+  }
+  display(fp);
+}
+
+function syncFromMA(write){
+  var ma=gn('inp_ma');if(ma===null){display(NaN);return;}
+  var dp=clamp(maToDpPct(ma));
+  var fp=dpPctToFlow(dp),dr=dpRange(),fr=flRange();
+  var dpVal=dr?dpPctToVal(dp,dr.l,dr.u):NaN;
+  var flVal=fr?flowPctToActual(fp,fr.l,fr.u):NaN;
+  if(write){
+    $('inp_fpct').value=fmt(fp,2);
+    $('inp_dppct').value=fmt(dp,2);
+    if(isFinite(dpVal))$('inp_dp').value=fmt(dpVal,3);
+    if(isFinite(flVal))$('inp_flow').value=fmt(flVal,3);
+  }
+  display(fp);
+}
+
+function syncFromFlow(write){
+  var v=gn('inp_flow');if(v===null){display(NaN);return;}
+  var fr=flRange();if(!fr)return;
+  var fp=clamp(actualToFlowPct(v,fr.l,fr.u));
+  var dp=flowToDpPct(fp),dr=dpRange();
+  var dpVal=dr?dpPctToVal(dp,dr.l,dr.u):NaN;
+  var ma=dpPctToMA(dp);
+  if(write){
+    $('inp_fpct').value=fmt(fp,2);
+    $('inp_dppct').value=fmt(dp,2);
+    if(isFinite(dpVal))$('inp_dp').value=fmt(dpVal,3);
+    $('inp_ma').value=fmt(ma,3);
+  }
+  display(fp);
+}
+
+function setFlow(fp){source='fpct';$('inp_fpct').value=fp;syncFromFpct(true);}
+function recalc(){
+  if(source==='dppct')syncFromDppct(false);
+  else if(source==='dp')syncFromDP(false);
+  else if(source==='ma')syncFromMA(false);
+  else if(source==='flow')syncFromFlow(false);
+  else syncFromFpct(false);
+}
+
+// ── 5-Point Table ─────────────────────────────────────────────────────────────
+function buildTable(){
+  var tb=$('ref_table').querySelector('tbody');tb.innerHTML='';
+  var dr=dpRange(),fr=flRange();
+  [0,25,50,75,100].forEach(function(fp){
+    var dp=flowToDpPct(fp);
+    var dpVal=dr?dpPctToVal(dp,dr.l,dr.u):null;
+    var ma=dpPctToMA(dp);
+    var flVal=fr?flowPctToActual(fp,fr.l,fr.u):null;
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+fp+'%</td>'
+      +'<td>'+fmt(dp,2)+'%</td>'
+      +'<td>'+(dpVal!==null?fmt(dpVal,3)+uDP():'--')+'</td>'
+      +'<td>'+fmt(ma,3)+' mA</td>'
+      +'<td>'+(flVal!==null?fmt(flVal,3)+uFL():'--')+'</td>';
+    tb.appendChild(tr);
+  });
+}
+
+// ── Non-linearity bars ────────────────────────────────────────────────────────
+function buildBars(activeFp,activeDp){
+  var wrap=$('nl_bars');if(!wrap)return;
+  wrap.innerHTML='';
+  [0,25,50,75,100].forEach(function(fp){
+    var dp=flowToDpPct(fp);
+    var col=document.createElement('div');col.className='nl-col';
+    var track=document.createElement('div');track.className='nl-track';
+    var fillDp=document.createElement('div');fillDp.className='nl-fill-dp';fillDp.style.height=dp+'%';
+    var fillFl=document.createElement('div');fillFl.className='nl-fill-flow';fillFl.style.height=fp+'%';
+    var highlight=(Math.abs(fp-(activeFp||0))<0.5);
+    if(highlight){fillFl.style.background='var(--sky)';track.style.borderColor='var(--sky)';}
+    track.appendChild(fillDp);track.appendChild(fillFl);
+    var lbl=document.createElement('div');lbl.className='nl-label';lbl.innerHTML=fp+'%<br>flow';
+    col.appendChild(track);col.appendChild(lbl);
+    wrap.appendChild(col);
+  });
+}
+
+// ── Wire up inputs ────────────────────────────────────────────────────────────
+(function init(){
+  var configIds=['dp_lrv','dp_urv','dp_unit','fl_lrv','fl_urv','fl_unit'];
+  configIds.forEach(function(id){
+    if($(id))$(id).addEventListener('input',recalc);
+  });
+
+  $('inp_fpct').addEventListener('input',function(){source='fpct';syncFromFpct(false);});
+  $('inp_fpct').addEventListener('change',function(){syncFromFpct(true);});
+  $('inp_dppct').addEventListener('input',function(){source='dppct';syncFromDppct(false);});
+  $('inp_dppct').addEventListener('change',function(){syncFromDppct(true);});
+  $('inp_dp').addEventListener('input',function(){source='dp';syncFromDP(false);});
+  $('inp_dp').addEventListener('change',function(){syncFromDP(true);});
+  $('inp_ma').addEventListener('input',function(){source='ma';syncFromMA(false);});
+  $('inp_ma').addEventListener('change',function(){syncFromMA(true);});
+  $('inp_flow').addEventListener('input',function(){source='flow';syncFromFlow(false);});
+  $('inp_flow').addEventListener('change',function(){syncFromFlow(true);});
+
+  $('slider').addEventListener('input',function(){
+    source='fpct';$('inp_fpct').value=$('slider').value;syncFromFpct(true);
+  });
+
+  buildTable();
+  buildBars(50,25);
+})();
+</script>
+</body>
+</html>
